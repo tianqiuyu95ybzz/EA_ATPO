@@ -1,0 +1,53 @@
+# Local environments and caches
+.venv/
+venv/
+env/
+**/.venv/
+**/__pycache__/
+*.pyc
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+node_modules/
+
+# Secrets and local connection files
+.env
+.env.*
+*.pem
+*.key
+*.secret
+*credentials*
+*secrets*
+
+# Training outputs and model artifacts
+checkpoints/
+outputs/
+logs/
+**/checkpoints/
+**/outputs/
+**/logs/
+*.safetensors
+*.bin
+*.pt
+*.pth
+*.ckpt
+
+# Large/private datasets and generated staging material
+ATPO-official/dataset/
+staging/
+sources/
+**/*.jsonl
+**/*.jsonl.gz
+*.tgz
+*.zip
+
+# Keep the official ATPO checkout as an upstream dependency rather than
+# duplicating its nested Git repository in this research repository.
+ATPO-official/
+
+# OS/editor files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+

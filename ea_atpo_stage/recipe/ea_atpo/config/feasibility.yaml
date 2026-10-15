@@ -1,0 +1,23 @@
+seed: 20260909
+num_states: 500
+rollouts_per_action: 3
+max_assistant_turns: 10
+temperature: 0.7
+outcome_value:
+  correct: 1.0
+  incorrect: 0.0
+cost:
+  ANSWER: 0.00
+  ASK: 0.05
+  CONSULT: 0.20
+  DEFER: 0.60
+lambda_cost: 1.0
+lambda_harm: 1.0
+endpoints:
+  base: http://127.0.0.1:30001/v1
+  patient: http://127.0.0.1:30002/v1
+  expert: http://127.0.0.1:30003/v1
+models:
+  base: ea-atpo-base
+  patient: Qwen3-8B-patient
+  expert: Qwen3.5-35B-A3B-expert

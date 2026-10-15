@@ -1,0 +1,10 @@
+--- recipe/atpo/agent_loop.py
++++ recipe/atpo/agent_loop.py
+@@ -497,5 +497,6 @@
+             variance_threshold=tree_search.variance_threshold,
+             pruning_enabled=tree_search.pruning_enabled,
+             call_critic_enabled=tree_search.call_critic_enabled,
+-            only_use_critic_value=tree_search.only_use_critic_value
++            only_use_critic_value=tree_search.only_use_critic_value,
++            enable_process_reward=tree_search.get("enable_process_reward", False)
+         )

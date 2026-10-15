@@ -1,0 +1,19 @@
+--- recipe/atpo/user_assistant_agent_loop.py
++++ recipe/atpo/user_assistant_agent_loop.py
+@@ -386,5 +386,6 @@
+                 node.critic_state_value = 0.0 if self.params["call_critic_enabled"] else None
+             else:
+-                # node.action_reward = reward_info["process_reward"]
+-                node.action_reward = 0.0
++                node.action_reward = (
++                    reward_info["process_reward"] if self.params.get("enable_process_reward", False) else 0.0
++                )
+                 node.critic_state_value = values[i] if self.params["call_critic_enabled"] else None
+@@ -550,6 +551,7 @@
+             "pruning_enabled": tree_search_params.get("pruning_enabled", False),
+             "call_critic_enabled": tree_search_params.get("call_critic_enabled", False),
+             "only_use_critic_value": tree_search_params.get("only_use_critic_value", False),
++            "enable_process_reward": tree_search_params.get("enable_process_reward", False),
+             "gamma": self.config.algorithm.gamma,
+             "lam": self.config.algorithm.lam
+         }
