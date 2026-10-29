@@ -2,7 +2,7 @@
 
 ## Completed baseline evidence
 
-- Official Qwen3-4B SFT and corrected ATPO training chain completed through step 20.
+- Historical Qwen3-4B SFT and corrected ATPO training chain completed through step 20; keep this as an engineering smoke record. The formal main experiment should use the official Qwen3-8B Assistant policy.
 - Full deterministic test set: SFT 43.45% accuracy, ATPO 46.53% (+3.08 percentage
   points); average turns decreased from about 4.05 to 3.39.
 - The critic value loss decreased substantially, but online batch accuracy was not

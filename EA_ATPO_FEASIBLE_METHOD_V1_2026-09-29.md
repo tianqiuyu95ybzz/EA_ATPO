@@ -6,7 +6,7 @@
 
 以官方 ATPO 的多轮医疗问诊策略为基础，让 agent 从当前**公开信息状态**学习在 ANSWER、ASK、CONSULT、DEFER 间作序贯、成本敏感的选择。ACT 仅作 ASK/ANSWER 参考，不是主体算法。主方法采用两阶段：先改进 ATPO 的问诊训练，再冻结 agent、学习序贯专家接入策略；四动作联合 ATPO RL 只作为条件性扩展。
 
-当前官方 baseline 是 Qwen3-4B SFT+ATPO step-20；模型大小和训练预算固定做方法消融。若 E1/E2 在该规模有效，再考虑官方 Qwen3-8B 配置复核；35B 专家模型不是 35B actor。所有规模比较应明确不是同算力结论。
+当前已有的工程 baseline 是 Qwen3-4B SFT+ATPO step-20，但它只用于 smoke 和代码链路验证。正式主实验应对齐官方 ATPO，使用 Qwen3-8B 作为 Assistant policy；Qwen3-8B 同时用于官方 User/患者模拟器。Qwen3.5-35B-A3B 仅作为 CONSULT/DEFER 专家服务，不是 35B actor。所有规模比较都必须明确不是同算力结论。
 
 ## 2. 环境与动作语义
 

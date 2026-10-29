@@ -44,10 +44,14 @@ ATPO-official/dataset/             本地数据集副本（不上传）
 
 新环境中需要单独获取官方 ATPO 源码；不要把数据集、模型和 checkpoint 上传到公开仓库。
 
+## 模型口径
+
+官方 ATPO 论文在 Assistant policy 上评估 Qwen3-1.7B、Qwen3-4B 和 Qwen3-8B，正式主实验应对齐 Qwen3-8B；Qwen3-8B 也用于官方 User/患者模拟器。Qwen3-4B 仅保留为快速 smoke/工程复现模型。我们之前配置的 Qwen3.5-35B-A3B 是 CONSULT/DEFER 的模拟专家，不是被训练的主 Agent；服务器上的 27B 服务也不应表述为官方 ATPO policy。
+
 ## 已完成工作
 
 - 官方 ATPO 代码和医疗数据曾在旧服务器上准备完成。
-- Qwen3-4B SFT 已跑通：3 epochs、1500 steps，最终验证 loss 约 0.9658。
+- Qwen3-4B SFT 已跑通：3 epochs、1500 steps，最终验证 loss 约 0.9658；这是历史工程复现结果，不是最终主实验规模。
 - 官方 ATPO RL baseline 曾运行到 step 20。
 - 已完成 E0 奖励路径审计。
 - 已确认官方代码计算过程分数，但部分中间节点的 `action_reward` 原实现被置为 0。

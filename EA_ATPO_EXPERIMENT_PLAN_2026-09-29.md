@@ -4,7 +4,7 @@
 
 目标是改进 **ATPO** 的多轮医疗问诊与适时专家转交；ACT 只作为 ASK/ANSWER 对照或动作预热参考，不作为本文的优化算法。当前 `codes-repro/recipe/ea_atpo/` 是独立的四动作反事实采集与离线 router 包，**尚未把 CONSULT/DEFER 接入 ATPO 树搜索、critic 和 actor 更新**。现阶段不能称为已完成 Expert-aware ATPO 算法。
 
-已完成的官方 baseline：Qwen3-4B SFT 与 ATPO RL 至 step 20；既有记录显示测试准确率 SFT 43.45%、ATPO 46.53%，平均轮数约 4.05→3.39。此差值仍需按病例做置信区间，不能先写成显著提升。训练 checkpoint：`checkpoints/official-atpo-baseline-corrected-gpu1/global_step_20/actor_merged_hf`。
+已完成的历史工程 baseline：Qwen3-4B SFT 与 ATPO RL 至 step 20；既有记录显示测试准确率 SFT 43.45%、ATPO 46.53%，平均轮数约 4.05→3.39。该 4B 结果仅用于复现链路和调试，不是最终主实验规模。正式实验应以官方论文的 Qwen3-8B Assistant policy 为主，4B 只作 smoke/消融。此差值仍需按病例做置信区间，不能先写成显著提升。训练 checkpoint：`checkpoints/official-atpo-baseline-corrected-gpu1/global_step_20/actor_merged_hf`。
 
 已完成的四动作可行性采集：修复公开状态中的 `<think>` 泄漏后，重新得到 500 状态、250 病例、6000 条轨迹、485 个四动作均有效状态，有效率 96.23%。结果：`outputs/ea_atpo/feasibility_thinkstrip_35b_500states_3rollouts_20260928.jsonl`。按当前人为成本的胜出数 ANSWER 280 / ASK 94 / CONSULT 86 / DEFER 25；这些是带采样噪声的 *oracle-style* 探索统计，不是学得策略的测试性能。
 

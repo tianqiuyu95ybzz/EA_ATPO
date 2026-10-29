@@ -101,7 +101,7 @@ ANSWER/DEFER 是终止动作；ASK/CONSULT 后进入新状态，分别保留/消
 
 ## 8. 当前证据与实际状态（2026-09-29）
 
-- 官方 Qwen3-4B SFT 与 ATPO RL baseline 已跑至 step 20；既有记录中测试准确率 43.45%→46.53%，平均轮数约 4.05→3.39，但该提升还不能被表述为已证实显著。checkpoint：`checkpoints/official-atpo-baseline-corrected-gpu1/global_step_20/actor_merged_hf`。
+- 历史 Qwen3-4B SFT 与 ATPO RL baseline 已跑至 step 20；既有记录中测试准确率 43.45%→46.53%，平均轮数约 4.05→3.39，但该提升还不能被表述为已证实显著。该 4B 结果仅作为工程复现记录；正式主实验应使用官方配置的 Qwen3-8B Assistant policy。checkpoint：`checkpoints/official-atpo-baseline-corrected-gpu1/global_step_20/actor_merged_hf`。
 - 修复 `<think>` 泄漏后，四动作采集得到 500 状态/250 病例/6000 条 rollout；485 状态四动作完整，有效率约 96.23%。按指定人工成本的胜出数 ANSWER 280 / ASK 94 / CONSULT 86 / DEFER 25。该胜出数不是学习策略结果。
 - 冻结 Qwen3 隐状态的优势目标 router 在 98 个完整测试状态：效用 0.4869；always ANSWER 为 0.4966；差值 −0.0097，病例 bootstrap 95% CI [−0.0403, 0.0134]。TF-IDF 优势目标在当前成本下全部选 ANSWER。**尚无 learned deferral 正收益证据。**
 - 数据：`outputs/ea_atpo/feasibility_thinkstrip_35b_500states_3rollouts_20260928.jsonl`；报告：`outputs/ea_atpo/router_adv_*_500states_20260929/report.json`。含泄漏的旧版 500 状态数据仅可用于管道调试。

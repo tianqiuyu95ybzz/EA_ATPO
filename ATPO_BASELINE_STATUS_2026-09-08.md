@@ -2,7 +2,7 @@
 
 ## 研究目标
 
-最终目标是构建医疗 Agent，使模型能够依据当前信息状态学习何时直接 `ANSWER`、何时继续 `ASK`、何时请求专家 `CONSULT`、何时将病例 `DEFER` 给专家。当前阶段只复现官方 ATPO baseline，尚未开始 EA-ATPO 四动作方法的正式改进。
+最终目标是构建医疗 Agent，使模型能够依据当前信息状态学习何时直接 `ANSWER`、何时继续 `ASK`、何时请求专家 `CONSULT`、何时将病例 `DEFER` 给专家。当前阶段只复现官方 ATPO baseline，尚未开始 EA-ATPO 四动作方法的正式改进。本文记录的是历史 Qwen3-4B 工程复现；正式主实验应切换到官方论文使用的 Qwen3-8B Assistant policy。
 
 ## 当前服务器与资源
 
