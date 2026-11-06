@@ -1,0 +1,29 @@
+{
+  "uncertainty_threshold": 0.6130556107160738,
+  "equivalent_answer_confidence_threshold": 0.38694438928392616,
+  "alternative_action": "CONSULT",
+  "selection_metric": "validation mean utility under reference cost",
+  "validation_cases": [
+    "row-10082:item-10082",
+    "row-13705:item-13705",
+    "row-1702:item-1702",
+    "row-1856:item-1856",
+    "row-1874:item-1874",
+    "row-2921:item-2921",
+    "row-2935:item-2935",
+    "row-3207:item-3207",
+    "row-3534:item-3534",
+    "row-3714:item-3714",
+    "row-3976:item-3976",
+    "row-4160:item-4160",
+    "row-5103:item-5103",
+    "row-932:item-932",
+    "row-9631:item-9631"
+  ],
+  "validation_mean_utility": 0.4913271428571428,
+  "cost": {
+    "ASK": 0.01,
+    "CONSULT": 0.02,
+    "DEFER": 0.02
+  }
+}

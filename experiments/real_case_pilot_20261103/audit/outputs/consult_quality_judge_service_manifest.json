@@ -1,0 +1,20 @@
+{
+  "started_at_utc": "2026-11-04T07:49:35+00:00",
+  "purpose": "Post-hoc exploratory CONSULT quality annotations; not physician adjudication.",
+  "framework": "vllm",
+  "vllm_version": "0.33.0",
+  "model_repo_id": "Qwen/Qwen3-8B",
+  "model_revision": "b968826d9c46dd6066d109eabc6255188de91218",
+  "served_model_name": "qwen3-8b-audit-judge",
+  "gpu_physical_index": 6,
+  "gpu_free_mib_before_start": 158419,
+  "port": 30131,
+  "dtype": "bfloat16",
+  "max_model_len": 8192,
+  "max_num_seqs": 1,
+  "gpu_memory_utilization": 0.3,
+  "attention_backend": "TRITON_ATTN",
+  "stopped_at_utc": "2026-11-04T08:07:51+00:00",
+  "stop_reason": "Completed V2 post-hoc CONSULT quality annotations; temporary local judge service shut down.",
+  "service_process_group": 607507
+}

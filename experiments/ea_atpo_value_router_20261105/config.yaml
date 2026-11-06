@@ -1,0 +1,55 @@
+experiment: ea_atpo_four_action_value_router
+created_date: 2026-11-05
+seed: 20261105
+pilot_dir: ../real_case_pilot_20261103
+pilot_trajectories: ../real_case_pilot_20261103/outputs/full/pilot_trajectories.jsonl
+test_parquet: ../real_case_pilot_20261103/assets/test.pilot.parquet
+train_split:
+  train_cases: 0.70
+  validation_cases: 0.15
+  internal_test_cases: 0.15
+  split_unit: case_id
+  seed: 20261105
+router_test:
+  cases: 200
+  seed: 20261106
+  exclude_strong_expert_sample_seed: 20261104
+  exclude_strong_expert_sample_cases: 200
+  resume: true
+model:
+  base_model: Qwen/Qwen3-8B
+  base_revision: b968826d9c46dd6066d109eabc6255188de91218
+  patient_simulator: Qwen/Qwen3-8B
+  expert_simulator: Qwen/Qwen3-8B
+  expert_note: "Pilot-consistent simulated Expert; 32B direct reliability is a separate study."
+  temperatures: {base: 0.2, patient_simulator: 0.0, expert: 0.2}
+  max_turns: 10
+  max_consults: 1
+  enable_thinking: false
+cost:
+  utility: "correctness - lambda_ask * branch_patient_turns - lambda_consult * branch_consult_expert_tokens/1000 - lambda_defer * branch_defer_expert_tokens/1000"
+  reference: {ask: 0.01, consult: 0.02, defer: 0.02}
+  sensitivity:
+    - {name: no_cost, ask: 0.0, consult: 0.0, defer: 0.0}
+    - {name: reference, ask: 0.01, consult: 0.02, defer: 0.02}
+    - {name: higher_cost, ask: 0.03, consult: 0.10, defer: 0.10}
+value_model:
+  class: action-specific kernel ridge regression on hashed public-state TF-IDF
+  max_features: 3000
+  alpha: 1.0
+  reliability_feature: cross-fitted predicted DEFER correctness from pilot training cases
+  note: "Q and all three branch cost components are predicted separately; each component is deducted once at routing time."
+policy:
+  reselect_after_each_public_state_update: true
+  initial_action_only_diagnostic: true
+  initial_action_only_is_primary_result: false
+  q_target_continuation_policy: base_agent_after_forced_initial_action
+  note: "Stepwise test reuses one-step counterfactual Q under a learned continuation policy; this induces policy-distribution shift."
+  invalid_rollout_scoring: 0
+  hidden_facts_allowed_only_for_patient_simulator: true
+strong_expert:
+  repo_id: Qwen/Qwen3-32B-AWQ
+  revision: 0499c3ac83fdef8810b907a23894ba91e95eddd8
+  quantization: AWQ
+  direct_test_cases: 200
+  direct_test_seed: 20261104

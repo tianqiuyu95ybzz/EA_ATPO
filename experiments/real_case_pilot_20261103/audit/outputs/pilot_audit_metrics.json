@@ -1,0 +1,168 @@
+{
+  "input_hashes": {
+    "pilot_trajectories.jsonl": "9ab625088db8beeae74fa6f314013dbf6b78499e133d114cfee0407e2ac036df",
+    "pilot_public_states.jsonl": "c2d77685dc3d6a82926fb2a7545dc4bfabd16df98e9fea3ca74ab4a170f8c507",
+    "summary.csv": "2bf4af8d294f5a0952a907a511c519d23b2aeadf3684bf33e54eea77115479a9",
+    "action_value_analysis.csv": "2bf4af8d294f5a0952a907a511c519d23b2aeadf3684bf33e54eea77115479a9",
+    "run_manifest.json": "a5e08ec1ce2deeba0ec7415b947cdbc1ddc2fa68d245dfc1d410d1834961493d"
+  },
+  "record_count_including_status": 3494,
+  "trajectory_count": 3492,
+  "run_status_rows": [
+    {
+      "record_type": "run_status",
+      "status": "running",
+      "seed": 20261103,
+      "resumed": true
+    },
+    {
+      "record_type": "run_status",
+      "status": "completed",
+      "trajectory_count": 3492
+    }
+  ],
+  "case_count": 100,
+  "state_count": 291,
+  "action_counts": {
+    "ANSWER": 873,
+    "ASK": 873,
+    "CONSULT": 873,
+    "DEFER": 873
+  },
+  "paired_action_rollout_tuples": 873,
+  "incomplete_action_pairs": 0,
+  "all_states_have_four_actions_x_three_repeats": true,
+  "state_serializations_per_case_state_max": 1,
+  "state_id_message_hash_matches": 3492,
+  "gold_mismatch_within_state_count": 0,
+  "invalid_count": 27,
+  "invalid_by_action": {
+    "CONSULT": 8,
+    "DEFER": 14,
+    "ASK": 5
+  },
+  "invalid_error_type_counts": {
+    "ValueError": 27
+  },
+  "invalid_error_details": {
+    "ValueError: CONSULT response must use 'Expert Advice:' format": 1,
+    "ValueError: DEFER response must contain exactly one final option": 23,
+    "ValueError: CONSULT leaked or asserted a final answer": 3
+  },
+  "invalid_unique_cases": 7,
+  "invalid_cases": {
+    "1210": {
+      "count": 1,
+      "actions": {
+        "ASK": 1
+      }
+    },
+    "1465": {
+      "count": 1,
+      "actions": {
+        "CONSULT": 1
+      }
+    },
+    "2894": {
+      "count": 1,
+      "actions": {
+        "CONSULT": 1
+      }
+    },
+    "3101": {
+      "count": 3,
+      "actions": {
+        "DEFER": 3
+      }
+    },
+    "3181": {
+      "count": 2,
+      "actions": {
+        "DEFER": 2
+      }
+    },
+    "3359": {
+      "count": 18,
+      "actions": {
+        "CONSULT": 5,
+        "DEFER": 9,
+        "ASK": 4
+      }
+    },
+    "13369": {
+      "count": 1,
+      "actions": {
+        "CONSULT": 1
+      }
+    }
+  },
+  "expert_validation_failures": 27,
+  "invalid_rows_without_saved_expert_usage_event": 22,
+  "case_clustered_accuracy": {
+    "ANSWER": {
+      "mean": 0.41888888888888887,
+      "ci95": [
+        0.3322222222222222,
+        0.5088888888888888
+      ],
+      "n_cases": 100
+    },
+    "ASK": {
+      "mean": 0.45611111111111113,
+      "ci95": [
+        0.37277777777777776,
+        0.54
+      ],
+      "n_cases": 100
+    },
+    "CONSULT": {
+      "mean": 0.44555555555555554,
+      "ci95": [
+        0.3622222222222222,
+        0.53
+      ],
+      "n_cases": 100
+    },
+    "DEFER": {
+      "mean": 0.4438888888888889,
+      "ci95": [
+        0.35666666666666663,
+        0.5333333333333333
+      ],
+      "n_cases": 100
+    }
+  },
+  "consult_minus_answer_case_paired_delta": {
+    "mean": 0.026666666666666665,
+    "ci95": [
+      -0.017777777777777778,
+      0.07333333333333333
+    ]
+  },
+  "consult_corrected_answer_errors": {
+    "count": 78,
+    "denominator": 508,
+    "rate": 0.15354330708661418,
+    "cluster_bootstrap_ci95": [
+      0.09533468559837728,
+      0.22037037037037038
+    ]
+  },
+  "consult_degraded_answer_correct": {
+    "count": 56,
+    "denominator": 365,
+    "rate": 0.15342465753424658,
+    "cluster_bootstrap_ci95": [
+      0.08921161825726141,
+      0.23333333333333334
+    ]
+  },
+  "prefix_cache_hit_rate_log_percent": {
+    "n_log_samples": 168,
+    "min": 1.6,
+    "mean": 88.64047619047619,
+    "max": 94.2
+  },
+  "cost_sensitivity_scenarios": 5,
+  "bootstrap_case_clusters": 4000
+}

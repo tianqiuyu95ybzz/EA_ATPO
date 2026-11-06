@@ -1,0 +1,315 @@
+section,group,metric,n_cases,n_states,value,ci95_low,ci95_high,notes
+action,ANSWER,accuracy,100,,0.41888888888888887,0.3333333333333333,0.5072222222222222,Case-clustered mean over generated states and replicates; invalid rollout scores 0.
+action,ANSWER,valid_rate,100,,1.0,1.0,1.0,
+cost,ANSWER,expert_tokens_per_rollout,100,,0.0,0.0,0.0,
+cost,ANSWER,expert_latency_seconds_per_rollout,100,,0.0,0.0,0.0,
+cost,ANSWER,patient_turns_per_rollout,100,,0,0,0,
+cost,ANSWER,patient_tokens_per_rollout,100,,0.0,0.0,0.0,
+cost,ANSWER,base_tokens_per_rollout,100,,551.0833333333334,547.325,554.875,
+cost,ANSWER,total_tokens_per_rollout,100,,551.0833333333334,547.325,554.875,
+cost,ANSWER,total_latency_seconds_per_rollout,100,,0.06683777565033072,0.06614315609751631,0.06758247357359828,
+action,ASK,accuracy,100,,0.45611111111111113,0.37555555555555553,0.54,Case-clustered mean over generated states and replicates; invalid rollout scores 0.
+action,ASK,valid_rate,100,,0.9944444444444445,0.9844444444444445,1.0,
+cost,ASK,expert_tokens_per_rollout,100,,493.4238888888889,431.0861111111111,557.665,
+cost,ASK,expert_latency_seconds_per_rollout,100,,0.10096569803536921,0.08758426717036248,0.11438780813038142,
+cost,ASK,patient_turns_per_rollout,100,,5.917222222222223,5.496666666666667,6.3277777777777775,
+cost,ASK,patient_tokens_per_rollout,100,,1419.621111111111,1279.6566666666668,1562.1055555555556,
+cost,ASK,base_tokens_per_rollout,100,,5431.011111111111,5121.116666666667,5733.84,
+cost,ASK,total_tokens_per_rollout,100,,7344.056111111111,6952.187777777778,7723.356111111111,
+cost,ASK,total_latency_seconds_per_rollout,100,,1.5497899987682466,1.4660777363421706,1.6300287205110848,
+action,CONSULT,accuracy,100,,0.44555555555555554,0.3638888888888889,0.53,Case-clustered mean over generated states and replicates; invalid rollout scores 0.
+action,CONSULT,valid_rate,100,,0.991111111111111,0.9777777777777777,0.9988888888888889,
+cost,CONSULT,expert_tokens_per_rollout,100,,813.8344444444444,785.1555555555556,844.1494444444445,
+cost,CONSULT,expert_latency_seconds_per_rollout,100,,0.21474673468923558,0.20768538449153615,0.22232270681700256,
+cost,CONSULT,patient_turns_per_rollout,100,,1.5216666666666667,1.346111111111111,1.7016666666666667,
+cost,CONSULT,patient_tokens_per_rollout,100,,380.7266666666667,324.2027777777778,441.44388888888886,
+cost,CONSULT,base_tokens_per_rollout,100,,2409.3094444444446,2268.4,2554.8644444444444,
+cost,CONSULT,total_tokens_per_rollout,100,,3603.8705555555557,3408.2038888888887,3807.302222222222,
+cost,CONSULT,total_latency_seconds_per_rollout,100,,0.8124975755226721,0.7684172910379453,0.857946522884239,
+action,DEFER,accuracy,100,,0.4438888888888889,0.35333333333333333,0.5338888888888889,Case-clustered mean over generated states and replicates; invalid rollout scores 0.
+action,DEFER,valid_rate,100,,0.9844444444444445,0.96,1.0,
+cost,DEFER,expert_tokens_per_rollout,100,,659.5066666666667,642.8966666666666,670.73,
+cost,DEFER,expert_latency_seconds_per_rollout,100,,0.07679807088706488,0.07466214658188013,0.07846905609786821,
+cost,DEFER,patient_turns_per_rollout,100,,0,0,0,
+cost,DEFER,patient_tokens_per_rollout,100,,0.0,0.0,0.0,
+cost,DEFER,base_tokens_per_rollout,100,,0.0,0.0,0.0,
+cost,DEFER,total_tokens_per_rollout,100,,659.5066666666667,642.8966666666666,670.73,
+cost,DEFER,total_latency_seconds_per_rollout,100,,0.07679807088706488,0.07466214658188013,0.07846905609786821,
+comparison,CONSULT-ANSWER,paired_accuracy_delta,100,,0.026666666666666665,-0.017777777777777778,0.07222222222222222,
+comparison,CONSULT-DEFER,paired_accuracy_delta,100,,0.0016666666666666668,-0.04722222222222222,0.05,
+revision,CONSULT,correction_count,100,873,78,,,Denominator: 508 paired ANSWER errors.
+revision,CONSULT,correction_rate_given_answer_wrong,100,873,0.15354330708661418,,,CONSULT branch correct where ANSWER branch was wrong.
+revision,CONSULT,degradation_count,100,873,56,,,Denominator: 365 paired ANSWER successes.
+revision,CONSULT,degradation_rate_given_answer_correct,100,873,0.15342465753424658,,,CONSULT branch wrong where ANSWER branch was correct.
+expert_reliability_slice,low_observed_DEFER_accuracy,CONSULT_minus_ANSWER_accuracy,33,,-0.0101010101010101,-0.09764309764309764,0.06397306397306397,Post-hoc descriptive strata by observed DEFER accuracy; never an input to agent or router.
+expert_reliability_slice,mid_observed_DEFER_accuracy,CONSULT_minus_ANSWER_accuracy,33,,0.11784511784511784,0.0404040404040404,0.21212121212121213,Post-hoc descriptive strata by observed DEFER accuracy; never an input to agent or router.
+expert_reliability_slice,high_observed_DEFER_accuracy,CONSULT_minus_ANSWER_accuracy,34,,-0.0261437908496732,-0.0849673202614379,0.02287581699346405,Post-hoc descriptive strata by observed DEFER accuracy; never an input to agent or router.
+dominance,CONSULT_vs_ANSWER,consult_better_state_share,100,291,0.13058419243986255,,,Uncosted empirical outcome value Q_out.
+dominance,CONSULT_vs_ANSWER,consult_equal_state_share,100,291,0.7697594501718213,,,Uncosted empirical outcome value Q_out.
+dominance,CONSULT_vs_ANSWER,consult_worse_state_share,100,291,0.09965635738831616,,,Uncosted empirical outcome value Q_out.
+dominance,CONSULT_vs_DEFER,consult_better_state_share,100,291,0.10652920962199312,,,Uncosted empirical outcome value Q_out.
+dominance,CONSULT_vs_DEFER,consult_equal_state_share,100,291,0.7903780068728522,,,Uncosted empirical outcome value Q_out.
+dominance,CONSULT_vs_DEFER,consult_worse_state_share,100,291,0.10309278350515463,,,Uncosted empirical outcome value Q_out.
+cost_sensitivity,lambdaE=0;lambdaP=0,optimal_action_share:ANSWER,100,291,0.7766323024054983,,,"No-cost baseline is lambdaE=0; lambdaE penalizes expert k-tokens, lambdaP patient turns."
+cost_sensitivity,lambdaE=0;lambdaP=0,optimal_action_share:ASK,100,291,0.10652920962199312,,,"No-cost baseline is lambdaE=0; lambdaE penalizes expert k-tokens, lambdaP patient turns."
+cost_sensitivity,lambdaE=0;lambdaP=0,optimal_action_share:CONSULT,100,291,0.061855670103092786,,,"No-cost baseline is lambdaE=0; lambdaE penalizes expert k-tokens, lambdaP patient turns."
+cost_sensitivity,lambdaE=0;lambdaP=0,optimal_action_share:DEFER,100,291,0.054982817869415807,,,"No-cost baseline is lambdaE=0; lambdaE penalizes expert k-tokens, lambdaP patient turns."
+cost_sensitivity,lambdaE=0;lambdaP=0,mean_best_vs_second_value_gap,100,291,0.1,,,Utilities use one common cost formula across all actions.
+policy_tradeoff,lambdaE=0;lambdaP=0,selected_accuracy,100,,0.5816666666666667,0.49666666666666665,0.6655555555555556,"Case-clustered post-hoc oracle over the four measured action outcomes; not a learned or deployable router. Utility costs are sensitivity units, not dollars."
+policy_tradeoff,lambdaE=0;lambdaP=0,selected_defer_rate,100,,0.06,0.026666666666666665,0.09666666666666666,"Case-clustered post-hoc oracle over the four measured action outcomes; not a learned or deployable router. Utility costs are sensitivity units, not dollars."
+policy_tradeoff,lambdaE=0;lambdaP=0,selected_expert_tokens,100,,134.315,90.70666666666666,181.6988888888889,"Case-clustered post-hoc oracle over the four measured action outcomes; not a learned or deployable router. Utility costs are sensitivity units, not dollars."
+policy_tradeoff,lambdaE=0;lambdaP=0,selected_patient_turns,100,,0.7372222222222222,0.4766666666666667,1.0233333333333334,"Case-clustered post-hoc oracle over the four measured action outcomes; not a learned or deployable router. Utility costs are sensitivity units, not dollars."
+policy_tradeoff,lambdaE=0;lambdaP=0,selected_total_tokens,100,,1500.6594444444445,1184.5805555555555,1849.1138888888888,"Case-clustered post-hoc oracle over the four measured action outcomes; not a learned or deployable router. Utility costs are sensitivity units, not dollars."
+policy_tradeoff,lambdaE=0;lambdaP=0,selected_latency_seconds,100,,0.2751851500577888,0.20504794350288447,0.35265536300902667,"Case-clustered post-hoc oracle over the four measured action outcomes; not a learned or deployable router. Utility costs are sensitivity units, not dollars."
+policy_tradeoff,lambdaE=0;lambdaP=0,selected_utility,100,,0.5816666666666667,0.49666666666666665,0.6655555555555556,"Case-clustered post-hoc oracle over the four measured action outcomes; not a learned or deployable router. Utility costs are sensitivity units, not dollars."
+policy_tradeoff,lambdaE=0;lambdaP=0,best_vs_second_gap,100,,0.1,0.06555555555555556,0.13777777777777778,"Case-clustered post-hoc oracle over the four measured action outcomes; not a learned or deployable router. Utility costs are sensitivity units, not dollars."
+cost_sensitivity,lambdaE=0;lambdaP=0.01,optimal_action_share:ANSWER,100,291,0.7766323024054983,,,"No-cost baseline is lambdaE=0; lambdaE penalizes expert k-tokens, lambdaP patient turns."
+cost_sensitivity,lambdaE=0;lambdaP=0.01,optimal_action_share:ASK,100,291,0.06872852233676977,,,"No-cost baseline is lambdaE=0; lambdaE penalizes expert k-tokens, lambdaP patient turns."
+cost_sensitivity,lambdaE=0;lambdaP=0.01,optimal_action_share:CONSULT,100,291,0.07560137457044673,,,"No-cost baseline is lambdaE=0; lambdaE penalizes expert k-tokens, lambdaP patient turns."
+cost_sensitivity,lambdaE=0;lambdaP=0.01,optimal_action_share:DEFER,100,291,0.07903780068728522,,,"No-cost baseline is lambdaE=0; lambdaE penalizes expert k-tokens, lambdaP patient turns."
+cost_sensitivity,lambdaE=0;lambdaP=0.01,mean_best_vs_second_value_gap,100,291,0.10157222222222222,,,Utilities use one common cost formula across all actions.
+policy_tradeoff,lambdaE=0;lambdaP=0.01,selected_accuracy,100,,0.5816666666666667,0.49666666666666665,0.6655555555555556,"Case-clustered post-hoc oracle over the four measured action outcomes; not a learned or deployable router. Utility costs are sensitivity units, not dollars."
+policy_tradeoff,lambdaE=0;lambdaP=0.01,selected_defer_rate,100,,0.08333333333333333,0.04333333333333333,0.12666666666666665,"Case-clustered post-hoc oracle over the four measured action outcomes; not a learned or deployable router. Utility costs are sensitivity units, not dollars."
+policy_tradeoff,lambdaE=0;lambdaP=0.01,selected_expert_tokens,100,,149.25944444444445,103.39277777777778,197.92499999999998,"Case-clustered post-hoc oracle over the four measured action outcomes; not a learned or deployable router. Utility costs are sensitivity units, not dollars."
+policy_tradeoff,lambdaE=0;lambdaP=0.01,selected_patient_turns,100,,0.495,0.2833333333333333,0.74,"Case-clustered post-hoc oracle over the four measured action outcomes; not a learned or deployable router. Utility costs are sensitivity units, not dollars."
+policy_tradeoff,lambdaE=0;lambdaP=0.01,selected_total_tokens,100,,1265.3683333333333,986.3255555555555,1584.3327777777777,"Case-clustered post-hoc oracle over the four measured action outcomes; not a learned or deployable router. Utility costs are sensitivity units, not dollars."
+policy_tradeoff,lambdaE=0;lambdaP=0.01,selected_latency_seconds,100,,0.2249168129591918,0.16267376949344503,0.295129430244043,"Case-clustered post-hoc oracle over the four measured action outcomes; not a learned or deployable router. Utility costs are sensitivity units, not dollars."
+policy_tradeoff,lambdaE=0;lambdaP=0.01,selected_utility,100,,0.5767166666666667,0.4921111111111111,0.6605833333333333,"Case-clustered post-hoc oracle over the four measured action outcomes; not a learned or deployable router. Utility costs are sensitivity units, not dollars."
+policy_tradeoff,lambdaE=0;lambdaP=0.01,best_vs_second_gap,100,,0.10157222222222222,0.06765555555555555,0.1392611111111111,"Case-clustered post-hoc oracle over the four measured action outcomes; not a learned or deployable router. Utility costs are sensitivity units, not dollars."
+cost_sensitivity,lambdaE=0;lambdaP=0.03,optimal_action_share:ANSWER,100,291,0.7766323024054983,,,"No-cost baseline is lambdaE=0; lambdaE penalizes expert k-tokens, lambdaP patient turns."
+cost_sensitivity,lambdaE=0;lambdaP=0.03,optimal_action_share:ASK,100,291,0.06872852233676977,,,"No-cost baseline is lambdaE=0; lambdaE penalizes expert k-tokens, lambdaP patient turns."
+cost_sensitivity,lambdaE=0;lambdaP=0.03,optimal_action_share:CONSULT,100,291,0.07560137457044673,,,"No-cost baseline is lambdaE=0; lambdaE penalizes expert k-tokens, lambdaP patient turns."
+cost_sensitivity,lambdaE=0;lambdaP=0.03,optimal_action_share:DEFER,100,291,0.07903780068728522,,,"No-cost baseline is lambdaE=0; lambdaE penalizes expert k-tokens, lambdaP patient turns."
+cost_sensitivity,lambdaE=0;lambdaP=0.03,mean_best_vs_second_value_gap,100,291,0.10471666666666667,,,Utilities use one common cost formula across all actions.
+policy_tradeoff,lambdaE=0;lambdaP=0.03,selected_accuracy,100,,0.5816666666666667,0.49666666666666665,0.6655555555555556,"Case-clustered post-hoc oracle over the four measured action outcomes; not a learned or deployable router. Utility costs are sensitivity units, not dollars."
+policy_tradeoff,lambdaE=0;lambdaP=0.03,selected_defer_rate,100,,0.08333333333333333,0.04333333333333333,0.12666666666666665,"Case-clustered post-hoc oracle over the four measured action outcomes; not a learned or deployable router. Utility costs are sensitivity units, not dollars."
+policy_tradeoff,lambdaE=0;lambdaP=0.03,selected_expert_tokens,100,,149.25944444444445,103.39277777777778,197.92499999999998,"Case-clustered post-hoc oracle over the four measured action outcomes; not a learned or deployable router. Utility costs are sensitivity units, not dollars."
+policy_tradeoff,lambdaE=0;lambdaP=0.03,selected_patient_turns,100,,0.495,0.2833333333333333,0.74,"Case-clustered post-hoc oracle over the four measured action outcomes; not a learned or deployable router. Utility costs are sensitivity units, not dollars."
+policy_tradeoff,lambdaE=0;lambdaP=0.03,selected_total_tokens,100,,1265.3683333333333,986.3255555555555,1584.3327777777777,"Case-clustered post-hoc oracle over the four measured action outcomes; not a learned or deployable router. Utility costs are sensitivity units, not dollars."
+policy_tradeoff,lambdaE=0;lambdaP=0.03,selected_latency_seconds,100,,0.2249168129591918,0.16267376949344503,0.295129430244043,"Case-clustered post-hoc oracle over the four measured action outcomes; not a learned or deployable router. Utility costs are sensitivity units, not dollars."
+policy_tradeoff,lambdaE=0;lambdaP=0.03,selected_utility,100,,0.5668166666666666,0.48094444444444445,0.6514555555555556,"Case-clustered post-hoc oracle over the four measured action outcomes; not a learned or deployable router. Utility costs are sensitivity units, not dollars."
+policy_tradeoff,lambdaE=0;lambdaP=0.03,best_vs_second_gap,100,,0.10471666666666667,0.07063888888888889,0.14295,"Case-clustered post-hoc oracle over the four measured action outcomes; not a learned or deployable router. Utility costs are sensitivity units, not dollars."
+cost_sensitivity,lambdaE=0.02;lambdaP=0,optimal_action_share:ANSWER,100,291,0.7766323024054983,,,"No-cost baseline is lambdaE=0; lambdaE penalizes expert k-tokens, lambdaP patient turns."
+cost_sensitivity,lambdaE=0.02;lambdaP=0,optimal_action_share:ASK,100,291,0.10652920962199312,,,"No-cost baseline is lambdaE=0; lambdaE penalizes expert k-tokens, lambdaP patient turns."
+cost_sensitivity,lambdaE=0.02;lambdaP=0,optimal_action_share:CONSULT,100,291,0.061855670103092786,,,"No-cost baseline is lambdaE=0; lambdaE penalizes expert k-tokens, lambdaP patient turns."
+cost_sensitivity,lambdaE=0.02;lambdaP=0,optimal_action_share:DEFER,100,291,0.054982817869415807,,,"No-cost baseline is lambdaE=0; lambdaE penalizes expert k-tokens, lambdaP patient turns."
+cost_sensitivity,lambdaE=0.02;lambdaP=0,mean_best_vs_second_value_gap,100,291,0.10510596666666666,,,Utilities use one common cost formula across all actions.
+policy_tradeoff,lambdaE=0.02;lambdaP=0,selected_accuracy,100,,0.5816666666666667,0.49666666666666665,0.6655555555555556,"Case-clustered post-hoc oracle over the four measured action outcomes; not a learned or deployable router. Utility costs are sensitivity units, not dollars."
+policy_tradeoff,lambdaE=0.02;lambdaP=0,selected_defer_rate,100,,0.06,0.026666666666666665,0.09666666666666666,"Case-clustered post-hoc oracle over the four measured action outcomes; not a learned or deployable router. Utility costs are sensitivity units, not dollars."
+policy_tradeoff,lambdaE=0.02;lambdaP=0,selected_expert_tokens,100,,134.315,90.70666666666666,181.6988888888889,"Case-clustered post-hoc oracle over the four measured action outcomes; not a learned or deployable router. Utility costs are sensitivity units, not dollars."
+policy_tradeoff,lambdaE=0.02;lambdaP=0,selected_patient_turns,100,,0.7372222222222222,0.4766666666666667,1.0233333333333334,"Case-clustered post-hoc oracle over the four measured action outcomes; not a learned or deployable router. Utility costs are sensitivity units, not dollars."
+policy_tradeoff,lambdaE=0.02;lambdaP=0,selected_total_tokens,100,,1500.6594444444445,1184.5805555555555,1849.1138888888888,"Case-clustered post-hoc oracle over the four measured action outcomes; not a learned or deployable router. Utility costs are sensitivity units, not dollars."
+policy_tradeoff,lambdaE=0.02;lambdaP=0,selected_latency_seconds,100,,0.2751851500577888,0.20504794350288447,0.35265536300902667,"Case-clustered post-hoc oracle over the four measured action outcomes; not a learned or deployable router. Utility costs are sensitivity units, not dollars."
+policy_tradeoff,lambdaE=0.02;lambdaP=0,selected_utility,100,,0.5789803666666666,0.4945036222222222,0.6628893666666666,"Case-clustered post-hoc oracle over the four measured action outcomes; not a learned or deployable router. Utility costs are sensitivity units, not dollars."
+policy_tradeoff,lambdaE=0.02;lambdaP=0,best_vs_second_gap,100,,0.10510596666666666,0.07148256666666666,0.14225212222222222,"Case-clustered post-hoc oracle over the four measured action outcomes; not a learned or deployable router. Utility costs are sensitivity units, not dollars."
+cost_sensitivity,lambdaE=0.02;lambdaP=0.01,optimal_action_share:ANSWER,100,291,0.7766323024054983,,,"No-cost baseline is lambdaE=0; lambdaE penalizes expert k-tokens, lambdaP patient turns."
+cost_sensitivity,lambdaE=0.02;lambdaP=0.01,optimal_action_share:ASK,100,291,0.06872852233676977,,,"No-cost baseline is lambdaE=0; lambdaE penalizes expert k-tokens, lambdaP patient turns."
+cost_sensitivity,lambdaE=0.02;lambdaP=0.01,optimal_action_share:CONSULT,100,291,0.07560137457044673,,,"No-cost baseline is lambdaE=0; lambdaE penalizes expert k-tokens, lambdaP patient turns."
+cost_sensitivity,lambdaE=0.02;lambdaP=0.01,optimal_action_share:DEFER,100,291,0.07903780068728522,,,"No-cost baseline is lambdaE=0; lambdaE penalizes expert k-tokens, lambdaP patient turns."
+cost_sensitivity,lambdaE=0.02;lambdaP=0.01,mean_best_vs_second_value_gap,100,291,0.11027893333333333,,,Utilities use one common cost formula across all actions.
+policy_tradeoff,lambdaE=0.02;lambdaP=0.01,selected_accuracy,100,,0.5816666666666667,0.49666666666666665,0.6655555555555556,"Case-clustered post-hoc oracle over the four measured action outcomes; not a learned or deployable router. Utility costs are sensitivity units, not dollars."
+policy_tradeoff,lambdaE=0.02;lambdaP=0.01,selected_defer_rate,100,,0.08333333333333333,0.04333333333333333,0.12666666666666665,"Case-clustered post-hoc oracle over the four measured action outcomes; not a learned or deployable router. Utility costs are sensitivity units, not dollars."
+policy_tradeoff,lambdaE=0.02;lambdaP=0.01,selected_expert_tokens,100,,149.25944444444445,103.39277777777778,197.92499999999998,"Case-clustered post-hoc oracle over the four measured action outcomes; not a learned or deployable router. Utility costs are sensitivity units, not dollars."
+policy_tradeoff,lambdaE=0.02;lambdaP=0.01,selected_patient_turns,100,,0.495,0.2833333333333333,0.74,"Case-clustered post-hoc oracle over the four measured action outcomes; not a learned or deployable router. Utility costs are sensitivity units, not dollars."
+policy_tradeoff,lambdaE=0.02;lambdaP=0.01,selected_total_tokens,100,,1265.3683333333333,986.3255555555555,1584.3327777777777,"Case-clustered post-hoc oracle over the four measured action outcomes; not a learned or deployable router. Utility costs are sensitivity units, not dollars."
+policy_tradeoff,lambdaE=0.02;lambdaP=0.01,selected_latency_seconds,100,,0.2249168129591918,0.16267376949344503,0.295129430244043,"Case-clustered post-hoc oracle over the four measured action outcomes; not a learned or deployable router. Utility costs are sensitivity units, not dollars."
+policy_tradeoff,lambdaE=0.02;lambdaP=0.01,selected_utility,100,,0.5737314777777778,0.48930235555555557,0.6576956444444444,"Case-clustered post-hoc oracle over the four measured action outcomes; not a learned or deployable router. Utility costs are sensitivity units, not dollars."
+policy_tradeoff,lambdaE=0.02;lambdaP=0.01,best_vs_second_gap,100,,0.11027893333333333,0.07724602222222222,0.14727547777777777,"Case-clustered post-hoc oracle over the four measured action outcomes; not a learned or deployable router. Utility costs are sensitivity units, not dollars."
+cost_sensitivity,lambdaE=0.02;lambdaP=0.03,optimal_action_share:ANSWER,100,291,0.7766323024054983,,,"No-cost baseline is lambdaE=0; lambdaE penalizes expert k-tokens, lambdaP patient turns."
+cost_sensitivity,lambdaE=0.02;lambdaP=0.03,optimal_action_share:ASK,100,291,0.06872852233676977,,,"No-cost baseline is lambdaE=0; lambdaE penalizes expert k-tokens, lambdaP patient turns."
+cost_sensitivity,lambdaE=0.02;lambdaP=0.03,optimal_action_share:CONSULT,100,291,0.07560137457044673,,,"No-cost baseline is lambdaE=0; lambdaE penalizes expert k-tokens, lambdaP patient turns."
+cost_sensitivity,lambdaE=0.02;lambdaP=0.03,optimal_action_share:DEFER,100,291,0.07903780068728522,,,"No-cost baseline is lambdaE=0; lambdaE penalizes expert k-tokens, lambdaP patient turns."
+cost_sensitivity,lambdaE=0.02;lambdaP=0.03,mean_best_vs_second_value_gap,100,291,0.11349874444444444,,,Utilities use one common cost formula across all actions.
+policy_tradeoff,lambdaE=0.02;lambdaP=0.03,selected_accuracy,100,,0.5816666666666667,0.49666666666666665,0.6655555555555556,"Case-clustered post-hoc oracle over the four measured action outcomes; not a learned or deployable router. Utility costs are sensitivity units, not dollars."
+policy_tradeoff,lambdaE=0.02;lambdaP=0.03,selected_defer_rate,100,,0.08333333333333333,0.04333333333333333,0.12666666666666665,"Case-clustered post-hoc oracle over the four measured action outcomes; not a learned or deployable router. Utility costs are sensitivity units, not dollars."
+policy_tradeoff,lambdaE=0.02;lambdaP=0.03,selected_expert_tokens,100,,149.25944444444445,103.39277777777778,197.92499999999998,"Case-clustered post-hoc oracle over the four measured action outcomes; not a learned or deployable router. Utility costs are sensitivity units, not dollars."
+policy_tradeoff,lambdaE=0.02;lambdaP=0.03,selected_patient_turns,100,,0.495,0.2833333333333333,0.74,"Case-clustered post-hoc oracle over the four measured action outcomes; not a learned or deployable router. Utility costs are sensitivity units, not dollars."
+policy_tradeoff,lambdaE=0.02;lambdaP=0.03,selected_total_tokens,100,,1265.3683333333333,986.3255555555555,1584.3327777777777,"Case-clustered post-hoc oracle over the four measured action outcomes; not a learned or deployable router. Utility costs are sensitivity units, not dollars."
+policy_tradeoff,lambdaE=0.02;lambdaP=0.03,selected_latency_seconds,100,,0.2249168129591918,0.16267376949344503,0.295129430244043,"Case-clustered post-hoc oracle over the four measured action outcomes; not a learned or deployable router. Utility costs are sensitivity units, not dollars."
+policy_tradeoff,lambdaE=0.02;lambdaP=0.03,selected_utility,100,,0.5638314777777778,0.4779830888888889,0.6484276777777778,"Case-clustered post-hoc oracle over the four measured action outcomes; not a learned or deployable router. Utility costs are sensitivity units, not dollars."
+policy_tradeoff,lambdaE=0.02;lambdaP=0.03,best_vs_second_gap,100,,0.11349874444444444,0.08039386666666666,0.1510805,"Case-clustered post-hoc oracle over the four measured action outcomes; not a learned or deployable router. Utility costs are sensitivity units, not dollars."
+cost_sensitivity,lambdaE=0.05;lambdaP=0,optimal_action_share:ANSWER,100,291,0.7766323024054983,,,"No-cost baseline is lambdaE=0; lambdaE penalizes expert k-tokens, lambdaP patient turns."
+cost_sensitivity,lambdaE=0.05;lambdaP=0,optimal_action_share:ASK,100,291,0.10652920962199312,,,"No-cost baseline is lambdaE=0; lambdaE penalizes expert k-tokens, lambdaP patient turns."
+cost_sensitivity,lambdaE=0.05;lambdaP=0,optimal_action_share:CONSULT,100,291,0.061855670103092786,,,"No-cost baseline is lambdaE=0; lambdaE penalizes expert k-tokens, lambdaP patient turns."
+cost_sensitivity,lambdaE=0.05;lambdaP=0,optimal_action_share:DEFER,100,291,0.054982817869415807,,,"No-cost baseline is lambdaE=0; lambdaE penalizes expert k-tokens, lambdaP patient turns."
+cost_sensitivity,lambdaE=0.05;lambdaP=0,mean_best_vs_second_value_gap,100,291,0.11276491666666666,,,Utilities use one common cost formula across all actions.
+policy_tradeoff,lambdaE=0.05;lambdaP=0,selected_accuracy,100,,0.5816666666666667,0.49666666666666665,0.6655555555555556,"Case-clustered post-hoc oracle over the four measured action outcomes; not a learned or deployable router. Utility costs are sensitivity units, not dollars."
+policy_tradeoff,lambdaE=0.05;lambdaP=0,selected_defer_rate,100,,0.06,0.026666666666666665,0.09666666666666666,"Case-clustered post-hoc oracle over the four measured action outcomes; not a learned or deployable router. Utility costs are sensitivity units, not dollars."
+policy_tradeoff,lambdaE=0.05;lambdaP=0,selected_expert_tokens,100,,134.315,90.70666666666666,181.6988888888889,"Case-clustered post-hoc oracle over the four measured action outcomes; not a learned or deployable router. Utility costs are sensitivity units, not dollars."
+policy_tradeoff,lambdaE=0.05;lambdaP=0,selected_patient_turns,100,,0.7372222222222222,0.4766666666666667,1.0233333333333334,"Case-clustered post-hoc oracle over the four measured action outcomes; not a learned or deployable router. Utility costs are sensitivity units, not dollars."
+policy_tradeoff,lambdaE=0.05;lambdaP=0,selected_total_tokens,100,,1500.6594444444445,1184.5805555555555,1849.1138888888888,"Case-clustered post-hoc oracle over the four measured action outcomes; not a learned or deployable router. Utility costs are sensitivity units, not dollars."
+policy_tradeoff,lambdaE=0.05;lambdaP=0,selected_latency_seconds,100,,0.2751851500577888,0.20504794350288447,0.35265536300902667,"Case-clustered post-hoc oracle over the four measured action outcomes; not a learned or deployable router. Utility costs are sensitivity units, not dollars."
+policy_tradeoff,lambdaE=0.05;lambdaP=0,selected_utility,100,,0.5749509166666666,0.49093827777777777,0.6588900833333333,"Case-clustered post-hoc oracle over the four measured action outcomes; not a learned or deployable router. Utility costs are sensitivity units, not dollars."
+policy_tradeoff,lambdaE=0.05;lambdaP=0,best_vs_second_gap,100,,0.11276491666666666,0.0800441388888889,0.14910827777777777,"Case-clustered post-hoc oracle over the four measured action outcomes; not a learned or deployable router. Utility costs are sensitivity units, not dollars."
+cost_sensitivity,lambdaE=0.05;lambdaP=0.01,optimal_action_share:ANSWER,100,291,0.7766323024054983,,,"No-cost baseline is lambdaE=0; lambdaE penalizes expert k-tokens, lambdaP patient turns."
+cost_sensitivity,lambdaE=0.05;lambdaP=0.01,optimal_action_share:ASK,100,291,0.06872852233676977,,,"No-cost baseline is lambdaE=0; lambdaE penalizes expert k-tokens, lambdaP patient turns."
+cost_sensitivity,lambdaE=0.05;lambdaP=0.01,optimal_action_share:CONSULT,100,291,0.07560137457044673,,,"No-cost baseline is lambdaE=0; lambdaE penalizes expert k-tokens, lambdaP patient turns."
+cost_sensitivity,lambdaE=0.05;lambdaP=0.01,optimal_action_share:DEFER,100,291,0.07903780068728522,,,"No-cost baseline is lambdaE=0; lambdaE penalizes expert k-tokens, lambdaP patient turns."
+cost_sensitivity,lambdaE=0.05;lambdaP=0.01,mean_best_vs_second_value_gap,100,291,0.12299144444444444,,,Utilities use one common cost formula across all actions.
+policy_tradeoff,lambdaE=0.05;lambdaP=0.01,selected_accuracy,100,,0.5816666666666667,0.49666666666666665,0.6655555555555556,"Case-clustered post-hoc oracle over the four measured action outcomes; not a learned or deployable router. Utility costs are sensitivity units, not dollars."
+policy_tradeoff,lambdaE=0.05;lambdaP=0.01,selected_defer_rate,100,,0.08333333333333333,0.04333333333333333,0.12666666666666665,"Case-clustered post-hoc oracle over the four measured action outcomes; not a learned or deployable router. Utility costs are sensitivity units, not dollars."
+policy_tradeoff,lambdaE=0.05;lambdaP=0.01,selected_expert_tokens,100,,149.25944444444445,103.39277777777778,197.92499999999998,"Case-clustered post-hoc oracle over the four measured action outcomes; not a learned or deployable router. Utility costs are sensitivity units, not dollars."
+policy_tradeoff,lambdaE=0.05;lambdaP=0.01,selected_patient_turns,100,,0.495,0.2833333333333333,0.74,"Case-clustered post-hoc oracle over the four measured action outcomes; not a learned or deployable router. Utility costs are sensitivity units, not dollars."
+policy_tradeoff,lambdaE=0.05;lambdaP=0.01,selected_total_tokens,100,,1265.3683333333333,986.3255555555555,1584.3327777777777,"Case-clustered post-hoc oracle over the four measured action outcomes; not a learned or deployable router. Utility costs are sensitivity units, not dollars."
+policy_tradeoff,lambdaE=0.05;lambdaP=0.01,selected_latency_seconds,100,,0.2249168129591918,0.16267376949344503,0.295129430244043,"Case-clustered post-hoc oracle over the four measured action outcomes; not a learned or deployable router. Utility costs are sensitivity units, not dollars."
+policy_tradeoff,lambdaE=0.05;lambdaP=0.01,selected_utility,100,,0.5692536944444444,0.48515502777777775,0.6531603333333333,"Case-clustered post-hoc oracle over the four measured action outcomes; not a learned or deployable router. Utility costs are sensitivity units, not dollars."
+policy_tradeoff,lambdaE=0.05;lambdaP=0.01,best_vs_second_gap,100,,0.12299144444444444,0.09101130555555556,0.15917466666666666,"Case-clustered post-hoc oracle over the four measured action outcomes; not a learned or deployable router. Utility costs are sensitivity units, not dollars."
+cost_sensitivity,lambdaE=0.05;lambdaP=0.03,optimal_action_share:ANSWER,100,291,0.7766323024054983,,,"No-cost baseline is lambdaE=0; lambdaE penalizes expert k-tokens, lambdaP patient turns."
+cost_sensitivity,lambdaE=0.05;lambdaP=0.03,optimal_action_share:ASK,100,291,0.06872852233676977,,,"No-cost baseline is lambdaE=0; lambdaE penalizes expert k-tokens, lambdaP patient turns."
+cost_sensitivity,lambdaE=0.05;lambdaP=0.03,optimal_action_share:CONSULT,100,291,0.07560137457044673,,,"No-cost baseline is lambdaE=0; lambdaE penalizes expert k-tokens, lambdaP patient turns."
+cost_sensitivity,lambdaE=0.05;lambdaP=0.03,optimal_action_share:DEFER,100,291,0.07903780068728522,,,"No-cost baseline is lambdaE=0; lambdaE penalizes expert k-tokens, lambdaP patient turns."
+cost_sensitivity,lambdaE=0.05;lambdaP=0.03,mean_best_vs_second_value_gap,100,291,0.12659177777777778,,,Utilities use one common cost formula across all actions.
+policy_tradeoff,lambdaE=0.05;lambdaP=0.03,selected_accuracy,100,,0.5816666666666667,0.49666666666666665,0.6655555555555556,"Case-clustered post-hoc oracle over the four measured action outcomes; not a learned or deployable router. Utility costs are sensitivity units, not dollars."
+policy_tradeoff,lambdaE=0.05;lambdaP=0.03,selected_defer_rate,100,,0.08333333333333333,0.04333333333333333,0.12666666666666665,"Case-clustered post-hoc oracle over the four measured action outcomes; not a learned or deployable router. Utility costs are sensitivity units, not dollars."
+policy_tradeoff,lambdaE=0.05;lambdaP=0.03,selected_expert_tokens,100,,149.25944444444445,103.39277777777778,197.92499999999998,"Case-clustered post-hoc oracle over the four measured action outcomes; not a learned or deployable router. Utility costs are sensitivity units, not dollars."
+policy_tradeoff,lambdaE=0.05;lambdaP=0.03,selected_patient_turns,100,,0.495,0.2833333333333333,0.74,"Case-clustered post-hoc oracle over the four measured action outcomes; not a learned or deployable router. Utility costs are sensitivity units, not dollars."
+policy_tradeoff,lambdaE=0.05;lambdaP=0.03,selected_total_tokens,100,,1265.3683333333333,986.3255555555555,1584.3327777777777,"Case-clustered post-hoc oracle over the four measured action outcomes; not a learned or deployable router. Utility costs are sensitivity units, not dollars."
+policy_tradeoff,lambdaE=0.05;lambdaP=0.03,selected_latency_seconds,100,,0.2249168129591918,0.16267376949344503,0.295129430244043,"Case-clustered post-hoc oracle over the four measured action outcomes; not a learned or deployable router. Utility costs are sensitivity units, not dollars."
+policy_tradeoff,lambdaE=0.05;lambdaP=0.03,selected_utility,100,,0.5593536944444445,0.4735715277777778,0.6439633055555556,"Case-clustered post-hoc oracle over the four measured action outcomes; not a learned or deployable router. Utility costs are sensitivity units, not dollars."
+policy_tradeoff,lambdaE=0.05;lambdaP=0.03,best_vs_second_gap,100,,0.12659177777777778,0.09475577777777777,0.16285755555555556,"Case-clustered post-hoc oracle over the four measured action outcomes; not a learned or deployable router. Utility costs are sensitivity units, not dollars."
+cost_sensitivity,lambdaE=0.1;lambdaP=0,optimal_action_share:ANSWER,100,291,0.7766323024054983,,,"No-cost baseline is lambdaE=0; lambdaE penalizes expert k-tokens, lambdaP patient turns."
+cost_sensitivity,lambdaE=0.1;lambdaP=0,optimal_action_share:ASK,100,291,0.10652920962199312,,,"No-cost baseline is lambdaE=0; lambdaE penalizes expert k-tokens, lambdaP patient turns."
+cost_sensitivity,lambdaE=0.1;lambdaP=0,optimal_action_share:CONSULT,100,291,0.061855670103092786,,,"No-cost baseline is lambdaE=0; lambdaE penalizes expert k-tokens, lambdaP patient turns."
+cost_sensitivity,lambdaE=0.1;lambdaP=0,optimal_action_share:DEFER,100,291,0.054982817869415807,,,"No-cost baseline is lambdaE=0; lambdaE penalizes expert k-tokens, lambdaP patient turns."
+cost_sensitivity,lambdaE=0.1;lambdaP=0,mean_best_vs_second_value_gap,100,291,0.12552983333333334,,,Utilities use one common cost formula across all actions.
+policy_tradeoff,lambdaE=0.1;lambdaP=0,selected_accuracy,100,,0.5816666666666667,0.49666666666666665,0.6655555555555556,"Case-clustered post-hoc oracle over the four measured action outcomes; not a learned or deployable router. Utility costs are sensitivity units, not dollars."
+policy_tradeoff,lambdaE=0.1;lambdaP=0,selected_defer_rate,100,,0.06,0.026666666666666665,0.09666666666666666,"Case-clustered post-hoc oracle over the four measured action outcomes; not a learned or deployable router. Utility costs are sensitivity units, not dollars."
+policy_tradeoff,lambdaE=0.1;lambdaP=0,selected_expert_tokens,100,,134.315,90.70666666666666,181.6988888888889,"Case-clustered post-hoc oracle over the four measured action outcomes; not a learned or deployable router. Utility costs are sensitivity units, not dollars."
+policy_tradeoff,lambdaE=0.1;lambdaP=0,selected_patient_turns,100,,0.7372222222222222,0.4766666666666667,1.0233333333333334,"Case-clustered post-hoc oracle over the four measured action outcomes; not a learned or deployable router. Utility costs are sensitivity units, not dollars."
+policy_tradeoff,lambdaE=0.1;lambdaP=0,selected_total_tokens,100,,1500.6594444444445,1184.5805555555555,1849.1138888888888,"Case-clustered post-hoc oracle over the four measured action outcomes; not a learned or deployable router. Utility costs are sensitivity units, not dollars."
+policy_tradeoff,lambdaE=0.1;lambdaP=0,selected_latency_seconds,100,,0.2751851500577888,0.20504794350288447,0.35265536300902667,"Case-clustered post-hoc oracle over the four measured action outcomes; not a learned or deployable router. Utility costs are sensitivity units, not dollars."
+policy_tradeoff,lambdaE=0.1;lambdaP=0,selected_utility,100,,0.5682351666666666,0.48439166666666666,0.6520243888888889,"Case-clustered post-hoc oracle over the four measured action outcomes; not a learned or deployable router. Utility costs are sensitivity units, not dollars."
+policy_tradeoff,lambdaE=0.1;lambdaP=0,best_vs_second_gap,100,,0.12552983333333334,0.09417772222222222,0.16040794444444445,"Case-clustered post-hoc oracle over the four measured action outcomes; not a learned or deployable router. Utility costs are sensitivity units, not dollars."
+cost_sensitivity,lambdaE=0.1;lambdaP=0.01,optimal_action_share:ANSWER,100,291,0.7766323024054983,,,"No-cost baseline is lambdaE=0; lambdaE penalizes expert k-tokens, lambdaP patient turns."
+cost_sensitivity,lambdaE=0.1;lambdaP=0.01,optimal_action_share:ASK,100,291,0.07560137457044673,,,"No-cost baseline is lambdaE=0; lambdaE penalizes expert k-tokens, lambdaP patient turns."
+cost_sensitivity,lambdaE=0.1;lambdaP=0.01,optimal_action_share:CONSULT,100,291,0.07560137457044673,,,"No-cost baseline is lambdaE=0; lambdaE penalizes expert k-tokens, lambdaP patient turns."
+cost_sensitivity,lambdaE=0.1;lambdaP=0.01,optimal_action_share:DEFER,100,291,0.07216494845360824,,,"No-cost baseline is lambdaE=0; lambdaE penalizes expert k-tokens, lambdaP patient turns."
+cost_sensitivity,lambdaE=0.1;lambdaP=0.01,mean_best_vs_second_value_gap,100,291,0.14352022222222222,,,Utilities use one common cost formula across all actions.
+policy_tradeoff,lambdaE=0.1;lambdaP=0.01,selected_accuracy,100,,0.5816666666666667,0.49666666666666665,0.6655555555555556,"Case-clustered post-hoc oracle over the four measured action outcomes; not a learned or deployable router. Utility costs are sensitivity units, not dollars."
+policy_tradeoff,lambdaE=0.1;lambdaP=0.01,selected_defer_rate,100,,0.07666666666666666,0.04,0.12,"Case-clustered post-hoc oracle over the four measured action outcomes; not a learned or deployable router. Utility costs are sensitivity units, not dollars."
+policy_tradeoff,lambdaE=0.1;lambdaP=0.01,selected_expert_tokens,100,,145.0261111111111,100.03111111111112,193.46055555555554,"Case-clustered post-hoc oracle over the four measured action outcomes; not a learned or deployable router. Utility costs are sensitivity units, not dollars."
+policy_tradeoff,lambdaE=0.1;lambdaP=0.01,selected_patient_turns,100,,0.5294444444444445,0.315,0.7827777777777778,"Case-clustered post-hoc oracle over the four measured action outcomes; not a learned or deployable router. Utility costs are sensitivity units, not dollars."
+policy_tradeoff,lambdaE=0.1;lambdaP=0.01,selected_total_tokens,100,,1298.6661111111111,1017.37,1621.8372222222222,"Case-clustered post-hoc oracle over the four measured action outcomes; not a learned or deployable router. Utility costs are sensitivity units, not dollars."
+policy_tradeoff,lambdaE=0.1;lambdaP=0.01,selected_latency_seconds,100,,0.23176301729121607,0.16926657863659783,0.30281976787108256,"Case-clustered post-hoc oracle over the four measured action outcomes; not a learned or deployable router. Utility costs are sensitivity units, not dollars."
+policy_tradeoff,lambdaE=0.1;lambdaP=0.01,selected_utility,100,,0.5618696111111111,0.47773944444444444,0.6454196111111111,"Case-clustered post-hoc oracle over the four measured action outcomes; not a learned or deployable router. Utility costs are sensitivity units, not dollars."
+policy_tradeoff,lambdaE=0.1;lambdaP=0.01,best_vs_second_gap,100,,0.14352022222222222,0.113376,0.17823433333333333,"Case-clustered post-hoc oracle over the four measured action outcomes; not a learned or deployable router. Utility costs are sensitivity units, not dollars."
+cost_sensitivity,lambdaE=0.1;lambdaP=0.03,optimal_action_share:ANSWER,100,291,0.7766323024054983,,,"No-cost baseline is lambdaE=0; lambdaE penalizes expert k-tokens, lambdaP patient turns."
+cost_sensitivity,lambdaE=0.1;lambdaP=0.03,optimal_action_share:ASK,100,291,0.06872852233676977,,,"No-cost baseline is lambdaE=0; lambdaE penalizes expert k-tokens, lambdaP patient turns."
+cost_sensitivity,lambdaE=0.1;lambdaP=0.03,optimal_action_share:CONSULT,100,291,0.07560137457044673,,,"No-cost baseline is lambdaE=0; lambdaE penalizes expert k-tokens, lambdaP patient turns."
+cost_sensitivity,lambdaE=0.1;lambdaP=0.03,optimal_action_share:DEFER,100,291,0.07903780068728522,,,"No-cost baseline is lambdaE=0; lambdaE penalizes expert k-tokens, lambdaP patient turns."
+cost_sensitivity,lambdaE=0.1;lambdaP=0.03,mean_best_vs_second_value_gap,100,291,0.14774555555555555,,,Utilities use one common cost formula across all actions.
+policy_tradeoff,lambdaE=0.1;lambdaP=0.03,selected_accuracy,100,,0.5816666666666667,0.49666666666666665,0.6655555555555556,"Case-clustered post-hoc oracle over the four measured action outcomes; not a learned or deployable router. Utility costs are sensitivity units, not dollars."
+policy_tradeoff,lambdaE=0.1;lambdaP=0.03,selected_defer_rate,100,,0.08333333333333333,0.04333333333333333,0.12666666666666665,"Case-clustered post-hoc oracle over the four measured action outcomes; not a learned or deployable router. Utility costs are sensitivity units, not dollars."
+policy_tradeoff,lambdaE=0.1;lambdaP=0.03,selected_expert_tokens,100,,149.25944444444445,103.39277777777778,197.92499999999998,"Case-clustered post-hoc oracle over the four measured action outcomes; not a learned or deployable router. Utility costs are sensitivity units, not dollars."
+policy_tradeoff,lambdaE=0.1;lambdaP=0.03,selected_patient_turns,100,,0.495,0.2833333333333333,0.74,"Case-clustered post-hoc oracle over the four measured action outcomes; not a learned or deployable router. Utility costs are sensitivity units, not dollars."
+policy_tradeoff,lambdaE=0.1;lambdaP=0.03,selected_total_tokens,100,,1265.3683333333333,986.3255555555555,1584.3327777777777,"Case-clustered post-hoc oracle over the four measured action outcomes; not a learned or deployable router. Utility costs are sensitivity units, not dollars."
+policy_tradeoff,lambdaE=0.1;lambdaP=0.03,selected_latency_seconds,100,,0.2249168129591918,0.16267376949344503,0.295129430244043,"Case-clustered post-hoc oracle over the four measured action outcomes; not a learned or deployable router. Utility costs are sensitivity units, not dollars."
+policy_tradeoff,lambdaE=0.1;lambdaP=0.03,selected_utility,100,,0.5518907222222222,0.4665525555555555,0.6365751666666667,"Case-clustered post-hoc oracle over the four measured action outcomes; not a learned or deployable router. Utility costs are sensitivity units, not dollars."
+policy_tradeoff,lambdaE=0.1;lambdaP=0.03,best_vs_second_gap,100,,0.14774555555555555,0.11780272222222223,0.18246338888888888,"Case-clustered post-hoc oracle over the four measured action outcomes; not a learned or deployable router. Utility costs are sensitivity units, not dollars."
+consult_gain_distribution,CONSULT-ANSWER,case_mean_paired_accuracy_delta,1,9,0.0,,,case_id=row-1465:item-1465
+consult_gain_distribution,CONSULT-ANSWER,case_mean_paired_accuracy_delta,1,9,0.5555555555555556,,,case_id=row-2352:item-2352
+consult_gain_distribution,CONSULT-ANSWER,case_mean_paired_accuracy_delta,1,9,-0.2222222222222222,,,case_id=row-2656:item-2656
+consult_gain_distribution,CONSULT-ANSWER,case_mean_paired_accuracy_delta,1,9,0.0,,,case_id=row-2671:item-2671
+consult_gain_distribution,CONSULT-ANSWER,case_mean_paired_accuracy_delta,1,9,1.0,,,case_id=row-3181:item-3181
+consult_gain_distribution,CONSULT-ANSWER,case_mean_paired_accuracy_delta,1,9,0.0,,,case_id=row-10154:item-10154
+consult_gain_distribution,CONSULT-ANSWER,case_mean_paired_accuracy_delta,1,9,0.2222222222222222,,,case_id=row-10082:item-10082
+consult_gain_distribution,CONSULT-ANSWER,case_mean_paired_accuracy_delta,1,9,-0.1111111111111111,,,case_id=row-13369:item-13369
+consult_gain_distribution,CONSULT-ANSWER,case_mean_paired_accuracy_delta,1,9,0.6666666666666666,,,case_id=row-2188:item-2188
+consult_gain_distribution,CONSULT-ANSWER,case_mean_paired_accuracy_delta,1,9,-0.1111111111111111,,,case_id=row-895:item-895
+consult_gain_distribution,CONSULT-ANSWER,case_mean_paired_accuracy_delta,1,9,0.1111111111111111,,,case_id=row-8663:item-8663
+consult_gain_distribution,CONSULT-ANSWER,case_mean_paired_accuracy_delta,1,9,0.1111111111111111,,,case_id=row-4160:item-4160
+consult_gain_distribution,CONSULT-ANSWER,case_mean_paired_accuracy_delta,1,9,0.0,,,case_id=row-8678:item-8678
+consult_gain_distribution,CONSULT-ANSWER,case_mean_paired_accuracy_delta,1,9,0.0,,,case_id=row-12118:item-12118
+consult_gain_distribution,CONSULT-ANSWER,case_mean_paired_accuracy_delta,1,9,0.2222222222222222,,,case_id=row-11155:item-11155
+consult_gain_distribution,CONSULT-ANSWER,case_mean_paired_accuracy_delta,1,9,0.0,,,case_id=row-11516:item-11516
+consult_gain_distribution,CONSULT-ANSWER,case_mean_paired_accuracy_delta,1,9,0.5555555555555556,,,case_id=row-8328:item-8328
+consult_gain_distribution,CONSULT-ANSWER,case_mean_paired_accuracy_delta,1,9,0.0,,,case_id=row-1874:item-1874
+consult_gain_distribution,CONSULT-ANSWER,case_mean_paired_accuracy_delta,1,9,0.2222222222222222,,,case_id=row-2921:item-2921
+consult_gain_distribution,CONSULT-ANSWER,case_mean_paired_accuracy_delta,1,9,0.0,,,case_id=row-7418:item-7418
+consult_gain_distribution,CONSULT-ANSWER,case_mean_paired_accuracy_delta,1,9,0.0,,,case_id=row-12457:item-12457
+consult_gain_distribution,CONSULT-ANSWER,case_mean_paired_accuracy_delta,1,9,0.0,,,case_id=row-3101:item-3101
+consult_gain_distribution,CONSULT-ANSWER,case_mean_paired_accuracy_delta,1,9,0.6666666666666666,,,case_id=row-5324:item-5324
+consult_gain_distribution,CONSULT-ANSWER,case_mean_paired_accuracy_delta,1,9,0.4444444444444444,,,case_id=row-10545:item-10545
+consult_gain_distribution,CONSULT-ANSWER,case_mean_paired_accuracy_delta,1,9,0.0,,,case_id=row-8209:item-8209
+consult_gain_distribution,CONSULT-ANSWER,case_mean_paired_accuracy_delta,1,9,0.0,,,case_id=row-2935:item-2935
+consult_gain_distribution,CONSULT-ANSWER,case_mean_paired_accuracy_delta,1,9,0.1111111111111111,,,case_id=row-5120:item-5120
+consult_gain_distribution,CONSULT-ANSWER,case_mean_paired_accuracy_delta,1,9,0.0,,,case_id=row-5257:item-5257
+consult_gain_distribution,CONSULT-ANSWER,case_mean_paired_accuracy_delta,1,6,0.0,,,case_id=row-7452:item-7452
+consult_gain_distribution,CONSULT-ANSWER,case_mean_paired_accuracy_delta,1,9,0.0,,,case_id=row-12152:item-12152
+consult_gain_distribution,CONSULT-ANSWER,case_mean_paired_accuracy_delta,1,9,0.0,,,case_id=row-13745:item-13745
+consult_gain_distribution,CONSULT-ANSWER,case_mean_paired_accuracy_delta,1,9,0.0,,,case_id=row-5567:item-5567
+consult_gain_distribution,CONSULT-ANSWER,case_mean_paired_accuracy_delta,1,9,0.0,,,case_id=row-7430:item-7430
+consult_gain_distribution,CONSULT-ANSWER,case_mean_paired_accuracy_delta,1,9,0.0,,,case_id=row-3359:item-3359
+consult_gain_distribution,CONSULT-ANSWER,case_mean_paired_accuracy_delta,1,9,0.0,,,case_id=row-3976:item-3976
+consult_gain_distribution,CONSULT-ANSWER,case_mean_paired_accuracy_delta,1,6,0.0,,,case_id=row-8656:item-8656
+consult_gain_distribution,CONSULT-ANSWER,case_mean_paired_accuracy_delta,1,9,0.0,,,case_id=row-1922:item-1922
+consult_gain_distribution,CONSULT-ANSWER,case_mean_paired_accuracy_delta,1,9,0.0,,,case_id=row-487:item-487
+consult_gain_distribution,CONSULT-ANSWER,case_mean_paired_accuracy_delta,1,9,-0.3333333333333333,,,case_id=row-1210:item-1210
+consult_gain_distribution,CONSULT-ANSWER,case_mean_paired_accuracy_delta,1,9,0.0,,,case_id=row-5103:item-5103
+consult_gain_distribution,CONSULT-ANSWER,case_mean_paired_accuracy_delta,1,9,0.0,,,case_id=row-3570:item-3570
+consult_gain_distribution,CONSULT-ANSWER,case_mean_paired_accuracy_delta,1,9,0.0,,,case_id=row-8565:item-8565
+consult_gain_distribution,CONSULT-ANSWER,case_mean_paired_accuracy_delta,1,6,0.0,,,case_id=row-7908:item-7908
+consult_gain_distribution,CONSULT-ANSWER,case_mean_paired_accuracy_delta,1,9,0.0,,,case_id=row-3714:item-3714
+consult_gain_distribution,CONSULT-ANSWER,case_mean_paired_accuracy_delta,1,6,0.0,,,case_id=row-1856:item-1856
+consult_gain_distribution,CONSULT-ANSWER,case_mean_paired_accuracy_delta,1,9,0.0,,,case_id=row-6524:item-6524
+consult_gain_distribution,CONSULT-ANSWER,case_mean_paired_accuracy_delta,1,9,0.1111111111111111,,,case_id=row-5973:item-5973
+consult_gain_distribution,CONSULT-ANSWER,case_mean_paired_accuracy_delta,1,9,-0.1111111111111111,,,case_id=row-659:item-659
+consult_gain_distribution,CONSULT-ANSWER,case_mean_paired_accuracy_delta,1,9,0.0,,,case_id=row-1392:item-1392
+consult_gain_distribution,CONSULT-ANSWER,case_mean_paired_accuracy_delta,1,9,0.0,,,case_id=row-7945:item-7945
+consult_gain_distribution,CONSULT-ANSWER,case_mean_paired_accuracy_delta,1,9,0.0,,,case_id=row-2119:item-2119
+consult_gain_distribution,CONSULT-ANSWER,case_mean_paired_accuracy_delta,1,9,-0.1111111111111111,,,case_id=row-13684:item-13684
+consult_gain_distribution,CONSULT-ANSWER,case_mean_paired_accuracy_delta,1,9,0.0,,,case_id=row-12845:item-12845
+consult_gain_distribution,CONSULT-ANSWER,case_mean_paired_accuracy_delta,1,9,0.0,,,case_id=row-3207:item-3207
+consult_gain_distribution,CONSULT-ANSWER,case_mean_paired_accuracy_delta,1,9,0.0,,,case_id=row-9631:item-9631
+consult_gain_distribution,CONSULT-ANSWER,case_mean_paired_accuracy_delta,1,9,0.0,,,case_id=row-4641:item-4641
+consult_gain_distribution,CONSULT-ANSWER,case_mean_paired_accuracy_delta,1,9,0.0,,,case_id=row-4298:item-4298
+consult_gain_distribution,CONSULT-ANSWER,case_mean_paired_accuracy_delta,1,9,0.1111111111111111,,,case_id=row-759:item-759
+consult_gain_distribution,CONSULT-ANSWER,case_mean_paired_accuracy_delta,1,9,0.0,,,case_id=row-9459:item-9459
+consult_gain_distribution,CONSULT-ANSWER,case_mean_paired_accuracy_delta,1,9,0.0,,,case_id=row-1781:item-1781
+consult_gain_distribution,CONSULT-ANSWER,case_mean_paired_accuracy_delta,1,9,-0.1111111111111111,,,case_id=row-5556:item-5556
+consult_gain_distribution,CONSULT-ANSWER,case_mean_paired_accuracy_delta,1,9,0.0,,,case_id=row-3448:item-3448
+consult_gain_distribution,CONSULT-ANSWER,case_mean_paired_accuracy_delta,1,9,0.2222222222222222,,,case_id=row-7128:item-7128
+consult_gain_distribution,CONSULT-ANSWER,case_mean_paired_accuracy_delta,1,6,0.0,,,case_id=row-12384:item-12384
+consult_gain_distribution,CONSULT-ANSWER,case_mean_paired_accuracy_delta,1,9,0.0,,,case_id=row-14137:item-14137
+consult_gain_distribution,CONSULT-ANSWER,case_mean_paired_accuracy_delta,1,9,0.0,,,case_id=row-3785:item-3785
+consult_gain_distribution,CONSULT-ANSWER,case_mean_paired_accuracy_delta,1,9,-0.1111111111111111,,,case_id=row-12313:item-12313
+consult_gain_distribution,CONSULT-ANSWER,case_mean_paired_accuracy_delta,1,9,0.0,,,case_id=row-7841:item-7841
+consult_gain_distribution,CONSULT-ANSWER,case_mean_paired_accuracy_delta,1,9,0.0,,,case_id=row-287:item-287
+consult_gain_distribution,CONSULT-ANSWER,case_mean_paired_accuracy_delta,1,9,0.1111111111111111,,,case_id=row-10617:item-10617
+consult_gain_distribution,CONSULT-ANSWER,case_mean_paired_accuracy_delta,1,9,0.0,,,case_id=row-13177:item-13177
+consult_gain_distribution,CONSULT-ANSWER,case_mean_paired_accuracy_delta,1,9,0.0,,,case_id=row-9706:item-9706
+consult_gain_distribution,CONSULT-ANSWER,case_mean_paired_accuracy_delta,1,6,0.0,,,case_id=row-13308:item-13308
+consult_gain_distribution,CONSULT-ANSWER,case_mean_paired_accuracy_delta,1,9,0.0,,,case_id=row-8099:item-8099
+consult_gain_distribution,CONSULT-ANSWER,case_mean_paired_accuracy_delta,1,9,0.0,,,case_id=row-2719:item-2719
+consult_gain_distribution,CONSULT-ANSWER,case_mean_paired_accuracy_delta,1,9,0.0,,,case_id=row-12004:item-12004
+consult_gain_distribution,CONSULT-ANSWER,case_mean_paired_accuracy_delta,1,9,0.0,,,case_id=row-13102:item-13102
+consult_gain_distribution,CONSULT-ANSWER,case_mean_paired_accuracy_delta,1,9,0.0,,,case_id=row-649:item-649
+consult_gain_distribution,CONSULT-ANSWER,case_mean_paired_accuracy_delta,1,3,0.3333333333333333,,,case_id=row-13705:item-13705
+consult_gain_distribution,CONSULT-ANSWER,case_mean_paired_accuracy_delta,1,9,0.0,,,case_id=row-13439:item-13439
+consult_gain_distribution,CONSULT-ANSWER,case_mean_paired_accuracy_delta,1,9,-0.2222222222222222,,,case_id=row-2201:item-2201
+consult_gain_distribution,CONSULT-ANSWER,case_mean_paired_accuracy_delta,1,9,0.1111111111111111,,,case_id=row-8273:item-8273
+consult_gain_distribution,CONSULT-ANSWER,case_mean_paired_accuracy_delta,1,6,0.0,,,case_id=row-1767:item-1767
+consult_gain_distribution,CONSULT-ANSWER,case_mean_paired_accuracy_delta,1,9,-0.1111111111111111,,,case_id=row-11537:item-11537
+consult_gain_distribution,CONSULT-ANSWER,case_mean_paired_accuracy_delta,1,9,-0.4444444444444444,,,case_id=row-6624:item-6624
+consult_gain_distribution,CONSULT-ANSWER,case_mean_paired_accuracy_delta,1,9,0.1111111111111111,,,case_id=row-1787:item-1787
+consult_gain_distribution,CONSULT-ANSWER,case_mean_paired_accuracy_delta,1,9,0.1111111111111111,,,case_id=row-11292:item-11292
+consult_gain_distribution,CONSULT-ANSWER,case_mean_paired_accuracy_delta,1,9,-0.3333333333333333,,,case_id=row-8591:item-8591
+consult_gain_distribution,CONSULT-ANSWER,case_mean_paired_accuracy_delta,1,9,-0.6666666666666666,,,case_id=row-1702:item-1702
+consult_gain_distribution,CONSULT-ANSWER,case_mean_paired_accuracy_delta,1,9,0.0,,,case_id=row-9897:item-9897
+consult_gain_distribution,CONSULT-ANSWER,case_mean_paired_accuracy_delta,1,9,0.3333333333333333,,,case_id=row-5737:item-5737
+consult_gain_distribution,CONSULT-ANSWER,case_mean_paired_accuracy_delta,1,9,0.0,,,case_id=row-10605:item-10605
+consult_gain_distribution,CONSULT-ANSWER,case_mean_paired_accuracy_delta,1,9,-1.0,,,case_id=row-2057:item-2057
+consult_gain_distribution,CONSULT-ANSWER,case_mean_paired_accuracy_delta,1,9,0.0,,,case_id=row-2894:item-2894
+consult_gain_distribution,CONSULT-ANSWER,case_mean_paired_accuracy_delta,1,9,0.2222222222222222,,,case_id=row-10708:item-10708
+consult_gain_distribution,CONSULT-ANSWER,case_mean_paired_accuracy_delta,1,9,0.0,,,case_id=row-5404:item-5404
+consult_gain_distribution,CONSULT-ANSWER,case_mean_paired_accuracy_delta,1,9,0.0,,,case_id=row-943:item-943
+consult_gain_distribution,CONSULT-ANSWER,case_mean_paired_accuracy_delta,1,9,0.0,,,case_id=row-13499:item-13499
+consult_gain_distribution,CONSULT-ANSWER,case_mean_paired_accuracy_delta,1,9,0.0,,,case_id=row-932:item-932
+consult_gain_distribution,CONSULT-ANSWER,case_mean_paired_accuracy_delta,1,9,0.0,,,case_id=row-3534:item-3534
+failure_analysis,ANSWER,failure_rate,100,873,0.0,,,Invalid or nonterminal rollout; see error-type rows below.
+failure_analysis,ASK,failure_rate,100,873,0.0057273768613974796,,,Invalid or nonterminal rollout; see error-type rows below.
+failure_analysis,CONSULT,failure_rate,100,873,0.009163802978235968,,,Invalid or nonterminal rollout; see error-type rows below.
+failure_analysis,DEFER,failure_rate,100,873,0.016036655211912942,,,Invalid or nonterminal rollout; see error-type rows below.
+failure_analysis,ASK,error_count:ValueError,2,873,5,,,Errors are retained in the raw JSONL with their full failure reason.
+failure_analysis,CONSULT,error_count:ValueError,4,873,8,,,Errors are retained in the raw JSONL with their full failure reason.
+failure_analysis,DEFER,error_count:ValueError,3,873,14,,,Errors are retained in the raw JSONL with their full failure reason.

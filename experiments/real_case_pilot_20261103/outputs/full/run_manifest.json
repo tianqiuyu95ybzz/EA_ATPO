@@ -1,0 +1,596 @@
+{
+  "created_at_utc": "2026-11-03T15:44:58+00:00",
+  "status": "completed",
+  "project_git_commit": "1e2b330abcf9e52c4ebc10f01338fc0068beceed",
+  "project_git_status": "M .gitignore\n M ea_atpo_stage/recipe/ea_atpo/collect_counterfactuals.py\n M ea_atpo_stage/recipe/ea_atpo/protocol.py\n M ea_atpo_stage/recipe/ea_atpo/test_protocol.py\n?? EA_ATPO_EXPERIMENT_PREREGISTRATION_2026-11-03.md\n?? EA_ATPO_RESEARCH_REVIEW_AND_NEW_METHOD_2026-11-02.md\n?? EA_ATPO_ROADMAP_2026-11-02.md\n?? README.md\n?? ea_atpo_stage/recipe/ea_atpo/test_collect_counterfactuals.py\n?? experiments/",
+  "pilot_script_sha256": "b90ff72831c19fba803e805ffcb88e56a23c2016dcb6cea01fde108869f702cb",
+  "collector_sha256": "e8f933eabb9fdfc02aa5a6a8155bf5c81a98d20473d8ecc28319982ccc037d4e",
+  "protocol_sha256": "15e9899173d126815512beea3fe8ceca30d428734ca437ac788d2308fe973f12",
+  "python_version": "3.12.3",
+  "python_executable": "/pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO/.venv-real-pilot/bin/python",
+  "platform": "linux",
+  "dependencies": {
+    "aiohttp": true,
+    "pandas": true,
+    "pyarrow": true,
+    "yaml": true,
+    "datasets": true,
+    "torch": true,
+    "transformers": true,
+    "huggingface_hub": true,
+    "vllm": true,
+    "accelerate": true
+  },
+  "local_tokenizer_inventory": {
+    "transformers_installed": true,
+    "tokenizers_installed": true,
+    "qwen_model_cache_entries": [],
+    "package_versions": {
+      "torch": "2.14.0",
+      "transformers": "5.20.2",
+      "tokenizers": "0.23.3",
+      "vllm": "0.33.0",
+      "aiohttp": "3.14.5",
+      "pandas": "3.1.0",
+      "pyarrow": "26.0.0",
+      "datasets": "5.1.0",
+      "PyYAML": "6.0.3"
+    }
+  },
+  "data_path": "/pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO/experiments/real_case_pilot_20261103/assets/train.pilot.parquet",
+  "data_exists": true,
+  "data_sha256": "c586d8653460e8bef102f7c6231a1356dbfa88b5b35c3538219724efd4c1a5c5",
+  "config_path": "/pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO/experiments/real_case_pilot_20261103/pilot_config.yaml",
+  "config_sha256": "caacbe478f18a79391f4f001daa7cd1a6891667365deafda8c41c66d545335c0",
+  "source": {
+    "repository": "https://github.com/Quark-Medical/ATPO",
+    "commit": "25af83688c06917f94245a4db06be7d0924c090c",
+    "train_file": "dataset/merged_train_dataset.jsonl",
+    "test_file": "dataset/medqa_test_dataset.jsonl",
+    "preprocessor": "codes/recipe/atpo/data_utils/mix_data_jsonl.py",
+    "local_recovery_status": "Rebuilt from official pinned JSONL into separate Parquet files under assets/; original upstream files are preserved."
+  },
+  "source_data_manifest": {
+    "repository": "https://github.com/Quark-Medical/ATPO",
+    "commit": "25af83688c06917f94245a4db06be7d0924c090c",
+    "files": {
+      "dataset/merged_train_dataset.jsonl": {
+        "bytes": 43067603,
+        "sha256": "434a6734dce931262f2ed9e3201a3751e57db3609b1612ab9666835ac8832fdc",
+        "records": 14256
+      },
+      "dataset/medqa_test_dataset.jsonl": {
+        "bytes": 4009909,
+        "sha256": "5e10a4dc50802e2dc3c156a3bc9e33111837dd762dff97aaaa0327fc4fdbba46",
+        "records": 1268
+      },
+      "codes/recipe/atpo/data_utils/mix_data_jsonl.py": {
+        "bytes": 3362,
+        "sha256": "046d317c41997d38216ae675b024c686ae37d931f0a4af7474eb61110da231c8"
+      }
+    },
+    "reconstructed_parquet": {
+      "train": {
+        "path": "train.parquet",
+        "bytes": 13231697,
+        "sha256": "7467f9afc1c294066e487bc16b0e4f0f9cd6fa57704703d8bb8ce83ba7b385ca"
+      },
+      "test": {
+        "path": "test.parquet",
+        "bytes": 1032738,
+        "sha256": "e53f853c2e333216f746326167f3dd6f0c9610cf46a1d0f3ba2e48e9e20c37dc"
+      }
+    },
+    "pilot_parquet": {
+      "train": {
+        "path": "train.pilot.parquet",
+        "bytes": 13213514,
+        "sha256": "c586d8653460e8bef102f7c6231a1356dbfa88b5b35c3538219724efd4c1a5c5"
+      },
+      "test": {
+        "path": "test.pilot.parquet",
+        "bytes": 1019057,
+        "sha256": "3783ebd70d2282ab31c19f5030bf122301d34465516dee222438835e57c9c051"
+      }
+    },
+    "adapter_manifest_sha256": "a224b6f0ced63201aa2d042928e570c0c25de5f7109761a223d2562f330047e4"
+  },
+  "data_adapter_manifest": {
+    "adapter": "adapt_atpo_parquet.py",
+    "train": {
+      "split": "train",
+      "input_path": "experiments/real_case_pilot_20261103/assets/train.parquet",
+      "input_sha256": "7467f9afc1c294066e487bc16b0e4f0f9cd6fa57704703d8bb8ce83ba7b385ca",
+      "output_path": "experiments/real_case_pilot_20261103/assets/train.pilot.parquet",
+      "output_sha256": "c586d8653460e8bef102f7c6231a1356dbfa88b5b35c3538219724efd4c1a5c5",
+      "rows": 14256,
+      "input_columns": [
+        "prompt",
+        "ground_truth",
+        "agent_name",
+        "extra_info",
+        "data_source",
+        "index",
+        "reward_model"
+      ],
+      "output_columns": [
+        "prompt",
+        "ground_truth",
+        "agent_name",
+        "extra_info",
+        "data_source",
+        "index",
+        "reward_model"
+      ],
+      "missing_prompt": 0,
+      "missing_ground_truth": 0,
+      "invalid_ground_truth_format": 0,
+      "missing_atomic_facts": 0,
+      "atomic_facts_types": {
+        "ndarray": 14256
+      },
+      "prompt_option_label_count_distribution": {
+        "4": 14256
+      },
+      "extra_info_keys": {
+        "split": 14256,
+        "index": 14256,
+        "ground_truth": 14256,
+        "prompt": 14256,
+        "atomic_facts": 14256
+      }
+    },
+    "test": {
+      "split": "test",
+      "input_path": "experiments/real_case_pilot_20261103/assets/test.parquet",
+      "input_sha256": "e53f853c2e333216f746326167f3dd6f0c9610cf46a1d0f3ba2e48e9e20c37dc",
+      "output_path": "experiments/real_case_pilot_20261103/assets/test.pilot.parquet",
+      "output_sha256": "3783ebd70d2282ab31c19f5030bf122301d34465516dee222438835e57c9c051",
+      "rows": 1268,
+      "input_columns": [
+        "prompt",
+        "ground_truth",
+        "agent_name",
+        "extra_info",
+        "data_source",
+        "index",
+        "reward_model"
+      ],
+      "output_columns": [
+        "prompt",
+        "ground_truth",
+        "agent_name",
+        "extra_info",
+        "data_source",
+        "index",
+        "reward_model"
+      ],
+      "missing_prompt": 0,
+      "missing_ground_truth": 0,
+      "invalid_ground_truth_format": 0,
+      "missing_atomic_facts": 0,
+      "atomic_facts_types": {
+        "ndarray": 1268
+      },
+      "prompt_option_label_count_distribution": {
+        "4": 1268
+      },
+      "extra_info_keys": {
+        "split": 1268,
+        "index": 1268,
+        "ground_truth": 1268,
+        "prompt": 1268,
+        "atomic_facts": 1268
+      }
+    }
+  },
+  "model": {
+    "repo_id": "Qwen/Qwen3-8B",
+    "revision": "b968826d9c46dd6066d109eabc6255188de91218",
+    "local_path": "assets/models/Qwen3-8B",
+    "served_model_name": "qwen3-8b",
+    "serving_framework": "vllm"
+  },
+  "model_manifest": {
+    "repository": "Qwen/Qwen3-8B",
+    "revision": "b968826d9c46dd6066d109eabc6255188de91218",
+    "local_path": "/pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO/experiments/real_case_pilot_20261103/assets/models/Qwen3-8B",
+    "files": {
+      ".gitattributes": {
+        "bytes": 1570,
+        "sha256": "34448b82c17d60fec9b65b1f093c115ddbaadc04beb1b0140b6bfed2e012a930"
+      },
+      "LICENSE": {
+        "bytes": 11343,
+        "sha256": "832dd9e00a68dd83b3c3fb9f5588dad7dcf337a0db50f7d9483f310cd292e92e"
+      },
+      "README.md": {
+        "bytes": 16660,
+        "sha256": "0f36caaff9c2516411a7738db384606263ba653c1e63e61d72f511606164d5a6"
+      },
+      "config.json": {
+        "bytes": 728,
+        "sha256": "f7c4eadfbbf522470667b797a3c89be2524832d2d599797248dc304fff447c30"
+      },
+      "generation_config.json": {
+        "bytes": 239,
+        "sha256": "2325da0f15bb848e018c5ae071b7943332e9f871d6b60e2ed22ca97d4cb993d2"
+      },
+      "merges.txt": {
+        "bytes": 1671853,
+        "sha256": "8831e4f1a044471340f7c0a83d7bd71306a5b867e95fd870f74d0c5308a904d5"
+      },
+      "model-00001-of-00005.safetensors": {
+        "bytes": 3996250744,
+        "sha256": "31d6a825ae35f11fb85b195b4c42c146c051e446433125a215336abdf95cbf5f"
+      },
+      "model-00002-of-00005.safetensors": {
+        "bytes": 3993160032,
+        "sha256": "5991236cea6fe21f3d43cab0f0e84448734fbbe0789816202989f2ddc9d18282"
+      },
+      "model-00003-of-00005.safetensors": {
+        "bytes": 3959604768,
+        "sha256": "c5185c4794be2d8a9784d5753c9922db38df478ce11f9ed0b415b7304d896836"
+      },
+      "model-00004-of-00005.safetensors": {
+        "bytes": 3187841392,
+        "sha256": "b5ee7de71fbf17db3d5704e0c8f2bc7d005ca9e1d7ca2aeb19827b0cfcaa917a"
+      },
+      "model-00005-of-00005.safetensors": {
+        "bytes": 1244659840,
+        "sha256": "20c2d6366ab85c90786ccdd829cd2b9e7d30ef3b2ebbb998280e7e4014b542ff"
+      },
+      "model.safetensors.index.json": {
+        "bytes": 32878,
+        "sha256": "f9fdbcb91c23971c13ec5d5f2573d2349e8f61f2f049371ec699281748fdb1bc"
+      },
+      "tokenizer.json": {
+        "bytes": 11422654,
+        "sha256": "aeb13307a71acd8fe81861d94ad54ab689df773318809eed3cbe794b4492dae4"
+      },
+      "tokenizer_config.json": {
+        "bytes": 9732,
+        "sha256": "d5d09f07b48c3086c508b30d1c9114bd1189145b74e982a265350c923acd8101"
+      },
+      "vocab.json": {
+        "bytes": 2776833,
+        "sha256": "ca10d7e9fb3ed18575dd1e277a2579c16d108e32f27439684afa0e10b1440910"
+      }
+    },
+    "vllm_version": "0.33.0",
+    "transformers_version": "5.20.2"
+  },
+  "model_service": {
+    "started_at_utc": "2026-11-03T15:38:26+00:00",
+    "framework": "vllm",
+    "vllm_version": "0.33.0",
+    "model_repo_id": "Qwen/Qwen3-8B",
+    "model_revision": "b968826d9c46dd6066d109eabc6255188de91218",
+    "local_path": "/pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO/experiments/real_case_pilot_20261103/assets/models/Qwen3-8B",
+    "served_model_name": "qwen3-8b",
+    "gpu_physical_index": 1,
+    "gpu_free_mib_before_start": 84319,
+    "port": 30000,
+    "dtype": "bfloat16",
+    "max_model_len": 8192,
+    "max_num_seqs": 4,
+    "gpu_memory_utilization": 0.2,
+    "attention_backend": "TRITON_ATTN",
+    "flashinfer_sampler_enabled": false,
+    "flashinfer_workspace_base": "/pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO/experiments/real_case_pilot_20261103/cache/flashinfer_workspace"
+  },
+  "model_service_config_path": "/pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO/experiments/real_case_pilot_20261103/model_service_config.yaml",
+  "model_service_config_sha256": "c66ad33cddcaeb5c2989686b32b73c48609a69dfcecf4900fdccfa2856e25d7c",
+  "reproduction_artifact_sha256": {
+    "PILOT_RUNTIME_REQUIREMENTS.in": "28cd78bc2a28a6acda185ee5abd296114e1be3c787f4efc61bb9909da1610362",
+    "runtime-requirements.lock.txt": "e2283795dabc04439533135890d9c684f9faaf4080f3061858560aa7aea11a8e",
+    "restore_public_atpo_data.sh": "ef3c2779aa24089baba3ebd1e31ec9c60fe97354c67ac04b1c2e61bf19dcdcfb",
+    "adapt_atpo_parquet.py": "024a9d7afe6a50adb2a40604073a7881e9df39a40e858bafd643e7857c6139e9",
+    "download_model.sh": "6e2a1d56810159cc8b320e288161123098d909d754b1e1bbe5a3f157f48816f8",
+    "start_model_service.sh": "2c01b01c6ce218904af5bd7eec75eb65b533d49952bc9177aeacd36749550ef4",
+    "run_service_role_smoke.py": "9b5f9a79db58f6a2e6b037f89b95fd1213529f2ab28485f70671eb8e4b5aa842",
+    "run_smoke_test.sh": "bb80e7f664134c9606a09e326bb5ba43a3f7d05a05e90fe293c1888adeaf9eea",
+    "run_full_pilot.sh": "8ec7ded7598cfabee03dc1d68a81818588a03744b7f7c427b1916e936d344029"
+  },
+  "models": {
+    "base": "qwen3-8b",
+    "patient": "qwen3-8b",
+    "expert": "qwen3-8b"
+  },
+  "checkpoint_paths": {
+    "base": null,
+    "patient": null,
+    "expert": null
+  },
+  "historical_checkpoint_inventory": [],
+  "endpoints": {
+    "base": {
+      "url": "http://127.0.0.1:30000/v1/models",
+      "http_status": 200,
+      "reachable": true,
+      "configured_model": "qwen3-8b",
+      "model_ids": [
+        "qwen3-8b"
+      ],
+      "model_metadata": [
+        {
+          "id": "qwen3-8b",
+          "created": 1793720698,
+          "owned_by": "vllm"
+        }
+      ],
+      "configured_model_listed": true,
+      "api_key_env": "EA_ATPO_BASE_API_KEY",
+      "api_key_present": false
+    },
+    "patient": {
+      "url": "http://127.0.0.1:30000/v1/models",
+      "http_status": 200,
+      "reachable": true,
+      "configured_model": "qwen3-8b",
+      "model_ids": [
+        "qwen3-8b"
+      ],
+      "model_metadata": [
+        {
+          "id": "qwen3-8b",
+          "created": 1793720698,
+          "owned_by": "vllm"
+        }
+      ],
+      "configured_model_listed": true,
+      "api_key_env": "EA_ATPO_PATIENT_API_KEY",
+      "api_key_present": false
+    },
+    "expert": {
+      "url": "http://127.0.0.1:30000/v1/models",
+      "http_status": 200,
+      "reachable": true,
+      "configured_model": "qwen3-8b",
+      "model_ids": [
+        "qwen3-8b"
+      ],
+      "model_metadata": [
+        {
+          "id": "qwen3-8b",
+          "created": 1793720698,
+          "owned_by": "vllm"
+        }
+      ],
+      "configured_model_listed": true,
+      "api_key_env": "EA_ATPO_EXPERT_API_KEY",
+      "api_key_present": false
+    }
+  },
+  "inference": {
+    "temperature": 0.2,
+    "state_temperature": 0.0,
+    "num_cases": 100,
+    "max_states_per_case": 3,
+    "max_assistant_turns": 10,
+    "max_consults_per_rollout": 1,
+    "rollouts_per_action": 3,
+    "seed": 20261103,
+    "thinking": {
+      "base": false,
+      "patient": false,
+      "expert": false
+    },
+    "protocol_controls": {
+      "action_output_mode": "vllm_structured_outputs_regex",
+      "terminal_answer_on_last_assistant_turn": true
+    }
+  },
+  "cost_sensitivity": {
+    "lambda_expert_per_1k_tokens": [
+      0.0,
+      0.02,
+      0.05,
+      0.1
+    ],
+    "lambda_patient_per_turn": [
+      0.0,
+      0.01,
+      0.03
+    ]
+  },
+  "gpus": [
+    {
+      "index": "0",
+      "name": "NVIDIA B20Z",
+      "memory_total_mib": 183359,
+      "memory_used_mib": 63244,
+      "utilization_pct": 0
+    },
+    {
+      "index": "1",
+      "name": "NVIDIA B20Z",
+      "memory_total_mib": 183359,
+      "memory_used_mib": 134336,
+      "utilization_pct": 0
+    },
+    {
+      "index": "2",
+      "name": "NVIDIA B20Z",
+      "memory_total_mib": 183359,
+      "memory_used_mib": 3852,
+      "utilization_pct": 0
+    },
+    {
+      "index": "3",
+      "name": "NVIDIA B20Z",
+      "memory_total_mib": 183359,
+      "memory_used_mib": 124372,
+      "utilization_pct": 100
+    },
+    {
+      "index": "4",
+      "name": "NVIDIA B20Z",
+      "memory_total_mib": 183359,
+      "memory_used_mib": 118605,
+      "utilization_pct": 100
+    },
+    {
+      "index": "5",
+      "name": "NVIDIA B20Z",
+      "memory_total_mib": 183359,
+      "memory_used_mib": 169202,
+      "utilization_pct": 100
+    },
+    {
+      "index": "6",
+      "name": "NVIDIA B20Z",
+      "memory_total_mib": 183359,
+      "memory_used_mib": 95354,
+      "utilization_pct": 100
+    },
+    {
+      "index": "7",
+      "name": "NVIDIA B20Z",
+      "memory_total_mib": 183359,
+      "memory_used_mib": 53054,
+      "utilization_pct": 100
+    }
+  ],
+  "trajectory_count": 3492,
+  "blockers": [],
+  "train_rows": 14256,
+  "sample_seed": 20261103,
+  "sampled_source_rows": [
+    1465,
+    2352,
+    2656,
+    2671,
+    3181,
+    10154,
+    10082,
+    13369,
+    2188,
+    895,
+    8663,
+    4160,
+    8678,
+    12118,
+    11155,
+    11516,
+    8328,
+    1874,
+    2921,
+    7418,
+    12457,
+    3101,
+    5324,
+    10545,
+    8209,
+    2935,
+    5120,
+    5257,
+    7452,
+    12152,
+    13745,
+    5567,
+    7430,
+    3359,
+    3976,
+    8656,
+    1922,
+    487,
+    1210,
+    5103,
+    3570,
+    8565,
+    7908,
+    3714,
+    1856,
+    6524,
+    5973,
+    659,
+    1392,
+    7945,
+    2119,
+    13684,
+    12845,
+    3207,
+    9631,
+    4641,
+    4298,
+    759,
+    9459,
+    1781,
+    5556,
+    3448,
+    7128,
+    12384,
+    14137,
+    3785,
+    12313,
+    7841,
+    287,
+    10617,
+    13177,
+    9706,
+    13308,
+    8099,
+    2719,
+    12004,
+    13102,
+    649,
+    13705,
+    13439,
+    2201,
+    8273,
+    1767,
+    11537,
+    6624,
+    1787,
+    11292,
+    8591,
+    1702,
+    9897,
+    5737,
+    10605,
+    2057,
+    2894,
+    10708,
+    5404,
+    943,
+    13499,
+    932,
+    3534
+  ],
+  "selected_cases": 100,
+  "max_states_per_case": 3,
+  "rollouts_per_action": 3,
+  "max_consults_per_rollout": 1,
+  "valid_trajectory_count": 3465,
+  "failed_trajectory_count": 27,
+  "postrun_analysis": {
+    "created_at_utc": "2026-11-03T16:20:41+00:00",
+    "purpose": "Post-run plotting/report formatting only; no model inference or outcome recomputation.",
+    "analysis_script": "/pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO/experiments/real_case_pilot_20261103/plot_pilot_tradeoffs.py",
+    "analysis_script_sha256": "7dbd0b09a89ac30dc1789ad63f8042a1687ba0d31fa7261cb7999bdbb195d87d",
+    "report_script": "/pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO/experiments/real_case_pilot_20261103/make_pilot_report.py",
+    "report_script_sha256": "272bd523406d3bb8b4cabc13918c00efcc923fdf2cd509392f90c103c9755d2b",
+    "requirements_input": "/pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO/experiments/real_case_pilot_20261103/PILOT_ANALYSIS_REQUIREMENTS.in",
+    "requirements_lock": "/pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO/experiments/real_case_pilot_20261103/PILOT_ANALYSIS_REQUIREMENTS.lock.txt",
+    "requirements_lock_sha256": "65a171424bd32fa148c390940568c608e48e4300384c00ec901b44831e5193ce",
+    "matplotlib_version": "3.11.2",
+    "analysis_packages_added_after_inference": {
+      "matplotlib": "3.11.2",
+      "contourpy": "1.4.0",
+      "cycler": "0.12.1",
+      "fonttools": "4.68.0",
+      "kiwisolver": "1.5.1",
+      "pyparsing": "3.3.3"
+    },
+    "output_sha256": {
+      "tradeoff_curve_points.csv": "015f9576a55ba65adf54e4707b4f5ca9c8f7b6ccd6746327f1dbdd98ac74fef1",
+      "action_cost_accuracy_points.csv": "0bd92513606af5c7a2f2f85d38c4820516041d66e98b772174a235ff3e9e91ce",
+      "accuracy_cost_curve.png": "a012af39817406adcdb472b381ed228e034b1b3215d8ca1c680f3907d10cd6ad",
+      "accuracy_cost_curve.svg": "012f5817b0d0e10f18da6ac34515442e1413b605aff0df1e5e512ed572a044c1",
+      "accuracy_deferral_curve.png": "2f8bc5d4623b49a05594a83b96b398fdfe4d287d0cc4415be208182d3fc09a87",
+      "accuracy_deferral_curve.svg": "6eb4f14ffd572bf89bc2118e3b56fd2420aeee1096abfc7479e50bf2f477bc80",
+      "REAL_PILOT_REPORT.md": "da8a10c864eece6e1573fce8c8ec865137fd74330fdb68f4bedb0e5f530f01ef"
+    }
+  }
+}

@@ -1,0 +1,2 @@
+metric,group,value,ci95_low,ci95_high,n_cases,valid_rate,mean_total_tokens,mean_latency_s,notes
+accuracy,base_8b,0.44,0.37,0.51,200,1.0,170.32,0.06460723750817124,Case-level bootstrap; parse failures/API failures score 0 and remain in denominator.

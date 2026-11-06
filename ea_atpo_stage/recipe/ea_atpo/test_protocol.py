@@ -55,6 +55,8 @@ class ProtocolTest(unittest.TestCase):
     def test_action_parser(self):
         self.assertEqual(parse_action("</think>\nQuestion: Any fever?")[0], Action.ASK)
         self.assertEqual(parse_action("Final Answer: D"), (Action.ANSWER, "D"))
+        with self.assertRaises(ValueError):
+            parse_action("<think>private thought with Question: hidden question")
 
 
 class UtilityTest(unittest.TestCase):

@@ -13,12 +13,10 @@ import json
 import random
 import re
 import time
-from dataclasses import asdict, dataclass
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Mapping, Sequence
 
-import aiohttp
-import pandas as pd
 import yaml
 
 from .protocol import (
@@ -29,6 +27,7 @@ from .protocol import (
     unrevealed_atomic_facts,
     validate_expert_response,
     validate_expert_view,
+    visible_response,
 )
 from .utility import UtilityConfig, select_action
 
@@ -36,7 +35,35 @@ from .utility import UtilityConfig, select_action
 BASE_FORCE = {
     Action.ANSWER: "For this counterfactual branch, answer now. End with exactly: Final Answer: <one option letter>.",
     Action.ASK: "For this counterfactual branch, ask exactly one useful patient question. End with exactly: Question: <one question>.",
+    Action.CONSULT: "For this counterfactual branch, request one focused expert hint based only on the visible case. End with exactly: Consult Expert: <one specific diagnostic question>.",
 }
+
+# vLLM's structured-output regex constrains syntax only; the model still
+# generates the clinical question, consultation focus, or selected option.
+FINAL_ANSWER_REGEX = r"^Final Answer: [A-D]$"
+ACTION_REGEX = {
+    Action.ANSWER: FINAL_ANSWER_REGEX,
+    Action.ASK: r"^Question: [^\r\n]{8,320}$",
+    Action.CONSULT: r"^Consult Expert: [^\r\n]{8,320}$",
+}
+CONTINUATION_REGEX = (
+    r"^(?:Final Answer: [A-D]|Question: [^\r\n]{8,320}|"
+    r"Consult Expert: [^\r\n]{8,320}|Defer to Expert)$"
+)
+CONTINUATION_NO_CONSULT_REGEX = (
+    r"^(?:Final Answer: [A-D]|Question: [^\r\n]{8,320}|Defer to Expert)$"
+)
+
+CONTINUATION_SYSTEM = """Continue the visible medical dialogue. After any private reasoning,
+output exactly one next action in this format:
+- Final Answer: <one option letter>
+- Question: <one question for the patient>
+- Consult Expert: <one focused question for the expert>
+- Defer to Expert
+Never include private reasoning in the visible action. A CONSULT asks for a short hint
+and then you continue reasoning. DEFER ends the episode and transfers control to the
+expert. Treat 'The patient cannot answer this question.' as UNKNOWN, not as a negative
+clinical finding."""
 
 PATIENT_SYSTEM = """You are a patient simulator. Answer the doctor's question using
 only the supplied patient atomic facts. Do not add medical inference or outside
@@ -52,12 +79,26 @@ class APICall:
     latency_s: float
 
 
+def _call_metrics(call: APICall) -> dict[str, Any]:
+    """Keep usage data while excluding raw private model reasoning from JSONL."""
+    return {
+        "prompt_tokens": call.prompt_tokens,
+        "completion_tokens": call.completion_tokens,
+        "latency_s": call.latency_s,
+    }
+
+
 class ChatAPI:
     def __init__(self, base_url: str, model: str, timeout_s: float = 180.0, enable_thinking: bool | None = None):
+        try:
+            import aiohttp
+        except ImportError as exc:
+            raise RuntimeError("ChatAPI requires aiohttp; install the ATPO runtime dependencies") from exc
+        self._aiohttp = aiohttp
         self.url = base_url.rstrip("/") + "/chat/completions"
         self.model = model
         self.enable_thinking = enable_thinking
-        self.client = aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=timeout_s))
+        self.client = self._aiohttp.ClientSession(timeout=self._aiohttp.ClientTimeout(total=timeout_s))
 
     async def close(self) -> None:
         await self.client.close()
@@ -69,6 +110,7 @@ class ChatAPI:
         temperature: float,
         max_tokens: int = 768,
         retries: int = 3,
+        structured_outputs: Mapping[str, Any] | None = None,
     ) -> APICall:
         payload = {
             "model": self.model,
@@ -78,6 +120,8 @@ class ChatAPI:
         }
         if self.enable_thinking is not None:
             payload["chat_template_kwargs"] = {"enable_thinking": self.enable_thinking}
+        if structured_outputs is not None:
+            payload["structured_outputs"] = dict(structured_outputs)
         last_error: Exception | None = None
         for attempt in range(retries):
             started = time.perf_counter()
@@ -145,11 +189,80 @@ def _patient_messages(atomic_facts: Sequence[str], question: str) -> list[dict[s
     ]
 
 
+def _public_action_text(action: Action, content: str) -> str:
+    """Return only the visible action, never the model's private <think> text."""
+    if action is Action.ANSWER:
+        return f"Final Answer: {content.strip().upper()}"
+    if action is Action.ASK:
+        return f"Question: {content.strip()}"
+    if action is Action.CONSULT:
+        return f"Consult Expert: {content.strip()}"
+    return "Defer to Expert"
+
+
+def _extend_state(state: PublicState, *turns: Mapping[str, str]) -> PublicState:
+    return PublicState(state.sample_id, state.initial_messages, (*state.dialogue, *turns))
+
+
+def _continuation_messages(state: PublicState, *, consult_available: bool) -> list[dict[str, str]]:
+    """Add a per-turn action contract without exposing it as dialogue to experts."""
+    messages = state.messages
+    prompt = CONTINUATION_SYSTEM
+    if not consult_available:
+        prompt = prompt.replace("- Consult Expert: <one focused question for the expert>\n", "")
+        prompt += "\nThe consultation budget is exhausted; do not choose CONSULT."
+    system_index = next((i for i, message in enumerate(messages) if message["role"] == "system"), None)
+    if system_index is None:
+        return [{"role": "system", "content": prompt}, *messages]
+    messages[system_index] = {**messages[system_index], "content": prompt + "\n\n" + messages[system_index]["content"]}
+    return messages
+
+
+async def _consult_expert(
+    expert: ChatAPI,
+    state: PublicState,
+    question: str,
+    atomic_facts: Sequence[str],
+    temperature: float,
+) -> tuple[str, APICall]:
+    expert_messages = build_expert_messages(state, Action.CONSULT, consult_question=question)
+    validate_expert_view(
+        expert_messages,
+        atomic_facts=unrevealed_atomic_facts(state, atomic_facts),
+    )
+    call = await expert.generate(expert_messages, temperature=temperature, max_tokens=384)
+    return validate_expert_response(Action.CONSULT, call.content), call
+
+
+async def _defer_to_expert(
+    expert: ChatAPI,
+    state: PublicState,
+    atomic_facts: Sequence[str],
+    temperature: float,
+) -> tuple[str, APICall]:
+    expert_messages = build_expert_messages(state, Action.DEFER)
+    validate_expert_view(
+        expert_messages,
+        atomic_facts=unrevealed_atomic_facts(state, atomic_facts),
+    )
+    call = await expert.generate(expert_messages, temperature=temperature, max_tokens=384)
+    validated = validate_expert_response(Action.DEFER, call.content)
+    answer = _answer_letter(validated, expert=True)
+    if answer is None:
+        raise ValueError("validated DEFER response did not contain a final option")
+    return answer, call
+
+
 async def _base_action(api: ChatAPI, state: PublicState, action: Action, temperature: float) -> tuple[str, APICall]:
     last: tuple[Action, APICall] | None = None
     for strict in (False, True):
         for _ in range(2):
-            call = await api.generate(_forced_messages(state, action, strict=strict), temperature=0.0)
+            call = await api.generate(
+                _forced_messages(state, action, strict=strict),
+                temperature=temperature,
+                max_tokens=256 if action is not Action.ANSWER else 16,
+                structured_outputs={"regex": ACTION_REGEX[action]},
+            )
             parsed, content = parse_action(call.content)
             if parsed is action:
                 return content, call
@@ -160,30 +273,108 @@ async def _base_action(api: ChatAPI, state: PublicState, action: Action, tempera
 async def _continue_base(
     base: ChatAPI,
     patient: ChatAPI,
+    expert: ChatAPI,
     state: PublicState,
     atomic_facts: Sequence[str],
     temperature: float,
     max_turns: int,
-) -> tuple[str | None, list[dict[str, Any]]]:
-    messages = state.messages
+    *,
+    consults_used: int = 0,
+    max_consults: int = 2,
+) -> tuple[str | None, list[dict[str, Any]], PublicState]:
+    current_state = state
     trace: list[dict[str, Any]] = []
-    for _ in range(max_turns):
-        call = await base.generate(messages, temperature=temperature)
+    for turn_index in range(max_turns):
+        terminal_turn = turn_index == max_turns - 1
+        if terminal_turn:
+            messages = _forced_messages(current_state, Action.ANSWER, strict=True)
+            structured_regex = FINAL_ANSWER_REGEX
+            token_limit = 16
+        else:
+            messages = _continuation_messages(
+                current_state, consult_available=consults_used < max_consults
+            )
+            structured_regex = (
+                CONTINUATION_REGEX
+                if consults_used < max_consults
+                else CONTINUATION_NO_CONSULT_REGEX
+            )
+            token_limit = 256
+        call = await base.generate(
+            messages,
+            temperature=temperature,
+            max_tokens=token_limit,
+            structured_outputs={"regex": structured_regex},
+        )
         try:
             action, content = parse_action(call.content)
         except ValueError:
-            trace.append({"actor": "base", "error": "invalid_format", **asdict(call)})
-            return None, trace
-        trace.append({"actor": "base", "action": action.value, **asdict(call)})
-        messages.append({"role": "assistant", "content": call.content})
+            trace.append({"actor": "base", "error": "invalid_format", **_call_metrics(call)})
+            return None, trace, current_state
+        trace.append({
+            "actor": "base",
+            "action": action.value,
+            "response": _public_action_text(action, content),
+            **_call_metrics(call),
+        })
+        if terminal_turn and action is not Action.ANSWER:
+            trace.append({"actor": "router", "error": "terminal_answer_constraint_violated"})
+            return None, trace, current_state
+        visible_action = {"role": "assistant", "content": _public_action_text(action, content)}
         if action is Action.ANSWER:
-            return content.strip().upper(), trace
-        if action is not Action.ASK:
-            return None, trace
-        patient_call = await patient.generate(_patient_messages(atomic_facts, content), temperature=0.0, max_tokens=256)
-        trace.append({"actor": "patient", **asdict(patient_call)})
-        messages.append({"role": "user", "content": patient_call.content})
-    return None, trace
+            return content.strip().upper(), trace, _extend_state(current_state, visible_action)
+        if action is Action.ASK:
+            patient_call = await patient.generate(
+                _patient_messages(atomic_facts, content), temperature=0.0, max_tokens=256
+            )
+            patient_response = visible_response(patient_call.content)
+            trace.append({"actor": "patient", "response": patient_response, **_call_metrics(patient_call)})
+            current_state = _extend_state(
+                current_state,
+                visible_action,
+                {"role": "user", "content": patient_response},
+            )
+            continue
+        if action is Action.CONSULT:
+            if consults_used >= max_consults:
+                trace.append({"actor": "router", "error": "consult_budget_exhausted"})
+                return None, trace, current_state
+            advice, expert_call = await _consult_expert(
+                expert, current_state, content, atomic_facts, temperature
+            )
+            trace.append({
+                "actor": "expert",
+                "action": Action.CONSULT.value,
+                "consult_question": content,
+                "response": advice,
+                **_call_metrics(expert_call),
+            })
+            current_state = _extend_state(
+                current_state,
+                visible_action,
+                {"role": "user", "content": advice},
+            )
+            consults_used += 1
+            continue
+
+        # DEFER is terminal. The expert sees the public state before the agent's
+        # deferral action, so it cannot be anchored by private reasoning or a guess.
+        answer, expert_call = await _defer_to_expert(
+            expert, current_state, atomic_facts, temperature
+        )
+        trace.append({
+            "actor": "expert",
+            "action": Action.DEFER.value,
+            "response": f"Expert Final Answer: {answer}",
+            **_call_metrics(expert_call),
+        })
+        current_state = _extend_state(
+            current_state,
+            visible_action,
+            {"role": "user", "content": f"Expert Final Answer: {answer}"},
+        )
+        return answer, trace, current_state
+    return None, trace, current_state
 
 
 async def rollout_action(
@@ -197,55 +388,109 @@ async def rollout_action(
     *,
     temperature: float,
     max_turns: int,
+    max_consults: int = 2,
 ) -> dict[str, Any]:
-    gold = _gold_letter(ground_truth)
     trace: list[dict[str, Any]] = []
     answer: str | None = None
     error: str | None = None
+    final_state = state
     try:
-        if action in (Action.ANSWER, Action.ASK):
+        if action in (Action.ANSWER, Action.ASK, Action.CONSULT):
             content, call = await _base_action(base, state, action, temperature)
-            trace.append({"actor": "base", "action": action.value, **asdict(call)})
+            visible_action = {"role": "assistant", "content": _public_action_text(action, content)}
+            trace.append({
+                "actor": "base",
+                "action": action.value,
+                **({"consult_question": content} if action is Action.CONSULT else {}),
+                "response": visible_action["content"],
+                **_call_metrics(call),
+            })
             if action is Action.ANSWER:
                 answer = content.strip().upper()
+                final_state = _extend_state(state, visible_action)
             else:
-                patient_call = await patient.generate(_patient_messages(atomic_facts, content), temperature=0.0, max_tokens=256)
-                trace.append({"actor": "patient", **asdict(patient_call)})
-                next_state = PublicState(
-                    state.sample_id,
-                    state.initial_messages,
-                    (*state.dialogue, {"role": "assistant", "content": call.content}, {"role": "user", "content": patient_call.content}),
+                if action is Action.ASK:
+                    patient_call = await patient.generate(
+                        _patient_messages(atomic_facts, content), temperature=0.0, max_tokens=256
+                    )
+                    patient_response = visible_response(patient_call.content)
+                    trace.append({"actor": "patient", "response": patient_response, **_call_metrics(patient_call)})
+                    next_state = _extend_state(
+                        state,
+                        visible_action,
+                        {"role": "user", "content": patient_response},
+                    )
+                    consults_used = 0
+                else:
+                    advice, expert_call = await _consult_expert(
+                        expert, state, content, atomic_facts, temperature
+                    )
+                    trace.append({
+                        "actor": "expert",
+                        "action": Action.CONSULT.value,
+                        "consult_question": content,
+                        "response": advice,
+                        **_call_metrics(expert_call),
+                    })
+                    next_state = _extend_state(
+                        state,
+                        visible_action,
+                        {"role": "user", "content": advice},
+                    )
+                    consults_used = 1
+                answer, continued, final_state = await _continue_base(
+                    base,
+                    patient,
+                    expert,
+                    next_state,
+                    atomic_facts,
+                    temperature,
+                    max_turns - 1,
+                    consults_used=consults_used,
+                    max_consults=max_consults,
                 )
-                answer, continued = await _continue_base(base, patient, next_state, atomic_facts, temperature, max_turns - 1)
                 trace.extend(continued)
-        elif action is Action.CONSULT:
-            expert_messages = build_expert_messages(state, action)
-            validate_expert_view(expert_messages, atomic_facts=unrevealed_atomic_facts(state, atomic_facts), ground_truth=ground_truth)
-            expert_call = await expert.generate(expert_messages, temperature=temperature, max_tokens=384)
-            trace.append({"actor": "expert", "action": action.value, **asdict(expert_call)})
-            advice = validate_expert_response(action, expert_call.content)
-            next_state = PublicState(
-                state.sample_id,
-                state.initial_messages,
-                (*state.dialogue, {"role": "user", "content": advice}),
-            )
-            answer, continued = await _continue_base(base, patient, next_state, atomic_facts, temperature, max_turns)
-            trace.extend(continued)
         else:
-            expert_messages = build_expert_messages(state, action)
-            validate_expert_view(expert_messages, atomic_facts=unrevealed_atomic_facts(state, atomic_facts), ground_truth=ground_truth)
-            expert_call = await expert.generate(expert_messages, temperature=temperature, max_tokens=384)
-            trace.append({"actor": "expert", "action": action.value, **asdict(expert_call)})
-            validated = validate_expert_response(action, expert_call.content)
-            answer = _answer_letter(validated, expert=True)
+            answer, expert_call = await _defer_to_expert(
+                expert, state, atomic_facts, temperature
+            )
+            trace.append({
+                "actor": "expert",
+                "action": Action.DEFER.value,
+                "response": f"Expert Final Answer: {answer}",
+                **_call_metrics(expert_call),
+            })
+            final_state = _extend_state(
+                state,
+                {"role": "assistant", "content": "Defer to Expert"},
+                {"role": "user", "content": f"Expert Final Answer: {answer}"},
+            )
     except Exception as exc:
         error = f"{type(exc).__name__}: {exc}"
 
+    if answer is None and error is None:
+        traced_error = next((item.get("error") for item in reversed(trace) if item.get("error")), None)
+        error = traced_error or "no_terminal_answer"
+
+    # Gold is first read after all model calls have finished; it is used only by
+    # this post-hoc evaluator and never enters a prompt or pre-call validator.
+    gold = _gold_letter(ground_truth)
+    def actor_usage(actor: str) -> dict[str, float | int]:
+        calls = [event for event in trace if event.get("actor") == actor]
+        return {
+            "prompt_tokens": sum(int(event.get("prompt_tokens", 0)) for event in calls),
+            "completion_tokens": sum(int(event.get("completion_tokens", 0)) for event in calls),
+            "latency_s": sum(float(event.get("latency_s", 0.0)) for event in calls),
+        }
+
+    base_usage = actor_usage("base")
+    patient_usage = actor_usage("patient")
+    expert_usage = actor_usage("expert")
     return {
         "state_id": state.state_id,
         "sample_id": state.sample_id,
         "dialogue_turns": len(state.dialogue),
-        "public_messages": state.messages,
+        "public_messages": final_state.messages,
         "action": action.value,
         "answer": answer,
         "gold": gold,
@@ -255,6 +500,16 @@ async def rollout_action(
         "expert_prompt_tokens": sum(x.get("prompt_tokens", 0) for x in trace if x["actor"] == "expert"),
         "expert_completion_tokens": sum(x.get("completion_tokens", 0) for x in trace if x["actor"] == "expert"),
         "expert_latency_s": sum(x.get("latency_s", 0.0) for x in trace if x["actor"] == "expert"),
+        "base_prompt_tokens": base_usage["prompt_tokens"],
+        "base_completion_tokens": base_usage["completion_tokens"],
+        "base_latency_s": base_usage["latency_s"],
+        "patient_prompt_tokens": patient_usage["prompt_tokens"],
+        "patient_completion_tokens": patient_usage["completion_tokens"],
+        "patient_latency_s": patient_usage["latency_s"],
+        "patient_turns": sum(x.get("actor") == "patient" for x in trace),
+        "total_prompt_tokens": sum(int(x.get("prompt_tokens", 0)) for x in trace),
+        "total_completion_tokens": sum(int(x.get("completion_tokens", 0)) for x in trace),
+        "total_latency_s": sum(float(x.get("latency_s", 0.0)) for x in trace),
         "trace": trace,
     }
 
@@ -290,11 +545,20 @@ async def generate_states(
             if action is not Action.ASK:
                 break
             patient_call = await patient.generate(_patient_messages(facts, content), temperature=0.0, max_tokens=256)
-            dialogue = (*dialogue, {"role": "assistant", "content": call.content}, {"role": "user", "content": patient_call.content})
+            patient_response = visible_response(patient_call.content)
+            dialogue = (
+                *dialogue,
+                {"role": "assistant", "content": _public_action_text(action, content)},
+                {"role": "user", "content": patient_response},
+            )
     return states
 
 
 async def run(args: argparse.Namespace) -> None:
+    try:
+        import pandas as pd
+    except ImportError as exc:
+        raise RuntimeError("The counterfactual collector requires pandas to read Parquet data") from exc
     config = yaml.safe_load(Path(args.config).read_text())
     random.seed(config["seed"])
     frame = pd.read_parquet(args.data)

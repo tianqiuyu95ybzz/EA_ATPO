@@ -1,0 +1,185 @@
+{
+  "status": "router_trained",
+  "pilot_trajectory_sha256": "9ab625088db8beeae74fa6f314013dbf6b78499e133d114cfee0407e2ac036df",
+  "pilot_records": 3492,
+  "pilot_cases": 100,
+  "pilot_states": 291,
+  "rollouts_per_state_action": {
+    "min": 3,
+    "max": 3
+  },
+  "invalid_rollouts_retained_as_zero_outcome": 27,
+  "missing_cost_component_observations_imputed_with_starting_action_train_mean": {
+    "patient_turns": 8,
+    "consult_tokens": 8,
+    "defer_tokens": 27
+  },
+  "imputed_action_cost_means": {
+    "ANSWER": {
+      "patient_turns": 0.0,
+      "consult_tokens": 0.0,
+      "defer_tokens": 0.0
+    },
+    "ASK": {
+      "patient_turns": 5.981672394043527,
+      "consult_tokens": 0.37930287356321846,
+      "defer_tokens": 0.11640574712643678
+    },
+    "CONSULT": {
+      "patient_turns": 1.5408045977011495,
+      "consult_tokens": 0.6978946162657503,
+      "defer_tokens": 0.1226367816091954
+    },
+    "DEFER": {
+      "patient_turns": 0.0,
+      "consult_tokens": 0.0,
+      "defer_tokens": 0.6707247386759582
+    }
+  },
+  "fixed_cost_baseline_action": "DEFER",
+  "fixed_cost_training_mean_utility": {
+    "ANSWER": 0.418098510882016,
+    "ASK": 0.38273187569617256,
+    "CONSULT": 0.41148029513765455,
+    "DEFER": 0.4253025728095278
+  },
+  "reference_cost": {
+    "ASK": 0.01,
+    "CONSULT": 0.02,
+    "DEFER": 0.02
+  },
+  "cost_components": {
+    "ASK": "all patient simulator turns in branch",
+    "CONSULT": "all Expert CONSULT prompt+completion tokens / 1000 in branch",
+    "DEFER": "all Expert DEFER prompt+completion tokens / 1000 in branch"
+  },
+  "split": {
+    "train": 70,
+    "validation": 15,
+    "internal_test": 15
+  },
+  "train_only_fit_summary": {
+    "cost_means": {
+      "ANSWER": {
+        "patient_turns": 0.0,
+        "consult_tokens": 0.0,
+        "defer_tokens": 0.0
+      },
+      "ASK": {
+        "patient_turns": 5.983739837398375,
+        "consult_tokens": 0.3859174836601308,
+        "defer_tokens": 0.10417973856209148
+      },
+      "CONSULT": {
+        "patient_turns": 1.554738562091503,
+        "consult_tokens": 0.6966504065040651,
+        "defer_tokens": 0.12041339869281047
+      },
+      "DEFER": {
+        "patient_turns": 0.0,
+        "consult_tokens": 0.0,
+        "defer_tokens": 0.6701393034825871
+      }
+    },
+    "training_states": 205,
+    "training_cases": 70,
+    "reliability_oof_mean": 0.41295732220890546,
+    "reliability_oof_sd": 0.14654810193895465
+  },
+  "final_fit_summary": {
+    "cost_means": {
+      "ANSWER": {
+        "patient_turns": 0.0,
+        "consult_tokens": 0.0,
+        "defer_tokens": 0.0
+      },
+      "ASK": {
+        "patient_turns": 5.981672394043527,
+        "consult_tokens": 0.37930287356321846,
+        "defer_tokens": 0.11640574712643678
+      },
+      "CONSULT": {
+        "patient_turns": 1.5408045977011495,
+        "consult_tokens": 0.6978946162657503,
+        "defer_tokens": 0.1226367816091954
+      },
+      "DEFER": {
+        "patient_turns": 0.0,
+        "consult_tokens": 0.0,
+        "defer_tokens": 0.6707247386759582
+      }
+    },
+    "training_states": 291,
+    "training_cases": 100,
+    "reliability_oof_mean": 0.43858695738484804,
+    "reliability_oof_sd": 0.14258305457938822
+  },
+  "no_reliability_fit_summary": {
+    "cost_means": {
+      "ANSWER": {
+        "patient_turns": 0.0,
+        "consult_tokens": 0.0,
+        "defer_tokens": 0.0
+      },
+      "ASK": {
+        "patient_turns": 5.981672394043527,
+        "consult_tokens": 0.37930287356321846,
+        "defer_tokens": 0.11640574712643678
+      },
+      "CONSULT": {
+        "patient_turns": 1.5408045977011495,
+        "consult_tokens": 0.6978946162657503,
+        "defer_tokens": 0.1226367816091954
+      },
+      "DEFER": {
+        "patient_turns": 0.0,
+        "consult_tokens": 0.0,
+        "defer_tokens": 0.6707247386759582
+      }
+    },
+    "training_states": 291,
+    "training_cases": 100
+  },
+  "threshold_baseline": {
+    "uncertainty_threshold": 0.6130556107160738,
+    "equivalent_answer_confidence_threshold": 0.38694438928392616,
+    "alternative_action": "CONSULT",
+    "selection_metric": "validation mean utility under reference cost",
+    "validation_cases": [
+      "row-10082:item-10082",
+      "row-13705:item-13705",
+      "row-1702:item-1702",
+      "row-1856:item-1856",
+      "row-1874:item-1874",
+      "row-2921:item-2921",
+      "row-2935:item-2935",
+      "row-3207:item-3207",
+      "row-3534:item-3534",
+      "row-3714:item-3714",
+      "row-3976:item-3976",
+      "row-4160:item-4160",
+      "row-5103:item-5103",
+      "row-932:item-932",
+      "row-9631:item-9631"
+    ],
+    "validation_mean_utility": 0.4913271428571428,
+    "cost": {
+      "ASK": 0.01,
+      "CONSULT": 0.02,
+      "DEFER": 0.02
+    }
+  },
+  "decision_input_fields": [
+    "public_state messages with non-system user/assistant text",
+    "derived text and dialogue structure"
+  ],
+  "explicitly_excluded_input_fields": [
+    "gold",
+    "ground_truth",
+    "atomic_facts",
+    "state_construction_trace",
+    "rollout outcomes",
+    "future patient response",
+    "expert advice"
+  ]
+}

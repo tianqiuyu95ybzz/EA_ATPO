@@ -1,0 +1,17 @@
+policy,reference,paired_accuracy_delta,ci95_low,ci95_high,n_cases,corrected_from_reference_errors,reference_error_denominator,degraded_from_reference_correct,reference_correct_denominator
+uncertainty_threshold,always_answer,0.01,-0.025,0.045,200,7,103,5,97
+fixed_cost_router,always_answer,-0.03,-0.065,0.0,200,3,103,9,97
+learned_value_no_cost,always_answer,-0.015,-0.06,0.03,200,9,103,12,97
+learned_value_router,always_answer,-0.025,-0.065,0.015,200,5,103,10,97
+learned_value_higher_cost,always_answer,-0.02,-0.045,0.0,200,1,103,5,97
+ablation_no_expert_reliability,always_answer,-0.025,-0.065,0.015,200,6,103,11,97
+ablation_no_consult,always_answer,-0.005,-0.04,0.025,200,5,103,6,97
+ablation_no_defer,always_answer,-0.005,-0.04,0.035,200,7,103,8,97
+always_answer,learned_value_router,0.025,-0.01,0.065,200,10,108,5,92
+uncertainty_threshold,learned_value_router,0.035,-0.005,0.075,200,12,108,5,92
+fixed_cost_router,learned_value_router,-0.005,-0.045,0.035,200,8,108,9,92
+learned_value_no_cost,learned_value_router,0.01,-0.025,0.045,200,7,108,5,92
+learned_value_higher_cost,learned_value_router,0.005,-0.025,0.035,200,5,108,4,92
+ablation_no_expert_reliability,learned_value_router,0.0,-0.015,0.015,200,1,108,1,92
+ablation_no_consult,learned_value_router,0.02,-0.01,0.05,200,7,108,3,92
+ablation_no_defer,learned_value_router,0.02,0.0,0.045,200,5,108,1,92

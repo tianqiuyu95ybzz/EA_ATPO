@@ -1,0 +1,3208 @@
+{
+  "claim_scope": "synthetic decision-policy feasibility only; not medical or LLM performance",
+  "config": {
+    "budget_protocol": "each policy is allocated the same 0.20 expert-work units per test case",
+    "expert_budget_units_per_case": 0.2,
+    "expert_cost_units": {
+      "ANSWER": 0,
+      "ASK": 0,
+      "CONSULT": 1,
+      "DEFER": 2
+    },
+    "patient_ask_cost": 0.04,
+    "patient_cost_weight": 0.1,
+    "seeds": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23,
+      24,
+      25,
+      26,
+      27,
+      28,
+      29
+    ],
+    "test_cases_per_seed": 5000,
+    "test_mix": "75% difficult; 75% low patient-answerability; 70% low expert reliability",
+    "train_mix": "balanced over difficulty, patient answerability, and expert reliability bins",
+    "train_rollouts_per_context_action": 20
+  },
+  "experiment": "synthetic_reliability_conditioned_router",
+  "paired_differences": {
+    "both_reliabilities_minus_always_answer": {
+      "ci95_high": 0.060367771254705424,
+      "ci95_low": 0.04778434541196121,
+      "mean": 0.054076058333333316
+    },
+    "both_reliabilities_minus_difficulty_only": {
+      "ci95_high": 0.01265461353797269,
+      "ci95_low": -0.0008688902046393486,
+      "mean": 0.005892861666666671
+    },
+    "both_reliabilities_minus_expert_reliability": {
+      "ci95_high": -0.0007241174612521457,
+      "ci95_low": -0.01492718253874783,
+      "mean": -0.007825649999999988
+    },
+    "both_reliabilities_minus_no_reliability": {
+      "ci95_high": 0.0250314888385633,
+      "ci95_low": 0.011223224494770043,
+      "mean": 0.01812735666666667
+    },
+    "both_reliabilities_minus_patient_reliability": {
+      "ci95_high": 0.019780139757040013,
+      "ci95_low": 0.007304040242960015,
+      "mean": 0.013542090000000014
+    },
+    "expert_reliability_minus_difficulty_only": {
+      "ci95_high": 0.020761252241461428,
+      "ci95_low": 0.006675771091871891,
+      "mean": 0.013718511666666659
+    },
+    "expert_reliability_minus_no_reliability": {
+      "ci95_high": 0.0336540298280692,
+      "ci95_low": 0.018251983505264118,
+      "mean": 0.02595300666666666
+    }
+  },
+  "per_seed": [
+    {
+      "metrics": {
+        "always_answer": {
+          "action_rates": {
+            "ANSWER": 1.0,
+            "ASK": 0.0,
+            "CONSULT": 0.0,
+            "DEFER": 0.0
+          },
+          "expected_accuracy": 0.572816,
+          "expert_units_per_case": 0.0,
+          "low_answerability_accuracy": 0.5739306666666667,
+          "low_expert_reliability_accuracy": 0.5714567483798253,
+          "patient_ask_rate": 0.0
+        },
+        "both_reliabilities": {
+          "action_rates": {
+            "ANSWER": 0.5558,
+            "ASK": 0.3442,
+            "CONSULT": 0.0,
+            "DEFER": 0.1
+          },
+          "expected_accuracy": 0.61200225,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.5832522666666666,
+          "low_expert_reliability_accuracy": 0.6020443082558468,
+          "patient_ask_rate": 0.3442
+        },
+        "difficulty_only": {
+          "action_rates": {
+            "ANSWER": 0.6436,
+            "ASK": 0.2564,
+            "CONSULT": 0.0,
+            "DEFER": 0.1
+          },
+          "expected_accuracy": 0.5969992000000001,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.5957040000000001,
+          "low_expert_reliability_accuracy": 0.5912347140039448,
+          "patient_ask_rate": 0.2564
+        },
+        "expert_reliability": {
+          "action_rates": {
+            "ANSWER": 0.6436,
+            "ASK": 0.2564,
+            "CONSULT": 0.0,
+            "DEFER": 0.1
+          },
+          "expected_accuracy": 0.6085832,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.6074330666666667,
+          "low_expert_reliability_accuracy": 0.5832786700479008,
+          "patient_ask_rate": 0.2564
+        },
+        "no_reliability": {
+          "action_rates": {
+            "ANSWER": 0.0,
+            "ASK": 0.8,
+            "CONSULT": 0.2,
+            "DEFER": 0.0
+          },
+          "expected_accuracy": 0.61056155,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.5965893333333333,
+          "low_expert_reliability_accuracy": 0.5929613271344041,
+          "patient_ask_rate": 0.8
+        },
+        "oracle": {
+          "action_rates": {
+            "ANSWER": 0.0,
+            "ASK": 0.8,
+            "CONSULT": 0.2,
+            "DEFER": 0.0
+          },
+          "expected_accuracy": 0.6600086500000001,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.6473378666666667,
+          "low_expert_reliability_accuracy": 0.6194365314173007,
+          "patient_ask_rate": 0.8
+        },
+        "patient_reliability": {
+          "action_rates": {
+            "ANSWER": 0.5558,
+            "ASK": 0.3442,
+            "CONSULT": 0.0,
+            "DEFER": 0.1
+          },
+          "expected_accuracy": 0.60720225,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.5832522666666666,
+          "low_expert_reliability_accuracy": 0.6004910538179768,
+          "patient_ask_rate": 0.3442
+        }
+      },
+      "seed": 0
+    },
+    {
+      "metrics": {
+        "always_answer": {
+          "action_rates": {
+            "ANSWER": 1.0,
+            "ASK": 0.0,
+            "CONSULT": 0.0,
+            "DEFER": 0.0
+          },
+          "expected_accuracy": 0.571848,
+          "expert_units_per_case": 0.0,
+          "low_answerability_accuracy": 0.5710896921017403,
+          "low_expert_reliability_accuracy": 0.573082366260968,
+          "patient_ask_rate": 0.0
+        },
+        "both_reliabilities": {
+          "action_rates": {
+            "ANSWER": 0.4092,
+            "ASK": 0.4908,
+            "CONSULT": 0.0,
+            "DEFER": 0.1
+          },
+          "expected_accuracy": 0.6295747500000001,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.614461311914324,
+          "low_expert_reliability_accuracy": 0.6070073591848288,
+          "patient_ask_rate": 0.4908
+        },
+        "difficulty_only": {
+          "action_rates": {
+            "ANSWER": 0.0,
+            "ASK": 0.9,
+            "CONSULT": 0.0,
+            "DEFER": 0.1
+          },
+          "expected_accuracy": 0.628083,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.6104206157965194,
+          "low_expert_reliability_accuracy": 0.6248523917350693,
+          "patient_ask_rate": 0.9
+        },
+        "expert_reliability": {
+          "action_rates": {
+            "ANSWER": 0.0,
+            "ASK": 0.9,
+            "CONSULT": 0.0,
+            "DEFER": 0.1
+          },
+          "expected_accuracy": 0.639443,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.6217726907630522,
+          "low_expert_reliability_accuracy": 0.6219632040758563,
+          "patient_ask_rate": 0.9
+        },
+        "no_reliability": {
+          "action_rates": {
+            "ANSWER": 0.0,
+            "ASK": 0.9,
+            "CONSULT": 0.0,
+            "DEFER": 0.1
+          },
+          "expected_accuracy": 0.61705405,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.6002211512717537,
+          "low_expert_reliability_accuracy": 0.6141203651287858,
+          "patient_ask_rate": 0.9
+        },
+        "oracle": {
+          "action_rates": {
+            "ANSWER": 0.0,
+            "ASK": 0.8,
+            "CONSULT": 0.2,
+            "DEFER": 0.0
+          },
+          "expected_accuracy": 0.6601708000000001,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.6479804551539491,
+          "low_expert_reliability_accuracy": 0.6219632040758563,
+          "patient_ask_rate": 0.8
+        },
+        "patient_reliability": {
+          "action_rates": {
+            "ANSWER": 0.0,
+            "ASK": 0.9,
+            "CONSULT": 0.0,
+            "DEFER": 0.1
+          },
+          "expected_accuracy": 0.63027055,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.6134864792503346,
+          "low_expert_reliability_accuracy": 0.62705887347863,
+          "patient_ask_rate": 0.9
+        }
+      },
+      "seed": 1
+    },
+    {
+      "metrics": {
+        "always_answer": {
+          "action_rates": {
+            "ANSWER": 1.0,
+            "ASK": 0.0,
+            "CONSULT": 0.0,
+            "DEFER": 0.0
+          },
+          "expected_accuracy": 0.566656,
+          "expert_units_per_case": 0.0,
+          "low_answerability_accuracy": 0.5652890792291221,
+          "low_expert_reliability_accuracy": 0.5694280762564992,
+          "patient_ask_rate": 0.0
+        },
+        "both_reliabilities": {
+          "action_rates": {
+            "ANSWER": 0.3416,
+            "ASK": 0.5148,
+            "CONSULT": 0.0872,
+            "DEFER": 0.0564
+          },
+          "expected_accuracy": 0.5970538000000001,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.5883150428265526,
+          "low_expert_reliability_accuracy": 0.5896854419410745,
+          "patient_ask_rate": 0.5148
+        },
+        "difficulty_only": {
+          "action_rates": {
+            "ANSWER": 0.6576,
+            "ASK": 0.2424,
+            "CONSULT": 0.0,
+            "DEFER": 0.1
+          },
+          "expected_accuracy": 0.5909088,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.5875904710920772,
+          "low_expert_reliability_accuracy": 0.5890236857307914,
+          "patient_ask_rate": 0.2424
+        },
+        "expert_reliability": {
+          "action_rates": {
+            "ANSWER": 0.2076,
+            "ASK": 0.6924,
+            "CONSULT": 0.0,
+            "DEFER": 0.1
+          },
+          "expected_accuracy": 0.624325,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.6098246788008564,
+          "low_expert_reliability_accuracy": 0.618343443096476,
+          "patient_ask_rate": 0.6924
+        },
+        "no_reliability": {
+          "action_rates": {
+            "ANSWER": 0.8,
+            "ASK": 0.0,
+            "CONSULT": 0.2,
+            "DEFER": 0.0
+          },
+          "expected_accuracy": 0.5669656,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.5664502141327624,
+          "low_expert_reliability_accuracy": 0.5532582322357019,
+          "patient_ask_rate": 0.0
+        },
+        "oracle": {
+          "action_rates": {
+            "ANSWER": 0.0,
+            "ASK": 0.8,
+            "CONSULT": 0.2,
+            "DEFER": 0.0
+          },
+          "expected_accuracy": 0.65617105,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.6460393468950749,
+          "low_expert_reliability_accuracy": 0.618343443096476,
+          "patient_ask_rate": 0.8
+        },
+        "patient_reliability": {
+          "action_rates": {
+            "ANSWER": 0.6576,
+            "ASK": 0.2424,
+            "CONSULT": 0.0,
+            "DEFER": 0.1
+          },
+          "expected_accuracy": 0.5906208000000001,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.5739036402569594,
+          "low_expert_reliability_accuracy": 0.5892264586943963,
+          "patient_ask_rate": 0.2424
+        }
+      },
+      "seed": 2
+    },
+    {
+      "metrics": {
+        "always_answer": {
+          "action_rates": {
+            "ANSWER": 1.0,
+            "ASK": 0.0,
+            "CONSULT": 0.0,
+            "DEFER": 0.0
+          },
+          "expected_accuracy": 0.569296,
+          "expert_units_per_case": 0.0,
+          "low_answerability_accuracy": 0.5685987261146497,
+          "low_expert_reliability_accuracy": 0.5699687233437589,
+          "patient_ask_rate": 0.0
+        },
+        "both_reliabilities": {
+          "action_rates": {
+            "ANSWER": 0.593,
+            "ASK": 0.207,
+            "CONSULT": 0.2,
+            "DEFER": 0.0
+          },
+          "expected_accuracy": 0.625672,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.6224522292993631,
+          "low_expert_reliability_accuracy": 0.5768473130508956,
+          "patient_ask_rate": 0.207
+        },
+        "difficulty_only": {
+          "action_rates": {
+            "ANSWER": 0.0,
+            "ASK": 0.8,
+            "CONSULT": 0.2,
+            "DEFER": 0.0
+          },
+          "expected_accuracy": 0.6139385500000001,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.5986536624203821,
+          "low_expert_reliability_accuracy": 0.5959434176855274,
+          "patient_ask_rate": 0.8
+        },
+        "expert_reliability": {
+          "action_rates": {
+            "ANSWER": 0.7034,
+            "ASK": 0.0966,
+            "CONSULT": 0.2,
+            "DEFER": 0.0
+          },
+          "expected_accuracy": 0.6220432,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.6187006369426752,
+          "low_expert_reliability_accuracy": 0.5699687233437589,
+          "patient_ask_rate": 0.0966
+        },
+        "no_reliability": {
+          "action_rates": {
+            "ANSWER": 0.0,
+            "ASK": 0.8,
+            "CONSULT": 0.2,
+            "DEFER": 0.0
+          },
+          "expected_accuracy": 0.60789025,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.592208067940552,
+          "low_expert_reliability_accuracy": 0.5915978817173728,
+          "patient_ask_rate": 0.8
+        },
+        "oracle": {
+          "action_rates": {
+            "ANSWER": 0.0,
+            "ASK": 0.8,
+            "CONSULT": 0.2,
+            "DEFER": 0.0
+          },
+          "expected_accuracy": 0.6569695,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.6445127388535031,
+          "low_expert_reliability_accuracy": 0.6174266420244527,
+          "patient_ask_rate": 0.8
+        },
+        "patient_reliability": {
+          "action_rates": {
+            "ANSWER": 0.43,
+            "ASK": 0.37,
+            "CONSULT": 0.2,
+            "DEFER": 0.0
+          },
+          "expected_accuracy": 0.603346,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.5857643312101911,
+          "low_expert_reliability_accuracy": 0.5853982087005971,
+          "patient_ask_rate": 0.37
+        }
+      },
+      "seed": 3
+    },
+    {
+      "metrics": {
+        "always_answer": {
+          "action_rates": {
+            "ANSWER": 1.0,
+            "ASK": 0.0,
+            "CONSULT": 0.0,
+            "DEFER": 0.0
+          },
+          "expected_accuracy": 0.568944,
+          "expert_units_per_case": 0.0,
+          "low_answerability_accuracy": 0.567764705882353,
+          "low_expert_reliability_accuracy": 0.572294941411832,
+          "patient_ask_rate": 0.0
+        },
+        "both_reliabilities": {
+          "action_rates": {
+            "ANSWER": 0.1824,
+            "ASK": 0.6176,
+            "CONSULT": 0.2,
+            "DEFER": 0.0
+          },
+          "expected_accuracy": 0.6409366,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.6434818181818183,
+          "low_expert_reliability_accuracy": 0.5997033438125179,
+          "patient_ask_rate": 0.6176
+        },
+        "difficulty_only": {
+          "action_rates": {
+            "ANSWER": 0.0,
+            "ASK": 0.8,
+            "CONSULT": 0.2,
+            "DEFER": 0.0
+          },
+          "expected_accuracy": 0.61336735,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.5970243315508021,
+          "low_expert_reliability_accuracy": 0.5989046870534439,
+          "patient_ask_rate": 0.8
+        },
+        "expert_reliability": {
+          "action_rates": {
+            "ANSWER": 0.0,
+            "ASK": 0.8,
+            "CONSULT": 0.2,
+            "DEFER": 0.0
+          },
+          "expected_accuracy": 0.6556804,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.6396828877005348,
+          "low_expert_reliability_accuracy": 0.6208233781080309,
+          "patient_ask_rate": 0.8
+        },
+        "no_reliability": {
+          "action_rates": {
+            "ANSWER": 0.0,
+            "ASK": 0.8,
+            "CONSULT": 0.2,
+            "DEFER": 0.0
+          },
+          "expected_accuracy": 0.6080862,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.591664705882353,
+          "low_expert_reliability_accuracy": 0.5950923835381537,
+          "patient_ask_rate": 0.8
+        },
+        "oracle": {
+          "action_rates": {
+            "ANSWER": 0.0,
+            "ASK": 0.8,
+            "CONSULT": 0.2,
+            "DEFER": 0.0
+          },
+          "expected_accuracy": 0.657646,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.6460614973262032,
+          "low_expert_reliability_accuracy": 0.6208233781080309,
+          "patient_ask_rate": 0.8
+        },
+        "patient_reliability": {
+          "action_rates": {
+            "ANSWER": 0.0,
+            "ASK": 0.8062,
+            "CONSULT": 0.1876,
+            "DEFER": 0.0062
+          },
+          "expected_accuracy": 0.602993,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.5978622994652407,
+          "low_expert_reliability_accuracy": 0.5889517004858531,
+          "patient_ask_rate": 0.8062
+        }
+      },
+      "seed": 4
+    },
+    {
+      "metrics": {
+        "always_answer": {
+          "action_rates": {
+            "ANSWER": 1.0,
+            "ASK": 0.0,
+            "CONSULT": 0.0,
+            "DEFER": 0.0
+          },
+          "expected_accuracy": 0.5690320000000001,
+          "expert_units_per_case": 0.0,
+          "low_answerability_accuracy": 0.5702659145850121,
+          "low_expert_reliability_accuracy": 0.5690342679127726,
+          "patient_ask_rate": 0.0
+        },
+        "both_reliabilities": {
+          "action_rates": {
+            "ANSWER": 0.3934,
+            "ASK": 0.4066,
+            "CONSULT": 0.2,
+            "DEFER": 0.0
+          },
+          "expected_accuracy": 0.63679645,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.6250765511684127,
+          "low_expert_reliability_accuracy": 0.5953154205607477,
+          "patient_ask_rate": 0.4066
+        },
+        "difficulty_only": {
+          "action_rates": {
+            "ANSWER": 0.0,
+            "ASK": 0.9,
+            "CONSULT": 0.0,
+            "DEFER": 0.1
+          },
+          "expected_accuracy": 0.6251645,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.6088818157399947,
+          "low_expert_reliability_accuracy": 0.6211839422259984,
+          "patient_ask_rate": 0.9
+        },
+        "expert_reliability": {
+          "action_rates": {
+            "ANSWER": 0.0,
+            "ASK": 0.9,
+            "CONSULT": 0.0,
+            "DEFER": 0.1
+          },
+          "expected_accuracy": 0.63699005,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.621057749127048,
+          "low_expert_reliability_accuracy": 0.6180163551401868,
+          "patient_ask_rate": 0.9
+        },
+        "no_reliability": {
+          "action_rates": {
+            "ANSWER": 0.0,
+            "ASK": 0.8,
+            "CONSULT": 0.2,
+            "DEFER": 0.0
+          },
+          "expected_accuracy": 0.6080447,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.5933671770077895,
+          "low_expert_reliability_accuracy": 0.5925409232512037,
+          "patient_ask_rate": 0.8
+        },
+        "oracle": {
+          "action_rates": {
+            "ANSWER": 0.0,
+            "ASK": 0.8,
+            "CONSULT": 0.2,
+            "DEFER": 0.0
+          },
+          "expected_accuracy": 0.6574897,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.6466067687348912,
+          "low_expert_reliability_accuracy": 0.6180163551401868,
+          "patient_ask_rate": 0.8
+        },
+        "patient_reliability": {
+          "action_rates": {
+            "ANSWER": 0.0,
+            "ASK": 0.9,
+            "CONSULT": 0.0,
+            "DEFER": 0.1
+          },
+          "expected_accuracy": 0.62754405,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.612344345957561,
+          "low_expert_reliability_accuracy": 0.6232304587935429,
+          "patient_ask_rate": 0.9
+        }
+      },
+      "seed": 5
+    },
+    {
+      "metrics": {
+        "always_answer": {
+          "action_rates": {
+            "ANSWER": 1.0,
+            "ASK": 0.0,
+            "CONSULT": 0.0,
+            "DEFER": 0.0
+          },
+          "expected_accuracy": 0.5719360000000001,
+          "expert_units_per_case": 0.0,
+          "low_answerability_accuracy": 0.569325513196481,
+          "low_expert_reliability_accuracy": 0.5726521239954077,
+          "patient_ask_rate": 0.0
+        },
+        "both_reliabilities": {
+          "action_rates": {
+            "ANSWER": 0.1864,
+            "ASK": 0.6272,
+            "CONSULT": 0.1728,
+            "DEFER": 0.0136
+          },
+          "expected_accuracy": 0.65185455,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.6386222340709145,
+          "low_expert_reliability_accuracy": 0.6144331228473019,
+          "patient_ask_rate": 0.6272
+        },
+        "difficulty_only": {
+          "action_rates": {
+            "ANSWER": 0.0,
+            "ASK": 0.9,
+            "CONSULT": 0.0,
+            "DEFER": 0.1
+          },
+          "expected_accuracy": 0.62847035,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.6091338309784057,
+          "low_expert_reliability_accuracy": 0.6238765786452353,
+          "patient_ask_rate": 0.9
+        },
+        "expert_reliability": {
+          "action_rates": {
+            "ANSWER": 0.076,
+            "ASK": 0.724,
+            "CONSULT": 0.2,
+            "DEFER": 0.0
+          },
+          "expected_accuracy": 0.65496035,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.6387078112503333,
+          "low_expert_reliability_accuracy": 0.621132319173364,
+          "patient_ask_rate": 0.724
+        },
+        "no_reliability": {
+          "action_rates": {
+            "ANSWER": 0.0,
+            "ASK": 0.8,
+            "CONSULT": 0.2,
+            "DEFER": 0.0
+          },
+          "expected_accuracy": 0.6117875,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.594296987470008,
+          "low_expert_reliability_accuracy": 0.59605848163031,
+          "patient_ask_rate": 0.8
+        },
+        "oracle": {
+          "action_rates": {
+            "ANSWER": 0.0,
+            "ASK": 0.8,
+            "CONSULT": 0.2,
+            "DEFER": 0.0
+          },
+          "expected_accuracy": 0.6603662,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.6475670487869901,
+          "low_expert_reliability_accuracy": 0.621132319173364,
+          "patient_ask_rate": 0.8
+        },
+        "patient_reliability": {
+          "action_rates": {
+            "ANSWER": 0.1864,
+            "ASK": 0.7136,
+            "CONSULT": 0.0,
+            "DEFER": 0.1
+          },
+          "expected_accuracy": 0.6148091499999999,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.5896169021594241,
+          "low_expert_reliability_accuracy": 0.6108805252583237,
+          "patient_ask_rate": 0.7136
+        }
+      },
+      "seed": 6
+    },
+    {
+      "metrics": {
+        "always_answer": {
+          "action_rates": {
+            "ANSWER": 1.0,
+            "ASK": 0.0,
+            "CONSULT": 0.0,
+            "DEFER": 0.0
+          },
+          "expected_accuracy": 0.5678,
+          "expert_units_per_case": 0.0,
+          "low_answerability_accuracy": 0.5694117647058823,
+          "low_expert_reliability_accuracy": 0.5690489913544668,
+          "patient_ask_rate": 0.0
+        },
+        "both_reliabilities": {
+          "action_rates": {
+            "ANSWER": 0.4156,
+            "ASK": 0.3844,
+            "CONSULT": 0.2,
+            "DEFER": 0.0
+          },
+          "expected_accuracy": 0.58416395,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.5595631016042781,
+          "low_expert_reliability_accuracy": 0.5735174351585015,
+          "patient_ask_rate": 0.3844
+        },
+        "difficulty_only": {
+          "action_rates": {
+            "ANSWER": 0.0,
+            "ASK": 0.9,
+            "CONSULT": 0.0,
+            "DEFER": 0.1
+          },
+          "expected_accuracy": 0.624371,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.6086403743315508,
+          "low_expert_reliability_accuracy": 0.6203402737752162,
+          "patient_ask_rate": 0.9
+        },
+        "expert_reliability": {
+          "action_rates": {
+            "ANSWER": 0.172,
+            "ASK": 0.728,
+            "CONSULT": 0.0,
+            "DEFER": 0.1
+          },
+          "expected_accuracy": 0.62733315,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.6127941176470588,
+          "low_expert_reliability_accuracy": 0.6059969740634006,
+          "patient_ask_rate": 0.728
+        },
+        "no_reliability": {
+          "action_rates": {
+            "ANSWER": 0.0,
+            "ASK": 0.8,
+            "CONSULT": 0.2,
+            "DEFER": 0.0
+          },
+          "expected_accuracy": 0.6064615,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.5915901069518716,
+          "low_expert_reliability_accuracy": 0.5907630403458213,
+          "patient_ask_rate": 0.8
+        },
+        "oracle": {
+          "action_rates": {
+            "ANSWER": 0.0,
+            "ASK": 0.8,
+            "CONSULT": 0.2,
+            "DEFER": 0.0
+          },
+          "expected_accuracy": 0.65664465,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.6475144385026739,
+          "low_expert_reliability_accuracy": 0.6174044668587897,
+          "patient_ask_rate": 0.8
+        },
+        "patient_reliability": {
+          "action_rates": {
+            "ANSWER": 0.648,
+            "ASK": 0.252,
+            "CONSULT": 0.0,
+            "DEFER": 0.1
+          },
+          "expected_accuracy": 0.60701075,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.5859144385026739,
+          "low_expert_reliability_accuracy": 0.6033744956772334,
+          "patient_ask_rate": 0.252
+        }
+      },
+      "seed": 7
+    },
+    {
+      "metrics": {
+        "always_answer": {
+          "action_rates": {
+            "ANSWER": 1.0,
+            "ASK": 0.0,
+            "CONSULT": 0.0,
+            "DEFER": 0.0
+          },
+          "expected_accuracy": 0.5719360000000001,
+          "expert_units_per_case": 0.0,
+          "low_answerability_accuracy": 0.5727406241804354,
+          "low_expert_reliability_accuracy": 0.5743396226415094,
+          "patient_ask_rate": 0.0
+        },
+        "both_reliabilities": {
+          "action_rates": {
+            "ANSWER": 0.2134,
+            "ASK": 0.6866,
+            "CONSULT": 0.0,
+            "DEFER": 0.1
+          },
+          "expected_accuracy": 0.6321018,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.6204909520062942,
+          "low_expert_reliability_accuracy": 0.6145147226986849,
+          "patient_ask_rate": 0.6866
+        },
+        "difficulty_only": {
+          "action_rates": {
+            "ANSWER": 0.2544,
+            "ASK": 0.6456,
+            "CONSULT": 0.0,
+            "DEFER": 0.1
+          },
+          "expected_accuracy": 0.61621465,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.6032019407290847,
+          "low_expert_reliability_accuracy": 0.6129358919382505,
+          "patient_ask_rate": 0.6456
+        },
+        "expert_reliability": {
+          "action_rates": {
+            "ANSWER": 0.0726,
+            "ASK": 0.8274,
+            "CONSULT": 0.0,
+            "DEFER": 0.1
+          },
+          "expected_accuracy": 0.6350470500000001,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.6204419092578022,
+          "low_expert_reliability_accuracy": 0.6217600057175529,
+          "patient_ask_rate": 0.8274
+        },
+        "no_reliability": {
+          "action_rates": {
+            "ANSWER": 0.0,
+            "ASK": 0.9,
+            "CONSULT": 0.0,
+            "DEFER": 0.1
+          },
+          "expected_accuracy": 0.61810765,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.6018030422239706,
+          "low_expert_reliability_accuracy": 0.6150641795311605,
+          "patient_ask_rate": 0.9
+        },
+        "oracle": {
+          "action_rates": {
+            "ANSWER": 0.0,
+            "ASK": 0.8,
+            "CONSULT": 0.2,
+            "DEFER": 0.0
+          },
+          "expected_accuracy": 0.65970695,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.6503669027012852,
+          "low_expert_reliability_accuracy": 0.6217600057175529,
+          "patient_ask_rate": 0.8
+        },
+        "patient_reliability": {
+          "action_rates": {
+            "ANSWER": 0.1954,
+            "ASK": 0.7046,
+            "CONSULT": 0.0,
+            "DEFER": 0.1
+          },
+          "expected_accuracy": 0.6225018,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.6060141620771047,
+          "low_expert_reliability_accuracy": 0.6195447398513436,
+          "patient_ask_rate": 0.7046
+        }
+      },
+      "seed": 8
+    },
+    {
+      "metrics": {
+        "always_answer": {
+          "action_rates": {
+            "ANSWER": 1.0,
+            "ASK": 0.0,
+            "CONSULT": 0.0,
+            "DEFER": 0.0
+          },
+          "expected_accuracy": 0.566656,
+          "expert_units_per_case": 0.0,
+          "low_answerability_accuracy": 0.5659716653301257,
+          "low_expert_reliability_accuracy": 0.5628226501868353,
+          "patient_ask_rate": 0.0
+        },
+        "both_reliabilities": {
+          "action_rates": {
+            "ANSWER": 0.4946,
+            "ASK": 0.4054,
+            "CONSULT": 0.0,
+            "DEFER": 0.1
+          },
+          "expected_accuracy": 0.5946465,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.5882042234696606,
+          "low_expert_reliability_accuracy": 0.585215291750503,
+          "patient_ask_rate": 0.4054
+        },
+        "difficulty_only": {
+          "action_rates": {
+            "ANSWER": 0.0,
+            "ASK": 0.9,
+            "CONSULT": 0.0,
+            "DEFER": 0.1
+          },
+          "expected_accuracy": 0.62327935,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.6051662657043572,
+          "low_expert_reliability_accuracy": 0.6147418798505317,
+          "patient_ask_rate": 0.9
+        },
+        "expert_reliability": {
+          "action_rates": {
+            "ANSWER": 0.4332,
+            "ASK": 0.4668,
+            "CONSULT": 0.0,
+            "DEFER": 0.1
+          },
+          "expected_accuracy": 0.5968569,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.5887399091152099,
+          "low_expert_reliability_accuracy": 0.585215291750503,
+          "patient_ask_rate": 0.4668
+        },
+        "no_reliability": {
+          "action_rates": {
+            "ANSWER": 0.0,
+            "ASK": 0.9,
+            "CONSULT": 0.0,
+            "DEFER": 0.1
+          },
+          "expected_accuracy": 0.6132372,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.5953731622560813,
+          "low_expert_reliability_accuracy": 0.6048661253233688,
+          "patient_ask_rate": 0.9
+        },
+        "oracle": {
+          "action_rates": {
+            "ANSWER": 0.0,
+            "ASK": 0.8,
+            "CONSULT": 0.2,
+            "DEFER": 0.0
+          },
+          "expected_accuracy": 0.6550739999999999,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.6431937984496124,
+          "low_expert_reliability_accuracy": 0.6115948548433457,
+          "patient_ask_rate": 0.8
+        },
+        "patient_reliability": {
+          "action_rates": {
+            "ANSWER": 0.1802,
+            "ASK": 0.7198,
+            "CONSULT": 0.0,
+            "DEFER": 0.1
+          },
+          "expected_accuracy": 0.6184645999999999,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.599486768243785,
+          "low_expert_reliability_accuracy": 0.6106523426271917,
+          "patient_ask_rate": 0.7198
+        }
+      },
+      "seed": 9
+    },
+    {
+      "metrics": {
+        "always_answer": {
+          "action_rates": {
+            "ANSWER": 1.0,
+            "ASK": 0.0,
+            "CONSULT": 0.0,
+            "DEFER": 0.0
+          },
+          "expected_accuracy": 0.5690320000000001,
+          "expert_units_per_case": 0.0,
+          "low_answerability_accuracy": 0.5678891257995736,
+          "low_expert_reliability_accuracy": 0.5679221522610189,
+          "patient_ask_rate": 0.0
+        },
+        "both_reliabilities": {
+          "action_rates": {
+            "ANSWER": 0.2402,
+            "ASK": 0.6598,
+            "CONSULT": 0.0,
+            "DEFER": 0.1
+          },
+          "expected_accuracy": 0.62846535,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.6166748400852878,
+          "low_expert_reliability_accuracy": 0.604598955352032,
+          "patient_ask_rate": 0.6598
+        },
+        "difficulty_only": {
+          "action_rates": {
+            "ANSWER": 0.0,
+            "ASK": 0.8,
+            "CONSULT": 0.2,
+            "DEFER": 0.0
+          },
+          "expected_accuracy": 0.6116907500000001,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.5960628997867804,
+          "low_expert_reliability_accuracy": 0.5933641957641671,
+          "patient_ask_rate": 0.8
+        },
+        "expert_reliability": {
+          "action_rates": {
+            "ANSWER": 0.1714,
+            "ASK": 0.6286,
+            "CONSULT": 0.2,
+            "DEFER": 0.0
+          },
+          "expected_accuracy": 0.6474179,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.6335525053304903,
+          "low_expert_reliability_accuracy": 0.604598955352032,
+          "patient_ask_rate": 0.6286
+        },
+        "no_reliability": {
+          "action_rates": {
+            "ANSWER": 0.0,
+            "ASK": 0.8,
+            "CONSULT": 0.2,
+            "DEFER": 0.0
+          },
+          "expected_accuracy": 0.6062601,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.5902793176972282,
+          "low_expert_reliability_accuracy": 0.5892975100171723,
+          "patient_ask_rate": 0.8
+        },
+        "oracle": {
+          "action_rates": {
+            "ANSWER": 0.0,
+            "ASK": 0.8,
+            "CONSULT": 0.2,
+            "DEFER": 0.0
+          },
+          "expected_accuracy": 0.6572355500000001,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.6450095948827292,
+          "low_expert_reliability_accuracy": 0.6162623783629079,
+          "patient_ask_rate": 0.8
+        },
+        "patient_reliability": {
+          "action_rates": {
+            "ANSWER": 0.5504,
+            "ASK": 0.2496,
+            "CONSULT": 0.2,
+            "DEFER": 0.0
+          },
+          "expected_accuracy": 0.60013655,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.5741257995735609,
+          "low_expert_reliability_accuracy": 0.581989911276474,
+          "patient_ask_rate": 0.2496
+        }
+      },
+      "seed": 10
+    },
+    {
+      "metrics": {
+        "always_answer": {
+          "action_rates": {
+            "ANSWER": 1.0,
+            "ASK": 0.0,
+            "CONSULT": 0.0,
+            "DEFER": 0.0
+          },
+          "expected_accuracy": 0.5657760000000001,
+          "expert_units_per_case": 0.0,
+          "low_answerability_accuracy": 0.5650869216368013,
+          "low_expert_reliability_accuracy": 0.5678628571428571,
+          "patient_ask_rate": 0.0
+        },
+        "both_reliabilities": {
+          "action_rates": {
+            "ANSWER": 0.4406,
+            "ASK": 0.3594,
+            "CONSULT": 0.2,
+            "DEFER": 0.0
+          },
+          "expected_accuracy": 0.6405747,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.6215790318266917,
+          "low_expert_reliability_accuracy": 0.602207,
+          "patient_ask_rate": 0.3594
+        },
+        "difficulty_only": {
+          "action_rates": {
+            "ANSWER": 0.0,
+            "ASK": 0.9,
+            "CONSULT": 0.0,
+            "DEFER": 0.1
+          },
+          "expected_accuracy": 0.6217826,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.604010163145226,
+          "low_expert_reliability_accuracy": 0.6203822857142858,
+          "patient_ask_rate": 0.9
+        },
+        "expert_reliability": {
+          "action_rates": {
+            "ANSWER": 0.0688,
+            "ASK": 0.7312,
+            "CONSULT": 0.2,
+            "DEFER": 0.0
+          },
+          "expected_accuracy": 0.6496699,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.6356458946242312,
+          "low_expert_reliability_accuracy": 0.6172344285714285,
+          "patient_ask_rate": 0.7312
+        },
+        "no_reliability": {
+          "action_rates": {
+            "ANSWER": 0.0,
+            "ASK": 0.8,
+            "CONSULT": 0.2,
+            "DEFER": 0.0
+          },
+          "expected_accuracy": 0.6051728,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.5885274137469911,
+          "low_expert_reliability_accuracy": 0.5919130714285714,
+          "patient_ask_rate": 0.8
+        },
+        "oracle": {
+          "action_rates": {
+            "ANSWER": 0.0,
+            "ASK": 0.8,
+            "CONSULT": 0.2,
+            "DEFER": 0.0
+          },
+          "expected_accuracy": 0.6551763,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.6453928857983419,
+          "low_expert_reliability_accuracy": 0.6172344285714285,
+          "patient_ask_rate": 0.8
+        },
+        "patient_reliability": {
+          "action_rates": {
+            "ANSWER": 0.1786,
+            "ASK": 0.7214,
+            "CONSULT": 0.0,
+            "DEFER": 0.1
+          },
+          "expected_accuracy": 0.6176768,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.5986632789515913,
+          "low_expert_reliability_accuracy": 0.615845,
+          "patient_ask_rate": 0.7214
+        }
+      },
+      "seed": 11
+    },
+    {
+      "metrics": {
+        "always_answer": {
+          "action_rates": {
+            "ANSWER": 1.0,
+            "ASK": 0.0,
+            "CONSULT": 0.0,
+            "DEFER": 0.0
+          },
+          "expected_accuracy": 0.57264,
+          "expert_units_per_case": 0.0,
+          "low_answerability_accuracy": 0.5718100890207716,
+          "low_expert_reliability_accuracy": 0.5736708860759494,
+          "patient_ask_rate": 0.0
+        },
+        "both_reliabilities": {
+          "action_rates": {
+            "ANSWER": 0.1318,
+            "ASK": 0.6682,
+            "CONSULT": 0.2,
+            "DEFER": 0.0
+          },
+          "expected_accuracy": 0.6045854,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.5740210412732668,
+          "low_expert_reliability_accuracy": 0.5935043153049483,
+          "patient_ask_rate": 0.6682
+        },
+        "difficulty_only": {
+          "action_rates": {
+            "ANSWER": 0.0,
+            "ASK": 0.9,
+            "CONSULT": 0.0,
+            "DEFER": 0.1
+          },
+          "expected_accuracy": 0.62968945,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.6118540598867008,
+          "low_expert_reliability_accuracy": 0.6255499856156502,
+          "patient_ask_rate": 0.9
+        },
+        "expert_reliability": {
+          "action_rates": {
+            "ANSWER": 0.1796,
+            "ASK": 0.7204,
+            "CONSULT": 0.0,
+            "DEFER": 0.1
+          },
+          "expected_accuracy": 0.6161916000000001,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.599994065281899,
+          "low_expert_reliability_accuracy": 0.6144869821634061,
+          "patient_ask_rate": 0.7204
+        },
+        "no_reliability": {
+          "action_rates": {
+            "ANSWER": 0.0,
+            "ASK": 0.8,
+            "CONSULT": 0.2,
+            "DEFER": 0.0
+          },
+          "expected_accuracy": 0.61266475,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.5966684650660912,
+          "low_expert_reliability_accuracy": 0.5964371403912544,
+          "patient_ask_rate": 0.8
+        },
+        "oracle": {
+          "action_rates": {
+            "ANSWER": 0.0,
+            "ASK": 0.8,
+            "CONSULT": 0.2,
+            "DEFER": 0.0
+          },
+          "expected_accuracy": 0.6613829,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.6490752630159159,
+          "low_expert_reliability_accuracy": 0.622379746835443,
+          "patient_ask_rate": 0.8
+        },
+        "patient_reliability": {
+          "action_rates": {
+            "ANSWER": 0.0,
+            "ASK": 0.8044,
+            "CONSULT": 0.1912,
+            "DEFER": 0.0044
+          },
+          "expected_accuracy": 0.6071650000000001,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.6016954410574589,
+          "low_expert_reliability_accuracy": 0.5899551208285386,
+          "patient_ask_rate": 0.8044
+        }
+      },
+      "seed": 12
+    },
+    {
+      "metrics": {
+        "always_answer": {
+          "action_rates": {
+            "ANSWER": 1.0,
+            "ASK": 0.0,
+            "CONSULT": 0.0,
+            "DEFER": 0.0
+          },
+          "expected_accuracy": 0.569824,
+          "expert_units_per_case": 0.0,
+          "low_answerability_accuracy": 0.5702051691979749,
+          "low_expert_reliability_accuracy": 0.5718474238542557,
+          "patient_ask_rate": 0.0
+        },
+        "both_reliabilities": {
+          "action_rates": {
+            "ANSWER": 0.5788,
+            "ASK": 0.2276,
+            "CONSULT": 0.1872,
+            "DEFER": 0.0064
+          },
+          "expected_accuracy": 0.63773765,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.6251372235544899,
+          "low_expert_reliability_accuracy": 0.5988623683461429,
+          "patient_ask_rate": 0.2276
+        },
+        "difficulty_only": {
+          "action_rates": {
+            "ANSWER": 0.2496,
+            "ASK": 0.6504,
+            "CONSULT": 0.0,
+            "DEFER": 0.1
+          },
+          "expected_accuracy": 0.6140661000000001,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.5999914734878764,
+          "low_expert_reliability_accuracy": 0.6114319669797894,
+          "patient_ask_rate": 0.6504
+        },
+        "expert_reliability": {
+          "action_rates": {
+            "ANSWER": 0.7736,
+            "ASK": 0.1264,
+            "CONSULT": 0.0,
+            "DEFER": 0.1
+          },
+          "expected_accuracy": 0.59954645,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.5971870503597122,
+          "low_expert_reliability_accuracy": 0.5718474238542557,
+          "patient_ask_rate": 0.1264
+        },
+        "no_reliability": {
+          "action_rates": {
+            "ANSWER": 0.0,
+            "ASK": 0.8,
+            "CONSULT": 0.2,
+            "DEFER": 0.0
+          },
+          "expected_accuracy": 0.6071444500000001,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.5924034106048495,
+          "low_expert_reliability_accuracy": 0.5933369627099345,
+          "patient_ask_rate": 0.8
+        },
+        "oracle": {
+          "action_rates": {
+            "ANSWER": 0.0,
+            "ASK": 0.8,
+            "CONSULT": 0.2,
+            "DEFER": 0.0
+          },
+          "expected_accuracy": 0.6583857,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.6482115640820677,
+          "low_expert_reliability_accuracy": 0.6206642470822659,
+          "patient_ask_rate": 0.8
+        },
+        "patient_reliability": {
+          "action_rates": {
+            "ANSWER": 0.6506,
+            "ASK": 0.2494,
+            "CONSULT": 0.0,
+            "DEFER": 0.1
+          },
+          "expected_accuracy": 0.60877405,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.5868212096989076,
+          "low_expert_reliability_accuracy": 0.606722317107885,
+          "patient_ask_rate": 0.2494
+        }
+      },
+      "seed": 13
+    },
+    {
+      "metrics": {
+        "always_answer": {
+          "action_rates": {
+            "ANSWER": 1.0,
+            "ASK": 0.0,
+            "CONSULT": 0.0,
+            "DEFER": 0.0
+          },
+          "expected_accuracy": 0.567712,
+          "expert_units_per_case": 0.0,
+          "low_answerability_accuracy": 0.5667552484719639,
+          "low_expert_reliability_accuracy": 0.5676187798706775,
+          "patient_ask_rate": 0.0
+        },
+        "both_reliabilities": {
+          "action_rates": {
+            "ANSWER": 0.6806,
+            "ASK": 0.1928,
+            "CONSULT": 0.0532,
+            "DEFER": 0.0734
+          },
+          "expected_accuracy": 0.6073849,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.5757214988041457,
+          "low_expert_reliability_accuracy": 0.5937100084340737,
+          "patient_ask_rate": 0.1928
+        },
+        "difficulty_only": {
+          "action_rates": {
+            "ANSWER": 0.5552,
+            "ASK": 0.2448,
+            "CONSULT": 0.2,
+            "DEFER": 0.0
+          },
+          "expected_accuracy": 0.5850816000000001,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.5811820356098858,
+          "low_expert_reliability_accuracy": 0.5673117795895418,
+          "patient_ask_rate": 0.2448
+        },
+        "expert_reliability": {
+          "action_rates": {
+            "ANSWER": 0.6552,
+            "ASK": 0.2448,
+            "CONSULT": 0.0,
+            "DEFER": 0.1
+          },
+          "expected_accuracy": 0.6030616,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.599397289396758,
+          "low_expert_reliability_accuracy": 0.5791700871520945,
+          "patient_ask_rate": 0.2448
+        },
+        "no_reliability": {
+          "action_rates": {
+            "ANSWER": 0.8,
+            "ASK": 0.0,
+            "CONSULT": 0.2,
+            "DEFER": 0.0
+          },
+          "expected_accuracy": 0.5676696,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.5668169014084508,
+          "low_expert_reliability_accuracy": 0.5513488895136351,
+          "patient_ask_rate": 0.0
+        },
+        "oracle": {
+          "action_rates": {
+            "ANSWER": 0.0,
+            "ASK": 0.8,
+            "CONSULT": 0.2,
+            "DEFER": 0.0
+          },
+          "expected_accuracy": 0.65529165,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.6421841615732129,
+          "low_expert_reliability_accuracy": 0.6157001686814731,
+          "patient_ask_rate": 0.8
+        },
+        "patient_reliability": {
+          "action_rates": {
+            "ANSWER": 0.57,
+            "ASK": 0.23,
+            "CONSULT": 0.2,
+            "DEFER": 0.0
+          },
+          "expected_accuracy": 0.57592425,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.5442269465851713,
+          "low_expert_reliability_accuracy": 0.5640950238965421,
+          "patient_ask_rate": 0.23
+        }
+      },
+      "seed": 14
+    },
+    {
+      "metrics": {
+        "always_answer": {
+          "action_rates": {
+            "ANSWER": 1.0,
+            "ASK": 0.0,
+            "CONSULT": 0.0,
+            "DEFER": 0.0
+          },
+          "expected_accuracy": 0.570704,
+          "expert_units_per_case": 0.0,
+          "low_answerability_accuracy": 0.5708762612851832,
+          "low_expert_reliability_accuracy": 0.5705976551329711,
+          "patient_ask_rate": 0.0
+        },
+        "both_reliabilities": {
+          "action_rates": {
+            "ANSWER": 0.646,
+            "ASK": 0.171,
+            "CONSULT": 0.166,
+            "DEFER": 0.017
+          },
+          "expected_accuracy": 0.6293447,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.6237705788635156,
+          "low_expert_reliability_accuracy": 0.5951682871032313,
+          "patient_ask_rate": 0.171
+        },
+        "difficulty_only": {
+          "action_rates": {
+            "ANSWER": 0.0,
+            "ASK": 0.9,
+            "CONSULT": 0.0,
+            "DEFER": 0.1
+          },
+          "expected_accuracy": 0.6264232,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.6095751460435475,
+          "low_expert_reliability_accuracy": 0.6211858021160995,
+          "patient_ask_rate": 0.9
+        },
+        "expert_reliability": {
+          "action_rates": {
+            "ANSWER": 0.1248,
+            "ASK": 0.7752,
+            "CONSULT": 0.0,
+            "DEFER": 0.1
+          },
+          "expected_accuracy": 0.63149205,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.6175764737121615,
+          "low_expert_reliability_accuracy": 0.6183106233914785,
+          "patient_ask_rate": 0.7752
+        },
+        "no_reliability": {
+          "action_rates": {
+            "ANSWER": 0.0,
+            "ASK": 0.8,
+            "CONSULT": 0.2,
+            "DEFER": 0.0
+          },
+          "expected_accuracy": 0.6097985499999999,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.5944676048858205,
+          "low_expert_reliability_accuracy": 0.5924372319130684,
+          "patient_ask_rate": 0.8
+        },
+        "oracle": {
+          "action_rates": {
+            "ANSWER": 0.0,
+            "ASK": 0.8,
+            "CONSULT": 0.2,
+            "DEFER": 0.0
+          },
+          "expected_accuracy": 0.65853785,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.6470878916622411,
+          "low_expert_reliability_accuracy": 0.6183106233914785,
+          "patient_ask_rate": 0.8
+        },
+        "patient_reliability": {
+          "action_rates": {
+            "ANSWER": 0.6532,
+            "ASK": 0.2468,
+            "CONSULT": 0.0,
+            "DEFER": 0.1
+          },
+          "expected_accuracy": 0.60918875,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.587222517259692,
+          "low_expert_reliability_accuracy": 0.6040689877037461,
+          "patient_ask_rate": 0.2468
+        }
+      },
+      "seed": 15
+    },
+    {
+      "metrics": {
+        "always_answer": {
+          "action_rates": {
+            "ANSWER": 1.0,
+            "ASK": 0.0,
+            "CONSULT": 0.0,
+            "DEFER": 0.0
+          },
+          "expected_accuracy": 0.570528,
+          "expert_units_per_case": 0.0,
+          "low_answerability_accuracy": 0.5701788617886179,
+          "low_expert_reliability_accuracy": 0.5718343875790685,
+          "patient_ask_rate": 0.0
+        },
+        "both_reliabilities": {
+          "action_rates": {
+            "ANSWER": 0.2996,
+            "ASK": 0.5694,
+            "CONSULT": 0.062,
+            "DEFER": 0.069
+          },
+          "expected_accuracy": 0.62186315,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.591639024390244,
+          "low_expert_reliability_accuracy": 0.6191310379528465,
+          "patient_ask_rate": 0.5694
+        },
+        "difficulty_only": {
+          "action_rates": {
+            "ANSWER": 0.0,
+            "ASK": 0.9,
+            "CONSULT": 0.0,
+            "DEFER": 0.1
+          },
+          "expected_accuracy": 0.62748455,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.6091682926829268,
+          "low_expert_reliability_accuracy": 0.6239547153536515,
+          "patient_ask_rate": 0.9
+        },
+        "expert_reliability": {
+          "action_rates": {
+            "ANSWER": 0.03,
+            "ASK": 0.77,
+            "CONSULT": 0.2,
+            "DEFER": 0.0
+          },
+          "expected_accuracy": 0.6562413500000001,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.6408235772357724,
+          "low_expert_reliability_accuracy": 0.620872556066705,
+          "patient_ask_rate": 0.77
+        },
+        "no_reliability": {
+          "action_rates": {
+            "ANSWER": 0.0,
+            "ASK": 0.8,
+            "CONSULT": 0.2,
+            "DEFER": 0.0
+          },
+          "expected_accuracy": 0.60905545,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.5918636856368563,
+          "low_expert_reliability_accuracy": 0.5940889160437033,
+          "patient_ask_rate": 0.8
+        },
+        "oracle": {
+          "action_rates": {
+            "ANSWER": 0.0,
+            "ASK": 0.8,
+            "CONSULT": 0.2,
+            "DEFER": 0.0
+          },
+          "expected_accuracy": 0.65968385,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.6479780487804878,
+          "low_expert_reliability_accuracy": 0.620872556066705,
+          "patient_ask_rate": 0.8
+        },
+        "patient_reliability": {
+          "action_rates": {
+            "ANSWER": 0.4532,
+            "ASK": 0.4468,
+            "CONSULT": 0.0,
+            "DEFER": 0.1
+          },
+          "expected_accuracy": 0.6171219,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.5957029810298103,
+          "low_expert_reliability_accuracy": 0.6140695083381253,
+          "patient_ask_rate": 0.4468
+        }
+      },
+      "seed": 16
+    },
+    {
+      "metrics": {
+        "always_answer": {
+          "action_rates": {
+            "ANSWER": 1.0,
+            "ASK": 0.0,
+            "CONSULT": 0.0,
+            "DEFER": 0.0
+          },
+          "expected_accuracy": 0.567712,
+          "expert_units_per_case": 0.0,
+          "low_answerability_accuracy": 0.5705562949161564,
+          "low_expert_reliability_accuracy": 0.5668499427262313,
+          "patient_ask_rate": 0.0
+        },
+        "both_reliabilities": {
+          "action_rates": {
+            "ANSWER": 0.7416,
+            "ASK": 0.1142,
+            "CONSULT": 0.0884,
+            "DEFER": 0.0558
+          },
+          "expected_accuracy": 0.6087836,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.601579984029811,
+          "low_expert_reliability_accuracy": 0.5713172966781214,
+          "patient_ask_rate": 0.1142
+        },
+        "difficulty_only": {
+          "action_rates": {
+            "ANSWER": 0.6552,
+            "ASK": 0.2448,
+            "CONSULT": 0.0,
+            "DEFER": 0.1
+          },
+          "expected_accuracy": 0.5913968,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.5919712536598349,
+          "low_expert_reliability_accuracy": 0.5860011454753723,
+          "patient_ask_rate": 0.2448
+        },
+        "expert_reliability": {
+          "action_rates": {
+            "ANSWER": 0.5288,
+            "ASK": 0.3712,
+            "CONSULT": 0.0,
+            "DEFER": 0.1
+          },
+          "expected_accuracy": 0.6089394,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.6069049773755657,
+          "low_expert_reliability_accuracy": 0.578049255441008,
+          "patient_ask_rate": 0.3712
+        },
+        "no_reliability": {
+          "action_rates": {
+            "ANSWER": 0.0,
+            "ASK": 0.8,
+            "CONSULT": 0.2,
+            "DEFER": 0.0
+          },
+          "expected_accuracy": 0.6060589,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.5936491881820601,
+          "low_expert_reliability_accuracy": 0.5895877004581902,
+          "patient_ask_rate": 0.8
+        },
+        "oracle": {
+          "action_rates": {
+            "ANSWER": 0.0,
+            "ASK": 0.8,
+            "CONSULT": 0.2,
+            "DEFER": 0.0
+          },
+          "expected_accuracy": 0.6563,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.6481778014373171,
+          "low_expert_reliability_accuracy": 0.6156806987399771,
+          "patient_ask_rate": 0.8
+        },
+        "patient_reliability": {
+          "action_rates": {
+            "ANSWER": 0.5552,
+            "ASK": 0.2448,
+            "CONSULT": 0.2,
+            "DEFER": 0.0
+          },
+          "expected_accuracy": 0.5849288,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.5875070535001331,
+          "low_expert_reliability_accuracy": 0.5660045819014892,
+          "patient_ask_rate": 0.2448
+        }
+      },
+      "seed": 17
+    },
+    {
+      "metrics": {
+        "always_answer": {
+          "action_rates": {
+            "ANSWER": 1.0,
+            "ASK": 0.0,
+            "CONSULT": 0.0,
+            "DEFER": 0.0
+          },
+          "expected_accuracy": 0.568944,
+          "expert_units_per_case": 0.0,
+          "low_answerability_accuracy": 0.5709115209836942,
+          "low_expert_reliability_accuracy": 0.5654760563380282,
+          "patient_ask_rate": 0.0
+        },
+        "both_reliabilities": {
+          "action_rates": {
+            "ANSWER": 0.1886,
+            "ASK": 0.6114,
+            "CONSULT": 0.2,
+            "DEFER": 0.0
+          },
+          "expected_accuracy": 0.64993435,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.6364840951617214,
+          "low_expert_reliability_accuracy": 0.6079894366197184,
+          "patient_ask_rate": 0.6114
+        },
+        "difficulty_only": {
+          "action_rates": {
+            "ANSWER": 0.0,
+            "ASK": 0.9,
+            "CONSULT": 0.0,
+            "DEFER": 0.1
+          },
+          "expected_accuracy": 0.62468575,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.6092854851643945,
+          "low_expert_reliability_accuracy": 0.6175454929577465,
+          "patient_ask_rate": 0.9
+        },
+        "expert_reliability": {
+          "action_rates": {
+            "ANSWER": 0.0126,
+            "ASK": 0.7874,
+            "CONSULT": 0.2,
+            "DEFER": 0.0
+          },
+          "expected_accuracy": 0.6552781,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.6426717455225875,
+          "low_expert_reliability_accuracy": 0.6144897183098592,
+          "patient_ask_rate": 0.7874
+        },
+        "no_reliability": {
+          "action_rates": {
+            "ANSWER": 0.0,
+            "ASK": 0.8,
+            "CONSULT": 0.2,
+            "DEFER": 0.0
+          },
+          "expected_accuracy": 0.606898,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.5928158246458167,
+          "low_expert_reliability_accuracy": 0.5883841549295775,
+          "patient_ask_rate": 0.8
+        },
+        "oracle": {
+          "action_rates": {
+            "ANSWER": 0.0,
+            "ASK": 0.8,
+            "CONSULT": 0.2,
+            "DEFER": 0.0
+          },
+          "expected_accuracy": 0.6567239500000001,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.6455586741512964,
+          "low_expert_reliability_accuracy": 0.6144897183098592,
+          "patient_ask_rate": 0.8
+        },
+        "patient_reliability": {
+          "action_rates": {
+            "ANSWER": 0.6482,
+            "ASK": 0.2518,
+            "CONSULT": 0.0,
+            "DEFER": 0.1
+          },
+          "expected_accuracy": 0.6079718,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.5871959369152634,
+          "low_expert_reliability_accuracy": 0.600746338028169,
+          "patient_ask_rate": 0.2518
+        }
+      },
+      "seed": 18
+    },
+    {
+      "metrics": {
+        "always_answer": {
+          "action_rates": {
+            "ANSWER": 1.0,
+            "ASK": 0.0,
+            "CONSULT": 0.0,
+            "DEFER": 0.0
+          },
+          "expected_accuracy": 0.574488,
+          "expert_units_per_case": 0.0,
+          "low_answerability_accuracy": 0.5762506638343069,
+          "low_expert_reliability_accuracy": 0.5782145922746782,
+          "patient_ask_rate": 0.0
+        },
+        "both_reliabilities": {
+          "action_rates": {
+            "ANSWER": 0.5474,
+            "ASK": 0.3238,
+            "CONSULT": 0.0576,
+            "DEFER": 0.0712
+          },
+          "expected_accuracy": 0.6279618,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.6048882103027085,
+          "low_expert_reliability_accuracy": 0.6040801144492133,
+          "patient_ask_rate": 0.3238
+        },
+        "difficulty_only": {
+          "action_rates": {
+            "ANSWER": 0.0,
+            "ASK": 0.9,
+            "CONSULT": 0.0,
+            "DEFER": 0.1
+          },
+          "expected_accuracy": 0.63063605,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.6157668613913967,
+          "low_expert_reliability_accuracy": 0.6295921316165951,
+          "patient_ask_rate": 0.9
+        },
+        "expert_reliability": {
+          "action_rates": {
+            "ANSWER": 0.0,
+            "ASK": 0.8,
+            "CONSULT": 0.2,
+            "DEFER": 0.0
+          },
+          "expected_accuracy": 0.6610215,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.6480475305363781,
+          "low_expert_reliability_accuracy": 0.626370243204578,
+          "patient_ask_rate": 0.8
+        },
+        "no_reliability": {
+          "action_rates": {
+            "ANSWER": 0.0,
+            "ASK": 0.8,
+            "CONSULT": 0.2,
+            "DEFER": 0.0
+          },
+          "expected_accuracy": 0.61277375,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.598896176314392,
+          "low_expert_reliability_accuracy": 0.5999465665236052,
+          "patient_ask_rate": 0.8
+        },
+        "oracle": {
+          "action_rates": {
+            "ANSWER": 0.0,
+            "ASK": 0.8,
+            "CONSULT": 0.2,
+            "DEFER": 0.0
+          },
+          "expected_accuracy": 0.66286425,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.6539861922464154,
+          "low_expert_reliability_accuracy": 0.626370243204578,
+          "patient_ask_rate": 0.8
+        },
+        "patient_reliability": {
+          "action_rates": {
+            "ANSWER": 0.0,
+            "ASK": 0.9,
+            "CONSULT": 0.0,
+            "DEFER": 0.1
+          },
+          "expected_accuracy": 0.6237739999999999,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.6056285183218268,
+          "low_expert_reliability_accuracy": 0.6226374105865522,
+          "patient_ask_rate": 0.9
+        }
+      },
+      "seed": 19
+    },
+    {
+      "metrics": {
+        "always_answer": {
+          "action_rates": {
+            "ANSWER": 1.0,
+            "ASK": 0.0,
+            "CONSULT": 0.0,
+            "DEFER": 0.0
+          },
+          "expected_accuracy": 0.566304,
+          "expert_units_per_case": 0.0,
+          "low_answerability_accuracy": 0.56628418230563,
+          "low_expert_reliability_accuracy": 0.5649855741488747,
+          "patient_ask_rate": 0.0
+        },
+        "both_reliabilities": {
+          "action_rates": {
+            "ANSWER": 0.2318,
+            "ASK": 0.639,
+            "CONSULT": 0.0584,
+            "DEFER": 0.0708
+          },
+          "expected_accuracy": 0.6052714,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.597586327077748,
+          "low_expert_reliability_accuracy": 0.5919648009232544,
+          "patient_ask_rate": 0.639
+        },
+        "difficulty_only": {
+          "action_rates": {
+            "ANSWER": 0.0,
+            "ASK": 0.9,
+            "CONSULT": 0.0,
+            "DEFER": 0.1
+          },
+          "expected_accuracy": 0.6232813500000001,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.6059337801608579,
+          "low_expert_reliability_accuracy": 0.616511396422389,
+          "patient_ask_rate": 0.9
+        },
+        "expert_reliability": {
+          "action_rates": {
+            "ANSWER": 0.0762,
+            "ASK": 0.7238,
+            "CONSULT": 0.2,
+            "DEFER": 0.0
+          },
+          "expected_accuracy": 0.6496524,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.6355174262734584,
+          "low_expert_reliability_accuracy": 0.6137487738026545,
+          "patient_ask_rate": 0.7238
+        },
+        "no_reliability": {
+          "action_rates": {
+            "ANSWER": 0.0,
+            "ASK": 0.8,
+            "CONSULT": 0.2,
+            "DEFER": 0.0
+          },
+          "expected_accuracy": 0.6074228,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.5917769436997319,
+          "low_expert_reliability_accuracy": 0.588883871898442,
+          "patient_ask_rate": 0.8
+        },
+        "oracle": {
+          "action_rates": {
+            "ANSWER": 0.0,
+            "ASK": 0.8,
+            "CONSULT": 0.2,
+            "DEFER": 0.0
+          },
+          "expected_accuracy": 0.6552412000000001,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.6446252010723861,
+          "low_expert_reliability_accuracy": 0.6137487738026545,
+          "patient_ask_rate": 0.8
+        },
+        "patient_reliability": {
+          "action_rates": {
+            "ANSWER": 0.0,
+            "ASK": 0.8036,
+            "CONSULT": 0.1928,
+            "DEFER": 0.0036
+          },
+          "expected_accuracy": 0.5994106,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.5960839142091153,
+          "low_expert_reliability_accuracy": 0.5799826889786498,
+          "patient_ask_rate": 0.8036
+        }
+      },
+      "seed": 20
+    },
+    {
+      "metrics": {
+        "always_answer": {
+          "action_rates": {
+            "ANSWER": 1.0,
+            "ASK": 0.0,
+            "CONSULT": 0.0,
+            "DEFER": 0.0
+          },
+          "expected_accuracy": 0.5712320000000001,
+          "expert_units_per_case": 0.0,
+          "low_answerability_accuracy": 0.5737248677248677,
+          "low_expert_reliability_accuracy": 0.5727106017191977,
+          "patient_ask_rate": 0.0
+        },
+        "both_reliabilities": {
+          "action_rates": {
+            "ANSWER": 0.6394,
+            "ASK": 0.2606,
+            "CONSULT": 0.0,
+            "DEFER": 0.1
+          },
+          "expected_accuracy": 0.61975075,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.6080349206349206,
+          "low_expert_reliability_accuracy": 0.5932275071633238,
+          "patient_ask_rate": 0.2606
+        },
+        "difficulty_only": {
+          "action_rates": {
+            "ANSWER": 0.0,
+            "ASK": 0.9,
+            "CONSULT": 0.0,
+            "DEFER": 0.1
+          },
+          "expected_accuracy": 0.62630595,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.6121410052910053,
+          "low_expert_reliability_accuracy": 0.6230761461318052,
+          "patient_ask_rate": 0.9
+        },
+        "expert_reliability": {
+          "action_rates": {
+            "ANSWER": 0.1788,
+            "ASK": 0.7212,
+            "CONSULT": 0.0,
+            "DEFER": 0.1
+          },
+          "expected_accuracy": 0.6297826,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.6168375661375662,
+          "low_expert_reliability_accuracy": 0.6084836676217765,
+          "patient_ask_rate": 0.7212
+        },
+        "no_reliability": {
+          "action_rates": {
+            "ANSWER": 0.0,
+            "ASK": 0.8,
+            "CONSULT": 0.2,
+            "DEFER": 0.0
+          },
+          "expected_accuracy": 0.6090485,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.5968068783068783,
+          "low_expert_reliability_accuracy": 0.5940164040114614,
+          "patient_ask_rate": 0.8
+        },
+        "oracle": {
+          "action_rates": {
+            "ANSWER": 0.0,
+            "ASK": 0.8,
+            "CONSULT": 0.2,
+            "DEFER": 0.0
+          },
+          "expected_accuracy": 0.659041,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.6498772486772487,
+          "low_expert_reliability_accuracy": 0.6204034383954155,
+          "patient_ask_rate": 0.8
+        },
+        "patient_reliability": {
+          "action_rates": {
+            "ANSWER": 0.4606,
+            "ASK": 0.4394,
+            "CONSULT": 0.0,
+            "DEFER": 0.1
+          },
+          "expected_accuracy": 0.61667875,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.5994423280423281,
+          "low_expert_reliability_accuracy": 0.6131037249283667,
+          "patient_ask_rate": 0.4394
+        }
+      },
+      "seed": 21
+    },
+    {
+      "metrics": {
+        "always_answer": {
+          "action_rates": {
+            "ANSWER": 1.0,
+            "ASK": 0.0,
+            "CONSULT": 0.0,
+            "DEFER": 0.0
+          },
+          "expected_accuracy": 0.570704,
+          "expert_units_per_case": 0.0,
+          "low_answerability_accuracy": 0.5726943556975506,
+          "low_expert_reliability_accuracy": 0.5693001735106998,
+          "patient_ask_rate": 0.0
+        },
+        "both_reliabilities": {
+          "action_rates": {
+            "ANSWER": 0.5198,
+            "ASK": 0.3502,
+            "CONSULT": 0.06,
+            "DEFER": 0.07
+          },
+          "expected_accuracy": 0.6160472,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.6076453674121406,
+          "low_expert_reliability_accuracy": 0.5806859456333141,
+          "patient_ask_rate": 0.3502
+        },
+        "difficulty_only": {
+          "action_rates": {
+            "ANSWER": 0.0,
+            "ASK": 0.9,
+            "CONSULT": 0.0,
+            "DEFER": 0.1
+          },
+          "expected_accuracy": 0.62712745,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.6121530883919063,
+          "low_expert_reliability_accuracy": 0.6206304945054945,
+          "patient_ask_rate": 0.9
+        },
+        "expert_reliability": {
+          "action_rates": {
+            "ANSWER": 0.5198,
+            "ASK": 0.3802,
+            "CONSULT": 0.0,
+            "DEFER": 0.1
+          },
+          "expected_accuracy": 0.61281515,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.6094414270500532,
+          "low_expert_reliability_accuracy": 0.5806859456333141,
+          "patient_ask_rate": 0.3802
+        },
+        "no_reliability": {
+          "action_rates": {
+            "ANSWER": 0.0,
+            "ASK": 0.9,
+            "CONSULT": 0.0,
+            "DEFER": 0.1
+          },
+          "expected_accuracy": 0.61713815,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.6014526091586795,
+          "low_expert_reliability_accuracy": 0.6111092394447657,
+          "patient_ask_rate": 0.9
+        },
+        "oracle": {
+          "action_rates": {
+            "ANSWER": 0.0,
+            "ASK": 0.8,
+            "CONSULT": 0.2,
+            "DEFER": 0.0
+          },
+          "expected_accuracy": 0.6590728,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.6498620873269436,
+          "low_expert_reliability_accuracy": 0.6174478744939271,
+          "patient_ask_rate": 0.8
+        },
+        "patient_reliability": {
+          "action_rates": {
+            "ANSWER": 0.1896,
+            "ASK": 0.7104,
+            "CONSULT": 0.0,
+            "DEFER": 0.1
+          },
+          "expected_accuracy": 0.607322,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.6151357827476038,
+          "low_expert_reliability_accuracy": 0.6010882012724118,
+          "patient_ask_rate": 0.7104
+        }
+      },
+      "seed": 22
+    },
+    {
+      "metrics": {
+        "always_answer": {
+          "action_rates": {
+            "ANSWER": 1.0,
+            "ASK": 0.0,
+            "CONSULT": 0.0,
+            "DEFER": 0.0
+          },
+          "expected_accuracy": 0.5668320000000001,
+          "expert_units_per_case": 0.0,
+          "low_answerability_accuracy": 0.5686217008797654,
+          "low_expert_reliability_accuracy": 0.5669585253456221,
+          "patient_ask_rate": 0.0
+        },
+        "both_reliabilities": {
+          "action_rates": {
+            "ANSWER": 0.6104,
+            "ASK": 0.2032,
+            "CONSULT": 0.1728,
+            "DEFER": 0.0136
+          },
+          "expected_accuracy": 0.6174412,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.6341418288456412,
+          "low_expert_reliability_accuracy": 0.5751947004608295,
+          "patient_ask_rate": 0.2032
+        },
+        "difficulty_only": {
+          "action_rates": {
+            "ANSWER": 0.6572,
+            "ASK": 0.2428,
+            "CONSULT": 0.0,
+            "DEFER": 0.1
+          },
+          "expected_accuracy": 0.5906752000000001,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.5901050386563583,
+          "low_expert_reliability_accuracy": 0.5860915898617511,
+          "patient_ask_rate": 0.2428
+        },
+        "expert_reliability": {
+          "action_rates": {
+            "ANSWER": 0.826,
+            "ASK": 0.074,
+            "CONSULT": 0.0,
+            "DEFER": 0.1
+          },
+          "expected_accuracy": 0.5780968,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.5791596907491335,
+          "low_expert_reliability_accuracy": 0.5781912442396313,
+          "patient_ask_rate": 0.074
+        },
+        "no_reliability": {
+          "action_rates": {
+            "ANSWER": 0.8,
+            "ASK": 0.0,
+            "CONSULT": 0.2,
+            "DEFER": 0.0
+          },
+          "expected_accuracy": 0.5672556000000001,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.5690514529458811,
+          "low_expert_reliability_accuracy": 0.5509251152073733,
+          "patient_ask_rate": 0.0
+        },
+        "oracle": {
+          "action_rates": {
+            "ANSWER": 0.0,
+            "ASK": 0.8,
+            "CONSULT": 0.2,
+            "DEFER": 0.0
+          },
+          "expected_accuracy": 0.6556128,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.6468488403092508,
+          "low_expert_reliability_accuracy": 0.6154750864055301,
+          "patient_ask_rate": 0.8
+        },
+        "patient_reliability": {
+          "action_rates": {
+            "ANSWER": 0.7148,
+            "ASK": 0.1852,
+            "CONSULT": 0.0,
+            "DEFER": 0.1
+          },
+          "expected_accuracy": 0.5860032000000001,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.594176486270328,
+          "low_expert_reliability_accuracy": 0.5815973502304148,
+          "patient_ask_rate": 0.1852
+        }
+      },
+      "seed": 23
+    },
+    {
+      "metrics": {
+        "always_answer": {
+          "action_rates": {
+            "ANSWER": 1.0,
+            "ASK": 0.0,
+            "CONSULT": 0.0,
+            "DEFER": 0.0
+          },
+          "expected_accuracy": 0.567008,
+          "expert_units_per_case": 0.0,
+          "low_answerability_accuracy": 0.5683346613545818,
+          "low_expert_reliability_accuracy": 0.5649771689497717,
+          "patient_ask_rate": 0.0
+        },
+        "both_reliabilities": {
+          "action_rates": {
+            "ANSWER": 0.3982,
+            "ASK": 0.4018,
+            "CONSULT": 0.2,
+            "DEFER": 0.0
+          },
+          "expected_accuracy": 0.6424699500000001,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.6246278884462152,
+          "low_expert_reliability_accuracy": 0.5982607734018265,
+          "patient_ask_rate": 0.4018
+        },
+        "difficulty_only": {
+          "action_rates": {
+            "ANSWER": 0.0,
+            "ASK": 0.9,
+            "CONSULT": 0.0,
+            "DEFER": 0.1
+          },
+          "expected_accuracy": 0.62246635,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.6068682602921647,
+          "low_expert_reliability_accuracy": 0.6165253281963471,
+          "patient_ask_rate": 0.9
+        },
+        "expert_reliability": {
+          "action_rates": {
+            "ANSWER": 0.0,
+            "ASK": 0.8,
+            "CONSULT": 0.2,
+            "DEFER": 0.0
+          },
+          "expected_accuracy": 0.65374785,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.6406031872509961,
+          "low_expert_reliability_accuracy": 0.6136023829908676,
+          "patient_ask_rate": 0.8
+        },
+        "no_reliability": {
+          "action_rates": {
+            "ANSWER": 0.0,
+            "ASK": 0.8,
+            "CONSULT": 0.2,
+            "DEFER": 0.0
+          },
+          "expected_accuracy": 0.6042145000000001,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.5901508632138115,
+          "low_expert_reliability_accuracy": 0.5867216752283105,
+          "patient_ask_rate": 0.8
+        },
+        "oracle": {
+          "action_rates": {
+            "ANSWER": 0.0,
+            "ASK": 0.8,
+            "CONSULT": 0.2,
+            "DEFER": 0.0
+          },
+          "expected_accuracy": 0.65525715,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.6454685258964145,
+          "low_expert_reliability_accuracy": 0.6136023829908676,
+          "patient_ask_rate": 0.8
+        },
+        "patient_reliability": {
+          "action_rates": {
+            "ANSWER": 0.0,
+            "ASK": 0.9,
+            "CONSULT": 0.0,
+            "DEFER": 0.1
+          },
+          "expected_accuracy": 0.6248583,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.610188047808765,
+          "low_expert_reliability_accuracy": 0.618871218607306,
+          "patient_ask_rate": 0.9
+        }
+      },
+      "seed": 24
+    },
+    {
+      "metrics": {
+        "always_answer": {
+          "action_rates": {
+            "ANSWER": 1.0,
+            "ASK": 0.0,
+            "CONSULT": 0.0,
+            "DEFER": 0.0
+          },
+          "expected_accuracy": 0.5682400000000001,
+          "expert_units_per_case": 0.0,
+          "low_answerability_accuracy": 0.5677144379328717,
+          "low_expert_reliability_accuracy": 0.5646028037383177,
+          "patient_ask_rate": 0.0
+        },
+        "both_reliabilities": {
+          "action_rates": {
+            "ANSWER": 0.1152,
+            "ASK": 0.6848,
+            "CONSULT": 0.2,
+            "DEFER": 0.0
+          },
+          "expected_accuracy": 0.6493009,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.6434033031433138,
+          "low_expert_reliability_accuracy": 0.6128809871495328,
+          "patient_ask_rate": 0.6848
+        },
+        "difficulty_only": {
+          "action_rates": {
+            "ANSWER": 0.0,
+            "ASK": 0.9,
+            "CONSULT": 0.0,
+            "DEFER": 0.1
+          },
+          "expected_accuracy": 0.62435895,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.6064429941395845,
+          "low_expert_reliability_accuracy": 0.6161720940420561,
+          "patient_ask_rate": 0.9
+        },
+        "expert_reliability": {
+          "action_rates": {
+            "ANSWER": 0.1152,
+            "ASK": 0.6848,
+            "CONSULT": 0.2,
+            "DEFER": 0.0
+          },
+          "expected_accuracy": 0.6493009,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.6345807139051678,
+          "low_expert_reliability_accuracy": 0.6128809871495328,
+          "patient_ask_rate": 0.6848
+        },
+        "no_reliability": {
+          "action_rates": {
+            "ANSWER": 0.0,
+            "ASK": 0.8,
+            "CONSULT": 0.2,
+            "DEFER": 0.0
+          },
+          "expected_accuracy": 0.60920625,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.5923124667021844,
+          "low_expert_reliability_accuracy": 0.5884782418224299,
+          "patient_ask_rate": 0.8
+        },
+        "oracle": {
+          "action_rates": {
+            "ANSWER": 0.0,
+            "ASK": 0.8,
+            "CONSULT": 0.2,
+            "DEFER": 0.0
+          },
+          "expected_accuracy": 0.6569361,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.6463377730420884,
+          "low_expert_reliability_accuracy": 0.6128809871495328,
+          "patient_ask_rate": 0.8
+        },
+        "patient_reliability": {
+          "action_rates": {
+            "ANSWER": 0.0,
+            "ASK": 0.8,
+            "CONSULT": 0.2,
+            "DEFER": 0.0
+          },
+          "expected_accuracy": 0.6179200499999999,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.5986758124667022,
+          "low_expert_reliability_accuracy": 0.5953996787383178,
+          "patient_ask_rate": 0.8
+        }
+      },
+      "seed": 25
+    },
+    {
+      "metrics": {
+        "always_answer": {
+          "action_rates": {
+            "ANSWER": 1.0,
+            "ASK": 0.0,
+            "CONSULT": 0.0,
+            "DEFER": 0.0
+          },
+          "expected_accuracy": 0.570176,
+          "expert_units_per_case": 0.0,
+          "low_answerability_accuracy": 0.569620589015654,
+          "low_expert_reliability_accuracy": 0.5717803468208092,
+          "patient_ask_rate": 0.0
+        },
+        "both_reliabilities": {
+          "action_rates": {
+            "ANSWER": 0.5528,
+            "ASK": 0.3184,
+            "CONSULT": 0.0576,
+            "DEFER": 0.0712
+          },
+          "expected_accuracy": 0.6250849,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.5982998142743434,
+          "low_expert_reliability_accuracy": 0.6047446531791908,
+          "patient_ask_rate": 0.3184
+        },
+        "difficulty_only": {
+          "action_rates": {
+            "ANSWER": 0.0,
+            "ASK": 0.8,
+            "CONSULT": 0.2,
+            "DEFER": 0.0
+          },
+          "expected_accuracy": 0.614478,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.5994215972406475,
+          "low_expert_reliability_accuracy": 0.5979560693641618,
+          "patient_ask_rate": 0.8
+        },
+        "expert_reliability": {
+          "action_rates": {
+            "ANSWER": 0.0,
+            "ASK": 0.8,
+            "CONSULT": 0.2,
+            "DEFER": 0.0
+          },
+          "expected_accuracy": 0.65652495,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.6413045900769435,
+          "low_expert_reliability_accuracy": 0.6199692196531792,
+          "patient_ask_rate": 0.8
+        },
+        "no_reliability": {
+          "action_rates": {
+            "ANSWER": 0.0,
+            "ASK": 0.8,
+            "CONSULT": 0.2,
+            "DEFER": 0.0
+          },
+          "expected_accuracy": 0.60831665,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.5933003449190767,
+          "low_expert_reliability_accuracy": 0.5932340317919076,
+          "patient_ask_rate": 0.8
+        },
+        "oracle": {
+          "action_rates": {
+            "ANSWER": 0.0,
+            "ASK": 0.8,
+            "CONSULT": 0.2,
+            "DEFER": 0.0
+          },
+          "expected_accuracy": 0.65877135,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.6485383390819845,
+          "low_expert_reliability_accuracy": 0.6199692196531792,
+          "patient_ask_rate": 0.8
+        },
+        "patient_reliability": {
+          "action_rates": {
+            "ANSWER": 0.6538,
+            "ASK": 0.2462,
+            "CONSULT": 0.0,
+            "DEFER": 0.1
+          },
+          "expected_accuracy": 0.6089481,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.5864632528522155,
+          "low_expert_reliability_accuracy": 0.6058145953757226,
+          "patient_ask_rate": 0.2462
+        }
+      },
+      "seed": 26
+    },
+    {
+      "metrics": {
+        "always_answer": {
+          "action_rates": {
+            "ANSWER": 1.0,
+            "ASK": 0.0,
+            "CONSULT": 0.0,
+            "DEFER": 0.0
+          },
+          "expected_accuracy": 0.564016,
+          "expert_units_per_case": 0.0,
+          "low_answerability_accuracy": 0.5654178827275139,
+          "low_expert_reliability_accuracy": 0.5651787773933102,
+          "patient_ask_rate": 0.0
+        },
+        "both_reliabilities": {
+          "action_rates": {
+            "ANSWER": 0.5804,
+            "ASK": 0.3196,
+            "CONSULT": 0.0,
+            "DEFER": 0.1
+          },
+          "expected_accuracy": 0.6057845000000001,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.6058336428760945,
+          "low_expert_reliability_accuracy": 0.5761822376009227,
+          "patient_ask_rate": 0.3196
+        },
+        "difficulty_only": {
+          "action_rates": {
+            "ANSWER": 0.0,
+            "ASK": 0.9,
+            "CONSULT": 0.0,
+            "DEFER": 0.1
+          },
+          "expected_accuracy": 0.6205102,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.6047137171663571,
+          "low_expert_reliability_accuracy": 0.6162289504036909,
+          "patient_ask_rate": 0.9
+        },
+        "expert_reliability": {
+          "action_rates": {
+            "ANSWER": 0.5984,
+            "ASK": 0.3016,
+            "CONSULT": 0.0,
+            "DEFER": 0.1
+          },
+          "expected_accuracy": 0.6019752500000001,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.5982759352613426,
+          "low_expert_reliability_accuracy": 0.5761822376009227,
+          "patient_ask_rate": 0.3016
+        },
+        "no_reliability": {
+          "action_rates": {
+            "ANSWER": 0.0,
+            "ASK": 0.8,
+            "CONSULT": 0.2,
+            "DEFER": 0.0
+          },
+          "expected_accuracy": 0.6035946,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.588170071637039,
+          "low_expert_reliability_accuracy": 0.5879969723183391,
+          "patient_ask_rate": 0.8
+        },
+        "oracle": {
+          "action_rates": {
+            "ANSWER": 0.0,
+            "ASK": 0.8,
+            "CONSULT": 0.2,
+            "DEFER": 0.0
+          },
+          "expected_accuracy": 0.65281795,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.6443626956752454,
+          "low_expert_reliability_accuracy": 0.6132760957324106,
+          "patient_ask_rate": 0.8
+        },
+        "patient_reliability": {
+          "action_rates": {
+            "ANSWER": 0.1806,
+            "ASK": 0.7194,
+            "CONSULT": 0.0,
+            "DEFER": 0.1
+          },
+          "expected_accuracy": 0.6157368000000001,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.5991249668347042,
+          "low_expert_reliability_accuracy": 0.6117648500576701,
+          "patient_ask_rate": 0.7194
+        }
+      },
+      "seed": 27
+    },
+    {
+      "metrics": {
+        "always_answer": {
+          "action_rates": {
+            "ANSWER": 1.0,
+            "ASK": 0.0,
+            "CONSULT": 0.0,
+            "DEFER": 0.0
+          },
+          "expected_accuracy": 0.5678880000000001,
+          "expert_units_per_case": 0.0,
+          "low_answerability_accuracy": 0.5691808510638298,
+          "low_expert_reliability_accuracy": 0.5707268026429188,
+          "patient_ask_rate": 0.0
+        },
+        "both_reliabilities": {
+          "action_rates": {
+            "ANSWER": 0.4442,
+            "ASK": 0.4558,
+            "CONSULT": 0.0,
+            "DEFER": 0.1
+          },
+          "expected_accuracy": 0.61969275,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.593166755319149,
+          "low_expert_reliability_accuracy": 0.6038094656707843,
+          "patient_ask_rate": 0.4558
+        },
+        "difficulty_only": {
+          "action_rates": {
+            "ANSWER": 0.0,
+            "ASK": 0.9,
+            "CONSULT": 0.0,
+            "DEFER": 0.1
+          },
+          "expected_accuracy": 0.6240746500000001,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.6079704787234043,
+          "low_expert_reliability_accuracy": 0.6220335392128699,
+          "patient_ask_rate": 0.9
+        },
+        "expert_reliability": {
+          "action_rates": {
+            "ANSWER": 0.0,
+            "ASK": 0.9,
+            "CONSULT": 0.0,
+            "DEFER": 0.1
+          },
+          "expected_accuracy": 0.63511155,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.6191773936170213,
+          "low_expert_reliability_accuracy": 0.6189809681126114,
+          "patient_ask_rate": 0.9
+        },
+        "no_reliability": {
+          "action_rates": {
+            "ANSWER": 0.0,
+            "ASK": 0.8,
+            "CONSULT": 0.2,
+            "DEFER": 0.0
+          },
+          "expected_accuracy": 0.6079355000000001,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.5930574468085107,
+          "low_expert_reliability_accuracy": 0.5936510341855789,
+          "patient_ask_rate": 0.8
+        },
+        "oracle": {
+          "action_rates": {
+            "ANSWER": 0.0,
+            "ASK": 0.8,
+            "CONSULT": 0.2,
+            "DEFER": 0.0
+          },
+          "expected_accuracy": 0.6566291,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.6477553191489361,
+          "low_expert_reliability_accuracy": 0.6189809681126114,
+          "patient_ask_rate": 0.8
+        },
+        "patient_reliability": {
+          "action_rates": {
+            "ANSWER": 0.0,
+            "ASK": 0.9,
+            "CONSULT": 0.0,
+            "DEFER": 0.1
+          },
+          "expected_accuracy": 0.61748205,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.5984140957446809,
+          "low_expert_reliability_accuracy": 0.615307023843723,
+          "patient_ask_rate": 0.9
+        }
+      },
+      "seed": 28
+    },
+    {
+      "metrics": {
+        "always_answer": {
+          "action_rates": {
+            "ANSWER": 1.0,
+            "ASK": 0.0,
+            "CONSULT": 0.0,
+            "DEFER": 0.0
+          },
+          "expected_accuracy": 0.568856,
+          "expert_units_per_case": 0.0,
+          "low_answerability_accuracy": 0.5739460591777953,
+          "low_expert_reliability_accuracy": 0.5670098322729902,
+          "patient_ask_rate": 0.0
+        },
+        "both_reliabilities": {
+          "action_rates": {
+            "ANSWER": 0.0612,
+            "ASK": 0.8388,
+            "CONSULT": 0.0,
+            "DEFER": 0.1
+          },
+          "expected_accuracy": 0.63553595,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.6280172820109977,
+          "low_expert_reliability_accuracy": 0.6149825766338924,
+          "patient_ask_rate": 0.8388
+        },
+        "difficulty_only": {
+          "action_rates": {
+            "ANSWER": 0.0,
+            "ASK": 0.9,
+            "CONSULT": 0.0,
+            "DEFER": 0.1
+          },
+          "expected_accuracy": 0.6240202,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.6125307672165489,
+          "low_expert_reliability_accuracy": 0.6174358010410641,
+          "patient_ask_rate": 0.9
+        },
+        "expert_reliability": {
+          "action_rates": {
+            "ANSWER": 0.0,
+            "ASK": 0.9,
+            "CONSULT": 0.0,
+            "DEFER": 0.1
+          },
+          "expected_accuracy": 0.63545765,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.623719298245614,
+          "low_expert_reliability_accuracy": 0.6149825766338924,
+          "patient_ask_rate": 0.9
+        },
+        "no_reliability": {
+          "action_rates": {
+            "ANSWER": 0.0,
+            "ASK": 0.8,
+            "CONSULT": 0.2,
+            "DEFER": 0.0
+          },
+          "expected_accuracy": 0.60817195,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.5984844200052369,
+          "low_expert_reliability_accuracy": 0.5892599045691151,
+          "patient_ask_rate": 0.8
+        },
+        "oracle": {
+          "action_rates": {
+            "ANSWER": 0.0,
+            "ASK": 0.8,
+            "CONSULT": 0.2,
+            "DEFER": 0.0
+          },
+          "expected_accuracy": 0.6570278500000001,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.6520230426813302,
+          "low_expert_reliability_accuracy": 0.6149825766338924,
+          "patient_ask_rate": 0.8
+        },
+        "patient_reliability": {
+          "action_rates": {
+            "ANSWER": 0.1978,
+            "ASK": 0.7022,
+            "CONSULT": 0.0,
+            "DEFER": 0.1
+          },
+          "expected_accuracy": 0.6197703499999999,
+          "expert_units_per_case": 0.2,
+          "low_answerability_accuracy": 0.607376276512176,
+          "low_expert_reliability_accuracy": 0.6128718189705032,
+          "patient_ask_rate": 0.7022
+        }
+      },
+      "seed": 29
+    }
+  ],
+  "runtime": {
+    "dependencies": "Python standard library only",
+    "python": "3.12.3"
+  },
+  "summary": {
+    "always_answer": {
+      "action_rates": {
+        "ANSWER": 1.0,
+        "ASK": 0.0,
+        "CONSULT": 0.0,
+        "DEFER": 0.0
+      },
+      "expected_accuracy": {
+        "ci95_high": 0.5700786032544067,
+        "ci95_low": 0.5682904634122601,
+        "mean": 0.5691845333333334
+      },
+      "expert_units_per_case": {
+        "ci95_high": 0.0,
+        "ci95_low": 0.0,
+        "mean": 0.0
+      },
+      "low_answerability_accuracy": {
+        "ci95_high": 0.5707399824490674,
+        "ci95_low": 0.5686232240047707,
+        "mean": 0.5696816032269191
+      },
+      "low_expert_reliability_accuracy": {
+        "ci95_high": 0.5707790098155325,
+        "ci95_low": 0.5681712469539424,
+        "mean": 0.5694751283847375
+      },
+      "patient_ask_rate": {
+        "ci95_high": 0.0,
+        "ci95_low": 0.0,
+        "mean": 0.0
+      }
+    },
+    "both_reliabilities": {
+      "action_rates": {
+        "ANSWER": 0.41446666666666665,
+        "ASK": 0.4351466666666667,
+        "CONSULT": 0.10077333333333334,
+        "DEFER": 0.049613333333333336
+      },
+      "expected_accuracy": {
+        "ci95_high": 0.6297119935788856,
+        "ci95_low": 0.6168091897544478,
+        "mean": 0.6232605916666667
+      },
+      "expert_units_per_case": {
+        "ci95_high": 0.2,
+        "ci95_low": 0.2,
+        "mean": 0.2
+      },
+      "low_answerability_accuracy": {
+        "ci95_high": 0.6179867713284517,
+        "ci95_low": 0.6017580546409305,
+        "mean": 0.6098724129846911
+      },
+      "low_expert_reliability_accuracy": {
+        "ci95_high": 0.6017052638233729,
+        "ci95_low": 0.5916804846645005,
+        "mean": 0.5966928742439367
+      },
+      "patient_ask_rate": {
+        "ci95_high": 0.5058808391303633,
+        "ci95_low": 0.36441249420297,
+        "mean": 0.4351466666666667
+      }
+    },
+    "difficulty_only": {
+      "action_rates": {
+        "ANSWER": 0.12242666666666667,
+        "ASK": 0.7609066666666667,
+        "CONSULT": 0.03333333333333333,
+        "DEFER": 0.08333333333333334
+      },
+      "expected_accuracy": {
+        "ci95_high": 0.6222590203224012,
+        "ci95_low": 0.6124764396775988,
+        "mean": 0.61736773
+      },
+      "expert_units_per_case": {
+        "ci95_high": 0.2,
+        "ci95_low": 0.2,
+        "mean": 0.2
+      },
+      "low_answerability_accuracy": {
+        "ci95_high": 0.6068287393082349,
+        "ci95_low": 0.6006089744571371,
+        "mean": 0.603718856882686
+      },
+      "low_expert_reliability_accuracy": {
+        "ci95_high": 0.6165026141949596,
+        "ci95_low": 0.604965277338943,
+        "mean": 0.6107339457669513
+      },
+      "patient_ask_rate": {
+        "ci95_high": 0.851933936733171,
+        "ci95_low": 0.6698793966001625,
+        "mean": 0.7609066666666667
+      }
+    },
+    "expert_reliability": {
+      "action_rates": {
+        "ANSWER": 0.23892,
+        "ASK": 0.62108,
+        "CONSULT": 0.08,
+        "DEFER": 0.060000000000000005
+      },
+      "expected_accuracy": {
+        "ci95_high": 0.6393472353354908,
+        "ci95_low": 0.6228252479978427,
+        "mean": 0.6310862416666667
+      },
+      "expert_units_per_case": {
+        "ci95_high": 0.2,
+        "ci95_low": 0.2,
+        "mean": 0.2
+      },
+      "low_answerability_accuracy": {
+        "ci95_high": 0.6266816255220029,
+        "ci95_low": 0.613289960825603,
+        "mean": 0.619985793173803
+      },
+      "low_expert_reliability_accuracy": {
+        "ci95_high": 0.6119594024120358,
+        "ci95_low": 0.598016373685448,
+        "mean": 0.6049878880487419
+      },
+      "patient_ask_rate": {
+        "ci95_high": 0.7183719487299336,
+        "ci95_low": 0.5237880512700663,
+        "mean": 0.62108
+      }
+    },
+    "no_reliability": {
+      "action_rates": {
+        "ANSWER": 0.08,
+        "ASK": 0.7333333333333334,
+        "CONSULT": 0.17333333333333334,
+        "DEFER": 0.013333333333333334
+      },
+      "expected_accuracy": {
+        "ci95_high": 0.6101061708166344,
+        "ci95_low": 0.6001602991833657,
+        "mean": 0.605133235
+      },
+      "expert_units_per_case": {
+        "ci95_high": 0.2,
+        "ci95_low": 0.2,
+        "mean": 0.2
+      },
+      "low_answerability_accuracy": {
+        "ci95_high": 0.5947935313186641,
+        "ci95_low": 0.5881741642850733,
+        "mean": 0.5914838478018687
+      },
+      "low_expert_reliability_accuracy": {
+        "ci95_high": 0.5961939202946072,
+        "ci95_low": 0.5849645846549074,
+        "mean": 0.5905792524747573
+      },
+      "patient_ask_rate": {
+        "ci95_high": 0.8270384569476315,
+        "ci95_low": 0.6396282097190353,
+        "mean": 0.7333333333333334
+      }
+    },
+    "oracle": {
+      "action_rates": {
+        "ANSWER": 0.0,
+        "ASK": 0.8,
+        "CONSULT": 0.2,
+        "DEFER": 0.0
+      },
+      "expected_accuracy": {
+        "ci95_high": 0.6584314578539833,
+        "ci95_low": 0.6567843288126834,
+        "mean": 0.6576078933333334
+      },
+      "expert_units_per_case": {
+        "ci95_high": 0.2,
+        "ci95_low": 0.2,
+        "mean": 0.2
+      },
+      "low_answerability_accuracy": {
+        "ci95_high": 0.6481236459940305,
+        "ci95_low": 0.646245821513483,
+        "mean": 0.6471847337537567
+      },
+      "low_expert_reliability_accuracy": {
+        "ci95_high": 0.6191563081224288,
+        "ci95_low": 0.6166192527490041,
+        "mean": 0.6178877804357165
+      },
+      "patient_ask_rate": {
+        "ci95_high": 0.8,
+        "ci95_low": 0.8,
+        "mean": 0.8
+      }
+    },
+    "patient_reliability": {
+      "action_rates": {
+        "ANSWER": 0.317,
+        "ASK": 0.5568066666666667,
+        "CONSULT": 0.05238666666666667,
+        "DEFER": 0.07380666666666667
+      },
+      "expected_accuracy": {
+        "ci95_high": 0.6145531279896997,
+        "ci95_low": 0.6048838753436335,
+        "mean": 0.6097185016666666
+      },
+      "expert_units_per_case": {
+        "ci95_high": 0.2,
+        "ci95_low": 0.2,
+        "mean": 0.2
+      },
+      "low_answerability_accuracy": {
+        "ci95_high": 0.599376383485741,
+        "ci95_low": 0.5887247018590575,
+        "mean": 0.5940505426723992
+      },
+      "low_expert_reliability_accuracy": {
+        "ci95_high": 0.6082187964343543,
+        "ci95_low": 0.5958308174360255,
+        "mean": 0.6020248069351899
+      },
+      "patient_ask_rate": {
+        "ci95_high": 0.6577122037928811,
+        "ci95_low": 0.4559011295404522,
+        "mean": 0.5568066666666667
+      }
+    }
+  }
+}

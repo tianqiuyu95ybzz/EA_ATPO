@@ -114,8 +114,22 @@ def validate_expert_view(
         raise ValueError("privileged information in expert view: " + ", ".join(sorted(set(found))))
 
 
+def visible_response(text: str) -> str:
+    """Return the post-reasoning response, failing closed on incomplete tags."""
+    value = str(text)
+    lowered = value.lower()
+    if "<think>" in lowered or "</think>" in lowered:
+        close = lowered.rfind("</think>")
+        if close < 0:
+            return ""
+        value = value[close + len("</think>"):]
+        if "<think>" in value.lower():
+            return ""
+    return value.strip()
+
+
 def parse_action(text: str) -> tuple[Action, str]:
-    tail = text.split("</think>")[-1].strip()
+    tail = visible_response(text)
     patterns = (
         (Action.ANSWER, r"Final Answer:\s*([A-D])\b"),
         (Action.ASK, r"Question:\s*(.+)"),
@@ -132,7 +146,7 @@ def parse_action(text: str) -> tuple[Action, str]:
 def validate_expert_response(action: Action, text: str) -> str:
     # Qwen-family reasoning models may wrap private reasoning in think tags. Only
     # the post-thinking answer is exposed to the collaborator and validated.
-    value = text.split("</think>")[-1].strip()
+    value = visible_response(text)
     if action is Action.CONSULT:
         if not re.fullmatch(r"Expert Advice:\s*.+", value, re.IGNORECASE | re.DOTALL):
             raise ValueError("CONSULT response must use 'Expert Advice:' format")

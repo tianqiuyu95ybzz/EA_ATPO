@@ -1,0 +1,23 @@
+{
+  "created_at_utc": "2026-11-04T07:55:26+00:00",
+  "source": "Existing full Pilot only; no inference changes the Pilot result.",
+  "source_trajectory_sha256": "9ab625088db8beeae74fa6f314013dbf6b78499e133d114cfee0407e2ac036df",
+  "total_initial_consult_trajectories": 873,
+  "eligible_distinct_case_state_units": 291,
+  "sample_size": 150,
+  "sample_seed": 20261104,
+  "sampling": "One randomly selected repeat per randomly selected distinct case/state; case clusters retained for intervals.",
+  "judge_model": "Qwen/Qwen3-8B revision b968826d9c46dd6066d109eabc6255188de91218 (same model family as Pilot; exploratory LLM judge, not independent clinical adjudicator).",
+  "gold_and_rationale_usage": "Added only after rollout for post-hoc annotation; neither was given to the Pilot Expert/Base calls.",
+  "categories_are_nonexclusive": true,
+  "annotation_suffix": "_v2",
+  "judge_completed": "2026-11-04T07:57:06+00:00",
+  "judged_count": 150,
+  "judge_error_count": 0,
+  "judgment_file": "/pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO/experiments/real_case_pilot_20261103/audit/outputs/consult_quality_judgments_v2.jsonl",
+  "summary_csv": "/pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO/experiments/real_case_pilot_20261103/audit/outputs/consult_quality_summary_v2.csv",
+  "judgment_file_sha256": "91e750ce707d51ac6c2f9bc474a6557c3ec34202753c981658d4bbe9b59ec03b",
+  "sample_file_sha256": "a48dcca3125ecb8b58152fdbe01f01b1187924506516211ad42e829c69fd5002",
+  "summary_csv_sha256": "877892394227a4939e11143007764e0429b44751146aef0d632dec9bc5dd5f84",
+  "label_method": "Qwen3-8B post-hoc rubric labels, conditional on benchmark gold; outcome-based degradation is separately recomputed for all 873 paired CONSULT/ANSWER rollouts."
+}

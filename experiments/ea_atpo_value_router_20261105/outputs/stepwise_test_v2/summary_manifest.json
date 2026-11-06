@@ -1,0 +1,8 @@
+{
+  "case_count": 200,
+  "policy_episode_sha256": "f0f8bc110608527f336417cb69f746c262e106635aeffefd6c90ef8ba68dcc4b",
+  "summary_sha256": "beb1c1d4746a498b26a5762d8c97a8e23735f7a44a966febe174eed2f8f4c3e7",
+  "paired_sha256": "e9de99c8304136478514ff536523dcc44587e66300180371a0e3ae76e57177dc",
+  "accuracy_cost_sha256": "8951a6a5a3ccaa530e6d281568ff1142452784ed8bc079bf6b2c69e952683168",
+  "completed_at_utc": "2026-11-05T10:10:20+00:00"
+}

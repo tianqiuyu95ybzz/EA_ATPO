@@ -1,0 +1,33 @@
+{
+  "created_at_utc": "2026-11-03T16:20:41+00:00",
+  "purpose": "Post-run plotting/report formatting only; no model inference or outcome recomputation.",
+  "analysis_script": "/pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO/experiments/real_case_pilot_20261103/plot_pilot_tradeoffs.py",
+  "analysis_script_sha256": "7dbd0b09a89ac30dc1789ad63f8042a1687ba0d31fa7261cb7999bdbb195d87d",
+  "report_script": "/pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO/experiments/real_case_pilot_20261103/make_pilot_report.py",
+  "report_script_sha256": "272bd523406d3bb8b4cabc13918c00efcc923fdf2cd509392f90c103c9755d2b",
+  "requirements_input": "/pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO/experiments/real_case_pilot_20261103/PILOT_ANALYSIS_REQUIREMENTS.in",
+  "requirements_lock": "/pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO/experiments/real_case_pilot_20261103/PILOT_ANALYSIS_REQUIREMENTS.lock.txt",
+  "requirements_lock_sha256": "65a171424bd32fa148c390940568c608e48e4300384c00ec901b44831e5193ce",
+  "matplotlib_version": "3.11.2",
+  "analysis_packages_added_after_inference": {
+    "matplotlib": "3.11.2",
+    "contourpy": "1.4.0",
+    "cycler": "0.12.1",
+    "fonttools": "4.68.0",
+    "kiwisolver": "1.5.1",
+    "pyparsing": "3.3.3"
+  },
+  "input_sha256": {
+    "summary.csv": "2bf4af8d294f5a0952a907a511c519d23b2aeadf3684bf33e54eea77115479a9",
+    "action_value_analysis.csv": "2bf4af8d294f5a0952a907a511c519d23b2aeadf3684bf33e54eea77115479a9"
+  },
+  "output_sha256": {
+    "tradeoff_curve_points.csv": "015f9576a55ba65adf54e4707b4f5ca9c8f7b6ccd6746327f1dbdd98ac74fef1",
+    "action_cost_accuracy_points.csv": "0bd92513606af5c7a2f2f85d38c4820516041d66e98b772174a235ff3e9e91ce",
+    "accuracy_cost_curve.png": "a012af39817406adcdb472b381ed228e034b1b3215d8ca1c680f3907d10cd6ad",
+    "accuracy_cost_curve.svg": "012f5817b0d0e10f18da6ac34515442e1413b605aff0df1e5e512ed572a044c1",
+    "accuracy_deferral_curve.png": "2f8bc5d4623b49a05594a83b96b398fdfe4d287d0cc4415be208182d3fc09a87",
+    "accuracy_deferral_curve.svg": "6eb4f14ffd572bf89bc2118e3b56fd2420aeee1096abfc7479e50bf2f477bc80",
+    "REAL_PILOT_REPORT.md": "da8a10c864eece6e1573fce8c8ec865137fd74330fdb68f4bedb0e5f530f01ef"
+  }
+}

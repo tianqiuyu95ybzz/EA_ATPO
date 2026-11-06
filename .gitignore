@@ -1,5 +1,8 @@
 # Local environments and caches
 .venv/
+.venv-real-pilot/
+.cache/
+.tmp/
 venv/
 env/
 **/.venv/

@@ -1,0 +1,20 @@
+{
+  "started_at_utc": "2026-11-05T14:00:15+00:00",
+  "framework": "vllm",
+  "vllm_version": "0.33.0",
+  "repo_id": "Qwen/Qwen3-32B-AWQ",
+  "revision": "0499c3ac83fdef8810b907a23894ba91e95eddd8",
+  "precision": "AWQ",
+  "served_model_name": "qwen3-32b-awq-expert",
+  "gpu_physical_index": 2,
+  "gpu_free_mib_before_start": 138203,
+  "port": 30132,
+  "dtype": "auto",
+  "quantization": "awq",
+  "max_model_len": 8192,
+  "max_num_seqs": 1,
+  "gpu_memory_utilization": 0.3,
+  "attention_backend": "TRITON_ATTN",
+  "shard_count": 4,
+  "model_files_verified_present": true
+}

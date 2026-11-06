@@ -1,0 +1,22 @@
+framework: vllm
+model:
+  repo_id: Qwen/Qwen3-8B
+  revision: b968826d9c46dd6066d109eabc6255188de91218
+  local_path: ../real_case_pilot_20261103/assets/models/Qwen3-8B
+  served_model_name: qwen3-8b-router
+  dtype: bfloat16
+  max_model_len: 8192
+  max_num_seqs: 2
+  gpu_memory_utilization: 0.20
+  tensor_parallel_size: 1
+  attention_backend: TRITON_ATTN
+  enable_thinking: false
+gpu:
+  physical_index: 2
+  minimum_free_memory_mib: 35000
+runtime:
+  port: 30131
+  host: 127.0.0.1
+  python: ../../.venv-real-pilot/bin/python
+  log_path: outputs/model_service.log
+  pid_path: outputs/model_service.pid

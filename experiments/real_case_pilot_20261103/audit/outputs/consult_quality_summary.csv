@@ -1,0 +1,7 @@
+category,count,denominator,proportion,ci95_low,ci95_high,notes
+correct_and_helpful_final_correct,31,150,0.20666666666666667,0.13725490196078433,0.2802547770700637,Overlapping exploratory labels from same-family Qwen3-8B LLM judge; not physician-adjudicated.
+gold_aligned_but_final_wrong,1,150,0.006666666666666667,0.0,0.020689655172413793,Overlapping exploratory labels from same-family Qwen3-8B LLM judge; not physician-adjudicated.
+advice_conflicts_with_gold,108,150,0.72,0.6381578947368421,0.7961783439490446,Overlapping exploratory labels from same-family Qwen3-8B LLM judge; not physician-adjudicated.
+repeats_public_information,63,150,0.42,0.3401360544217687,0.50625,Overlapping exploratory labels from same-family Qwen3-8B LLM judge; not physician-adjudicated.
+unclear_consult_question,47,150,0.31333333333333335,0.23717948717948717,0.3959731543624161,Overlapping exploratory labels from same-family Qwen3-8B LLM judge; not physician-adjudicated.
+judge_assessable_advice,149,150,0.9933333333333333,,,Advice present and judge returned a non-unassessable label.

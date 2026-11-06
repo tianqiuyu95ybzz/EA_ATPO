@@ -1,0 +1,72 @@
+{
+  "status": "completed",
+  "created_at_utc": "2026-11-05T06:48:40+00:00",
+  "experiment": "Post-consult decision mechanism comparison on existing Pilot public states and verbatim Pilot Expert advice.",
+  "pilot_trajectory_path": "/pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO/experiments/real_case_pilot_20261103/outputs/full/pilot_trajectories.jsonl",
+  "pilot_trajectory_sha256": "9ab625088db8beeae74fa6f314013dbf6b78499e133d114cfee0407e2ac036df",
+  "sample_seed": 20261105,
+  "sampled_state_count": 200,
+  "sampled_case_count": 97,
+  "sampled_state_ids_sha256": "5285e3424972552c454d9cc9418e2ce9de82b53034eec3fa800f1016ede222ca",
+  "inputs_path": "/pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO/experiments/real_case_pilot_20261103/audit/outputs/advice_utilization/frozen_consult_inputs.jsonl",
+  "inputs_sha256": "cb433fd3c5a760a2829ee83644bad76d12c2a415327f6542dba4238ee10b2fa9",
+  "eligibility": "One randomly selected rollout per sampled case/state, requiring a valid saved CONSULT response and a valid paired Pilot ANSWER. One of 291 states has no eligible valid CONSULT advice; 290 states are eligible.",
+  "models": {
+    "base": {
+      "repo_id": "Qwen/Qwen3-8B",
+      "revision": "b968826d9c46dd6066d109eabc6255188de91218",
+      "served_alias": "qwen3-8b-advice-base"
+    },
+    "advice_source": {
+      "repo_id": "Qwen/Qwen3-8B",
+      "revision": "b968826d9c46dd6066d109eabc6255188de91218",
+      "source": "Existing Pilot CONSULT trace; advice unchanged across methods."
+    }
+  },
+  "methods": {
+    "PILOT_ANSWER": "Existing paired Pilot direct ANSWER, no Expert advice; historical measured tokens/latency retained.",
+    "CONSULT_NAIVE": "Fresh Qwen3-8B response to same public state plus verbatim consult question/advice; previous answer withheld.",
+    "CONSULT_RETAIN": "Same state/advice plus paired Pilot answer; Base may keep or update, with a KEEP/UPDATE declaration.",
+    "CONSULT_CRITICAL": "Same state/advice and prior answer; Base makes a short public-evidence consistency check before KEEP/UPDATE."
+  },
+  "generation": {
+    "temperature": 0.0,
+    "top_p": 1.0,
+    "max_tokens": 128,
+    "seed": 20261105,
+    "enable_thinking": false,
+    "max_num_seqs": 1,
+    "prefix_caching": false
+  },
+  "scoring": "Same exact single-letter Final Answer parser for all methods. Invalid/API/parse failures remain in denominator and score 0.",
+  "gold_policy": "Gold is stored in evaluator sample only; it is not included in any Base request. atomic_facts and future Patient responses are not used or sent.",
+  "prior_reasoning_limitation": "Pilot branch trace stores only the prior answer, not a verbal rationale or private chain-of-thought. Retain/Critical therefore receive the prior option only; Critical performs a new brief visible-evidence audit.",
+  "advice_uptake_definition": "Answer-change rate relative to the paired Pilot answer is the cross-method operational uptake proxy. It is not a semantic adjudication that the advice caused or was followed by the answer change. Retain/Critical also report their self-declared UPDATE rate.",
+  "token_latency_caveat": "Pilot_ANSWER usage/latency comes from the original batched Pilot service; new CONSULT variants run sequentially on a separate single-sequence service with prefix cache disabled. Compare costs as observed measurements, not controlled wall-clock throughput estimates.",
+  "trajectory_path": "/pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO/experiments/real_case_pilot_20261103/audit/outputs/advice_utilization/advice_utilization_trajectories.jsonl",
+  "completed_at_utc": "2026-11-05T07:02:20+00:00",
+  "evaluated_states": 200,
+  "evaluated_cases": 97,
+  "failure_counts": {
+    "PILOT_ANSWER": 0,
+    "CONSULT_NAIVE": 26,
+    "CONSULT_RETAIN": 5,
+    "CONSULT_CRITICAL": 0
+  },
+  "summary_sha256": "29c153033e45db1e349f5cdfeae2661d7034135409cb3706e8d28a54fd928fa8",
+  "trajectory_sha256": "6011bf532c82b06cf424143b638ffce6fb0f83ea104bd8b1cadb465c95e39128",
+  "cost_accounting": "For CONSULT variants, add recorded Base consultation-question and Expert-response calls from the matching Pilot CONSULT trace to the fresh continuation request. Prior state-acquisition costs are shared/sunk and excluded. Direct ANSWER uses the paired Pilot answer request.",
+  "latency_accounting": "Sum of the recorded sequential request latencies; direct ANSWER is historical batched-service timing, while consultation setup is from historical Pilot and continuation is from the new sequential service. Treat as observed, not controlled throughput.",
+  "cost_by_state_path": "/pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO/experiments/real_case_pilot_20261103/audit/outputs/advice_utilization/advice_utilization_cost_by_state.csv",
+  "cost_by_state_sha256": "5b24afec2d8ef9c2f4b88152e2c6ed9fc3c145a50de0930eda556872f6c284e7",
+  "cost_summary_path": "/pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO/experiments/real_case_pilot_20261103/audit/outputs/advice_utilization/advice_utilization_cost_summary.csv",
+  "cost_summary_sha256": "e3278d696ab5c4a821eda6b4580d8d383317b12c14200057b455df51a329a0a8",
+  "paired_differences_path": "/pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO/experiments/real_case_pilot_20261103/audit/outputs/advice_utilization/advice_utilization_paired_differences.csv",
+  "paired_differences_sha256": "cc8ed50236969de1d1788c6daad15189b36aa34a81eb58a39b954ee00dbb60bf",
+  "bootstrap": {
+    "unit": "case cluster",
+    "repeats": 10000,
+    "sampled_cases": 97,
+    "seed_base": 20261105
+  }
+}

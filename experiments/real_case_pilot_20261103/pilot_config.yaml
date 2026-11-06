@@ -1,0 +1,48 @@
+seed: 20261103
+num_cases: 100
+max_states_per_case: 3
+rollouts_per_action: 3
+temperature: 0.2
+state_temperature: 0.0
+max_assistant_turns: 10
+max_consults_per_rollout: 1
+timeout_s: 180
+protocol:
+  action_output_mode: vllm_structured_outputs_regex
+  terminal_answer_on_last_assistant_turn: true
+model:
+  repo_id: Qwen/Qwen3-8B
+  revision: b968826d9c46dd6066d109eabc6255188de91218
+  local_path: assets/models/Qwen3-8B
+  served_model_name: qwen3-8b
+  serving_framework: vllm
+source:
+  repository: https://github.com/Quark-Medical/ATPO
+  commit: 25af83688c06917f94245a4db06be7d0924c090c
+  train_file: dataset/merged_train_dataset.jsonl
+  test_file: dataset/medqa_test_dataset.jsonl
+  preprocessor: codes/recipe/atpo/data_utils/mix_data_jsonl.py
+  local_recovery_status: "Rebuilt from official pinned JSONL into separate Parquet files under assets/; original upstream files are preserved."
+data:
+  train_parquet: assets/train.pilot.parquet
+endpoints:
+  base:
+    base_url: http://127.0.0.1:30000/v1
+    model: qwen3-8b
+    api_key_env: EA_ATPO_BASE_API_KEY
+    enable_thinking: false
+  patient:
+    base_url: http://127.0.0.1:30000/v1
+    model: qwen3-8b
+    api_key_env: EA_ATPO_PATIENT_API_KEY
+    enable_thinking: false
+  expert:
+    base_url: http://127.0.0.1:30000/v1
+    model: qwen3-8b
+    api_key_env: EA_ATPO_EXPERT_API_KEY
+    enable_thinking: false
+cost_sensitivity:
+  # Utility = accuracy - lambda_expert * expert_tokens/1000
+  #                    - lambda_patient * patient_turns.
+  lambda_expert_per_1k_tokens: [0.0, 0.02, 0.05, 0.10]
+  lambda_patient_per_turn: [0.0, 0.01, 0.03]

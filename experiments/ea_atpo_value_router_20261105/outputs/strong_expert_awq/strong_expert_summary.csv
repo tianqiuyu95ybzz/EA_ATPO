@@ -1,0 +1,17 @@
+metric,group,value,ci95_low,ci95_high,n_cases,notes
+accuracy,base_8b,0.44,0.37,0.51,200,Case-level bootstrap; invalid/parse-failed response scores 0.
+valid_rate,base_8b,1.0,,,200,Invalid outputs remain in the accuracy denominator.
+mean_total_tokens,base_8b,170.32,,,200,Prompt plus completion tokens returned by vLLM.
+mean_latency_s,base_8b,0.06460723750817124,,,200,Client-observed per-request latency; requests run sequentially.
+accuracy,candidate_expert_32b,0.48,0.41,0.55,200,Case-level bootstrap; invalid/parse-failed response scores 0.
+valid_rate,candidate_expert_32b,1.0,,,200,Invalid outputs remain in the accuracy denominator.
+mean_total_tokens,candidate_expert_32b,170.32,,,200,Prompt plus completion tokens returned by vLLM.
+mean_latency_s,candidate_expert_32b,0.1427891019464005,,,200,Client-observed per-request latency; requests run sequentially.
+paired_accuracy_delta_candidate_minus_base,candidate_expert_32b-base_8b,0.04,-0.025,0.105,200,Paired case bootstrap of correctness-indicator differences.
+candidate_accuracy_given_base_error,paired_conditional,0.23214285714285715,0.1574074074074074,0.3135593220338983,112,Conditional denominator: 112 baseline cases in the specified stratum.
+correction_rate_given_base_error,paired_conditional,0.23214285714285715,0.1574074074074074,0.3135593220338983,112,Conditional denominator: 112 baseline cases in the specified stratum.
+degradation_rate_given_base_correct,paired_conditional,0.20454545454545456,0.12359550561797752,0.29292929292929293,88,Conditional denominator: 88 baseline cases in the specified stratum.
+paired_correctness_cell,base_correct__candidate_correct,70,,,200,Four-cell paired contingency table.
+paired_correctness_cell,base_correct__candidate_wrong,18,,,200,Four-cell paired contingency table.
+paired_correctness_cell,base_wrong__candidate_correct,26,,,200,Four-cell paired contingency table.
+paired_correctness_cell,base_wrong__candidate_wrong,86,,,200,Four-cell paired contingency table.

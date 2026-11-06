@@ -1,0 +1,47 @@
+metric,group,value,ci95_low,ci95_high,n_states,notes
+accuracy,PILOT_ANSWER,0.435,0.3383838383838384,0.533678756476684,200,Case-cluster bootstrap; invalid/API/parse failures score 0 and remain in denominator.
+correction_rate_given_pilot_answer_wrong,PILOT_ANSWER,0.0,0.0,0.0,113,Denominator is Pilot paired ANSWER errors/successes; case-cluster bootstrap.
+degradation_rate_given_pilot_answer_correct,PILOT_ANSWER,0.0,0.0,0.0,87,Denominator is Pilot paired ANSWER errors/successes; case-cluster bootstrap.
+answer_change_rate_vs_pilot_answer,PILOT_ANSWER,0.0,0.0,0.0,200,"Among valid parsed answers, final option differs from paired pre-consult Pilot answer; operational uptake proxy, not semantic advice adoption."
+mean_prompt_tokens,PILOT_ANSWER,545.215,,,200,Stored in the original paired Pilot answer branch.
+mean_completion_tokens,PILOT_ANSWER,5.0,,,200,Stored in the original paired Pilot answer branch.
+mean_total_tokens,PILOT_ANSWER,550.215,,,200,Stored in the original paired Pilot answer branch.
+mean_latency_s,PILOT_ANSWER,0.0666693554102676,,,200,Stored in the original paired Pilot answer branch; timing is from the original batched service.
+valid_rate,PILOT_ANSWER,1.0,,,200,Invalid responses remain in accuracy denominator and score 0.
+accuracy,CONSULT_NAIVE,0.42,0.3333333333333333,0.5076142131979695,200,Case-cluster bootstrap; invalid/API/parse failures score 0 and remain in denominator.
+correction_rate_given_pilot_answer_wrong,CONSULT_NAIVE,0.17699115044247787,0.10638297872340426,0.25892857142857145,113,Denominator is Pilot paired ANSWER errors/successes; case-cluster bootstrap.
+degradation_rate_given_pilot_answer_correct,CONSULT_NAIVE,0.26436781609195403,0.16304347826086957,0.3829787234042553,87,Denominator is Pilot paired ANSWER errors/successes; case-cluster bootstrap.
+answer_change_rate_vs_pilot_answer,CONSULT_NAIVE,0.29310344827586204,0.21714285714285714,0.37572254335260113,200,"Among valid parsed answers, final option differs from paired pre-consult Pilot answer; operational uptake proxy, not semantic advice adoption."
+mean_prompt_tokens,CONSULT_NAIVE,325.185,,,200,OpenAI-compatible vLLM API usage; one request per state.
+mean_completion_tokens,CONSULT_NAIVE,86.1,,,200,OpenAI-compatible vLLM API usage; one request per state.
+mean_total_tokens,CONSULT_NAIVE,411.285,,,200,OpenAI-compatible vLLM API usage; one request per state.
+mean_latency_s,CONSULT_NAIVE,1.0022981441847514,,,200,OpenAI-compatible vLLM API usage; one request per state.
+valid_rate,CONSULT_NAIVE,0.87,,,200,Invalid response remains in accuracy denominator and scores 0.
+accuracy,CONSULT_RETAIN,0.4,0.31343283582089554,0.49056603773584906,200,Case-cluster bootstrap; invalid/API/parse failures score 0 and remain in denominator.
+correction_rate_given_pilot_answer_wrong,CONSULT_RETAIN,0.12389380530973451,0.06818181818181818,0.19148936170212766,113,Denominator is Pilot paired ANSWER errors/successes; case-cluster bootstrap.
+degradation_rate_given_pilot_answer_correct,CONSULT_RETAIN,0.2413793103448276,0.1411764705882353,0.3541666666666667,87,Denominator is Pilot paired ANSWER errors/successes; case-cluster bootstrap.
+answer_change_rate_vs_pilot_answer,CONSULT_RETAIN,0.2358974358974359,0.16751269035532995,0.30569948186528495,200,"Among valid parsed answers, final option differs from paired pre-consult Pilot answer; operational uptake proxy, not semantic advice adoption."
+self_reported_update_rate,CONSULT_RETAIN,0.565,0.4857142857142857,0.6458333333333334,200,Model-emitted Decision: UPDATE among parseable KEEP/UPDATE labels; descriptive only.
+decision_label_parse_rate,CONSULT_RETAIN,1.0,,,200,Fraction with a parseable KEEP/UPDATE declaration.
+mean_prompt_tokens,CONSULT_RETAIN,377.185,,,200,OpenAI-compatible vLLM API usage; one request per state.
+mean_completion_tokens,CONSULT_RETAIN,51.075,,,200,OpenAI-compatible vLLM API usage; one request per state.
+mean_total_tokens,CONSULT_RETAIN,428.26,,,200,OpenAI-compatible vLLM API usage; one request per state.
+mean_latency_s,CONSULT_RETAIN,0.6140805995475966,,,200,OpenAI-compatible vLLM API usage; one request per state.
+valid_rate,CONSULT_RETAIN,0.975,,,200,Invalid response remains in accuracy denominator and scores 0.
+accuracy,CONSULT_CRITICAL,0.44,0.3469387755102041,0.5368421052631579,200,Case-cluster bootstrap; invalid/API/parse failures score 0 and remain in denominator.
+correction_rate_given_pilot_answer_wrong,CONSULT_CRITICAL,0.13274336283185842,0.06796116504854369,0.20909090909090908,113,Denominator is Pilot paired ANSWER errors/successes; case-cluster bootstrap.
+degradation_rate_given_pilot_answer_correct,CONSULT_CRITICAL,0.16091954022988506,0.07526881720430108,0.2682926829268293,87,Denominator is Pilot paired ANSWER errors/successes; case-cluster bootstrap.
+answer_change_rate_vs_pilot_answer,CONSULT_CRITICAL,0.18,0.125,0.2376237623762376,200,"Among valid parsed answers, final option differs from paired pre-consult Pilot answer; operational uptake proxy, not semantic advice adoption."
+self_reported_update_rate,CONSULT_CRITICAL,0.31,0.24120603015075376,0.38341968911917096,200,Model-emitted Decision: UPDATE among parseable KEEP/UPDATE labels; descriptive only.
+decision_label_parse_rate,CONSULT_CRITICAL,1.0,,,200,Fraction with a parseable KEEP/UPDATE declaration.
+mean_prompt_tokens,CONSULT_CRITICAL,430.185,,,200,OpenAI-compatible vLLM API usage; one request per state.
+mean_completion_tokens,CONSULT_CRITICAL,52.045,,,200,OpenAI-compatible vLLM API usage; one request per state.
+mean_total_tokens,CONSULT_CRITICAL,482.23,,,200,OpenAI-compatible vLLM API usage; one request per state.
+mean_latency_s,CONSULT_CRITICAL,0.6180540751153604,,,200,OpenAI-compatible vLLM API usage; one request per state.
+valid_rate,CONSULT_CRITICAL,1.0,,,200,Invalid response remains in accuracy denominator and scores 0.
+paired_accuracy_delta,CONSULT_NAIVE_minus_PILOT_ANSWER,-0.015,-0.08854166666666667,0.05555555555555555,200,Paired state outcomes; bootstrap resamples whole case clusters.
+paired_accuracy_delta,CONSULT_RETAIN_minus_PILOT_ANSWER,-0.035,-0.1,0.02617801047120419,200,Paired state outcomes; bootstrap resamples whole case clusters.
+paired_accuracy_delta,CONSULT_CRITICAL_minus_PILOT_ANSWER,0.005,-0.05853658536585366,0.06862745098039216,200,Paired state outcomes; bootstrap resamples whole case clusters.
+paired_accuracy_delta,CONSULT_RETAIN_minus_CONSULT_NAIVE,-0.02,-0.07881773399014778,0.04390243902439024,200,Paired state outcomes; bootstrap resamples whole case clusters.
+paired_accuracy_delta,CONSULT_CRITICAL_minus_CONSULT_NAIVE,0.02,-0.05583756345177665,0.1,200,Paired state outcomes; bootstrap resamples whole case clusters.
+paired_accuracy_delta,CONSULT_CRITICAL_minus_CONSULT_RETAIN,0.04,-0.015384615384615385,0.0970873786407767,200,Paired state outcomes; bootstrap resamples whole case clusters.

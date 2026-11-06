@@ -1,0 +1,44 @@
+{
+  "status": "all_shards_verified",
+  "repo_id": "Qwen/Qwen3-32B-AWQ",
+  "revision": "0499c3ac83fdef8810b907a23894ba91e95eddd8",
+  "method": "HTTP Range with per-file SHA-256 verification",
+  "source": "modelscope",
+  "source_revision": "c14568581d436715d61d40f471dee3cac433d1d9",
+  "huggingface_revision": "0499c3ac83fdef8810b907a23894ba91e95eddd8",
+  "modelscope_weight_upload_commit": "e70d01d7985077a16f9a7de5746ed87f90d665ff",
+  "chunk_mib": 16,
+  "max_workers": 8,
+  "read_timeout_s": 90,
+  "range_retries": 6,
+  "expected_shards": [
+    {
+      "name": "model-00001-of-00004.safetensors",
+      "size": 4966384688,
+      "sha256": "ab7988215e3b087c884e0c14ce1994a64aac31dc9a37a4bcf29f5b45f3506e2e"
+    },
+    {
+      "name": "model-00002-of-00004.safetensors",
+      "size": 4998723112,
+      "sha256": "46faff349f1dd18ffe76993edd3d9fd32941d042331dc590525409bbe3d37edf"
+    },
+    {
+      "name": "model-00003-of-00004.safetensors",
+      "size": 4949671152,
+      "sha256": "6e9f763d8c31ad19f1cd67b0b599a38edffd76a4465a22ff5f7fcac46d820e63"
+    },
+    {
+      "name": "model-00004-of-00004.safetensors",
+      "size": 4410702792,
+      "sha256": "87f180889fead12b00b1bdf4dca3a3a14e4510e1e200bf56e31898e120b993d8"
+    }
+  ],
+  "completed_shards": [
+    "model-00001-of-00004.safetensors",
+    "model-00002-of-00004.safetensors",
+    "model-00003-of-00004.safetensors",
+    "model-00004-of-00004.safetensors"
+  ],
+  "started_at_epoch": 1793884731.038184,
+  "completed_at_epoch": 1793886739.4033587
+}
