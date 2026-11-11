@@ -1,0 +1,328 @@
+{
+  "status": "baseline_smoke_pending",
+  "git": {
+    "branch": "ea-atpo-v1",
+    "commit": "25af83688c06917f94245a4db06be7d0924c090c",
+    "original_atpo_source_modified": false
+  },
+  "environment": {
+    "python": "3.12.3",
+    "torch": "2.7.1+cu128",
+    "cuda_runtime": "12.8",
+    "transformers": "4.54.1",
+    "ray": "2.47.1",
+    "sglang": "0.4.10.post2",
+    "flash_attn": "2.8.3.post1",
+    "flash_attn_sha256": "f87164bb919f5597cb94f7485196be6ac7842b71d7bf8e9f8e9133b9045ab5ea",
+    "dependency_check": "214 packages compatible",
+    "torch_memory_saver": "0.0.8",
+    "ninja": "1.13.2",
+    "ninja_binary": ".venv/bin/ninja",
+    "sgl_kernel": "0.2.9+cu128"
+  },
+  "data": {
+    "train_file": "dataset/merged_train_dataset.jsonl",
+    "train_rows": 14256,
+    "train_sha256": "434a6734dce931262f2ed9e3201a3751e57db3609b1612ab9666835ac8832fdc",
+    "test_file": "dataset/medqa_test_dataset.jsonl",
+    "test_rows": 1268,
+    "test_sha256": "5e10a4dc50802e2dc3c156a3bc9e33111837dd762dff97aaaa0327fc4fdbba46",
+    "smoke_train_rows": 2,
+    "smoke_validation_rows": 1,
+    "seed": 1
+  },
+  "model": {
+    "name": "Qwen3-8B",
+    "snapshot_path": "/pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO/experiments/real_case_pilot_20261103/assets/models/Qwen3-8B",
+    "config_sha256": "f7c4eadfbbf522470667b797a3c89be2524832d2d599797248dc304fff447c30",
+    "weights_index_sha256": "f9fdbcb91c23971c13ec5d5f2573d2349e8f61f2f049371ec699281748fdb1bc",
+    "tokenizer_config_sha256": "d5d09f07b48c3086c508b30d1c9114bd1189145b74e982a265350c923acd8101",
+    "generation_config_sha256": "2325da0f15bb848e018c5ae071b7943332e9f871d6b60e2ed22ca97d4cb993d2"
+  },
+  "attempts": [
+    {
+      "log": "experiments/ea_atpo_v1_smoke/original_atpo/logs/original_atpo_smoke_20261110T105210Z.log",
+      "status": "failed_before_worker_start",
+      "reason": "Hydra override algorithm.use_kl_loss is not defined in the official config"
+    },
+    {
+      "log": "experiments/ea_atpo_v1_smoke/original_atpo/logs/original_atpo_smoke_20261110T112613Z.log",
+      "status": "failed_during_critic_import",
+      "reason": "flash_attn was missing; official wheel is now installed"
+    },
+    {
+      "log": "experiments/ea_atpo_v1_smoke/original_atpo/logs/original_atpo_smoke_20261110T113912Z.log",
+      "status": "failed_before_first_training_step",
+      "physical_gpu": 6,
+      "reason": "CUDA OOM during Actor FSDP initialization; concurrent process used about 89.1 GiB and this run used about 87.0 GiB"
+    },
+    {
+      "log": "experiments/ea_atpo_v1_smoke/original_atpo/logs/original_atpo_smoke_20261111T013117Z.log",
+      "status": "failed_before_first_training_step",
+      "physical_gpu": 2,
+      "reason": "Actor/Critic initialization completed, then SGLang rollout initialization failed because its enabled optional torch_memory_saver dependency was absent; torch_memory_saver==0.0.8 is now pinned, installed, and import/API-checked"
+    },
+    {
+      "log": "experiments/ea_atpo_v1_smoke/original_atpo/logs/original_atpo_smoke_20261111T013833Z.log",
+      "status": "failed_before_first_training_step",
+      "physical_gpu": 2,
+      "reason": "torch_memory_saver==0.0.8 resolved the previous import failure; SGLang loaded its 8B weights but its static memory pool at gpu_memory_utilization=0.15 could not allocate the KV cache. Smoke config raised the pool to 0.25 for the next retry."
+    },
+    {
+      "log": "experiments/ea_atpo_v1_smoke/original_atpo/logs/original_atpo_smoke_20261111T014632Z.log",
+      "status": "failed_before_first_training_step",
+      "physical_gpu": 2,
+      "reason": "SGLang memory saver worked and the model loaded, but the KV-cache profiler returned zero at gpu_memory_utilization=0.25. SGLang computes this budget using post-load available memory and a per-worker available-memory baseline captured before loading weights; the earlier estimate using total physical VRAM was incorrect and is withdrawn. The retry config was raised to 0.75."
+    },
+    {
+      "log": "experiments/ea_atpo_v1_smoke/original_atpo/logs/original_atpo_smoke_20261111T020107Z.log",
+      "status": "failed_before_first_training_step",
+      "physical_gpu": 2,
+      "reason": "The 0.75 static fraction successfully allocated a 287,404-token KV cache; SGLang then rejected its auto-selected FlashAttention v3 backend on B200 SM100. The retry config now explicitly selects SGLang FlashInfer."
+    },
+    {
+      "log": "experiments/ea_atpo_v1_smoke/original_atpo/logs/original_atpo_smoke_20261111T021013Z.log",
+      "status": "failed_before_first_training_step",
+      "physical_gpu": 2,
+      "reason": "FlashInfer initialized and allocated a 250,054-token KV cache. CUDA graph capture failed because Ray workers could not find ninja on PATH. ninja==1.13.2 exists in .venv/bin; the launcher now prepends that directory to PATH."
+    },
+    {
+      "log": "experiments/ea_atpo_v1_smoke/original_atpo/logs/original_atpo_smoke_20261111T022446Z.log",
+      "status": "failed_before_first_training_step",
+      "physical_gpu": 2,
+      "reason": "ninja was found and the FlashInfer CUDA sources compiled, but the final host link failed with an undefined reference to BatchDecodeWithPagedKVCacheKernel. The log also confirmed cuda_graph_max_bs in engine_kwargs was ignored by this ATPO wrapper. The runner now selects SGLang Triton attention and sets max_num_seqs=8 through the supported max_running_requests path."
+    },
+    {
+      "log": "experiments/ea_atpo_v1_smoke/original_atpo/logs/original_atpo_smoke_20261111T023555Z.log",
+      "status": "failed",
+      "physical_gpu": 2,
+      "reason": "Retry using SGLang Triton attention and max_num_seqs=8. Config validation passed; Ray worker and dataset initialization are complete, and model-role initialization is in progress.",
+      "failure_reason": "SGLang CUDA graph capture failed on physical GPU 2 (Blackwell SM100): sgl-kernel RMSNorm returned \"no kernel image is available for execution on the device\". No PPO step started; Actor/Critic updates not observed.",
+      "gpu": "NVIDIA B20Z / Blackwell SM100 (physical index 2)",
+      "software_versions": {
+        "torch": "2.7.1+cu128",
+        "sglang": "0.4.10.post2",
+        "sgl-kernel": "0.2.8",
+        "triton": "3.3.1",
+        "cuda_runtime": "12.8"
+      },
+      "next_step": "Inspect official CUDA 12.8 sgl-kernel wheels for SM100 support; test a targeted compatible kernel package before retry."
+    },
+    {
+      "attempt": 11,
+      "status": "failed_before_ppo",
+      "started_utc": "2026-11-11T03:15:21Z",
+      "physical_gpu": 5,
+      "gpu": "NVIDIA B20Z / Blackwell SM100",
+      "log": "experiments/ea_atpo_v1_smoke/original_atpo/logs/original_atpo_smoke_20261111T031521Z.log",
+      "configuration": {
+        "attention_backend": "triton",
+        "max_num_seqs": 8,
+        "gpu_memory_utilization": 0.75,
+        "native_rmsnorm_fallback": true
+      },
+      "fallback_sha256": "234b2eaa1e6bc9cabc6b17e7d08f4a91b1d62e5d7c880aacebfa7bbe50ce6be1",
+      "result": "failed_before_ppo",
+      "failure_reason": "Actor and Critic model weights loaded. SGLang loaded Qwen3-8B and allocated 61,969 KV tokens (K 4.26 GB, V 4.26 GB), then CUDA graph capture failed in BatchQKApplyRotaryPosIdsCosSinCache with \"no kernel image is available for execution on the device\" on SM100. The native RMSNorm fallback bypassed the earlier RMSNorm error but did not cover this second unsupported sgl-kernel operation. No PPO step or Actor/Critic parameter update occurred.",
+      "dashboard_note": "Ray dashboard metrics server could not bind its metrics port; Ray itself started and continued. This did not cause the SGLang kernel failure."
+    },
+    {
+      "attempt": 12,
+      "status": "failed_before_first_training_step",
+      "started_utc": "2026-11-11T07:58:02Z",
+      "physical_gpu": 4,
+      "gpu": "NVIDIA B20Z / Blackwell SM100",
+      "preflight_free_mib": 116551,
+      "preflight_utilization_percent": 0,
+      "temporary_min_free_mib_gate": 110000,
+      "maximum_utilization_percent_gate": 60,
+      "gpu_1_and_7_used": false,
+      "log": "experiments/ea_atpo_v1_smoke/original_atpo/logs/original_atpo_smoke_20261111T075802Z.log",
+      "software_versions": {
+        "torch": "2.7.1+cu128",
+        "sglang": "0.4.10.post2",
+        "sgl-kernel": "0.2.9+cu128",
+        "triton": "3.3.1",
+        "cuda_runtime": "12.8"
+      },
+      "kernel_preflight": "SM100 RMSNorm and rotary isolated CUDA calls passed on physical GPU 0 before this run.",
+      "reason_for_gate_override": "Allowed GPU 4 was idle with 116551 MiB free; the smoke has max_num_seqs=8. The lower per-run threshold retains a 110 GiB free-memory gate and <=60% utilization gate.",
+      "result": "OOM during Critic FSDP initialization; no Actor/SGLang initialization and no PPO/update",
+      "failure_reason": "After loading Qwen3ForTokenClassification (7.57B parameters), FSDP parameter synchronization requested another 384 MiB with only 263 MiB free. At failure, unrelated processes occupied 64.51, 69.26, and 18.90 GiB; this run used 25.37 GiB. External processes were not interrupted. No Actor/Critic optimizer step occurred.",
+      "post_failure_gpu_free_mib": 24538,
+      "next_step": "Restore the 150000 MiB free-memory gate and wait for an allowed GPU; do not retry with the temporary 110000 MiB threshold."
+    },
+    {
+      "attempt": 13,
+      "status": "failed_before_first_ppo_update",
+      "started_utc": "2026-11-11T08:25:13Z",
+      "physical_gpu": 2,
+      "gpu": "NVIDIA B20Z / Blackwell SM100",
+      "preflight_free_mib": 161981,
+      "preflight_utilization_percent": 0,
+      "minimum_free_mib_gate": 150000,
+      "maximum_utilization_percent_gate": 60,
+      "gpu_1_and_7_used": false,
+      "log": "experiments/ea_atpo_v1_smoke/original_atpo/logs/original_atpo_smoke_20261111T082513Z.log",
+      "software_versions": {
+        "torch": "2.7.1+cu128",
+        "sglang": "0.4.10.post2",
+        "sgl-kernel": "0.2.9+cu128",
+        "triton": "3.3.1",
+        "cuda_runtime": "12.8"
+      },
+      "result": "Critic FSDP initialized; Actor and SGLang Qwen3-8B initialized; SGLang KV cache and CUDA graph capture completed; first training rollout did not run.",
+      "failure_reason": "On the first rollout wake_up, loading the FSDP model back to the GPU requested 738 MiB with 167 MiB free. The OOM report showed this process using 107.63 GiB, another process using 50.25 GiB, and a third using 20.18 GiB. No PPO step or Actor/Critic optimizer update occurred.",
+      "smi_gpu_index_in_torch_error": 0,
+      "smi_index_explanation": "CUDA_VISIBLE_DEVICES=2 remaps physical GPU 2 to local device 0.",
+      "sglang_kernel_runtime_result": "No missing SM100 RMSNorm or rotary kernel; model initialization and CUDA graph capture passed with sgl-kernel 0.2.9+cu128.",
+      "next_step": "Require at least 170000 MiB free and <=60% utilization on an allowed GPU for three checks 15 seconds apart, then revalidate immediately in the direct runner."
+    },
+    {
+      "attempt": 14,
+      "status": "failed_before_first_ppo_update",
+      "started_utc": "2026-11-11T09:23:47Z",
+      "physical_gpu": null,
+      "gpu": "NVIDIA B20Z / Blackwell SM100; physical index not preserved in per-run log",
+      "gpu_selection_policy": "Auto runner checked only [0,2,3,4,5,6]; GPU1 and GPU7 were excluded.",
+      "preflight_gate": {
+        "minimum_free_mib": 170000,
+        "maximum_utilization_percent": 60,
+        "stable_samples": 3,
+        "stable_interval_seconds": 15
+      },
+      "log": "experiments/ea_atpo_v1_smoke/original_atpo/logs/original_atpo_smoke_20261111T092347Z.log",
+      "software_versions": {
+        "torch": "2.7.1+cu128",
+        "sglang": "0.4.10.post2",
+        "sgl-kernel": "0.2.9+cu128",
+        "triton": "3.3.1",
+        "cuda_runtime": "12.8"
+      },
+      "result": "Critic/Actor initialization, Qwen3-8B SGLang load, KV pool, and CUDA graph capture completed; first rollout wake_up failed before PPO.",
+      "failure_reason": "FSDP wake_up requested 738 MiB with 45.56 MiB free. This run used 97.54 GiB; four other GPU processes used 17.38, 17.63, 22.51, and 23.11 GiB. No PPO step or Actor/Critic optimizer update occurred.",
+      "smi_gpu_index_in_torch_error": 0,
+      "result_interpretation": "The 170000 MiB / three-sample stability gate did not prevent later shared-GPU allocations; kernel compatibility is not the current blocker."
+    }
+  ],
+  "gpu_policy": {
+    "excluded_indices": [
+      1,
+      7
+    ],
+    "eligible_indices": [
+      0,
+      2,
+      3,
+      4,
+      5,
+      6
+    ],
+    "minimum_free_mib_for_retry": 150000,
+    "maximum_utilization_percent_for_retry": 60,
+    "attempt_12_minimum_free_mib": 110000,
+    "attempt_12_maximum_utilization_percent": 60,
+    "attempt_12_temporary_override_reason": "Idle allowed GPU 4 had 116551 MiB free; max_num_seqs=8. A 110000 MiB gate was used for this single baseline smoke; GPU1 and GPU7 remain excluded.",
+    "future_minimum_free_mib": 170000,
+    "future_maximum_utilization_percent": 60,
+    "attempt_12_temporary_override_outcome": "not safe under dynamic shared-GPU contention; subsequent attempts return to 150000 MiB",
+    "future_stability_samples": 3,
+    "future_stability_interval_seconds": 15,
+    "future_gate_reason": "Attempt 13 had 161981 MiB free and 0% utilization at preflight but external GPU allocations arrived before first rollout; stricter stable preflight is used."
+  },
+  "training_result": null,
+  "configuration": {
+    "rollout_gpu_memory_utilization": 0.75,
+    "rollout_attention_backend": "triton",
+    "rollout_max_num_seqs": 8,
+    "rollout_max_model_len": 4352,
+    "rollout_max_num_batched_tokens": 4352,
+    "max_prompt_length": 4096,
+    "max_response_length": 256,
+    "train_batch_size": 1,
+    "tree_search_M_trajectories": 2,
+    "tree_search_N_candidates": 2,
+    "total_epochs": 1
+  },
+  "retry_status": "attempt_14_documented; awaiting_resource_and_memory_plan_before_next_retry",
+  "last_blocker": "Attempt 14 passed full SGLang load and CUDA graph capture but OOMed when FSDP woke weights for the first rollout; shared-GPU allocations consumed headroom after preflight. No PPO step occurred. The 170000 MiB three-sample gate alone is insufficient under current contention.",
+  "runtime_compatibility_override": {
+    "attention_backend": "triton",
+    "native_rmsnorm_fallback": {
+      "enabled_for_next_smoke": false,
+      "source": "experiments/ea_atpo_v1_smoke/native_rmsnorm_fallback/sitecustomize.py",
+      "sha256": "234b2eaa1e6bc9cabc6b17e7d08f4a91b1d62e5d7c880aacebfa7bbe50ce6be1",
+      "implementation": "SGLang RMSNorm.forward_native dispatched through the existing CustomOp interface",
+      "reason": "The installed sgl-kernel 0.2.8 common_ops binary has no SM100 cubin for RMSNorm.",
+      "compatibility_check": {
+        "physical_gpu": 2,
+        "device": "NVIDIA B20Z",
+        "compute_capability": "10.0",
+        "torch_arch_list_includes_sm100": true,
+        "input_shape": [
+          2,
+          4096
+        ],
+        "dtype": "bfloat16",
+        "finite_output": true,
+        "method_dispatch": "forward_native"
+      },
+      "validation_result": "RMSNorm call passed, but full SGLang init later failed on unsupported rotary kernel; fallback insufficient as a complete compatibility fix."
+    },
+    "full_model_smoke_status": "attempt_14_sglang_and_cuda_graph_passed; first_rollout_wakeup_oom; no_ppo_update"
+  },
+  "kernel_upgrade_candidate": {
+    "package": "sgl-kernel 0.3.8+cu128",
+    "official_index": "https://sgl-project.github.io/whl/cu128/sgl-kernel/",
+    "wheel": "experiments/ea_atpo_v1_smoke/kernel_wheels/sgl_kernel-0.3.8+cu128-cp310-abi3-manylinux2014_x86_64.whl",
+    "actual_sha256": "1e670ffdc9e88cb97a642cb7228638a4f5e1c189e7cbd290b42ae347b0f12054",
+    "size_bytes": 418905250,
+    "sm100_targets_present": true,
+    "rotary_kernel_symbol_present": true,
+    "torch_2_7_1_abi_check": "failed_undefined_symbol__ZN3c104cuda9SetDeviceEab",
+    "installed_then_rolled_back": true,
+    "current_installed_sgl_kernel": "0.2.8",
+    "status": "rejected_for_current_torch_abi"
+  },
+  "install_attempt_notes": [
+    {
+      "package": "sgl-kernel 0.3.8+cu128",
+      "first_install": "uv used its default system cache and failed during extraction with ENOSPC before replacing the installed package; temp directory was cleaned by uv."
+    },
+    {
+      "package": "sgl-kernel 0.3.8+cu128",
+      "retry": "reinstalled with UV_CACHE_DIR and TMPDIR on project PFS; package import exposed Torch 2.7.1 ABI mismatch; restored 0.2.8 from project PFS backup."
+    }
+  ],
+  "kernel_upgrade_candidate_029": {
+    "package": "sgl-kernel 0.2.9+cu128",
+    "source": "https://github.com/sgl-project/whl/releases/download/v0.2.9/sgl_kernel-0.2.9+cu128-cp39-abi3-manylinux2014_x86_64.whl",
+    "wheel": "experiments/ea_atpo_v1_smoke/kernel_wheels/candidate_029/sgl_kernel-0.2.9+cu128-cp39-abi3-manylinux2014_x86_64.whl",
+    "size_bytes": 355669905,
+    "sha256": "5f875f1d3b48be1f2d15b50ec2ddf4e8dfb9b839be50292717954057e80af1ec",
+    "download_method": "resumable byte-range download with per-range validation",
+    "sm100_targets_present": true,
+    "rotary_kernel_symbol_present": true,
+    "installed_with": "uv pip install --no-deps",
+    "torch_2_7_1_abi_check": "passed; sgl_kernel import succeeded",
+    "isolated_smoke": {
+      "physical_gpu": 0,
+      "device": "NVIDIA B20Z",
+      "compute_capability": "10.0",
+      "torch": "2.7.1+cu128",
+      "dtype": "bfloat16",
+      "rmsnorm_shape": [
+        2,
+        4096
+      ],
+      "rotary_shape": [
+        3,
+        4,
+        128
+      ],
+      "finite_outputs": true,
+      "result": "passed"
+    },
+    "full_atpo_smoke_status": "attempts 13 and 14 passed SGLang model load and CUDA graph capture; both OOMed during first rollout wake_up due to dynamic shared-GPU allocations before PPO"
+  }
+}

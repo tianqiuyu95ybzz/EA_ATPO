@@ -1,0 +1,47 @@
+# Derived from codes/requirements_atpo.txt and codes/requirements_sglang.txt.
+# Resolved for Python 3.12 and NVIDIA CUDA 12.8 (B20Z/Blackwell).
+# The upstream files contain conflicting aiohttp pins, a NumPy 2.x vs <2 conflict,
+# and an unqualified torch pin that selects CUDA 12.6 on this host.
+torch==2.7.1+cu128
+setuptools>=77
+wheel
+packaging>=24
+accelerate
+aiohttp==3.12.12
+cachetools==5.4.0
+codetiming
+datasets==4.0.0
+dill
+hydra-core==1.3.2
+langchain_core==0.3.79
+langgraph==0.6.10
+numpy==1.26.4
+omegaconf==2.3.0
+pandas==2.3.3
+peft
+pyarrow==19.0.1
+pybind11
+pylatexenc
+pydantic==2.12.0
+ray[default]==2.47.1
+sympy==1.14.0
+tensordict==0.8.3
+torchdata==0.11.0
+tqdm==4.66.5
+transformers==4.54.1
+wandb
+# B20Z is Blackwell (SM100); use SGLang's hardware-specific official extra.
+sglang[blackwell]==0.4.10.post2
+# The ATPO SGLang rollout explicitly enables SGLang's memory-saver adapter.
+# Pin the minimum version declared by this SGLang release for reproducibility.
+torch_memory_saver==0.0.8
+# Keep SGLang's historical dependency resolver stable. The setup script then
+# replaces this with the official Torch 2.7 / CUDA 12.8 wheel that includes SM100.
+sgl-kernel==0.2.8
+flashinfer-python==0.2.9rc2
+# Keep the 2025 CUDA 12 runtime compatible with torch==2.7.1+cu128. Newer
+# unbounded releases resolve CUDA 13 bindings and CUTLASS DSL dependencies.
+cuda-python==12.9.2
+nvidia-cudnn-frontend==1.14.0
+# flash-attn is installed separately from the official, SHA256-verified CUDA 12
+# wheel by setup_ea_atpo_v1_env.sh to avoid building against the host CUDA 13.2.

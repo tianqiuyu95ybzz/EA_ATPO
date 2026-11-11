@@ -2,16 +2,20 @@
 .venv/
 .venv-real-pilot/
 .cache/
+.runtime/
 .tmp/
 venv/
 env/
 **/.venv/
 **/__pycache__/
 *.pyc
+*.pyo
+*.py[cod]
 .pytest_cache/
 .mypy_cache/
 .ruff_cache/
 node_modules/
+experiments/ea_atpo_v1_smoke/kernel_wheels/
 
 # Secrets and local connection files
 .env
@@ -43,6 +47,8 @@ sources/
 **/*.jsonl.gz
 *.tgz
 *.zip
+experiments/ea_atpo_v1_smoke/original_atpo/data/
+experiments/ea_atpo_v1_smoke/sgl_kernel_cu128_index*.html
 
 # Keep the official ATPO checkout as an upstream dependency rather than
 # duplicating its nested Git repository in this research repository.
@@ -53,4 +59,3 @@ ATPO-official/
 Thumbs.db
 .idea/
 .vscode/
-
