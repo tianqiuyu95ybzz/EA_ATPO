@@ -251,8 +251,8 @@
     "tree_search_N_candidates": 2,
     "total_epochs": 1
   },
-  "retry_status": "attempt_14_documented; attempt_15_resource_plan_recorded; waiting_for_a_stable_allowed_GPU",
-  "last_blocker": "Attempts 13 and 14 passed model initialization and CUDA graph capture, then OOMed at first rollout wake_up after other shared-GPU allocations arrived. At 2026-11-11T10:19:12Z no allowed GPU met the next retry gate (155000 MiB free, <=15% utilization); do not launch until a stable allowed GPU is available.",
+  "retry_status": "attempt_15_not_started; 900s_wait_expired_without_eligible_allowed_GPU",
+  "last_blocker": "Attempts 13 and 14 passed model initialization and CUDA graph capture, then OOMed at first rollout wake_up after shared-GPU allocations arrived. The revised 900-second watcher window (2026-11-11T10:21Z to 2026-11-11T10:36Z) found no allowed GPU meeting >=155000 MiB free and <=15% utilization for five 15-second checks. Attempt 15 did not launch; no PPO update occurred.",
   "runtime_compatibility_override": {
     "attention_backend": "triton",
     "native_rmsnorm_fallback": {
@@ -336,7 +336,7 @@
     "repository": "https://github.com/tianqiuyu95ybzz/EA_ATPO",
     "branch": "ea-atpo-v1",
     "base_commit": "ad9d0e31660b973a3e5ddfcadce6701f767e0f62",
-    "verified_head_commit": "e9eefeea2c8f0e23b6b64cb2a0a4071d2a59dddd",
+    "verified_head_commit": "165cc723b332de3325b6d61d89856770232daac3",
     "verification": [
       "git ls-remote",
       "GitHub Branch API"
@@ -364,7 +364,14 @@
     "sglang_gpu_memory_utilization": 0.6,
     "sglang_max_num_seqs": 2,
     "critic_parameter_offload": false,
-    "critic_offload_note": "Keep disabled; official FSDP worker notes CPUOffload can cause incorrect results with gradient accumulation."
+    "critic_offload_note": "Keep disabled; official FSDP worker notes CPUOffload can cause incorrect results with gradient accumulation.",
+    "last_wait_result": {
+      "log": "experiments/ea_atpo_v1_smoke/gpu_wait_attempt15_20261111T1021Z.log",
+      "wait_seconds": 900,
+      "exit_code": 3,
+      "launched": false,
+      "timestamp_utc_end": "2026-11-11T10:36:29Z"
+    }
   },
   "resource_snapshot": {
     "timestamp_utc": "2026-11-11T10:19:12Z",
@@ -401,5 +408,61 @@
       }
     ],
     "meets_retry_gate": false
+  },
+  "attempt_15_wait": {
+    "status": "not_launched_no_eligible_gpu",
+    "gate": {
+      "minimum_free_mib": 155000,
+      "maximum_utilization_percent": 15,
+      "stable_samples": 5,
+      "sample_interval_seconds": 15
+    },
+    "allowed_gpus": [
+      0,
+      2,
+      3,
+      4,
+      5,
+      6
+    ],
+    "excluded_gpus": [
+      1,
+      7
+    ],
+    "end_snapshot_timestamp_utc": "2026-11-11T10:36:29Z",
+    "end_snapshot": [
+      {
+        "gpu": 0,
+        "free_mib": 96595,
+        "utilization_percent": 2
+      },
+      {
+        "gpu": 2,
+        "free_mib": 35377,
+        "utilization_percent": 100
+      },
+      {
+        "gpu": 3,
+        "free_mib": 94373,
+        "utilization_percent": 54
+      },
+      {
+        "gpu": 4,
+        "free_mib": 29227,
+        "utilization_percent": 100
+      },
+      {
+        "gpu": 5,
+        "free_mib": 80003,
+        "utilization_percent": 78
+      },
+      {
+        "gpu": 6,
+        "free_mib": 49973,
+        "utilization_percent": 97
+      }
+    ],
+    "training_started": false,
+    "ppo_steps": 0
   }
 }

@@ -1,0 +1,14 @@
+EA-ATPO original ATPO baseline smoke resource wait
+Command: EA_ATPO_GPU_WAIT_SECONDS=900 EA_ATPO_GPU_POLL_SECONDS=15 EA_ATPO_GPU_STABLE_SAMPLES=5 EA_ATPO_GPU_STABLE_INTERVAL=15 ./run_original_atpo_smoke_when_gpu_free.sh
+Wait window: 900 seconds
+Gate: >=155000 MiB free, <=15% GPU utilization, five checks 15 seconds apart
+Eligible GPUs: 0, 2, 3, 4, 5, 6
+Excluded GPUs: 1, 7
+Result: no allowed GPU met the gate; watcher exited with code 3. Attempt 15 did not start; no GPU was allocated by this project and no training step ran.
+End snapshot (2026-11-11T10:36:29Z; GPU, free MiB, utilization percent):
+0, 96595, 2
+2, 35377, 100
+3, 94373, 54
+4, 29227, 100
+5, 80003, 78
+6, 49973, 97

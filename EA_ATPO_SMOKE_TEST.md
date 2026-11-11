@@ -23,7 +23,7 @@
 
 ## Next retry plan
 
-The runner now reads the pinned source and JSONL data from the ignored, read-only `ATPO-official/` checkout. The retry reduces SGLang `gpu_memory_utilization` to `0.60` and `max_num_seqs` to `2` (the smoke's trajectory count), while leaving the original Actor, Critic, reward, tree-search, and PPO code unchanged. The watcher requires at least 155,000 MiB free, at most 15% utilization, and five consecutive 15-second checks on one of GPUs 0, 2, 3, 4, 5, or 6. GPU 1 and 7 are excluded. At 2026-11-11 10:19 UTC, no allowed GPU met this gate, so attempt 15 has not started. Critic CPU offload remains disabled because the official FSDP worker documents incorrect results with gradient accumulation when enabled.
+The runner now reads the pinned source and JSONL data from the ignored, read-only `ATPO-official/` checkout. The retry reduces SGLang `gpu_memory_utilization` to `0.60` and `max_num_seqs` to `2` (the smoke's trajectory count), while leaving the original Actor, Critic, reward, tree-search, and PPO code unchanged. The watcher requires at least 155,000 MiB free, at most 15% utilization, and five consecutive 15-second checks on one of GPUs 0, 2, 3, 4, 5, or 6. GPU 1 and 7 are excluded. A 900-second watcher window ended at 2026-11-11 10:36 UTC without an eligible GPU, so attempt 15 did not start. Its output and end snapshot are saved at `experiments/ea_atpo_v1_smoke/gpu_wait_attempt15_20261111T1021Z.log`. Critic CPU offload remains disabled because the official FSDP worker documents incorrect results with gradient accumulation when enabled.
 
 ## Attempts and findings
 
@@ -78,6 +78,10 @@ The watcher started attempt 13 on allowed physical GPU 2 after observing 161,981
 ### Attempt 14: stable preflight still raced with shared allocations
 
 Attempt 14 used the 170,000 MiB / 60% gate with three checks 15 seconds apart; the runner only considers GPUs 0, 2, 3, 4, 5, and 6. The selected physical index was not preserved in the per-run log. Critic/Actor initialization, Qwen3-8B SGLang loading, KV allocation, and CUDA graph capture succeeded. At the first rollout wake-up, FSDP requested 738 MiB with only 45.56 MiB free; this process used 97.54 GiB while four other processes used 17.38, 17.63, 22.51, and 23.11 GiB. No PPO update occurred. The 170,000 MiB gate did not provide enough protection from shared-GPU allocations that arrived after preflight.
+
+### Attempt 15 resource gate: not launched
+
+The revised watcher checked only GPUs 0, 2, 3, 4, 5, and 6 for 900 seconds, requiring at least 155,000 MiB free and at most 15% utilization across five consecutive samples. No GPU met the gate. The watcher exited with code 3 before starting the smoke; no training or GPU allocation occurred. The end snapshot showed the best allowed card at 96,595 MiB free, below the gate. See `experiments/ea_atpo_v1_smoke/gpu_wait_attempt15_20261111T1021Z.log`.
 
 ## GitHub publication
 
