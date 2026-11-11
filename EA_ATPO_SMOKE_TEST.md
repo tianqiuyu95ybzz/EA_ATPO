@@ -74,3 +74,7 @@ The watcher started attempt 13 on allowed physical GPU 2 after observing 161,981
 ### Attempt 14: stable preflight still raced with shared allocations
 
 Attempt 14 used the 170,000 MiB / 60% gate with three checks 15 seconds apart; the runner only considers GPUs 0, 2, 3, 4, 5, and 6. The selected physical index was not preserved in the per-run log. Critic/Actor initialization, Qwen3-8B SGLang loading, KV allocation, and CUDA graph capture succeeded. At the first rollout wake-up, FSDP requested 738 MiB with only 45.56 MiB free; this process used 97.54 GiB while four other processes used 17.38, 17.63, 22.51, and 23.11 GiB. No PPO update occurred. The 170,000 MiB gate did not provide enough protection from shared-GPU allocations that arrived after preflight.
+
+## GitHub publication
+
+The smoke setup, run manifest, and attempt logs were published to `https://github.com/tianqiuyu95ybzz/EA_ATPO/tree/ea-atpo-v1`. The branch is based on the target repository's `main` commit `ad9d0e31660b973a3e5ddfcadce6701f767e0f62`; published commit `ed4883b736b9f82dff9d5357adb6e347599983e1` was confirmed through both `git ls-remote` and the GitHub Branch API. The target repository's `main` branch and the original ATPO `codes/` source were not modified.

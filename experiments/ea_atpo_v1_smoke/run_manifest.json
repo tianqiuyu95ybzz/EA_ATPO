@@ -324,5 +324,17 @@
       "result": "passed"
     },
     "full_atpo_smoke_status": "attempts 13 and 14 passed SGLang model load and CUDA graph capture; both OOMed during first rollout wake_up due to dynamic shared-GPU allocations before PPO"
+  },
+  "publication": {
+    "repository": "https://github.com/tianqiuyu95ybzz/EA_ATPO",
+    "branch": "ea-atpo-v1",
+    "base_commit": "ad9d0e31660b973a3e5ddfcadce6701f767e0f62",
+    "verified_head_commit": "ed4883b736b9f82dff9d5357adb6e347599983e1",
+    "verification": [
+      "git ls-remote",
+      "GitHub Branch API"
+    ],
+    "main_branch_modified": false,
+    "original_atpo_codes_modified": false
   }
 }
