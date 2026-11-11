@@ -336,7 +336,7 @@
     "repository": "https://github.com/tianqiuyu95ybzz/EA_ATPO",
     "branch": "ea-atpo-v1",
     "base_commit": "ad9d0e31660b973a3e5ddfcadce6701f767e0f62",
-    "verified_head_commit": "30a2b80f95fdeadb1086aefedf269931f2b6a2ee",
+    "verified_head_commit": "e9eefeea2c8f0e23b6b64cb2a0a4071d2a59dddd",
     "verification": [
       "git ls-remote",
       "GitHub Branch API"
