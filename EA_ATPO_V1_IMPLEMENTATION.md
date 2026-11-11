@@ -2,7 +2,7 @@
 
 ## Current status
 
-The method implementation is gated on a passing original ATPO training smoke. The original training source remains unchanged. The latest baseline attempt loaded Actor, Critic, and the SGLang Qwen3-8B model on physical GPU 5, then failed before PPO because the installed kernel wheel lacks the SM100 rotary kernel. Actor/Critic updates are not yet established. A newer official CUDA 12.8 kernel wheel is being verified before retry. See `EA_ATPO_SMOKE_TEST.md` and `experiments/ea_atpo_v1_smoke/run_manifest.json`.
+The method implementation is gated on a passing original ATPO training smoke. The official source is a read-only checkout at `ATPO-official/` (commit `25af83688c06917f94245a4db06be7d0924c090c`). The SM100 RMSNorm and rotary kernels now pass isolated checks with official `sgl-kernel==0.2.9+cu128`, and attempts 13 and 14 completed model load and CUDA graph capture. Both stopped before rollout/PPO because shared-GPU allocations consumed the remaining headroom. No Actor or Critic update has occurred. The next retry lowers SGLang's memory fraction and requires a longer, stricter resource stability window; GPUs 1 and 7 remain excluded. See `EA_ATPO_SMOKE_TEST.md` and `experiments/ea_atpo_v1_smoke/run_manifest.json`.
 
 ## V1 design to implement after the baseline passes
 

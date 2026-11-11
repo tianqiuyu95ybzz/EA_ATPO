@@ -5,21 +5,25 @@
 ## Source and environment
 
 - Branch: `ea-atpo-v1`; official ATPO base commit: `25af83688c06917f94245a4db06be7d0924c090c`.
-- The original ATPO source tree under `codes/` has not been edited.
+- The read-only original ATPO checkout is `ATPO-official/` at commit `25af83688c06917f94245a4db06be7d0924c090c`; the smoke launcher uses `ATPO-official/codes/` and `ATPO-official/dataset/`. No original source files are edited.
 - Python 3.12.3; PyTorch `2.7.1+cu128`; CUDA runtime 12.8; Transformers 4.54.1; Ray 2.47.1; SGLang 0.4.10.post2.
 - `sgl-kernel==0.2.9+cu128` is the official CUDA 12.8 wheel, with its full SHA256 recorded in `run_manifest.json`; isolated SM100 RMSNorm and rotary calls pass. The `0.3.8+cu128` candidate was rejected and rolled back because its extension had a Torch 2.7 ABI error.
 - FlashAttention `2.8.3.post1` is from the official Dao-AILab release wheel for CPython 3.12 / Torch 2.7 / CUDA 12, with its SHA256 recorded in the run manifest.
 - SGLang's optional `torch_memory_saver==0.0.8` is pinned, installed, and import/API checked. `uv pip check` passes for all 214 installed packages.
 - `ninja==1.13.2` is installed in `.venv/bin`; the launcher now exposes that binary to child workers through `PATH`.
 - GPU 1 and GPU 7 are excluded. The direct runner rejects those indices; the automatic runner checks only 0, 2, 3, 4, 5, and 6.
-- The watcher checks only GPUs 0, 2, 3, 4, 5, and 6. Attempt 12's temporary 110,000 MiB gate was withdrawn after OOM. Attempts 13 and 14 showed that even a 170,000 MiB gate with three stable samples can race with later shared-GPU allocations; do not retry on the same memory plan without sufficient headroom.
+- The watcher checks only GPUs 0, 2, 3, 4, 5, and 6. Attempt 12's temporary 110,000 MiB gate was withdrawn after OOM. Attempts 13 and 14 showed that even a 170,000 MiB gate with three stable samples can race with later shared-GPU allocations. The next retry lowers SGLang's GPU memory fraction from 0.75 to 0.60, limits concurrent requests to the two smoke trajectories, and requires at least 155,000 MiB free with utilization at most 15% across five 15-second checks. This is a resource adjustment only; Critic CPU parameter offload is not enabled because the official worker code explicitly disables it to avoid incorrect results with gradient accumulation.
 - Model, dataset, Ray cache, checkpoints, logs, and outputs are on the project PFS workspace. The short `/tmp` Ray symlink points to the Ray cache on PFS to satisfy the Unix socket path limit.
 
 ## Data and model
 
-- Official project data: `dataset/merged_train_dataset.jsonl` (14,256 rows) and `dataset/medqa_test_dataset.jsonl` (1,268 rows). Their SHA256 digests are in `experiments/ea_atpo_v1_smoke/run_manifest.json`.
+- Official project data: `ATPO-official/dataset/merged_train_dataset.jsonl` (14,256 rows) and `ATPO-official/dataset/medqa_test_dataset.jsonl` (1,268 rows). Their SHA256 digests are in `experiments/ea_atpo_v1_smoke/run_manifest.json`.
 - Smoke Parquet files contain two training examples and one validation example. Original JSONL files remain unchanged.
 - Model: local Qwen3-8B snapshot under the prior EA_ATPO experiment workspace. Config, weights-index, tokenizer-config, and generation-config hashes are recorded in the manifest.
+
+## Next retry plan
+
+The runner now reads the pinned source and JSONL data from the ignored, read-only `ATPO-official/` checkout. The retry reduces SGLang `gpu_memory_utilization` to `0.60` and `max_num_seqs` to `2` (the smoke's trajectory count), while leaving the original Actor, Critic, reward, tree-search, and PPO code unchanged. The watcher requires at least 155,000 MiB free, at most 15% utilization, and five consecutive 15-second checks on one of GPUs 0, 2, 3, 4, 5, or 6. GPU 1 and 7 are excluded. At 2026-11-11 10:19 UTC, no allowed GPU met this gate, so attempt 15 has not started. Critic CPU offload remains disabled because the official FSDP worker documents incorrect results with gradient accumulation when enabled.
 
 ## Attempts and findings
 

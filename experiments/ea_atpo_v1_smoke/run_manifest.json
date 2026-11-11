@@ -3,7 +3,9 @@
   "git": {
     "branch": "ea-atpo-v1",
     "commit": "25af83688c06917f94245a4db06be7d0924c090c",
-    "original_atpo_source_modified": false
+    "original_atpo_source_modified": false,
+    "official_atpo_source_commit": "25af83688c06917f94245a4db06be7d0924c090c",
+    "official_atpo_source_path": "ATPO-official/"
   },
   "environment": {
     "python": "3.12.3",
@@ -18,13 +20,18 @@
     "torch_memory_saver": "0.0.8",
     "ninja": "1.13.2",
     "ninja_binary": ".venv/bin/ninja",
-    "sgl_kernel": "0.2.9+cu128"
+    "sgl_kernel": "0.2.9+cu128",
+    "official_atpo_checkout": {
+      "path": "ATPO-official/",
+      "commit": "25af83688c06917f94245a4db06be7d0924c090c",
+      "read_only": true
+    }
   },
   "data": {
-    "train_file": "dataset/merged_train_dataset.jsonl",
+    "train_file": "ATPO-official/dataset/merged_train_dataset.jsonl",
     "train_rows": 14256,
     "train_sha256": "434a6734dce931262f2ed9e3201a3751e57db3609b1612ab9666835ac8832fdc",
-    "test_file": "dataset/medqa_test_dataset.jsonl",
+    "test_file": "ATPO-official/dataset/medqa_test_dataset.jsonl",
     "test_rows": 1268,
     "test_sha256": "5e10a4dc50802e2dc3c156a3bc9e33111837dd762dff97aaaa0327fc4fdbba46",
     "smoke_train_rows": 2,
@@ -232,9 +239,9 @@
   },
   "training_result": null,
   "configuration": {
-    "rollout_gpu_memory_utilization": 0.75,
+    "rollout_gpu_memory_utilization": 0.6,
     "rollout_attention_backend": "triton",
-    "rollout_max_num_seqs": 8,
+    "rollout_max_num_seqs": 2,
     "rollout_max_model_len": 4352,
     "rollout_max_num_batched_tokens": 4352,
     "max_prompt_length": 4096,
@@ -244,8 +251,8 @@
     "tree_search_N_candidates": 2,
     "total_epochs": 1
   },
-  "retry_status": "attempt_14_documented; awaiting_resource_and_memory_plan_before_next_retry",
-  "last_blocker": "Attempt 14 passed full SGLang load and CUDA graph capture but OOMed when FSDP woke weights for the first rollout; shared-GPU allocations consumed headroom after preflight. No PPO step occurred. The 170000 MiB three-sample gate alone is insufficient under current contention.",
+  "retry_status": "attempt_14_documented; attempt_15_resource_plan_recorded; waiting_for_a_stable_allowed_GPU",
+  "last_blocker": "Attempts 13 and 14 passed model initialization and CUDA graph capture, then OOMed at first rollout wake_up after other shared-GPU allocations arrived. At 2026-11-11T10:19:12Z no allowed GPU met the next retry gate (155000 MiB free, <=15% utilization); do not launch until a stable allowed GPU is available.",
   "runtime_compatibility_override": {
     "attention_backend": "triton",
     "native_rmsnorm_fallback": {
@@ -329,12 +336,70 @@
     "repository": "https://github.com/tianqiuyu95ybzz/EA_ATPO",
     "branch": "ea-atpo-v1",
     "base_commit": "ad9d0e31660b973a3e5ddfcadce6701f767e0f62",
-    "verified_head_commit": "ed4883b736b9f82dff9d5357adb6e347599983e1",
+    "verified_head_commit": "30a2b80f95fdeadb1086aefedf269931f2b6a2ee",
     "verification": [
       "git ls-remote",
       "GitHub Branch API"
     ],
     "main_branch_modified": false,
     "original_atpo_codes_modified": false
+  },
+  "next_retry_plan": {
+    "minimum_free_mib": 155000,
+    "maximum_utilization_percent": 15,
+    "stable_samples": 5,
+    "sample_interval_seconds": 15,
+    "allowed_gpus": [
+      0,
+      2,
+      3,
+      4,
+      5,
+      6
+    ],
+    "excluded_gpus": [
+      1,
+      7
+    ],
+    "sglang_gpu_memory_utilization": 0.6,
+    "sglang_max_num_seqs": 2,
+    "critic_parameter_offload": false,
+    "critic_offload_note": "Keep disabled; official FSDP worker notes CPUOffload can cause incorrect results with gradient accumulation."
+  },
+  "resource_snapshot": {
+    "timestamp_utc": "2026-11-11T10:19:12Z",
+    "eligible_gpu_observations": [
+      {
+        "gpu": 0,
+        "free_mib": 93357,
+        "utilization_percent": 74
+      },
+      {
+        "gpu": 2,
+        "free_mib": 35285,
+        "utilization_percent": 100
+      },
+      {
+        "gpu": 3,
+        "free_mib": 52801,
+        "utilization_percent": 49
+      },
+      {
+        "gpu": 4,
+        "free_mib": 61809,
+        "utilization_percent": 100
+      },
+      {
+        "gpu": 5,
+        "free_mib": 4267,
+        "utilization_percent": 93
+      },
+      {
+        "gpu": 6,
+        "free_mib": 21735,
+        "utilization_percent": 33
+      }
+    ],
+    "meets_retry_gate": false
   }
 }

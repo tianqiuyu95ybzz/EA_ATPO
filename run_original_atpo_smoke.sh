@@ -3,13 +3,15 @@ set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$ROOT/setup_cuda_driver_link.sh"
-CODE_ROOT="$ROOT/codes"
+ATPO_ROOT="$ROOT/ATPO-official"
+CODE_ROOT="$ATPO_ROOT/codes"
+DATA_ROOT="$ATPO_ROOT/dataset"
 PYTHON="$ROOT/.venv/bin/python"
 RUN_DIR="${EA_ATPO_RUN_DIR:-$ROOT/experiments/ea_atpo_v1_smoke/original_atpo}"
 MODEL_PATH="${EA_ATPO_MODEL_PATH:-/pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO/experiments/real_case_pilot_20261103/assets/models/Qwen3-8B}"
 GPU_INDEX="${EA_ATPO_GPU:-}"
-MAX_GPU_UTIL_PCT="${EA_ATPO_MAX_GPU_UTIL_PCT:-60}"
-MIN_GPU_FREE_MIB="${EA_ATPO_MIN_FREE_MIB:-150000}"
+MAX_GPU_UTIL_PCT="${EA_ATPO_MAX_GPU_UTIL_PCT:-15}"
+MIN_GPU_FREE_MIB="${EA_ATPO_MIN_FREE_MIB:-155000}"
 
 if [[ -z "$GPU_INDEX" ]]; then
   echo "Set EA_ATPO_GPU to a GPU index with sufficient free memory and low utilization." >&2
@@ -25,6 +27,14 @@ if [[ ! -x "$PYTHON" ]]; then
 fi
 if [[ ! -f "$MODEL_PATH/config.json" ]]; then
   echo "Qwen3 model not found at EA_ATPO_MODEL_PATH=$MODEL_PATH" >&2
+  exit 2
+fi
+if [[ ! -f "$CODE_ROOT/recipe/atpo/mt_main.py" ]]; then
+  echo "Official ATPO checkout missing at $ATPO_ROOT (expected commit 25af83688c06917f94245a4db06be7d0924c090c)." >&2
+  exit 2
+fi
+if [[ ! -f "$DATA_ROOT/merged_train_dataset.jsonl" || ! -f "$DATA_ROOT/medqa_test_dataset.jsonl" ]]; then
+  echo "Official ATPO data files are missing under $DATA_ROOT." >&2
   exit 2
 fi
 
@@ -56,18 +66,20 @@ TRAIN_PARQUET="$RUN_DIR/data/train.parquet"
 TEST_PARQUET="$RUN_DIR/data/test.parquet"
 if [[ ! -s "$TRAIN_PARQUET" ]]; then
   "$PYTHON" "$CODE_ROOT/recipe/atpo/data_utils/mix_data_jsonl.py" \
-    train "$TRAIN_PARQUET" 0.00015 "$ROOT/dataset/merged_train_dataset"
+    train "$TRAIN_PARQUET" 0.00015 "$DATA_ROOT/merged_train_dataset"
 fi
 if [[ ! -s "$TEST_PARQUET" ]]; then
   "$PYTHON" "$CODE_ROOT/recipe/atpo/data_utils/mix_data_jsonl.py" \
-    test "$TEST_PARQUET" 0.001 "$ROOT/dataset/medqa_test_dataset"
+    test "$TEST_PARQUET" 0.001 "$DATA_ROOT/medqa_test_dataset"
 fi
 
 cd "$CODE_ROOT"
 LOG_FILE="$RUN_DIR/logs/original_atpo_smoke_$(date -u +%Y%m%dT%H%M%SZ).log"
 set -o pipefail
 # SGLang sizes its KV cache from the available-memory baseline measured before
-# weight loading, not from physical VRAM. 0.75 produced a usable cache before.
+# weight loading, not from physical VRAM. Earlier runs at 0.75 reached graph
+# capture but lost the remaining headroom to shared-GPU allocations, so the
+# retry uses 0.60 and caps concurrent requests at the two smoke trajectories.
 # Triton avoids the failing FlashInfer JIT link; the smoke-only native RMSNorm
 # fallback avoids the old sgl-kernel wheel's missing SM100 cubin.
 "$PYTHON" -m recipe.atpo.mt_main \
@@ -107,10 +119,10 @@ set -o pipefail
   actor_rollout_ref.rollout.mode=async \
   actor_rollout_ref.rollout.tensor_model_parallel_size=1 \
   actor_rollout_ref.rollout.response_length=256 \
-  actor_rollout_ref.rollout.gpu_memory_utilization=0.75 \
+  actor_rollout_ref.rollout.gpu_memory_utilization=0.60 \
   actor_rollout_ref.rollout.max_model_len=4352 \
   actor_rollout_ref.rollout.max_num_batched_tokens=4352 \
-  actor_rollout_ref.rollout.max_num_seqs=8 \
+  actor_rollout_ref.rollout.max_num_seqs=2 \
   +actor_rollout_ref.rollout.engine_kwargs.sglang.attention_backend=triton \
   actor_rollout_ref.rollout.multi_turn.enable=True \
   actor_rollout_ref.rollout.multi_turn.max_assistant_turns=1 \
