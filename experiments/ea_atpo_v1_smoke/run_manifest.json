@@ -1,5 +1,5 @@
 {
-  "status": "baseline_smoke_pending",
+  "status": "original_atpo_baseline_smoke_passed_training_stack_only",
   "git": {
     "branch": "ea-atpo-v1",
     "commit": "25af83688c06917f94245a4db06be7d0924c090c",
@@ -699,32 +699,87 @@
     "checkpoint_saved": false,
     "official_atpo_source_modified": false
   },
-  "attempt_20_dual_gpu_plan": {
-    "status": "ready_with_critic_cpu_offload_for_retry",
+  "attempt_20_dual_gpu_result": {
+    "status": "passed_two_ppo_steps_training_stack_only",
     "selected_gpus": [
       4,
       6
     ],
-    "ray_resource_pool_gpus_per_node": 2,
-    "actor_critic_strategy": "FSDP across the two selected GPUs",
-    "sglang_tensor_model_parallel_size": 2,
-    "per_gpu_minimum_free_mib": 100000,
-    "stable_samples": 5,
-    "sample_interval_seconds": 15,
-    "utilization_policy": "recorded_not_gated",
-    "sglang_gpu_memory_utilization": 0.35,
-    "sglang_max_num_seqs": 2,
-    "sglang_multi_stage_wake_up": true,
     "excluded_gpus": [
       1,
       7
     ],
-    "rationale": "Attempt 17 had an FSDP state_dict peak of 1.16 GiB with 1.02 GiB free while SGLang retained its large KV cache; reducing the static cache fraction and enabling staged weight/KV resume should provide more synchronization headroom.",
-    "local_data_field": "Non-secret placeholder value is written only during smoke Parquet preprocessing; one-turn smoke does not call the anonymized upstream Patient API.",
-    "planned_run_dir": "experiments/ea_atpo_v1_smoke/original_atpo_attempt20",
-    "continuation_policy": "max_assistant_turns=1; each sample terminates after the Actor first answer, so this checks ATPO tree search/PPO/Actor/Critic path without relying on the separately deployed Patient API.",
+    "ray_resource_pool_gpus_per_node": 2,
+    "actor_critic_strategy": "FSDP across GPUs 4 and 6",
+    "sglang_tensor_model_parallel_size": 2,
+    "gpu_memory_utilization": 0.35,
+    "max_num_seqs": 2,
+    "multi_stage_wake_up": true,
     "critic_param_offload": true,
     "critic_optimizer_offload": true,
-    "reason": "The original trainer updates Critic before Actor; attempt 19 completed the Critic optimizer call, then Actor Adam ran out of 370 MiB with 272 MiB free. The official FSDP worker supports manual CPU offload after critic update, which releases its memory before Actor update."
+    "actor_param_offload": true,
+    "actor_optimizer_offload": true,
+    "preflight_minimum_free_mib": 100000,
+    "preflight_free_mib": {
+      "gpu_4": 111715,
+      "gpu_6": 111387
+    },
+    "started_at_utc": "2026-11-13T17:54:36Z",
+    "ended_at_utc": "2026-11-13T18:03:42Z",
+    "exit_code": 0,
+    "run_log": "experiments/ea_atpo_v1_smoke/original_atpo_attempt20/logs/original_atpo_smoke_20261113T175436Z.log",
+    "wait_log": "experiments/ea_atpo_v1_smoke/gpu_pair_wait_20261113T175330Z.log",
+    "derived_data": {
+      "train_rows": 2,
+      "train_sha256": "15155c59e1b69d2fe59fd4944f96cf93241194253f6f74c706affe271dba5c0b",
+      "test_rows": 1,
+      "test_sha256": "eec6d202cbae34ab1695c6f40c7ebdb8e6cc402a97120f3a1523df6c40e4408c",
+      "api_key_field": "non-secret placeholder; external Patient API not called"
+    },
+    "rollout": {
+      "steps": 2,
+      "tree_candidates_per_sample_per_step": 2,
+      "final_trajectories": 4,
+      "patient_api_called": false,
+      "max_assistant_turns": 1,
+      "all_responses_hit_max_length": true,
+      "max_response_length_tokens": 256,
+      "custom_valid_count": 0,
+      "custom_sample_count": 4,
+      "custom_valid_rate": 0.0,
+      "correct_count": 0
+    },
+    "metrics": {
+      "step_1": {
+        "actor_pg_loss": 3.149218797683716,
+        "actor_grad_norm": 30.88010597229004,
+        "critic_vf_loss": 7.0040483474731445,
+        "critic_grad_norm": 1409.0604248046875
+      },
+      "step_2": {
+        "actor_pg_loss": -3.957812547683716,
+        "actor_grad_norm": 37.3887939453125,
+        "critic_vf_loss": 11.664825439453125,
+        "critic_grad_norm": 1868.2906494140625
+      }
+    },
+    "checkpoint": {
+      "path": "experiments/ea_atpo_v1_smoke/original_atpo_attempt20/checkpoints",
+      "steps": [
+        1,
+        2
+      ],
+      "checkpoint_index": 2,
+      "files": 65,
+      "disk_usage": "353G",
+      "actor_and_critic_models_saved": true,
+      "actor_and_critic_optimizers_saved": true,
+      "actor_rank0_rank1_weights_changed_step1_to_step2": true,
+      "critic_rank0_rank1_weights_changed_step1_to_step2": true,
+      "git_published": false,
+      "git_note": "Checkpoint is retained on PFS; large binary model/optimizer state files are not stored in Git."
+    },
+    "performance_interpretation": "Engineering smoke only. All four outputs were clipped at 256 tokens and failed ATPO format validation; accuracy is not interpretable.",
+    "official_atpo_source_modified": false
   }
 }

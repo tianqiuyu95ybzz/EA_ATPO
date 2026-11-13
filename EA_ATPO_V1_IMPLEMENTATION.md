@@ -2,7 +2,7 @@
 
 ## Current status
 
-The method implementation is gated on a passing original ATPO training smoke. The official source is a read-only checkout at `ATPO-official/` (commit `25af83688c06917f94245a4db06be7d0924c090c`). Attempt 18 cleared the prior weight-sync OOM, and attempt 19 completed real SGLang tree-search rollout on GPUs 4 and 6. The Critic update ran first; the subsequent Actor Adam-state allocation OOMed by roughly 100 MiB, so the training step did not complete and no checkpoint was saved. Attempt 20 enables the official FSDP worker's manual CPU offload for Critic weights and optimizer state, freeing them after the Critic update before the Actor update. The original ATPO source remains read-only, and GPUs 1 and 7 remain excluded. See `EA_ATPO_SMOKE_TEST.md` and `experiments/ea_atpo_v1_smoke/run_manifest.json`.
+The original ATPO training smoke now completes two PPO steps on GPUs 4 and 6. FSDP and SGLang use both cards; manual Critic parameter/optimizer CPU offload gives the Actor enough memory for its first Adam update. Actor and Critic gradients are nonzero, their saved weights differ across steps, and model/optimizer checkpoints exist for both steps. All four sampled outputs hit the 256-token limit and had zero valid-format/accuracy score, so this is training-stack evidence only. The official ATPO source remains read-only at commit `25af83688c06917f94245a4db06be7d0924c090c`; GPUs 1 and 7 remain excluded. The next work is the isolated EA agent loop/tree search, followed by its four-action mask/reward smoke. See `EA_ATPO_SMOKE_TEST.md` and `experiments/ea_atpo_v1_smoke/run_manifest.json`.
 
 ## V1 design to implement after the baseline passes
 
