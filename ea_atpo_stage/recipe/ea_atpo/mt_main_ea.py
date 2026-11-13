@@ -1,14 +1,11 @@
 """EA-ATPO entrypoint that adds only an EA reward-accounting adapter."""
 
 from recipe.atpo import mt_main as _atpo_main
-from recipe.atpo.agent_loop import AgentLoopWorker
 
 from .ea_reward_manager import EARewardManager
-from .ea_metrics import patch_agent_loop_worker
 
 
 _load_atpo_reward_manager = _atpo_main.load_reward_manager
-patch_agent_loop_worker(AgentLoopWorker)
 
 
 def _load_reward_manager(config, tokenizer, num_examine, **reward_kwargs):

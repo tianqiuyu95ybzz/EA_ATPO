@@ -1,6 +1,6 @@
 # EA-ATPO V1 Smoke Test Status
 
-**Status: original ATPO baseline and deterministic EA protocol smoke passed; real EA attempt 2 completed one PPO update before a legacy-metrics adapter failure; attempt 3 also completed one PPO update but hit the same logger integration gap; an EA-entrypoint metric bridge is now tested and attempt 4 is pending.** The original Qwen3-8B baseline completed two PPO updates across GPUs 4 and 6 with nonzero Actor and Critic updates. The pinned ATPO source remains unchanged, and GPUs 1 and 7 remain excluded. See Attempt 20 below for the baseline logs and checkpoint evidence.
+**Status: original ATPO baseline and deterministic EA protocol smoke passed; real EA attempt 2 completed one PPO update before a legacy-metrics adapter failure; attempt 3 also completed one PPO update but hit the same logger integration gap; an EA-entrypoint metric bridge is now tested and attempt 4 also completed one PPO update but reproduced the logger error because the bridge lived only in the driver process; the hook now installs inside the Ray worker and attempt 5 is pending.** The original Qwen3-8B baseline completed two PPO updates across GPUs 4 and 6 with nonzero Actor and Critic updates. The pinned ATPO source remains unchanged, and GPUs 1 and 7 remain excluded. See Attempt 20 below for the baseline logs and checkpoint evidence.
 
 ## Source and environment
 
@@ -134,3 +134,8 @@ The two-GPU run initialized Qwen3-8B Actor/Critic and the SGLang TP=2 service wi
 ## Real EA training attempt 3
 
 Attempt 3 reproduced the metric failure after one PPO update. The second adapter attempt had added fields inside the reward manager, but ATPO removes per-sample `statistics` before that manager is called. The run again initialized the two-GPU models, generated two episodes, and saved Actor/Critic checkpoint state without OOM. The fix now attaches the post-rollout metric fields at the EA-only `_postprocess` boundary before ATPO discards statistics. Attempt 3 artifacts remain under `experiments/ea_atpo_v1_smoke/ea_atpo_v1_attempt03/`.
+
+
+## Real EA training attempt 4
+
+The third metric-bridge attempt was installed only in the training driver, while rollout uses a separate Ray AgentLoopWorker process, so the same post-update `is_valid` error remained. The run again loaded the two-GPU models, generated two episodes, and wrote Actor/Critic model and optimizer state after one update without OOM. The hook now installs when the EA loop module is imported inside the worker. Attempt 4 is preserved under `experiments/ea_atpo_v1_smoke/ea_atpo_v1_attempt04/`.
