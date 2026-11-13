@@ -82,12 +82,31 @@ mkdir -p "$RUN_DIR/data" "$RUN_DIR/logs" "$RUN_DIR/checkpoints" "$RUN_DIR/rollou
 
 TRAIN_PARQUET="$RUN_DIR/data/train.parquet"
 TEST_PARQUET="$RUN_DIR/data/test.parquet"
-if [[ ! -s "$TRAIN_PARQUET" ]]; then
-  "$PYTHON" "$CODE_ROOT/recipe/atpo/data_utils/mix_data_jsonl.py" \
+has_api_key_column() {
+  "$PYTHON" - "$1" <<'PY'
+import sys
+import pyarrow.parquet as pq
+
+try:
+    raise SystemExit(0 if "api_key" in pq.read_schema(sys.argv[1]).names else 1)
+except Exception:
+    raise SystemExit(1)
+PY
+}
+
+# The upstream AgentLoop unconditionally reads `kwargs["api_key"]` even when
+# this one-turn baseline smoke never calls its external Patient API. The smoke
+# uses a harmless sentinel only to satisfy that field; it is not an API
+# credential and is not used for authentication. Multi-turn Patient-service
+# testing requires a separately deployed service because upstream anonymizes
+# that endpoint.
+LOCAL_SMOKE_API_KEY="ea-atpo-local-smoke-placeholder"
+if [[ ! -s "$TRAIN_PARQUET" ]] || ! has_api_key_column "$TRAIN_PARQUET"; then
+  API_KEY="$LOCAL_SMOKE_API_KEY" "$PYTHON" "$CODE_ROOT/recipe/atpo/data_utils/mix_data_jsonl.py" \
     train "$TRAIN_PARQUET" 0.00015 "$DATA_ROOT/merged_train_dataset"
 fi
-if [[ ! -s "$TEST_PARQUET" ]]; then
-  "$PYTHON" "$CODE_ROOT/recipe/atpo/data_utils/mix_data_jsonl.py" \
+if [[ ! -s "$TEST_PARQUET" ]] || ! has_api_key_column "$TEST_PARQUET"; then
+  API_KEY="$LOCAL_SMOKE_API_KEY" "$PYTHON" "$CODE_ROOT/recipe/atpo/data_utils/mix_data_jsonl.py" \
     test "$TEST_PARQUET" 0.001 "$DATA_ROOT/medqa_test_dataset"
 fi
 

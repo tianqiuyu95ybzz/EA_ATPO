@@ -606,8 +606,43 @@
     "result": "no rollout generated; no Actor/Critic PPO update",
     "wait_log": "experiments/ea_atpo_v1_smoke/gpu_pair_wait_20261113T171435Z.log"
   },
-  "attempt_18_dual_gpu_plan": {
-    "status": "ready_for_memory_gated_pair_wait",
+  "attempt_18_dual_gpu_result": {
+    "status": "failed_before_model_generation_missing_api_key_field",
+    "selected_gpus": [
+      4,
+      6
+    ],
+    "ray_resource_pool_gpus_per_node": 2,
+    "actor_critic_strategy": "FSDP across GPUs 4 and 6",
+    "sglang_tensor_model_parallel_size": 2,
+    "gpu_memory_utilization": 0.35,
+    "max_num_seqs": 2,
+    "multi_stage_wake_up": true,
+    "preflight_free_mib": {
+      "gpu_4": 112073,
+      "gpu_6": 111835
+    },
+    "preflight_utilization_percent": {
+      "gpu_4": 56,
+      "gpu_6": 100
+    },
+    "excluded_gpus": [
+      1,
+      7
+    ],
+    "started_at_utc": "2026-11-13T17:28:30Z",
+    "ended_at_utc": "2026-11-13T17:33:18Z",
+    "log": "experiments/ea_atpo_v1_smoke/original_atpo/logs/original_atpo_smoke_20261113T172831Z.log",
+    "wait_log": "experiments/ea_atpo_v1_smoke/gpu_pair_wait_20261113T172729Z.log",
+    "initialization": "Critic and Actor loaded; SGLang TP=2 initialized; the run passed the first rollout weight synchronization and reached UserAssistantAgentLoop.run.",
+    "failure_reason": "Preprocessed train/test Parquet had no api_key column because API_KEY was unset while the data adapter ran. Upstream UserAssistantAgentLoop unconditionally accessed kwargs[\"api_key\"], so execution failed before Base generation. No rollout or PPO optimizer update occurred.",
+    "rollout_generated": false,
+    "ppo_steps": 0,
+    "patient_api_called": false,
+    "source_code_modified": false
+  },
+  "attempt_19_dual_gpu_plan": {
+    "status": "ready_to_retry_after_api_key_schema_fix",
     "selected_gpus": [
       4,
       6
@@ -626,6 +661,9 @@
       1,
       7
     ],
-    "rationale": "Attempt 17 had an FSDP state_dict peak of 1.16 GiB with 1.02 GiB free while SGLang retained its large KV cache; reducing the static cache fraction and enabling staged weight/KV resume should provide more synchronization headroom."
+    "rationale": "Attempt 17 had an FSDP state_dict peak of 1.16 GiB with 1.02 GiB free while SGLang retained its large KV cache; reducing the static cache fraction and enabling staged weight/KV resume should provide more synchronization headroom.",
+    "local_data_field": "Non-secret placeholder value is written only during smoke Parquet preprocessing; one-turn smoke does not call the anonymized upstream Patient API.",
+    "planned_run_dir": "experiments/ea_atpo_v1_smoke/original_atpo_attempt19",
+    "continuation_policy": "max_assistant_turns=1; each sample terminates after the Actor first answer, so this checks ATPO tree search/PPO/Actor/Critic path without relying on the separately deployed Patient API."
   }
 }
