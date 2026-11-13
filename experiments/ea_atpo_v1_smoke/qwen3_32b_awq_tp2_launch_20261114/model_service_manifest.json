@@ -1,0 +1,46 @@
+{
+  "experiment": "Qwen3-32B-AWQ two-GPU vLLM inference smoke",
+  "date_local": "2026-11-14",
+  "model": "Qwen/Qwen3-32B-AWQ",
+  "revision": "0499c3ac83fdef8810b907a23894ba91e95eddd8",
+  "source_shards": "all four AWQ shards verified by range_download_status.json",
+  "framework": "vLLM 0.33.0",
+  "hardware": {
+    "gpu_model": "NVIDIA B20Z",
+    "visible_physical_gpus": [4, 6],
+    "memory_total_mib_each": 183359,
+    "free_mib_before_first_attempt": {"gpu4": 112157, "gpu6": 111795},
+    "observed_total_used_peak_mib_during_successful_attempt": {"gpu4": 108466, "gpu6": 108774},
+    "free_mib_after_service_shutdown": {"gpu4": 111991, "gpu6": 111683},
+    "note": "GPUs 1 and 7 were not selected. Existing shared-process allocations remained untouched."
+  },
+  "serving_config": {
+    "tensor_parallel_size": 2,
+    "dtype": "auto (runtime selected float16 with AWQ)",
+    "quantization": "awq",
+    "max_model_len": 4096,
+    "max_num_seqs": 1,
+    "gpu_memory_utilization": 0.2,
+    "attention_backend": "TRITON_ATTN",
+    "allreduce_backend": "PYNCCL",
+    "flashinfer_allreduce": false,
+    "fuse_allreduce_rms": false,
+    "ipc_tmpdir": "/tmp/eaatpo32b",
+    "port": 30139
+  },
+  "result": {
+    "api_ready": true,
+    "generation_completed": true,
+    "completion": "READY",
+    "prompt_tokens": 19,
+    "completion_tokens": 2,
+    "service_shutdown_after_smoke": true
+  },
+  "attempts": [
+    {"attempt": 1, "result": "failed before model loading", "reason": "Unix IPC socket path exceeded 107-character limit; no GPU memory allocated"},
+    {"attempt": 2, "result": "failed during FlashInfer JIT", "reason": "CUDA compiler and CUDA headers incompatible in trtllm_mnnvl_comm"},
+    {"attempt": 3, "result": "same FlashInfer JIT error", "reason": "RMS/allreduce fusion still initialized FlashInfer despite disabling ordinary FlashInfer allreduce"},
+    {"attempt": 4, "result": "passed", "fix": "short TMPDIR, disable FlashInfer allreduce, disable custom allreduce, set pass_config.fuse_allreduce_rms=false"}
+  ],
+  "scope_note": "Inference deployment smoke only. This does not constitute an EA-ATPO Actor-Critic training run or prove BF16 Qwen3-32B training fits."
+}

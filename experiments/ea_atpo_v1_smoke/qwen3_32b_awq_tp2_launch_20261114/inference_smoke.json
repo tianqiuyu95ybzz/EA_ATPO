@@ -1,0 +1,21 @@
+{
+  "request": {
+    "model": "qwen3-32b-awq-tp2-smoke",
+    "messages": [
+      {"role": "user", "content": "Output exactly the single word READY."}
+    ],
+    "max_tokens": 32,
+    "temperature": 0,
+    "chat_template_kwargs": {"enable_thinking": false}
+  },
+  "response": {
+    "completion_text": "READY",
+    "finish_reason": "stop",
+    "usage": {
+      "prompt_tokens": 19,
+      "completion_tokens": 2,
+      "total_tokens": 21
+    },
+    "system_fingerprint": "vllm-0.33.0-tp2-608fab00"
+  }
+}

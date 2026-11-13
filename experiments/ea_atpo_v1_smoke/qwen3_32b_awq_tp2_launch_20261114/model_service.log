@@ -1,0 +1,77 @@
+W1114 02:13:58.964000 3494782 torch/_opaque_base.py:6] torch._opaque_base is deprecated, use torch._custom_class_base instead
+W1114 02:13:58.964000 3494782 torch/_library/opaque_object.py:288] register_opaque_type is deprecated, use register_custom_class instead
+W1114 02:13:58.965000 3494782 torch/_library/opaque_object.py:211] typ='value' is deprecated, use typ='constant' instead
+(APIServer pid=3494782) INFO 11-14 02:14:06 [startup.py:38]
+(APIServer pid=3494782) INFO 11-14 02:14:06 [startup.py:38]        █     █     █▄   ▄█
+(APIServer pid=3494782) INFO 11-14 02:14:06 [startup.py:38]  ▄▄ ▄█ █     █     █ ▀▄▀ █  version 0.33.0
+(APIServer pid=3494782) INFO 11-14 02:14:06 [startup.py:38]   █▄█▀ █     █     █     █  model   /pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO/experiments/real_case_pilot_20261103/assets/models/Qwen3-32B-AWQ
+(APIServer pid=3494782) INFO 11-14 02:14:06 [startup.py:38]    ▀▀  ▀▀▀▀▀ ▀▀▀▀▀ ▀     ▀
+(APIServer pid=3494782) INFO 11-14 02:14:06 [startup.py:38]
+(APIServer pid=3494782) INFO 11-14 02:14:06 [startup.py:96] non-default args: {'model_tag': '/pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO/experiments/real_case_pilot_20261103/assets/models/Qwen3-32B-AWQ', 'host': '127.0.0.1', 'port': 30139, 'model': '/pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO/experiments/real_case_pilot_20261103/assets/models/Qwen3-32B-AWQ', 'max_model_len': 4096, 'quantization': 'awq', 'served_model_name': ['qwen3-32b-awq-tp2-smoke'], 'attention_backend': 'TRITON_ATTN', 'tensor_parallel_size': 2, 'gpu_memory_utilization': 0.2, 'max_num_seqs': 1}
+(APIServer pid=3494782) INFO 11-14 02:14:15 [model.py:744] Resolved architecture: Qwen3ForCausalLM
+(APIServer pid=3494782) INFO 11-14 02:14:15 [model.py:2170] Using max model len 4096
+(APIServer pid=3494782) INFO 11-14 02:14:18 [scheduler.py:310] Chunked prefill is enabled with max_num_batched_tokens=4096.
+(APIServer pid=3494782) INFO 11-14 02:14:18 [kernel.py:480] Final IR op priority after setting platform defaults: IrOpPriorityConfig(rms_norm=['native'], fused_add_rms_norm=['native'], gelu_and_mul_sparse=['triton', 'native'])
+(APIServer pid=3494782) INFO 11-14 02:14:20 [compilation.py:317] Enabled custom fusions: allreduce_rms
+Traceback (most recent call last):
+  File "/pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO/.venv-real-pilot/bin/vllm", line 10, in <module>
+    sys.exit(main())
+             ^^^^^^
+  File "/pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO/.venv-real-pilot/lib/python3.12/site-packages/vllm/entrypoints/cli/main.py", line 117, in main
+    args.dispatch_function(args)
+  File "/pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO/.venv-real-pilot/lib/python3.12/site-packages/vllm/entrypoints/cli/serve.py", line 156, in cmd
+    uvloop.run(run_server(args))
+  File "/pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO/.venv-real-pilot/lib/python3.12/site-packages/uvloop/__init__.py", line 96, in run
+    return __asyncio.run(
+           ^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/runners.py", line 194, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "uvloop/loop.pyx", line 1515, in uvloop.loop.Loop.run_until_complete
+  File "/pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO/.venv-real-pilot/lib/python3.12/site-packages/uvloop/__init__.py", line 48, in wrapper
+    return await main
+           ^^^^^^^^^^
+  File "/pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO/.venv-real-pilot/lib/python3.12/site-packages/vllm/entrypoints/launchers/api_server/entry.py", line 176, in run_server
+    await run_server_worker(listen_address, sock, args, **uvicorn_kwargs)
+  File "/pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO/.venv-real-pilot/lib/python3.12/site-packages/vllm/entrypoints/launchers/api_server/entry.py", line 190, in run_server_worker
+    async with build_async_engine_client(
+  File "/usr/lib/python3.12/contextlib.py", line 210, in __aenter__
+    return await anext(self.gen)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO/.venv-real-pilot/lib/python3.12/site-packages/vllm/entrypoints/launchers/api_server/entry.py", line 60, in build_async_engine_client
+    async with build_async_engine_client_from_engine_args(
+  File "/usr/lib/python3.12/contextlib.py", line 210, in __aenter__
+    return await anext(self.gen)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO/.venv-real-pilot/lib/python3.12/site-packages/vllm/entrypoints/launchers/api_server/entry.py", line 94, in build_async_engine_client_from_engine_args
+    async_llm = AsyncLLM.from_vllm_config(
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO/.venv-real-pilot/lib/python3.12/site-packages/vllm/v1/engine/async_llm.py", line 264, in from_vllm_config
+    return cls(
+           ^^^^
+  File "/pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO/.venv-real-pilot/lib/python3.12/site-packages/vllm/v1/engine/async_llm.py", line 193, in __init__
+    self.engine_core = EngineCoreClient.make_async_mp_client(
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO/.venv-real-pilot/lib/python3.12/site-packages/vllm/tracing/otel.py", line 175, in sync_wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO/.venv-real-pilot/lib/python3.12/site-packages/vllm/v1/engine/core_client.py", line 170, in make_async_mp_client
+    return AsyncMPClient(
+           ^^^^^^^^^^^^^^
+  File "/pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO/.venv-real-pilot/lib/python3.12/site-packages/vllm/tracing/otel.py", line 175, in sync_wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO/.venv-real-pilot/lib/python3.12/site-packages/vllm/v1/engine/core_client.py", line 1163, in __init__
+    super().__init__(
+  File "/pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO/.venv-real-pilot/lib/python3.12/site-packages/vllm/v1/engine/core_client.py", line 677, in __init__
+    self.input_socket = self.resources.input_socket = make_zmq_socket(
+                                                      ^^^^^^^^^^^^^^^^
+  File "/pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO/.venv-real-pilot/lib/python3.12/site-packages/vllm/utils/network_utils.py", line 402, in make_zmq_socket
+    socket.bind(path)
+  File "/pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO/.venv-real-pilot/lib/python3.12/site-packages/zmq/sugar/socket.py", line 322, in bind
+    super().bind(addr)
+  File "zmq/backend/cython/_zmq.py", line 1002, in zmq.backend.cython._zmq.Socket.bind
+zmq.error.ZMQError: ipc path "/pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO_V1/experiments/ea_atpo_v1_smoke/qwen3_32b_awq_tp2_launch_20261114/tmp/60b625d4-f5f4-4abd-b26e-214a7969b820" is longer than 107 characters (sizeof(sockaddr_un.sun_path)). zmq.IPC_PATH_MAX_LEN constant can be used to check addr length (if it is defined). (addr='ipc:///pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO_V1/experiments/ea_atpo_v1_smoke/qwen3_32b_awq_tp2_launch_20261114/tmp/60b625d4-f5f4-4abd-b26e-214a7969b820')
