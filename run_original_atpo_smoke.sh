@@ -121,6 +121,8 @@ set -o pipefail
 # cache while FSDP materializes weights, then restores it for generation.
 # Triton avoids the failing FlashInfer JIT link; the smoke-only native RMSNorm
 # fallback avoids the old sgl-kernel wheel's missing SM100 cubin.
+# Critic updates before Actor in the trainer. Its manual FSDP parameter and
+# optimizer offload releases Critic state before Actor's first Adam allocation.
 "$PYTHON" -m recipe.atpo.mt_main \
   data.train_files="[$TRAIN_PARQUET]" \
   data.val_files="[$TEST_PARQUET]" \
@@ -177,8 +179,8 @@ set -o pipefail
   actor_rollout_ref.ref.fsdp_config.param_offload=True \
   critic.model.path="$MODEL_PATH" \
   critic.model.use_remove_padding=True \
-  critic.model.fsdp_config.param_offload=False \
-  critic.model.fsdp_config.optimizer_offload=False \
+  critic.model.fsdp_config.param_offload=True \
+  critic.model.fsdp_config.optimizer_offload=True \
   critic.optim.lr=1e-5 \
   critic.ppo_micro_batch_size_per_gpu=1 \
   critic.ppo_max_token_len_per_gpu=4352 \

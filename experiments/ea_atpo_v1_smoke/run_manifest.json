@@ -641,8 +641,66 @@
     "patient_api_called": false,
     "source_code_modified": false
   },
-  "attempt_19_dual_gpu_plan": {
-    "status": "ready_to_retry_after_api_key_schema_fix",
+  "attempt_19_dual_gpu_result": {
+    "status": "rollout_passed_actor_optimizer_oom",
+    "selected_gpus": [
+      4,
+      6
+    ],
+    "excluded_gpus": [
+      1,
+      7
+    ],
+    "ray_resource_pool_gpus_per_node": 2,
+    "actor_critic_strategy": "FSDP across GPUs 4 and 6",
+    "sglang_tensor_model_parallel_size": 2,
+    "gpu_memory_utilization": 0.35,
+    "max_num_seqs": 2,
+    "multi_stage_wake_up": true,
+    "preflight_minimum_free_mib": 100000,
+    "preflight_gpu_free_mib": {
+      "gpu_4": 112073,
+      "gpu_6": 111657
+    },
+    "started_at_utc": "2026-11-13T17:42:17Z",
+    "ended_at_utc": "2026-11-13T17:47:48Z",
+    "run_log": "experiments/ea_atpo_v1_smoke/original_atpo_attempt19/logs/original_atpo_smoke_20261113T174217Z.log",
+    "wait_log": "experiments/ea_atpo_v1_smoke/gpu_pair_wait_20261113T174112Z.log",
+    "derived_data": {
+      "train_rows": 2,
+      "train_sha256": "15155c59e1b69d2fe59fd4944f96cf93241194253f6f74c706affe271dba5c0b",
+      "test_rows": 1,
+      "test_sha256": "eec6d202cbae34ab1695c6f40c7ebdb8e6cc402a97120f3a1523df6c40e4408c",
+      "api_key_field": "non-secret local placeholder; not used for authentication"
+    },
+    "rollout": {
+      "generated_final_trajectories": 2,
+      "tree_search_completed": true,
+      "patient_api_called": false,
+      "max_assistant_turns": 1
+    },
+    "critic_optimizer_call_completed": true,
+    "critic_update_persisted_to_checkpoint": false,
+    "actor_update": "backward reached optimizer step; Adam exp_avg_sq allocation failed before parameter update completed",
+    "oom": {
+      "requested_mib": 370,
+      "reported_free_mib": [
+        271.81,
+        353.81
+      ],
+      "other_process_gib": [
+        69.22,
+        69.54
+      ],
+      "sglang_process_gib": 3.34,
+      "stage": "Actor AdamW first-moment/second-moment state initialization"
+    },
+    "completed_ppo_steps": 0,
+    "checkpoint_saved": false,
+    "official_atpo_source_modified": false
+  },
+  "attempt_20_dual_gpu_plan": {
+    "status": "ready_with_critic_cpu_offload_for_retry",
     "selected_gpus": [
       4,
       6
@@ -663,7 +721,10 @@
     ],
     "rationale": "Attempt 17 had an FSDP state_dict peak of 1.16 GiB with 1.02 GiB free while SGLang retained its large KV cache; reducing the static cache fraction and enabling staged weight/KV resume should provide more synchronization headroom.",
     "local_data_field": "Non-secret placeholder value is written only during smoke Parquet preprocessing; one-turn smoke does not call the anonymized upstream Patient API.",
-    "planned_run_dir": "experiments/ea_atpo_v1_smoke/original_atpo_attempt19",
-    "continuation_policy": "max_assistant_turns=1; each sample terminates after the Actor first answer, so this checks ATPO tree search/PPO/Actor/Critic path without relying on the separately deployed Patient API."
+    "planned_run_dir": "experiments/ea_atpo_v1_smoke/original_atpo_attempt20",
+    "continuation_policy": "max_assistant_turns=1; each sample terminates after the Actor first answer, so this checks ATPO tree search/PPO/Actor/Critic path without relying on the separately deployed Patient API.",
+    "critic_param_offload": true,
+    "critic_optimizer_offload": true,
+    "reason": "The original trainer updates Critic before Actor; attempt 19 completed the Critic optimizer call, then Actor Adam ran out of 370 MiB with 272 MiB free. The official FSDP worker supports manual CPU offload after critic update, which releases its memory before Actor update."
   }
 }
