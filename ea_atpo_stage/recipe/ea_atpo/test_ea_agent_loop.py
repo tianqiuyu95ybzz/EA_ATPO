@@ -14,8 +14,10 @@ import torch
 from verl import DataProto
 
 import recipe.atpo.user_assistant_agent_loop as original_loop
+from recipe.atpo.agent_loop import AgentLoopWorker
 import recipe.ea_atpo.ea_agent_loop as ea_loop
 from recipe.ea_atpo.ea_reward_manager import EARewardManager
+from recipe.ea_atpo.ea_metrics import attach_ea_metric_fields, patch_agent_loop_worker
 from recipe.ea_atpo.protocol import PublicState
 from recipe.atpo.chat_model import convert_to_agent_output
 from recipe.atpo.mt_metric_utils import compute_accuracy_metrics
@@ -55,6 +57,11 @@ async def _fixed_critic_value(messages, is_terminal, config):
 
 
 class EAFourActionLoopSmokeTest(unittest.TestCase):
+    def test_runtime_bridge_patches_only_the_ea_entrypoint_actor_class(self):
+        patch_agent_loop_worker(AgentLoopWorker)
+        worker_class = AgentLoopWorker.__ray_metadata__.modified_class
+        self.assertTrue(worker_class._ea_metric_bridge_installed)
+
     def test_four_actions_mask_cost_continue_and_isolate_roles(self):
         model_path = os.environ.get(
             "EA_ATPO_MODEL_PATH",
@@ -192,6 +199,7 @@ class EAFourActionLoopSmokeTest(unittest.TestCase):
                 )
             },
         )
+        attach_ea_metric_fields(data)
         manager = EARewardManager(tokenizer=None, num_examine=0)
         result = manager(data, return_dict=True)
         for observed, expected in zip(
@@ -206,8 +214,8 @@ class EAFourActionLoopSmokeTest(unittest.TestCase):
             {key: np.asarray(value) for key, value in result["reward_extra_info"].items()}
         )
         metrics = compute_accuracy_metrics(data)
-        self.assertEqual(result["reward_extra_info"]["is_valid"], [1, 0])
-        self.assertEqual(result["reward_extra_info"]["is_correct"], [1, 0])
+        self.assertEqual(data.non_tensor_batch["is_valid"].tolist(), [1, 0])
+        self.assertEqual(data.non_tensor_batch["is_correct"].tolist(), [1, 0])
         self.assertEqual(metrics["custom/num_valid"], 1)
         self.assertEqual(metrics["custom/num_correct"], 1)
         self.assertAlmostEqual(metrics["custom/incorrect_format_rate"], 0.5)

@@ -1,6 +1,6 @@
 # EA-ATPO V1 Smoke Test Status
 
-**Status: original ATPO baseline and deterministic EA protocol smoke passed; real EA attempt 2 completed one PPO update before a legacy-metrics adapter failure; attempt 3 is pending.** The original Qwen3-8B baseline completed two PPO updates across GPUs 4 and 6 with nonzero Actor and Critic updates. The pinned ATPO source remains unchanged, and GPUs 1 and 7 remain excluded. See Attempt 20 below for the baseline logs and checkpoint evidence.
+**Status: original ATPO baseline and deterministic EA protocol smoke passed; real EA attempt 2 completed one PPO update before a legacy-metrics adapter failure; attempt 3 also completed one PPO update but hit the same logger integration gap; an EA-entrypoint metric bridge is now tested and attempt 4 is pending.** The original Qwen3-8B baseline completed two PPO updates across GPUs 4 and 6 with nonzero Actor and Critic updates. The pinned ATPO source remains unchanged, and GPUs 1 and 7 remain excluded. See Attempt 20 below for the baseline logs and checkpoint evidence.
 
 ## Source and environment
 
@@ -129,3 +129,8 @@ Attempt 1 initialized the Qwen3-8B Actor/Critic and the SGLang rollout service a
 ## Real EA training attempt 2
 
 The two-GPU run initialized Qwen3-8B Actor/Critic and the SGLang TP=2 service without OOM, generated two real model rollouts, and completed one PPO update. Actor and Critic model/optimizer files were saved at `global_step_1`. Both episodes answered after ASK and CONSULT; 0/2 were correct, which is only an engineering smoke observation. The process then stopped during post-update metrics because the EA reward adapter had not populated legacy `is_valid` and related keys required by ATPO's unchanged metric function. The adapter now derives answer validity/correctness from completed EA episode traces and supplies the inapplicable legacy interaction counters as zero. The manifest, trace, rollout, raw log, and partial checkpoint remain under `experiments/ea_atpo_v1_smoke/ea_atpo_v1_attempt02/`.
+
+
+## Real EA training attempt 3
+
+Attempt 3 reproduced the metric failure after one PPO update. The second adapter attempt had added fields inside the reward manager, but ATPO removes per-sample `statistics` before that manager is called. The run again initialized the two-GPU models, generated two episodes, and saved Actor/Critic checkpoint state without OOM. The fix now attaches the post-rollout metric fields at the EA-only `_postprocess` boundary before ATPO discards statistics. Attempt 3 artifacts remain under `experiments/ea_atpo_v1_smoke/ea_atpo_v1_attempt03/`.

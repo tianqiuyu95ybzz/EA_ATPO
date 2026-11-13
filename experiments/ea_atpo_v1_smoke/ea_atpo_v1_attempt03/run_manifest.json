@@ -1,0 +1,96 @@
+{
+  "status": "failed_after_first_update",
+  "created_at_utc": "2026-11-13T19:34:49.032714+00:00",
+  "run_dir": "/pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO_V1/experiments/ea_atpo_v1_smoke/ea_atpo_v1_attempt03",
+  "git_commit": "0726488fbc723775959bffd4f94a360f1999e13d",
+  "official_atpo_commit": "unavailable: CalledProcessError: Command '('git', '-C', '/pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO_V1/ATPO-official', 'rev-parse', 'HEAD')' returned non-zero exit status 128.",
+  "gpu_indices": [
+    4,
+    6
+  ],
+  "cuda_visible_devices": "4,6",
+  "gpu_snapshot": "0, NVIDIA B20Z, 88197 MiB, 94428 MiB\n1, NVIDIA B20Z, 65609 MiB, 117016 MiB\n2, NVIDIA B20Z, 71315 MiB, 111310 MiB\n3, NVIDIA B20Z, 65625 MiB, 117000 MiB\n4, NVIDIA B20Z, 111687 MiB, 70938 MiB\n5, NVIDIA B20Z, 65467 MiB, 117158 MiB\n6, NVIDIA B20Z, 111441 MiB, 71184 MiB\n7, NVIDIA B20Z, 65139 MiB, 117486 MiB",
+  "python": "3.12.3 (main, Aug 14 2025, 17:47:21) [GCC 13.3.0]",
+  "packages": {
+    "torch": "2.7.1+cu128",
+    "transformers": "4.54.1",
+    "ray": "2.47.1",
+    "sglang": "0.4.10.post2",
+    "vllm": null,
+    "datasets": "4.0.0",
+    "pyarrow": "19.0.1"
+  },
+  "model": {
+    "path": "/pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO/experiments/real_case_pilot_20261103/assets/models/Qwen3-8B",
+    "config_sha256": "f7c4eadfbbf522470667b797a3c89be2524832d2d599797248dc304fff447c30",
+    "tokenizer_config_sha256": "d5d09f07b48c3086c508b30d1c9114bd1189145b74e982a265350c923acd8101"
+  },
+  "data": {
+    "official_train_jsonl_sha256": "434a6734dce931262f2ed9e3201a3751e57db3609b1612ab9666835ac8832fdc",
+    "official_test_jsonl_sha256": "5e10a4dc50802e2dc3c156a3bc9e33111837dd762dff97aaaa0327fc4fdbba46",
+    "train_parquet": {
+      "path": "/pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO_V1/experiments/ea_atpo_v1_smoke/ea_atpo_v1_attempt03/data/train.parquet",
+      "sha256": "15155c59e1b69d2fe59fd4944f96cf93241194253f6f74c706affe271dba5c0b"
+    },
+    "test_parquet": {
+      "path": "/pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO_V1/experiments/ea_atpo_v1_smoke/ea_atpo_v1_attempt03/data/test.parquet",
+      "sha256": "eec6d202cbae34ab1695c6f40c7ebdb8e6cc402a97120f3a1523df6c40e4408c"
+    }
+  },
+  "training_config": {
+    "train_rows": 2,
+    "validation_rows": 1,
+    "seed": 1,
+    "actor_critic_model": "Qwen3-8B",
+    "max_actor_actions": 3,
+    "max_asks": 1,
+    "max_consults": 1,
+    "M_trajectories": 2,
+    "N_candidates": 2,
+    "response_length": 512,
+    "costs": {
+      "ask": 0.05,
+      "consult": 0.2,
+      "defer": 0.6
+    },
+    "correctness_reward": 1.0,
+    "costs_charged_in": "EA tree edge rewards only; episode scalar is reporting-only because advantages/returns are precomputed",
+    "agent_loop": "recipe.ea_atpo.ea_agent_loop.EAATPOAgentLoop",
+    "reward_manager": "recipe.ea_atpo.ea_reward_manager.EARewardManager",
+    "reward_accounting": "copied from the EA tree trace once; precomputed Actor advantages and Critic returns are unchanged"
+  },
+  "log_path": "/pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO_V1/experiments/ea_atpo_v1_smoke/ea_atpo_v1_attempt03/logs/ea_atpo_v1_smoke_20261113T193446Z.log",
+  "completed_at_utc": "2026-11-13T19:45:24.872833+00:00",
+  "failure": {
+    "type": "KeyError",
+    "message": "ATPO AgentLoopWorker removes per-sample statistics before the reward manager runs; consequently post-update accuracy metrics still lacked is_valid.",
+    "failed_stage": "post-update metric aggregation",
+    "gpu_oom": false,
+    "training_updates_completed": 1,
+    "training_steps_configured": 2,
+    "fix": "Wrap EA AgentLoopWorker._postprocess in the EA entrypoint and preserve derived accuracy fields before ATPO removes statistics."
+  },
+  "partial_checkpoint": {
+    "path": "/pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO_V1/experiments/ea_atpo_v1_smoke/ea_atpo_v1_attempt03/checkpoints/global_step_1",
+    "file_count": 32,
+    "total_bytes": 189142648842,
+    "actor_critic_model_and_optimizer_files_present": true
+  },
+  "rollout_summary": {
+    "episode_count": 2,
+    "action_counts": {
+      "ANSWER": 2,
+      "ASK": 2,
+      "CONSULT": 2,
+      "DEFER": 0
+    },
+    "episodes_with_final_answer": 2,
+    "correct_episodes": 0,
+    "interpretation": "Two-case engineering rollout only; not a performance estimate."
+  },
+  "trace_path": "/pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO_V1/experiments/ea_atpo_v1_smoke/ea_atpo_v1_attempt03/traces/train.jsonl",
+  "trace_sha256": "7054be43bb5a7c715357a7307dd182c21a41ef492905f6b2474301c30021ee65",
+  "rollout_data_path": "/pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO_V1/experiments/ea_atpo_v1_smoke/ea_atpo_v1_attempt03/rollouts/1.jsonl",
+  "log_sha256": "1083ba105c80db7dfa1ea56a14bbbabebfcb481f37692f16d0935cddcb5166a8",
+  "exit_gpu_snapshot": "0, NVIDIA B20Z, 88181 MiB, 94444 MiB\n1, NVIDIA B20Z, 65575 MiB, 117050 MiB\n2, NVIDIA B20Z, 71293 MiB, 111332 MiB\n3, NVIDIA B20Z, 65055 MiB, 117570 MiB\n4, NVIDIA B20Z, 111553 MiB, 71072 MiB\n5, NVIDIA B20Z, 65453 MiB, 117172 MiB\n6, NVIDIA B20Z, 111423 MiB, 71202 MiB\n7, NVIDIA B20Z, 65127 MiB, 117498 MiB"
+}
