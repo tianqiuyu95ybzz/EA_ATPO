@@ -95,9 +95,11 @@ cd "$CODE_ROOT"
 LOG_FILE="$RUN_DIR/logs/original_atpo_smoke_$(date -u +%Y%m%dT%H%M%SZ).log"
 set -o pipefail
 # SGLang sizes its KV cache from the available-memory baseline measured before
-# weight loading, not from physical VRAM. Earlier runs at 0.75 reached graph
-# capture but lost the remaining headroom to shared-GPU allocations, so the
-# retry uses 0.60 and caps concurrent requests at the two smoke trajectories.
+# weight loading, not from physical VRAM. The two-GPU retry reached graph
+# capture at 0.60 but the first FSDP-to-SGLang weight sync lacked 1.16 GiB.
+# Use 0.35 to reserve more per-GPU headroom; this still yields KV capacity far
+# above the two 4,352-token smoke requests. Multi-stage wake-up releases KV
+# cache while FSDP materializes weights, then restores it for generation.
 # Triton avoids the failing FlashInfer JIT link; the smoke-only native RMSNorm
 # fallback avoids the old sgl-kernel wheel's missing SM100 cubin.
 "$PYTHON" -m recipe.atpo.mt_main \
@@ -137,13 +139,14 @@ set -o pipefail
   actor_rollout_ref.rollout.mode=async \
   actor_rollout_ref.rollout.tensor_model_parallel_size="$GPU_COUNT" \
   actor_rollout_ref.rollout.response_length=256 \
-  actor_rollout_ref.rollout.gpu_memory_utilization=0.60 \
+  actor_rollout_ref.rollout.gpu_memory_utilization=0.35 \
   actor_rollout_ref.rollout.max_model_len=4352 \
   actor_rollout_ref.rollout.max_num_batched_tokens=4352 \
   actor_rollout_ref.rollout.max_num_seqs=2 \
   +actor_rollout_ref.rollout.engine_kwargs.sglang.attention_backend=triton \
   actor_rollout_ref.rollout.multi_turn.enable=True \
   actor_rollout_ref.rollout.multi_turn.max_assistant_turns=1 \
+  actor_rollout_ref.rollout.multi_stage_wake_up=True \
   actor_rollout_ref.rollout.n=1 \
   actor_rollout_ref.rollout.top_p=0.8 \
   actor_rollout_ref.rollout.temperature=1.0 \

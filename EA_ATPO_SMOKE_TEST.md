@@ -1,6 +1,6 @@
 # EA-ATPO V1 Smoke Test Status
 
-**Status: pending; the original ATPO smoke has not reached its first PPO update.** The official `sgl-kernel==0.2.9+cu128` imports with PyTorch `2.7.1+cu128`; isolated SM100 RMSNorm and Qwen3-shaped rotary calls pass. Attempts 13 and 14 completed Critic/Actor and SGLang Qwen3-8B initialization, KV allocation, and CUDA graph capture. Both OOMed when the first rollout woke the FSDP model back onto the GPU after shared allocations changed. No PPO step or parameter update occurred. Attempt 14 passed the 170,000 MiB / three-sample stability gate, so that gate alone is insufficient under current shared-GPU contention. GPUs 1 and 7 remain excluded.
+**Status: pending; the original ATPO smoke has not reached its first PPO update.** The official `sgl-kernel==0.2.9+cu128` imports with PyTorch `2.7.1+cu128`; isolated SM100 RMSNorm and Qwen3-shaped rotary calls pass. Attempts 13 and 14 completed model initialization and CUDA graph capture but OOMed at rollout startup. Attempt 17 used FSDP and SGLang TP across GPUs 4 and 6, completed both model loads, KV allocation, and graph capture, then OOMed during the first FSDP-to-SGLang weight sync, before any rollout or PPO step. Its full log is recorded. The next retry lowers SGLang's memory fraction and enables multi-stage wake-up. GPUs 1 and 7 remain excluded.
 
 ## Source and environment
 
@@ -23,7 +23,7 @@
 
 ## Next retry plan
 
-The runner now reads the pinned source and JSONL data from the ignored, read-only `ATPO-official/` checkout. A 900-second single-GPU watcher ended at 2026-11-11 10:36 UTC without an eligible GPU, so attempt 15 did not start; its output and end snapshot are in `experiments/ea_atpo_v1_smoke/gpu_wait_attempt15_20261111T1021Z.log`. The next attempt uses GPUs 4 and 6 as a two-GPU set: Actor/Critic FSDP world size 2 and SGLang tensor parallel size 2. This mapping is supported by the official code: `mt_main.py` sizes the Ray resource pool from `trainer.n_gpus_per_node`; `sglang_rollout.py` forms a `(dp, tp, pp)` device mesh; and `async_sglang_server.py` maps the worker ranks into the TP group. Each selected GPU must maintain at least 100,000 MiB free for five consecutive 15-second checks. Utilization is logged but is not a launch gate for this requested shared-GPU attempt. SGLang remains at `gpu_memory_utilization=0.60` and `max_num_seqs=2`. GPU 1 and 7 are excluded. Critic CPU offload remains disabled because the official FSDP worker documents incorrect results with gradient accumulation when enabled. GPUs 4 and 6 briefly showed 0% utilization with about 112,000 MiB free, but both returned to 100% on the 2026-11-13 17:06 UTC sample; the pair watcher logs both metrics and only launches after the memory gate remains stable.
+The runner now reads the pinned source and JSONL data from the ignored, read-only `ATPO-official/` checkout. A 900-second single-GPU watcher ended at 2026-11-11 10:36 UTC without an eligible GPU, so attempt 15 did not start; its output and end snapshot are in `experiments/ea_atpo_v1_smoke/gpu_wait_attempt15_20261111T1021Z.log`. The two-GPU layout uses Actor/Critic FSDP world size 2 and SGLang tensor parallel size 2. This mapping is supported by the official code: `mt_main.py` sizes the Ray resource pool from `trainer.n_gpus_per_node`; `sglang_rollout.py` forms a `(dp, tp, pp)` device mesh; and `async_sglang_server.py` maps worker ranks into the TP group. Each selected GPU must maintain at least 100,000 MiB free for five consecutive 15-second checks. Utilization is logged but is not a launch gate for the requested shared-GPU attempt. Attempt 17 loaded the model and captured graphs at SGLang `gpu_memory_utilization=0.60`, but FSDP needed 1.16 GiB to materialize the rollout `state_dict` while only 1.02 GiB was free. The next retry lowers the fraction to `0.35`, keeps `max_num_seqs=2`, and enables `multi_stage_wake_up=True` so KV cache is restored after FSDP materializes and syncs weights. GPU 1 and 7 are excluded. Critic CPU offload remains disabled because the official FSDP worker documents incorrect results with gradient accumulation when enabled. GPUs 4 and 6 briefly showed 0% utilization with about 112,000 MiB free, but their utilization fluctuates; the pair watcher logs memory and utilization and only launches after the per-card memory gate remains stable.
 
 ## Attempts and findings
 
@@ -83,6 +83,14 @@ Attempt 14 used the 170,000 MiB / 60% gate with three checks 15 seconds apart; t
 ### Attempt 15 resource gate: not launched
 
 The revised watcher checked only GPUs 0, 2, 3, 4, 5, and 6 for 900 seconds, requiring at least 155,000 MiB free and at most 15% utilization across five consecutive samples. No GPU met the gate. The watcher exited with code 3 before starting the smoke; no training or GPU allocation occurred. The end snapshot showed the best allowed card at 96,595 MiB free, below the gate. See `experiments/ea_atpo_v1_smoke/gpu_wait_attempt15_20261111T1021Z.log`.
+
+### Attempt 16 strict pair wait: stopped before launch
+
+The first GPU 4+6 watcher also required utilization at most 15%. It repeatedly lost that gate while memory stayed near 112,000 MiB per GPU, so it was stopped before launching. Its output is in `experiments/ea_atpo_v1_smoke/gpu_pair_wait_20261113T170714Z.log`. The next attempt records utilization but gates on per-card free memory only.
+
+### Attempt 17: two-GPU initialization succeeds; first weight sync OOMs
+
+The run used physical GPUs 4 and 6 with Ray/FSDP world size 2, SGLang TP size 2, `gpu_memory_utilization=0.60`, and `max_num_seqs=2`. Both training models loaded. SGLang loaded Qwen3-8B across TP0/TP1, allocated 683,410 KV tokens, and captured CUDA graphs for batch sizes 1 and 2, leaving 36.4 GB reported available before training. On the first rollout `wake_up`, FSDP tried to materialize the sharded Actor state dict for SGLang synchronization and requested 1.16 GiB with 1.02 GiB free. The failing device reported 68.86 GiB held by another process, 51.23 GiB by this training worker, and 57.15 GiB by the SGLang process. The run stopped before generating a rollout and made zero PPO updates. Full log: `experiments/ea_atpo_v1_smoke/original_atpo/logs/original_atpo_smoke_20261113T171537Z.log`.
 
 ## GitHub publication
 

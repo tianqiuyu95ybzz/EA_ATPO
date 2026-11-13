@@ -239,7 +239,7 @@
   },
   "training_result": null,
   "configuration": {
-    "rollout_gpu_memory_utilization": 0.6,
+    "rollout_gpu_memory_utilization": 0.35,
     "rollout_attention_backend": "triton",
     "rollout_max_num_seqs": 2,
     "rollout_max_model_len": 4352,
@@ -251,10 +251,11 @@
     "tree_search_N_candidates": 2,
     "total_epochs": 1,
     "trainer_n_gpus_per_node": 2,
-    "rollout_tensor_model_parallel_size": 2
+    "rollout_tensor_model_parallel_size": 2,
+    "rollout_multi_stage_wake_up": true
   },
-  "retry_status": "attempt_16_strict_pair_wait_aborted_before_launch; attempt_17_memory_gated_pair_wait_ready",
-  "last_blocker": "A strict two-GPU wait with a 15% utilization cap was stopped before launch because the shared GPUs fluctuate in compute utilization. User requested a launch attempt using two GPUs. Attempt 17 keeps the per-card free-memory gate and stability checks, logs utilization without treating it as a blocker, and uses FSDP world size 2 plus SGLang TP 2.",
+  "retry_status": "attempt_17_two_gpu_weight_sync_oom_no_rollout; attempt_18_lower_kv_memory_multi_stage_plan_recorded",
+  "last_blocker": "Attempt 17 (GPUs 4,6; FSDP world size 2; SGLang TP 2) completed Actor/Critic and SGLang initialization plus CUDA graph capture, then OOMed during the first FSDP-to-SGLang weight sync. state_dict materialization requested 1.16 GiB with 1.02 GiB free. The OOM occurred before any rollout or PPO update. Attempt 18 lowers SGLang memory fraction to 0.35 and enables multi-stage wake-up.",
   "runtime_compatibility_override": {
     "attention_backend": "triton",
     "native_rmsnorm_fallback": {
@@ -338,7 +339,7 @@
     "repository": "https://github.com/tianqiuyu95ybzz/EA_ATPO",
     "branch": "ea-atpo-v1",
     "base_commit": "ad9d0e31660b973a3e5ddfcadce6701f767e0f62",
-    "verified_head_commit": "198358bda62433ae8a687390cfb0ebfd84e2d304",
+    "verified_head_commit": "890c6e3acd4bb101639d841ee610b39eee439bad",
     "verification": [
       "git ls-remote",
       "GitHub Branch API"
@@ -363,7 +364,7 @@
       1,
       7
     ],
-    "sglang_gpu_memory_utilization": 0.6,
+    "sglang_gpu_memory_utilization": 0.35,
     "sglang_max_num_seqs": 2,
     "critic_parameter_offload": false,
     "critic_offload_note": "Keep disabled; official FSDP worker notes CPUOffload can cause incorrect results with gradient accumulation.",
@@ -383,7 +384,8 @@
     "minimum_free_mib_per_gpu": 100000,
     "training_world_size": 2,
     "sglang_tensor_parallel_size": 2,
-    "utilization_is_advisory": true
+    "utilization_is_advisory": true,
+    "sglang_multi_stage_wake_up": true
   },
   "resource_snapshot": {
     "timestamp_utc": "2026-11-11T10:19:12Z",
@@ -551,7 +553,7 @@
     "note": "The 15% utilization cap was removed for the user-requested shared-GPU attempt; free-memory stability remains gated."
   },
   "attempt_17_dual_gpu_plan": {
-    "status": "ready_for_memory_gated_pair_wait",
+    "status": "failed_before_first_rollout_weight_sync_oom",
     "selected_gpus": [
       4,
       6
@@ -579,6 +581,51 @@
         "free_mib": 112077,
         "utilization_percent": 0
       }
-    ]
+    ],
+    "training_started": true,
+    "rollout_generated": false,
+    "ppo_steps": 0,
+    "started_at_utc": "2026-11-13T17:15:37Z",
+    "ended_at_utc": "2026-11-13T17:20:24Z",
+    "log": "experiments/ea_atpo_v1_smoke/original_atpo/logs/original_atpo_smoke_20261113T171537Z.log",
+    "rollout_gpu_memory_utilization": 0.6,
+    "rollout_multi_stage_wake_up": false,
+    "sglang_tp_size": 2,
+    "sglang_kv_tokens_per_gpu": 683410,
+    "sglang_kv_k_gib": 23.46,
+    "sglang_kv_v_gib": 23.46,
+    "sglang_cuda_graph_capture": "passed for batch sizes 1 and 2",
+    "oom_stage": "FSDP-to-SGLang weight sync during first wake_up, in FSDP state_dict materialization",
+    "oom_requested_gib": 1.16,
+    "oom_free_gib": 1.02,
+    "oom_processes_gib": {
+      "other_process": 68.86,
+      "fsdp_worker": 51.23,
+      "sglang_process": 57.15
+    },
+    "result": "no rollout generated; no Actor/Critic PPO update",
+    "wait_log": "experiments/ea_atpo_v1_smoke/gpu_pair_wait_20261113T171435Z.log"
+  },
+  "attempt_18_dual_gpu_plan": {
+    "status": "ready_for_memory_gated_pair_wait",
+    "selected_gpus": [
+      4,
+      6
+    ],
+    "ray_resource_pool_gpus_per_node": 2,
+    "actor_critic_strategy": "FSDP across the two selected GPUs",
+    "sglang_tensor_model_parallel_size": 2,
+    "per_gpu_minimum_free_mib": 100000,
+    "stable_samples": 5,
+    "sample_interval_seconds": 15,
+    "utilization_policy": "recorded_not_gated",
+    "sglang_gpu_memory_utilization": 0.35,
+    "sglang_max_num_seqs": 2,
+    "sglang_multi_stage_wake_up": true,
+    "excluded_gpus": [
+      1,
+      7
+    ],
+    "rationale": "Attempt 17 had an FSDP state_dict peak of 1.16 GiB with 1.02 GiB free while SGLang retained its large KV cache; reducing the static cache fraction and enabling staged weight/KV resume should provide more synchronization headroom."
   }
 }
