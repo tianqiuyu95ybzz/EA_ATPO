@@ -23,7 +23,7 @@ Each action edge receives one EA net reward:
 
 `r_t = terminal_correctness_reward_t - lambda_ask * ask_cost * I(ASK) - lambda_consult * consult_cost * I(CONSULT) - lambda_defer * defer_cost * I(DEFER)`
 
-The correctness term is nonzero only when an episode terminates with an answer. Costs are charged once at the edge. The EA runner supplies these edge rewards to ATPO's tree backup; returns train the existing Critic and the resulting advantages train the Actor. Because the loop returns precomputed advantages and returns, the trainer skips a second GAE calculation. The scalar reward function is for outcome reporting and does not add another training reward.
+The correctness term is nonzero only when an episode terminates with an answer. Costs are charged once at the edge. The EA runner supplies these edge rewards to ATPO's tree backup; returns train the existing Critic and the resulting advantages train the Actor. Because the loop returns precomputed advantages and returns, the trainer skips a second GAE calculation. The EA reward adapter copies the tree's episode total into the trainer's score field for reporting; it does not add another training reward.
 
 The original clipped PPO Actor loss and clipped Critic MSE remain unchanged. V1 adds no information-gain reward, clinical-harm reward, new Critic head, Router loss, or joint RL objective.
 
@@ -41,7 +41,8 @@ EA code lives in `ea_atpo_stage/recipe/ea_atpo/` and uses ATPO's `agent_loop_con
 
 - `ea_agent_loop.py`: Actor log-probability handling, role-isolated calls, four-action tree expansion, terminal/failure handling, net rewards, and trace capture.
 - `protocol.py`: public-state tracking, action parsing, and Expert information-boundary checks.
-- `ea_reward.py`: reporting-only scalar score.
+- `ea_reward.py`: standalone score utility for reading stored action text.
+- `ea_reward_manager.py` and `mt_main_ea.py`: EA episode-score adapter and entrypoint. They leave ATPO source unchanged and require the loop's trace-derived `reward_score`.
 - `agent.yaml`: maps the official dataset's `user_assistant_interaction` agent name to the EA loop.
 - `test_ea_agent_loop.py`: deterministic transition, role-isolation, cost, and token-mask checks.
 - `run_ea_atpo_v1_smoke.sh`: two-GPU Qwen3-8B Actor/Critic smoke runner with isolated outputs and data/model hashes.

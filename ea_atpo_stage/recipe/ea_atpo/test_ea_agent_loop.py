@@ -9,9 +9,12 @@ from unittest.mock import patch
 
 from langchain_core.messages import convert_to_messages
 from transformers import AutoTokenizer
+import torch
+from verl import DataProto
 
 import recipe.atpo.user_assistant_agent_loop as original_loop
 import recipe.ea_atpo.ea_agent_loop as ea_loop
+from recipe.ea_atpo.ea_reward_manager import EARewardManager
 from recipe.ea_atpo.protocol import PublicState
 from recipe.atpo.chat_model import convert_to_agent_output
 
@@ -161,6 +164,21 @@ class EAFourActionLoopSmokeTest(unittest.TestCase):
         for prompt in expert_prompts:
             self.assertNotIn("A 40-year-old patient reports fever.", prompt)
             self.assertNotIn("private gold explanation", prompt)
+
+    def test_reward_manager_only_accounts_for_precomputed_ea_score(self):
+        data = DataProto.from_dict(
+            tensors={"rm_scores": torch.tensor([[0.0, 0.95], [0.0, -0.60]])}
+        )
+        manager = EARewardManager(tokenizer=None, num_examine=0)
+        result = manager(data, return_dict=True)
+        for observed, expected in zip(
+            result["reward_tensor"].sum(dim=-1).tolist(), [0.95, -0.60]
+        ):
+            self.assertAlmostEqual(observed, expected)
+        for observed, expected in zip(
+            result["reward_extra_info"]["ea_net_episode_reward"], [0.95, -0.60]
+        ):
+            self.assertAlmostEqual(observed, expected)
 
 
 if __name__ == "__main__":

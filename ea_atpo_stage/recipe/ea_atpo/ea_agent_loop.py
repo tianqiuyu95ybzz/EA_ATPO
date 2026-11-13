@@ -838,6 +838,7 @@ class EAATPOAgentLoop(AgentLoopBase):
             episode = runner.episode_trace(leaf)
             output.statistics = output.statistics or {}
             output.statistics["ea_episode"] = episode
+            output.reward_score = float(episode["evaluation"]["net_episode_reward"])
             output.statistics["q_value_variance_list"] = output.statistics.get("q_value_variance_list", [])
             output.statistics["mdp_value_list"] = output.statistics.get("mdp_value_list", [])
             output.statistics["critic_value_list"] = output.statistics.get("critic_value_list", [])

@@ -177,9 +177,10 @@ manifest = {
         "response_length": 512,
         "costs": {"ask": 0.05, "consult": 0.20, "defer": 0.60},
         "correctness_reward": 1.0,
-        "costs_charged_in": "EA tree edge rewards only; custom scalar score is reporting-only because advantages/returns are precomputed",
+        "costs_charged_in": "EA tree edge rewards only; episode scalar is reporting-only because advantages/returns are precomputed",
         "agent_loop": "recipe.ea_atpo.ea_agent_loop.EAATPOAgentLoop",
-        "reward_function": "recipe.ea_atpo.ea_reward.compute_score",
+        "reward_manager": "recipe.ea_atpo.ea_reward_manager.EARewardManager",
+        "reward_accounting": "copied from the EA tree trace once; precomputed Actor advantages and Critic returns are unchanged",
     },
     "log_path": log_path,
 }
@@ -199,7 +200,7 @@ set -o pipefail
 # fallback avoids the old sgl-kernel wheel's missing SM100 cubin.
 # Critic updates before Actor in the trainer. Its manual FSDP parameter and
 # optimizer offload releases Critic state before Actor's first Adam allocation.
-"$PYTHON" -m recipe.atpo.mt_main \
+"$PYTHON" -m recipe.ea_atpo.mt_main_ea \
   data.train_files="[$TRAIN_PARQUET]" \
   data.val_files="[$TEST_PARQUET]" \
   data.return_raw_chat=True \
@@ -278,9 +279,7 @@ set -o pipefail
   +ea_atpo.defer_cost=0.60 \
   +ea_atpo.correctness_reward=1.0 \
   +ea_atpo.trace_path="$RUN_DIR/traces/train.jsonl" \
-  reward_model.reward_manager=naive \
-  custom_reward_function.path="$ROOT/ea_atpo_stage/recipe/ea_atpo/ea_reward.py" \
-  custom_reward_function.name=compute_score \
+  reward_model.reward_manager=ea_atpo \
   trainer.logger='[console]' \
   trainer.project_name=ea_atpo_v1_smoke \
   trainer.experiment_name=ea_atpo_v1_protocol_smoke \
