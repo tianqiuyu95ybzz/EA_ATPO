@@ -1,0 +1,72 @@
+{
+  "status": "failed_before_rollout",
+  "created_at_utc": "2026-11-13T19:15:40.608122+00:00",
+  "run_dir": "/pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO_V1/experiments/ea_atpo_v1_smoke/ea_atpo_v1_attempt01",
+  "git_commit": "eb2a881185efefc8285c5cedb6ffabdab2edfac2",
+  "official_atpo_commit": "unavailable: CalledProcessError: Command '('git', '-C', '/pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO_V1/ATPO-official', 'rev-parse', 'HEAD')' returned non-zero exit status 128.",
+  "gpu_indices": [
+    4,
+    6
+  ],
+  "cuda_visible_devices": "4,6",
+  "gpu_snapshot": "0, NVIDIA B20Z, 88229 MiB, 94396 MiB\n1, NVIDIA B20Z, 65855 MiB, 116770 MiB\n2, NVIDIA B20Z, 71423 MiB, 111202 MiB\n3, NVIDIA B20Z, 65653 MiB, 116972 MiB\n4, NVIDIA B20Z, 111875 MiB, 70750 MiB\n5, NVIDIA B20Z, 65611 MiB, 117014 MiB\n6, NVIDIA B20Z, 111673 MiB, 70952 MiB\n7, NVIDIA B20Z, 65171 MiB, 117454 MiB",
+  "python": "3.12.3 (main, Aug 14 2025, 17:47:21) [GCC 13.3.0]",
+  "packages": {
+    "torch": "2.7.1+cu128",
+    "transformers": "4.54.1",
+    "ray": "2.47.1",
+    "sglang": "0.4.10.post2",
+    "vllm": null,
+    "datasets": "4.0.0",
+    "pyarrow": "19.0.1"
+  },
+  "model": {
+    "path": "/pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO/experiments/real_case_pilot_20261103/assets/models/Qwen3-8B",
+    "config_sha256": "f7c4eadfbbf522470667b797a3c89be2524832d2d599797248dc304fff447c30",
+    "tokenizer_config_sha256": "d5d09f07b48c3086c508b30d1c9114bd1189145b74e982a265350c923acd8101"
+  },
+  "data": {
+    "official_train_jsonl_sha256": "434a6734dce931262f2ed9e3201a3751e57db3609b1612ab9666835ac8832fdc",
+    "official_test_jsonl_sha256": "5e10a4dc50802e2dc3c156a3bc9e33111837dd762dff97aaaa0327fc4fdbba46",
+    "train_parquet": {
+      "path": "/pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO_V1/experiments/ea_atpo_v1_smoke/ea_atpo_v1_attempt01/data/train.parquet",
+      "sha256": "15155c59e1b69d2fe59fd4944f96cf93241194253f6f74c706affe271dba5c0b"
+    },
+    "test_parquet": {
+      "path": "/pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO_V1/experiments/ea_atpo_v1_smoke/ea_atpo_v1_attempt01/data/test.parquet",
+      "sha256": "eec6d202cbae34ab1695c6f40c7ebdb8e6cc402a97120f3a1523df6c40e4408c"
+    }
+  },
+  "training_config": {
+    "train_rows": 2,
+    "validation_rows": 1,
+    "seed": 1,
+    "actor_critic_model": "Qwen3-8B",
+    "max_actor_actions": 3,
+    "max_asks": 1,
+    "max_consults": 1,
+    "M_trajectories": 2,
+    "N_candidates": 2,
+    "response_length": 512,
+    "costs": {
+      "ask": 0.05,
+      "consult": 0.2,
+      "defer": 0.6
+    },
+    "correctness_reward": 1.0,
+    "costs_charged_in": "EA tree edge rewards only; episode scalar is reporting-only because advantages/returns are precomputed",
+    "agent_loop": "recipe.ea_atpo.ea_agent_loop.EAATPOAgentLoop",
+    "reward_manager": "recipe.ea_atpo.ea_reward_manager.EARewardManager",
+    "reward_accounting": "copied from the EA tree trace once; precomputed Actor advantages and Critic returns are unchanged"
+  },
+  "log_path": "/pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO_V1/experiments/ea_atpo_v1_smoke/ea_atpo_v1_attempt01/logs/ea_atpo_v1_smoke_20261113T191538Z.log",
+  "completed_at_utc": "2026-11-13T19:23:17.317635+00:00",
+  "failure": {
+    "type": "KeyError",
+    "message": "EAATPOSearchRunner expected configurable.correctness_reward; EAATPOAgentLoop omitted that field in the first run.",
+    "training_updates": 0,
+    "actor_tokens_generated": 0,
+    "gpu_oom": false,
+    "fix": "Pass correctness_reward into the search runner configuration; verified by the 21-test EA protocol suite before retry."
+  }
+}

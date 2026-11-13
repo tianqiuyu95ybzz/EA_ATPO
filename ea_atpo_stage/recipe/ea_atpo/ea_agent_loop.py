@@ -808,6 +808,7 @@ class EAATPOAgentLoop(AgentLoopBase):
                 "max_actor_actions": max_actions,
                 "max_asks": max_asks,
                 "max_consults": max_consults,
+                "correctness_reward": correctness_reward,
                 "atomic_facts": facts,
                 "ground_truth": gold,
             }

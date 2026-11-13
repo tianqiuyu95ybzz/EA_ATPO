@@ -52,3 +52,7 @@ EA code lives in `ea_atpo_stage/recipe/ea_atpo/` and uses ATPO's `agent_loop_con
 The deterministic protocol smoke executes ANSWER, ASK, CONSULT, and DEFER; confirms ASK/CONSULT continuation through the same Actor; verifies action tokens have mask 1 and external observations mask 0; checks the Expert prompt excludes hidden facts and gold; and checks each configured action cost appears once. It does not measure model quality.
 
 The real training run must still confirm model-generated actions, Patient/Expert calls, nonzero Actor and Critic updates, valid checkpoints, and no cost/reward duplication. Any accuracy from this tiny engineering run will not be presented as a study result.
+
+## Real-run debugging note
+
+The first real EA training attempt successfully distributed the 8B Actor/Critic and SGLang rollout across physical GPUs 4 and 6. It exited before generation because the loop did not pass `correctness_reward` into the search runner. This was a code/configuration error rather than a memory limit; the failed manifest and raw log are preserved under `experiments/ea_atpo_v1_smoke/ea_atpo_v1_attempt01/`. The field is now included, and the 21 protocol/data-collection tests pass. No GPU 1 or 7 was used.
