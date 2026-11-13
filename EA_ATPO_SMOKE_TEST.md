@@ -23,7 +23,7 @@
 
 ## Next retry plan
 
-The runner now reads the pinned source and JSONL data from the ignored, read-only `ATPO-official/` checkout. The retry reduces SGLang `gpu_memory_utilization` to `0.60` and `max_num_seqs` to `2` (the smoke's trajectory count), while leaving the original Actor, Critic, reward, tree-search, and PPO code unchanged. The watcher requires at least 155,000 MiB free, at most 15% utilization, and five consecutive 15-second checks on one of GPUs 0, 2, 3, 4, 5, or 6. GPU 1 and 7 are excluded. A 900-second watcher window ended at 2026-11-11 10:36 UTC without an eligible GPU, so attempt 15 did not start. Its output and end snapshot are saved at `experiments/ea_atpo_v1_smoke/gpu_wait_attempt15_20261111T1021Z.log`. Critic CPU offload remains disabled because the official FSDP worker documents incorrect results with gradient accumulation when enabled.
+The runner now reads the pinned source and JSONL data from the ignored, read-only `ATPO-official/` checkout. A 900-second single-GPU watcher ended at 2026-11-11 10:36 UTC without an eligible GPU, so attempt 15 did not start; its output and end snapshot are in `experiments/ea_atpo_v1_smoke/gpu_wait_attempt15_20261111T1021Z.log`. The next attempt uses GPUs 4 and 6 as a two-GPU set: Actor/Critic FSDP world size 2 and SGLang tensor parallel size 2. This mapping is supported by the official code: `mt_main.py` sizes the Ray resource pool from `trainer.n_gpus_per_node`; `sglang_rollout.py` forms a `(dp, tp, pp)` device mesh; and `async_sglang_server.py` maps the worker ranks into the TP group. Each selected GPU must have at least 100,000 MiB free and at most 15% utilization for five consecutive 15-second checks. SGLang remains at `gpu_memory_utilization=0.60` and `max_num_seqs=2`. GPU 1 and 7 are excluded. Critic CPU offload remains disabled because the official FSDP worker documents incorrect results with gradient accumulation when enabled. GPUs 4 and 6 briefly showed 0% utilization with about 112,000 MiB free, but both returned to 100% on the 2026-11-13 17:06 UTC sample; the pair watcher will wait for a stable window rather than treating the earlier idle sample as availability.
 
 ## Attempts and findings
 
@@ -46,6 +46,7 @@ All completed attempts stopped before the first training step. The original base
 - Logs: `experiments/ea_atpo_v1_smoke/original_atpo/logs/`
 - Run manifest: `experiments/ea_atpo_v1_smoke/run_manifest.json`
 - Retry runner: `run_original_atpo_smoke_when_gpu_free.sh`
+- Two-GPU retry runner: `run_original_atpo_smoke_pair_when_gpu_free.sh`
 
 ### Attempt 10: Triton attention reaches RMSNorm failure
 

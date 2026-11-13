@@ -9,18 +9,34 @@ DATA_ROOT="$ATPO_ROOT/dataset"
 PYTHON="$ROOT/.venv/bin/python"
 RUN_DIR="${EA_ATPO_RUN_DIR:-$ROOT/experiments/ea_atpo_v1_smoke/original_atpo}"
 MODEL_PATH="${EA_ATPO_MODEL_PATH:-/pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO/experiments/real_case_pilot_20261103/assets/models/Qwen3-8B}"
-GPU_INDEX="${EA_ATPO_GPU:-}"
+GPU_LIST="${EA_ATPO_GPUS:-${EA_ATPO_GPU:-}}"
 MAX_GPU_UTIL_PCT="${EA_ATPO_MAX_GPU_UTIL_PCT:-15}"
 MIN_GPU_FREE_MIB="${EA_ATPO_MIN_FREE_MIB:-155000}"
 
-if [[ -z "$GPU_INDEX" ]]; then
-  echo "Set EA_ATPO_GPU to a GPU index with sufficient free memory and low utilization." >&2
+if [[ -z "$GPU_LIST" ]]; then
+  echo "Set EA_ATPO_GPU or EA_ATPO_GPUS to allowed GPU index/indices with sufficient free memory." >&2
   exit 2
 fi
-if [[ "$GPU_INDEX" == "1" || "$GPU_INDEX" == "7" ]]; then
-  echo "GPU $GPU_INDEX is excluded from this project run." >&2
+if [[ ! "$GPU_LIST" =~ ^[0-7](,[0-7])*$ ]]; then
+  echo "Invalid GPU list '$GPU_LIST'; use comma-separated physical GPU indices, such as 4,6." >&2
   exit 2
 fi
+IFS=',' read -r -a GPU_IDS <<< "$GPU_LIST"
+GPU_COUNT="${#GPU_IDS[@]}"
+SEEN_GPU_IDS=()
+for GPU_INDEX in "${GPU_IDS[@]}"; do
+  if [[ "$GPU_INDEX" == "1" || "$GPU_INDEX" == "7" ]]; then
+    echo "GPU $GPU_INDEX is excluded from this project run." >&2
+    exit 2
+  fi
+  for SEEN_GPU in "${SEEN_GPU_IDS[@]}"; do
+    if [[ "$GPU_INDEX" == "$SEEN_GPU" ]]; then
+      echo "GPU $GPU_INDEX occurs more than once in EA_ATPO_GPUS." >&2
+      exit 2
+    fi
+  done
+  SEEN_GPU_IDS+=("$GPU_INDEX")
+done
 if [[ ! -x "$PYTHON" ]]; then
   echo "Missing project environment: $PYTHON" >&2
   exit 2
@@ -38,16 +54,18 @@ if [[ ! -f "$DATA_ROOT/merged_train_dataset.jsonl" || ! -f "$DATA_ROOT/medqa_tes
   exit 2
 fi
 
-GPU_STATUS="$(nvidia-smi -i "$GPU_INDEX" --query-gpu=memory.free,utilization.gpu --format=csv,noheader,nounits)"
-FREE_MIB="${GPU_STATUS%%,*}"
-UTIL_PCT="${GPU_STATUS##*, }"
-if (( FREE_MIB < MIN_GPU_FREE_MIB || UTIL_PCT > MAX_GPU_UTIL_PCT )); then
-  echo "Refusing to start on GPU $GPU_INDEX (free=${FREE_MIB}MiB, utilization=${UTIL_PCT}%)." >&2
-  echo "This smoke test requires ${MIN_GPU_FREE_MIB}MiB free and utilization <= ${MAX_GPU_UTIL_PCT}%; choose another GPU or wait." >&2
-  exit 2
-fi
+for GPU_INDEX in "${GPU_IDS[@]}"; do
+  GPU_STATUS="$(nvidia-smi -i "$GPU_INDEX" --query-gpu=memory.free,utilization.gpu --format=csv,noheader,nounits)"
+  FREE_MIB="${GPU_STATUS%%,*}"
+  UTIL_PCT="${GPU_STATUS##*, }"
+  if (( FREE_MIB < MIN_GPU_FREE_MIB || UTIL_PCT > MAX_GPU_UTIL_PCT )); then
+    echo "Refusing to start on GPU $GPU_INDEX (free=${FREE_MIB}MiB, utilization=${UTIL_PCT}%)." >&2
+    echo "Each selected GPU requires ${MIN_GPU_FREE_MIB}MiB free and utilization <= ${MAX_GPU_UTIL_PCT}%; choose another GPU or wait." >&2
+    exit 2
+  fi
+done
 
-export CUDA_VISIBLE_DEVICES="$GPU_INDEX"
+export CUDA_VISIBLE_DEVICES="$GPU_LIST"
 export HF_HOME="$ROOT/.cache/huggingface"
 export HF_HUB_CACHE="$HF_HOME/hub"
 export NCCL_DEBUG="${EA_ATPO_NCCL_DEBUG:-INFO}"
@@ -117,7 +135,7 @@ set -o pipefail
   actor_rollout_ref.actor.fsdp_config.optimizer_offload=True \
   actor_rollout_ref.rollout.name=sglang \
   actor_rollout_ref.rollout.mode=async \
-  actor_rollout_ref.rollout.tensor_model_parallel_size=1 \
+  actor_rollout_ref.rollout.tensor_model_parallel_size="$GPU_COUNT" \
   actor_rollout_ref.rollout.response_length=256 \
   actor_rollout_ref.rollout.gpu_memory_utilization=0.60 \
   actor_rollout_ref.rollout.max_model_len=4352 \
@@ -157,7 +175,7 @@ set -o pipefail
   trainer.project_name=ea_atpo_v1_smoke \
   trainer.experiment_name=original_atpo_baseline \
   ray_kwargs.ray_init.num_cpus=4 \
-  trainer.n_gpus_per_node=1 \
+  trainer.n_gpus_per_node="$GPU_COUNT" \
   trainer.nnodes=1 \
   trainer.critic_warmup=0 \
   trainer.val_before_train=False \

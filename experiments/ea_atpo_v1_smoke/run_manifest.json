@@ -249,10 +249,12 @@
     "train_batch_size": 1,
     "tree_search_M_trajectories": 2,
     "tree_search_N_candidates": 2,
-    "total_epochs": 1
+    "total_epochs": 1,
+    "trainer_n_gpus_per_node": 2,
+    "rollout_tensor_model_parallel_size": 2
   },
-  "retry_status": "attempt_15_not_started; 900s_wait_expired_without_eligible_allowed_GPU",
-  "last_blocker": "Attempts 13 and 14 passed model initialization and CUDA graph capture, then OOMed at first rollout wake_up after shared-GPU allocations arrived. The revised 900-second watcher window (2026-11-11T10:21Z to 2026-11-11T10:36Z) found no allowed GPU meeting >=155000 MiB free and <=15% utilization for five 15-second checks. Attempt 15 did not launch; no PPO update occurred.",
+  "retry_status": "attempt_16_two_gpu_sharded_plan_recorded; waiting_for_gpu_pair_4_6_stability",
+  "last_blocker": "GPUs 4 and 6 were observed at about 112 GiB free each, but their utilization changed from 0% to 100% within minutes. Do not start until both satisfy the per-card gate across five consecutive 15-second checks.",
   "runtime_compatibility_override": {
     "attention_backend": "triton",
     "native_rmsnorm_fallback": {
@@ -336,7 +338,7 @@
     "repository": "https://github.com/tianqiuyu95ybzz/EA_ATPO",
     "branch": "ea-atpo-v1",
     "base_commit": "ad9d0e31660b973a3e5ddfcadce6701f767e0f62",
-    "verified_head_commit": "165cc723b332de3325b6d61d89856770232daac3",
+    "verified_head_commit": "190b699867e9feb30c5f9a803632b5d4516814ee",
     "verification": [
       "git ls-remote",
       "GitHub Branch API"
@@ -345,7 +347,7 @@
     "original_atpo_codes_modified": false
   },
   "next_retry_plan": {
-    "minimum_free_mib": 155000,
+    "minimum_free_mib": 100000,
     "maximum_utilization_percent": 15,
     "stable_samples": 5,
     "sample_interval_seconds": 15,
@@ -371,7 +373,16 @@
       "exit_code": 3,
       "launched": false,
       "timestamp_utc_end": "2026-11-11T10:36:29Z"
-    }
+    },
+    "mode": "two_gpu_sharded",
+    "selected_gpus": [
+      4,
+      6
+    ],
+    "previous_single_gpu_minimum_free_mib": 155000,
+    "minimum_free_mib_per_gpu": 100000,
+    "training_world_size": 2,
+    "sglang_tensor_parallel_size": 2
   },
   "resource_snapshot": {
     "timestamp_utc": "2026-11-11T10:19:12Z",
@@ -464,5 +475,72 @@
     ],
     "training_started": false,
     "ppo_steps": 0
+  },
+  "attempt_16_dual_gpu_plan": {
+    "status": "plan_recorded_waiting_for_stable_pair",
+    "selected_gpus": [
+      4,
+      6
+    ],
+    "ray_resource_pool_gpus_per_node": 2,
+    "actor_critic_strategy": "FSDP across the two selected GPUs",
+    "sglang_tensor_model_parallel_size": 2,
+    "per_gpu_gate": {
+      "minimum_free_mib": 100000,
+      "maximum_utilization_percent": 15
+    },
+    "stable_samples": 5,
+    "sample_interval_seconds": 15,
+    "excluded_gpus": [
+      1,
+      7
+    ],
+    "preflight_snapshot_timestamp_utc": "2026-11-13T17:01:45Z",
+    "preflight_snapshot": [
+      {
+        "gpu": 0,
+        "free_mib": 88875,
+        "utilization_percent": 0
+      },
+      {
+        "gpu": 2,
+        "free_mib": 71683,
+        "utilization_percent": 100
+      },
+      {
+        "gpu": 3,
+        "free_mib": 65697,
+        "utilization_percent": 0
+      },
+      {
+        "gpu": 4,
+        "free_mib": 111769,
+        "utilization_percent": 0
+      },
+      {
+        "gpu": 5,
+        "free_mib": 65871,
+        "utilization_percent": 100
+      },
+      {
+        "gpu": 6,
+        "free_mib": 111787,
+        "utilization_percent": 0
+      }
+    ],
+    "latest_observation_timestamp_utc": "2026-11-13T17:06:09Z",
+    "latest_observation": [
+      {
+        "gpu": 4,
+        "free_mib": 111757,
+        "utilization_percent": 100
+      },
+      {
+        "gpu": 6,
+        "free_mib": 111773,
+        "utilization_percent": 100
+      }
+    ],
+    "ready_to_launch": false
   }
 }
