@@ -1,0 +1,19 @@
+2026-11-13T17:07:14Z Watching GPU set 4,6. Each GPU must have >=100000MiB free and <=15% utilization for 5 samples.
+GPU 1 and 7 are excluded. Wait log: /pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO_V1/experiments/ea_atpo_v1_smoke/gpu_pair_wait_20261113T170714Z.log
+2026-11-13T17:07:14Z Waiting for GPU set 4,6 to meet the resource gate.
+2026-11-13T17:07:30Z Waiting for GPU set 4,6 to meet the resource gate.
+2026-11-13T17:07:45Z Waiting for GPU set 4,6 to meet the resource gate.
+2026-11-13T17:09:01Z GPU set 4,6 lost the resource gate during stability checks.
+2026-11-13T17:09:01Z Waiting for GPU set 4,6 to meet the resource gate.
+2026-11-13T17:09:17Z Waiting for GPU set 4,6 to meet the resource gate.
+2026-11-13T17:09:32Z Waiting for GPU set 4,6 to meet the resource gate.
+2026-11-13T17:09:47Z Waiting for GPU set 4,6 to meet the resource gate.
+2026-11-13T17:10:02Z Waiting for GPU set 4,6 to meet the resource gate.
+2026-11-13T17:10:17Z Waiting for GPU set 4,6 to meet the resource gate.
+2026-11-13T17:11:03Z GPU set 4,6 lost the resource gate during stability checks.
+2026-11-13T17:11:03Z Waiting for GPU set 4,6 to meet the resource gate.
+2026-11-13T17:11:18Z Waiting for GPU set 4,6 to meet the resource gate.
+2026-11-13T17:11:33Z Waiting for GPU set 4,6 to meet the resource gate.
+2026-11-13T17:11:48Z Waiting for GPU set 4,6 to meet the resource gate.
+2026-11-13T17:12:04Z Waiting for GPU set 4,6 to meet the resource gate.
+2026-11-13T17:12Z Interrupted before launch to revise the compute-utilization gate; no training started.

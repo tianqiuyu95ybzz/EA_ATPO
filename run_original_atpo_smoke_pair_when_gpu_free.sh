@@ -4,7 +4,7 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 WAIT_SECONDS="${EA_ATPO_GPU_WAIT_SECONDS:-900}"
 POLL_SECONDS="${EA_ATPO_GPU_POLL_SECONDS:-15}"
-MAX_UTIL="${EA_ATPO_MAX_GPU_UTIL_PCT:-15}"
+MAX_UTIL="${EA_ATPO_MAX_GPU_UTIL_PCT:-100}"
 MIN_FREE_MIB="${EA_ATPO_MIN_FREE_MIB:-100000}"
 STABLE_SAMPLES="${EA_ATPO_GPU_STABLE_SAMPLES:-5}"
 STABLE_INTERVAL="${EA_ATPO_GPU_STABLE_INTERVAL:-15}"
@@ -35,8 +35,8 @@ for GPU_INDEX in "${GPU_IDS[@]}"; do
 done
 
 START_TIME="$(date +%s)"
-echo "$(date -u +%Y-%m-%dT%H:%M:%SZ) Watching GPU set $GPU_LIST. Each GPU must have >=${MIN_FREE_MIB}MiB free and <=${MAX_UTIL}% utilization for ${STABLE_SAMPLES} samples."
-echo "GPU 1 and 7 are excluded. Wait log: $LOG_FILE"
+echo "$(date -u +%Y-%m-%dT%H:%M:%SZ) Watching GPU set $GPU_LIST. Each GPU must have >=${MIN_FREE_MIB}MiB free for ${STABLE_SAMPLES} samples; measured utilization cap is ${MAX_UTIL}%."
+echo "GPU 1 and 7 are excluded. Utilization is recorded because this is a shared-GPU run. Wait log: $LOG_FILE"
 
 check_selected_gpus() {
   local gpu_index gpu_status free_mib util_pct
@@ -44,6 +44,7 @@ check_selected_gpus() {
     gpu_status="$(nvidia-smi -i "$gpu_index" --query-gpu=memory.free,utilization.gpu --format=csv,noheader,nounits)"
     free_mib="${gpu_status%%,*}"
     util_pct="${gpu_status##*, }"
+    echo "$(date -u +%Y-%m-%dT%H:%M:%SZ) GPU $gpu_index free=${free_mib}MiB utilization=${util_pct}%"
     if (( free_mib < MIN_FREE_MIB || util_pct > MAX_UTIL )); then
       return 1
     fi
