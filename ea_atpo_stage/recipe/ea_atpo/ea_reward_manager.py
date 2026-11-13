@@ -36,8 +36,50 @@ class EARewardManager:
         reward_tensor = data.batch["rm_scores"].to(dtype=torch.float32)
         episode_scores = reward_tensor.sum(dim=-1).detach().cpu().tolist()
         if return_dict:
+            # ATPO's trainer still logs its legacy multi-turn interaction
+            # metrics after the PPO update. EA-ATPO does not use that protocol,
+            # so derive answer validity/correctness from the already completed
+            # episode trace and mark the unrelated legacy counters as zero.
+            # This is post-rollout evaluation metadata; it does not affect the
+            # precomputed EA rewards, returns, advantages, or PPO loss.
+            statistics = data.non_tensor_batch.get("statistics")
+            if statistics is None:
+                raise RuntimeError(
+                    "EARewardManager requires episode statistics to populate ATPO metrics"
+                )
+
+            episodes = []
+            for item in statistics:
+                if not isinstance(item, dict) or not isinstance(item.get("ea_episode"), dict):
+                    raise RuntimeError(
+                        "EARewardManager expected statistics['ea_episode'] from EAATPOAgentLoop"
+                    )
+                episodes.append(item["ea_episode"])
+
+            valid_answers = {"A", "B", "C", "D"}
+            final_answers = [episode.get("final_answer") for episode in episodes]
+            evaluations = [episode.get("evaluation", {}) for episode in episodes]
+            traces = [episode.get("action_trace", []) for episode in episodes]
+            invalid_action_rates = [
+                (sum(not bool(event.get("action_valid", False)) for event in trace) / len(trace))
+                if trace else 0.0
+                for trace in traces
+            ]
+            reward_extra_info = {
+                "ea_net_episode_reward": episode_scores,
+                "is_valid": [int(answer in valid_answers) for answer in final_answers],
+                "is_correct": [int(bool(evaluation.get("correct", False))) for evaluation in evaluations],
+                "incorrect_format_rate": invalid_action_rates,
+                "multiple_rate": [0.0] * len(episodes),
+                "repeated_rate": [0.0] * len(episodes),
+                "verify_timeout_rate": [0.0] * len(episodes),
+                "effective_rate": [0.0] * len(episodes),
+                "human_reject_rate": [0.0] * len(episodes),
+                "human_timeout_rate": [0.0] * len(episodes),
+                "assistant_error_rate": invalid_action_rates,
+            }
             return {
                 "reward_tensor": reward_tensor,
-                "reward_extra_info": {"ea_net_episode_reward": episode_scores},
+                "reward_extra_info": reward_extra_info,
             }
         return reward_tensor

@@ -2,7 +2,7 @@
 
 ## Current status
 
-The original ATPO training baseline completed two PPO updates on physical GPUs 4 and 6. The four-action EA loop is now implemented outside the read-only ATPO checkout. Protocol smoke tests pass for all four actions, ASK/CONSULT continuation, DEFER termination, Actor/observation masks, information isolation, and one-time action costs. Those deterministic tests use a stand-in generation client and are not model-performance evidence. A real Qwen3-8B EA Actor/Critic training smoke is being prepared. GPUs 1 and 7 remain excluded.
+The original ATPO training baseline completed two PPO updates on physical GPUs 4 and 6. The four-action EA loop is now implemented outside the read-only ATPO checkout. Protocol smoke tests pass for all four actions, ASK/CONSULT continuation, DEFER termination, Actor/observation masks, information isolation, and one-time action costs. Those deterministic tests use a stand-in generation client and are not model-performance evidence. Real Qwen3-8B EA Actor/Critic training is running as an engineering smoke: attempt 2 completed one PPO update and saved Actor/Critic model and optimizer state, then exited in legacy post-update metrics; the EA metric adapter is fixed and attempt 3 is pending. GPUs 1 and 7 remain excluded.
 
 Official ATPO source base: `25af83688c06917f94245a4db06be7d0924c090c`; no file under `ATPO-official/codes/` is modified.
 
@@ -56,3 +56,7 @@ The real training run must still confirm model-generated actions, Patient/Expert
 ## Real-run debugging note
 
 The first real EA training attempt successfully distributed the 8B Actor/Critic and SGLang rollout across physical GPUs 4 and 6. It exited before generation because the loop did not pass `correctness_reward` into the search runner. This was a code/configuration error rather than a memory limit; the failed manifest and raw log are preserved under `experiments/ea_atpo_v1_smoke/ea_atpo_v1_attempt01/`. The field is now included, and the 21 protocol/data-collection tests pass. No GPU 1 or 7 was used.
+
+## Real-run debugging note: post-update metrics
+
+Attempt 2 demonstrated the distributed setup is feasible on GPUs 4 and 6: the two-rank SGLang service initialized, two real episodes completed, and one PPO update wrote Actor/Critic model and optimizer state. It exited afterward because the legacy ATPO accuracy logger required `is_valid` and other interaction fields absent from EA reward metadata. The EA adapter now derives answer validity and correctness from the completed trace and fills protocol-inapplicable legacy counters with zero. Attempt 2's local manifest, raw rollout records, log, and partial checkpoint are preserved; the partial two-case accuracy is not a model-quality result.

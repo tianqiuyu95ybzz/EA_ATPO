@@ -1,6 +1,6 @@
 # EA-ATPO V1 Smoke Test Status
 
-**Status: original ATPO baseline passed; EA protocol smoke passed; real EA training smoke pending.** The original Qwen3-8B baseline completed two PPO updates across GPUs 4 and 6 with nonzero Actor and Critic updates. The pinned ATPO source remains unchanged, and GPUs 1 and 7 remain excluded. See Attempt 20 below for the baseline logs and checkpoint evidence.
+**Status: original ATPO baseline and deterministic EA protocol smoke passed; real EA attempt 2 completed one PPO update before a legacy-metrics adapter failure; attempt 3 is pending.** The original Qwen3-8B baseline completed two PPO updates across GPUs 4 and 6 with nonzero Actor and Critic updates. The pinned ATPO source remains unchanged, and GPUs 1 and 7 remain excluded. See Attempt 20 below for the baseline logs and checkpoint evidence.
 
 ## Source and environment
 
@@ -125,3 +125,7 @@ The real training launcher is `run_ea_atpo_v1_smoke.sh`. It uses the official tw
 ## Real EA training attempt 1
 
 Attempt 1 initialized the Qwen3-8B Actor/Critic and the SGLang rollout service across physical GPUs 4 and 6, then stopped before the first generated token. The EA loop had omitted `correctness_reward` from the search-runner configuration, causing a `KeyError`; there was no OOM, rollout, optimizer update, or model-quality result. The failure, GPU snapshot, hashes, and raw log are preserved in `experiments/ea_atpo_v1_smoke/ea_atpo_v1_attempt01/`. The missing field is now passed explicitly and all 21 EA protocol/data-collection tests pass. A clean retry uses a separate attempt directory so the failed run remains reproducible.
+
+## Real EA training attempt 2
+
+The two-GPU run initialized Qwen3-8B Actor/Critic and the SGLang TP=2 service without OOM, generated two real model rollouts, and completed one PPO update. Actor and Critic model/optimizer files were saved at `global_step_1`. Both episodes answered after ASK and CONSULT; 0/2 were correct, which is only an engineering smoke observation. The process then stopped during post-update metrics because the EA reward adapter had not populated legacy `is_valid` and related keys required by ATPO's unchanged metric function. The adapter now derives answer validity/correctness from completed EA episode traces and supplies the inapplicable legacy interaction counters as zero. The manifest, trace, rollout, raw log, and partial checkpoint remain under `experiments/ea_atpo_v1_smoke/ea_atpo_v1_attempt02/`.

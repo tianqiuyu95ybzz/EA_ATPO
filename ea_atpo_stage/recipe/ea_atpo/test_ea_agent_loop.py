@@ -8,6 +8,7 @@ from types import SimpleNamespace
 from unittest.mock import patch
 
 from langchain_core.messages import convert_to_messages
+import numpy as np
 from transformers import AutoTokenizer
 import torch
 from verl import DataProto
@@ -17,6 +18,7 @@ import recipe.ea_atpo.ea_agent_loop as ea_loop
 from recipe.ea_atpo.ea_reward_manager import EARewardManager
 from recipe.ea_atpo.protocol import PublicState
 from recipe.atpo.chat_model import convert_to_agent_output
+from recipe.atpo.mt_metric_utils import compute_accuracy_metrics
 
 
 class _DeterministicClient:
@@ -167,7 +169,28 @@ class EAFourActionLoopSmokeTest(unittest.TestCase):
 
     def test_reward_manager_only_accounts_for_precomputed_ea_score(self):
         data = DataProto.from_dict(
-            tensors={"rm_scores": torch.tensor([[0.0, 0.95], [0.0, -0.60]])}
+            tensors={"rm_scores": torch.tensor([[0.0, 0.95], [0.0, -0.60]])},
+            non_tensors={
+                "statistics": np.array(
+                    [
+                        {
+                            "ea_episode": {
+                                "final_answer": "B",
+                                "evaluation": {"correct": True},
+                                "action_trace": [{"action_valid": True}],
+                            }
+                        },
+                        {
+                            "ea_episode": {
+                                "final_answer": None,
+                                "evaluation": {"correct": False},
+                                "action_trace": [{"action_valid": False}],
+                            }
+                        },
+                    ],
+                    dtype=object,
+                )
+            },
         )
         manager = EARewardManager(tokenizer=None, num_examine=0)
         result = manager(data, return_dict=True)
@@ -179,6 +202,15 @@ class EAFourActionLoopSmokeTest(unittest.TestCase):
             result["reward_extra_info"]["ea_net_episode_reward"], [0.95, -0.60]
         ):
             self.assertAlmostEqual(observed, expected)
+        data.non_tensor_batch.update(
+            {key: np.asarray(value) for key, value in result["reward_extra_info"].items()}
+        )
+        metrics = compute_accuracy_metrics(data)
+        self.assertEqual(result["reward_extra_info"]["is_valid"], [1, 0])
+        self.assertEqual(result["reward_extra_info"]["is_correct"], [1, 0])
+        self.assertEqual(metrics["custom/num_valid"], 1)
+        self.assertEqual(metrics["custom/num_correct"], 1)
+        self.assertAlmostEqual(metrics["custom/incorrect_format_rate"], 0.5)
 
 
 if __name__ == "__main__":
