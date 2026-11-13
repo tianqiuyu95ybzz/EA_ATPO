@@ -27,6 +27,10 @@ class PublicState:
     sample_id: str
     initial_messages: tuple[Mapping[str, str], ...]
     dialogue: tuple[Mapping[str, str], ...] = ()
+    asked_count: int = 0
+    consulted_count: int = 0
+    remaining_interaction_budget: int = 0
+    actor_actions_used: int = 0
 
     @property
     def messages(self) -> list[dict[str, str]]:
@@ -34,7 +38,17 @@ class PublicState:
 
     @property
     def state_id(self) -> str:
-        payload = json.dumps(self.messages, sort_keys=True, ensure_ascii=False)
+        payload = json.dumps(
+            {
+                "messages": self.messages,
+                "asked_count": self.asked_count,
+                "consulted_count": self.consulted_count,
+                "remaining_interaction_budget": self.remaining_interaction_budget,
+                "actor_actions_used": self.actor_actions_used,
+            },
+            sort_keys=True,
+            ensure_ascii=False,
+        )
         digest = hashlib.sha256(payload.encode("utf-8")).hexdigest()[:16]
         return f"{self.sample_id}:{digest}"
 

@@ -318,7 +318,11 @@ async def _continue_base(
             **_call_metrics(call),
         })
         if terminal_turn and action is not Action.ANSWER:
-            trace.append({"actor": "router", "error": "terminal_answer_constraint_violated"})
+            trace.append({
+                "actor": "router",
+                "error": "no_terminal_answer",
+                "detail": "terminal_answer_constraint_violated",
+            })
             return None, trace, current_state
         visible_action = {"role": "assistant", "content": _public_action_text(action, content)}
         if action is Action.ANSWER:

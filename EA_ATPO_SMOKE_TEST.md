@@ -1,6 +1,6 @@
 # EA-ATPO V1 Smoke Test Status
 
-**Status: pending; the original ATPO smoke has not reached its first PPO update.** The official `sgl-kernel==0.2.9+cu128` imports with PyTorch `2.7.1+cu128`; isolated SM100 RMSNorm and Qwen3-shaped rotary calls pass. Attempts 13 and 14 completed model initialization and CUDA graph capture but OOMed at rollout startup. Attempt 17 used FSDP and SGLang TP across GPUs 4 and 6, completed both model loads, KV allocation, and graph capture, then OOMed during the first FSDP-to-SGLang weight sync, before any rollout or PPO step. Its full log is recorded. The next retry lowers SGLang's memory fraction and enables multi-stage wake-up. GPUs 1 and 7 remain excluded.
+**Status: original ATPO baseline passed; EA protocol smoke passed; real EA training smoke pending.** The original Qwen3-8B baseline completed two PPO updates across GPUs 4 and 6 with nonzero Actor and Critic updates. The pinned ATPO source remains unchanged, and GPUs 1 and 7 remain excluded. See Attempt 20 below for the baseline logs and checkpoint evidence.
 
 ## Source and environment
 
@@ -115,3 +115,9 @@ This is an engineering smoke only. All four rollouts hit the 256-token response 
 ## GitHub publication
 
 The smoke setup, run manifest, and attempt logs were published to `https://github.com/tianqiuyu95ybzz/EA_ATPO/tree/ea-atpo-v1`. The branch is based on the target repository's `main` commit `ad9d0e31660b973a3e5ddfcadce6701f767e0f62`; published commit `ed4883b736b9f82dff9d5357adb6e347599983e1` was confirmed through both `git ls-remote` and the GitHub Branch API. The target repository's `main` branch and the original ATPO `codes/` source were not modified.
+
+## EA-ATPO V1 protocol smoke
+
+The deterministic loop smoke ran through the EA tree expansion, reward assignment, and ATPO output converter using the local Qwen3 tokenizer plus a stand-in generation client. It exercised ANSWER, ASK, CONSULT, and DEFER; ASK and CONSULT returned to the same Actor; DEFER ended with an Expert final answer; and role prompts excluded hidden facts and gold. It also checked that every Actor-generated response token (including action tags) has response mask 1, Patient/Expert observation tokens have mask 0, and action costs are charged once. The unit tests pass, but this is protocol evidence only, not model-performance evidence.
+
+The real training launcher is `run_ea_atpo_v1_smoke.sh`. It uses the official two-row smoke subset derived from the unchanged ATPO train JSONL, Qwen3-8B Actor/Critic, and physical GPUs 4 and 6. Its run manifest hashes the source data, derived Parquet, and model configuration. The run will be reported separately after it exits; only then will model-generated action usage and Actor/Critic parameter updates be assessed.
