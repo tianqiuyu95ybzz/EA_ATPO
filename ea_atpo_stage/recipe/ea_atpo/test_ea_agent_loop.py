@@ -14,10 +14,8 @@ import torch
 from verl import DataProto
 
 import recipe.atpo.user_assistant_agent_loop as original_loop
-from recipe.atpo.agent_loop import AgentLoopWorker
 import recipe.ea_atpo.ea_agent_loop as ea_loop
 from recipe.ea_atpo.ea_reward_manager import EARewardManager
-from recipe.ea_atpo.ea_metrics import attach_ea_metric_fields, patch_agent_loop_worker
 from recipe.ea_atpo.protocol import PublicState
 from recipe.atpo.chat_model import convert_to_agent_output
 from recipe.atpo.mt_metric_utils import compute_accuracy_metrics
@@ -52,16 +50,17 @@ class _DeterministicClient:
         return SimpleNamespace(token_ids=token_ids, log_probs=[-0.02] * len(token_ids))
 
 
+class _MetricTokenizer:
+    def decode(self, token_ids, skip_special_tokens=False):
+        answers = {1: "Final Answer: B", 2: "Expert Final Answer: A"}
+        return answers[token_ids[0]]
+
+
 async def _fixed_critic_value(messages, is_terminal, config):
     return 0.0 if is_terminal else 0.2
 
 
 class EAFourActionLoopSmokeTest(unittest.TestCase):
-    def test_runtime_bridge_patches_only_the_ea_entrypoint_actor_class(self):
-        patch_agent_loop_worker(AgentLoopWorker)
-        worker_class = AgentLoopWorker.__ray_metadata__.modified_class
-        self.assertTrue(worker_class._ea_metric_bridge_installed)
-
     def test_four_actions_mask_cost_continue_and_isolate_roles(self):
         model_path = os.environ.get(
             "EA_ATPO_MODEL_PATH",
@@ -176,31 +175,22 @@ class EAFourActionLoopSmokeTest(unittest.TestCase):
 
     def test_reward_manager_only_accounts_for_precomputed_ea_score(self):
         data = DataProto.from_dict(
-            tensors={"rm_scores": torch.tensor([[0.0, 0.95], [0.0, -0.60]])},
+            tensors={
+                "rm_scores": torch.tensor([[0.0, 0.95], [0.0, -0.60]]),
+                "responses": torch.tensor([[1, 0], [2, 0]]),
+                "attention_mask": torch.tensor([[1, 1, 1, 0], [1, 1, 1, 0]]),
+            },
             non_tensors={
-                "statistics": np.array(
+                "reward_model": np.array(
                     [
-                        {
-                            "ea_episode": {
-                                "final_answer": "B",
-                                "evaluation": {"correct": True},
-                                "action_trace": [{"action_valid": True}],
-                            }
-                        },
-                        {
-                            "ea_episode": {
-                                "final_answer": None,
-                                "evaluation": {"correct": False},
-                                "action_trace": [{"action_valid": False}],
-                            }
-                        },
+                        {"ground_truth": {"answer": "B"}},
+                        {"ground_truth": {"answer": "C"}},
                     ],
                     dtype=object,
                 )
             },
         )
-        attach_ea_metric_fields(data)
-        manager = EARewardManager(tokenizer=None, num_examine=0)
+        manager = EARewardManager(tokenizer=_MetricTokenizer(), num_examine=0)
         result = manager(data, return_dict=True)
         for observed, expected in zip(
             result["reward_tensor"].sum(dim=-1).tolist(), [0.95, -0.60]
@@ -214,11 +204,11 @@ class EAFourActionLoopSmokeTest(unittest.TestCase):
             {key: np.asarray(value) for key, value in result["reward_extra_info"].items()}
         )
         metrics = compute_accuracy_metrics(data)
-        self.assertEqual(data.non_tensor_batch["is_valid"].tolist(), [1, 0])
+        self.assertEqual(data.non_tensor_batch["is_valid"].tolist(), [1, 1])
         self.assertEqual(data.non_tensor_batch["is_correct"].tolist(), [1, 0])
-        self.assertEqual(metrics["custom/num_valid"], 1)
+        self.assertEqual(metrics["custom/num_valid"], 2)
         self.assertEqual(metrics["custom/num_correct"], 1)
-        self.assertAlmostEqual(metrics["custom/incorrect_format_rate"], 0.5)
+        self.assertAlmostEqual(metrics["custom/incorrect_format_rate"], 0.0)
 
 
 if __name__ == "__main__":

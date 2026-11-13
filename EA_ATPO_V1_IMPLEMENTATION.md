@@ -2,7 +2,7 @@
 
 ## Current status
 
-The original ATPO training baseline completed two PPO updates on physical GPUs 4 and 6. The four-action EA loop is now implemented outside the read-only ATPO checkout. Protocol smoke tests pass for all four actions, ASK/CONSULT continuation, DEFER termination, Actor/observation masks, information isolation, and one-time action costs. Those deterministic tests use a stand-in generation client and are not model-performance evidence. Real Qwen3-8B EA Actor/Critic training is running as an engineering smoke: attempt 2 completed one PPO update and saved Actor/Critic model and optimizer state, then exited in legacy post-update metrics; attempt 3 reproduced the legacy-metrics failure because the trainer discards per-sample statistics before the reward manager; a runtime bridge at the EA-only AgentLoopWorker postprocess boundary is now tested and attempt 4 reproduced the logger error because its bridge was installed in the driver instead of the isolated Ray worker; module-import installation is now tested and attempt 5 is pending. GPUs 1 and 7 remain excluded.
+The original ATPO baseline and deterministic four-action protocol smoke passed. Real EA Qwen3-8B runs on GPUs 4 and 6 have initialized, generated rollouts, completed one PPO update, and saved partial Actor/Critic checkpoints; attempts 2–5 then exited at ATPO's legacy post-update metric logger because it expects per-sample validity fields. The current adapter derives those fields from the completed response and gold only after rollout. This metadata is for logging and does not alter reward targets or model input. GPUs 1 and 7 remain excluded.
 
 Official ATPO source base: `25af83688c06917f94245a4db06be7d0924c090c`; no file under `ATPO-official/codes/` is modified.
 
@@ -62,11 +62,6 @@ The first real EA training attempt successfully distributed the 8B Actor/Critic 
 Attempt 2 demonstrated the distributed setup is feasible on GPUs 4 and 6: the two-rank SGLang service initialized, two real episodes completed, and one PPO update wrote Actor/Critic model and optimizer state. It exited afterward because the legacy ATPO accuracy logger required `is_valid` and other interaction fields absent from EA reward metadata. The EA adapter now derives answer validity and correctness from the completed trace and fills protocol-inapplicable legacy counters with zero. Attempt 2's local manifest, raw rollout records, log, and partial checkpoint are preserved; the partial two-case accuracy is not a model-quality result.
 
 
-## Metric propagation boundary
+## Post-hoc legacy metrics
 
-ATPO consumes and removes `statistics` inside `AgentLoopWorker.generate_sequences` before the trainer calls the reward manager. The EA entrypoint now wraps only the Ray worker class used by this run and derives the legacy logging fields at `_postprocess`, before removal. No file in `ATPO-official/` is modified.
-
-
-## Ray worker installation
-
-The runtime bridge must be installed in the Ray worker that executes `_postprocess`, not only in the driver. `ea_agent_loop.py` now installs the patch during import inside that process. The original ATPO checkout remains unchanged.
+The EA Reward Manager reads the generated response and the dataset gold only after the trajectory is complete. It derives `is_valid` and `is_correct` for ATPO logging and marks unrelated human-interaction counters as not applicable. These values do not participate in Actor/Critic targets.

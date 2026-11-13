@@ -1,6 +1,6 @@
 # EA-ATPO V1 Smoke Test Status
 
-**Status: original ATPO baseline and deterministic EA protocol smoke passed; real EA attempt 2 completed one PPO update before a legacy-metrics adapter failure; attempt 3 also completed one PPO update but hit the same logger integration gap; an EA-entrypoint metric bridge is now tested and attempt 4 also completed one PPO update but reproduced the logger error because the bridge lived only in the driver process; the hook now installs inside the Ray worker and attempt 5 is pending.** The original Qwen3-8B baseline completed two PPO updates across GPUs 4 and 6 with nonzero Actor and Critic updates. The pinned ATPO source remains unchanged, and GPUs 1 and 7 remain excluded. See Attempt 20 below for the baseline logs and checkpoint evidence.
+**Status: original ATPO baseline and deterministic EA protocol smoke passed. Real EA attempts 2–5 each initialized on GPUs 4 and 6, generated model rollouts, completed one PPO update, and saved partial Actor/Critic checkpoints; each then exposed a post-update logging integration bug. Attempt 6 tests post-hoc validity/correctness derivation directly in the EA Reward Manager. None of these tiny runs is performance evidence.** The original Qwen3-8B baseline completed two PPO updates across GPUs 4 and 6 with nonzero Actor and Critic updates. The pinned ATPO source remains unchanged, and GPUs 1 and 7 remain excluded. See Attempt 20 below for the baseline logs and checkpoint evidence.
 
 ## Source and environment
 
@@ -139,3 +139,8 @@ Attempt 3 reproduced the metric failure after one PPO update. The second adapter
 ## Real EA training attempt 4
 
 The third metric-bridge attempt was installed only in the training driver, while rollout uses a separate Ray AgentLoopWorker process, so the same post-update `is_valid` error remained. The run again loaded the two-GPU models, generated two episodes, and wrote Actor/Critic model and optimizer state after one update without OOM. The hook now installs when the EA loop module is imported inside the worker. Attempt 4 is preserved under `experiments/ea_atpo_v1_smoke/ea_atpo_v1_attempt04/`.
+
+
+## Real EA training attempt 5
+
+Attempt 5 reproduced the missing `is_valid` field after one PPO update. The bridge was still not on the actual metric path, so it is removed. Attempt 6 instead computes answer validity/correctness in the EA Reward Manager from the completed response and `reward_model.ground_truth`, then returns the exact fields required by the legacy logger. This is post-rollout evaluation metadata and does not change EA reward, Critic returns, Actor advantages, or model-visible context. Attempt 5 artifacts remain under `experiments/ea_atpo_v1_smoke/ea_atpo_v1_attempt05/`.

@@ -20,7 +20,7 @@ from uuid import uuid4
 from langchain_core.messages import AIMessage, HumanMessage, convert_to_messages, convert_to_openai_messages
 from langchain_core.outputs import ChatGeneration, ChatResult
 
-from recipe.atpo.agent_loop import AgentLoopBase, AgentLoopMetrics, AgentLoopOutput, AgentLoopWorker
+from recipe.atpo.agent_loop import AgentLoopBase, AgentLoopMetrics, AgentLoopOutput
 from recipe.atpo.chat_model import ChatModel, MaxTokenExceededError, convert_to_agent_output
 from recipe.atpo.user_assistant_agent_loop import TreeSearchRunner as ATPOTreeSearchRunner
 from recipe.atpo.user_assistant_agent_loop import call_critic_model
@@ -36,12 +36,6 @@ from .protocol import (
     validate_expert_view,
     visible_response,
 )
-from .ea_metrics import patch_agent_loop_worker
-
-# This module is imported inside the Ray AgentLoopWorker process when Hydra
-# instantiates the EA loop. Install the bridge here so it runs in that process,
-# before ATPO removes per-sample statistics in generate_sequences().
-patch_agent_loop_worker(AgentLoopWorker)
 
 
 PATIENT_SYSTEM = """You are a patient simulator. Answer the doctor's question using only
