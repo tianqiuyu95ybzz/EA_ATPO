@@ -2,7 +2,7 @@
 
 ## Current status
 
-The original ATPO baseline and deterministic four-action protocol smoke passed. Real EA Qwen3-8B runs on GPUs 4 and 6 have initialized, generated rollouts, completed one PPO update, and saved partial Actor/Critic checkpoints; attempts 2–5 then exited at ATPO's legacy post-update metric logger because it expects per-sample validity fields. The current adapter derives those fields from the completed response and gold only after rollout. This metadata is for logging and does not alter reward targets or model input. GPUs 1 and 7 remain excluded.
+The original ATPO baseline and deterministic four-action protocol smoke passed. EA Attempt 06 completed two Qwen3-8B PPO updates across GPUs 4 and 6, logged post-rollout metrics, and saved complete step-1 and step-2 Actor/Critic checkpoints without OOM. The adapter derives validity/correctness from the completed response and gold only after rollout; this is logging metadata and does not alter reward targets or model input. Real model rollouts included ASK, CONSULT, and ANSWER, but not DEFER; two of four trajectories exhausted the ASK budget. This is engineering evidence, not a performance result. GPUs 1 and 7 remain excluded.
 
 Official ATPO source base: `25af83688c06917f94245a4db06be7d0924c090c`; no file under `ATPO-official/codes/` is modified.
 
@@ -51,7 +51,7 @@ EA code lives in `ea_atpo_stage/recipe/ea_atpo/` and uses ATPO's `agent_loop_con
 
 The deterministic protocol smoke executes ANSWER, ASK, CONSULT, and DEFER; confirms ASK/CONSULT continuation through the same Actor; verifies action tokens have mask 1 and external observations mask 0; checks the Expert prompt excludes hidden facts and gold; and checks each configured action cost appears once. It does not measure model quality.
 
-The real training run must still confirm model-generated actions, Patient/Expert calls, nonzero Actor and Critic updates, valid checkpoints, and no cost/reward duplication. Any accuracy from this tiny engineering run will not be presented as a study result.
+Attempt 06 confirms model-generated Patient/Expert calls, nonzero Actor and Critic gradient norms, two PPO update steps, checkpoint writes, and successful post-update metrics. Its four rollouts are insufficient to validate reward-learning quality or cost accounting statistically, and DEFER was not sampled by the real model. No accuracy claim is made from this smoke run; see the attempt-specific results record.
 
 ## Real-run debugging note
 

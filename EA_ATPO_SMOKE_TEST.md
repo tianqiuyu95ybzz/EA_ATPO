@@ -1,6 +1,6 @@
 # EA-ATPO V1 Smoke Test Status
 
-**Status: original ATPO baseline and deterministic EA protocol smoke passed. Real EA attempts 2–5 each initialized on GPUs 4 and 6, generated model rollouts, completed one PPO update, and saved partial Actor/Critic checkpoints; each then exposed a post-update logging integration bug. Attempt 6 tests post-hoc validity/correctness derivation directly in the EA Reward Manager. None of these tiny runs is performance evidence.** The original Qwen3-8B baseline completed two PPO updates across GPUs 4 and 6 with nonzero Actor and Critic updates. The pinned ATPO source remains unchanged, and GPUs 1 and 7 remain excluded. See Attempt 20 below for the baseline logs and checkpoint evidence.
+**Status: the original ATPO baseline, deterministic four-action protocol smoke, and EA real-model engineering smoke have completed. EA Attempt 06 ran two PPO updates on GPUs 4 and 6, saved complete step-1 and step-2 Actor/Critic checkpoints, and exited successfully without OOM. The model generated ASK, CONSULT, and ANSWER; it did not sample DEFER. Two of four rollouts ended after exhausting the ASK budget. This is execution evidence only, not a model-quality result.** The original Qwen3-8B baseline completed two PPO updates across GPUs 4 and 6. The pinned ATPO source remains unchanged, and GPUs 1 and 7 remain excluded. See Attempt 20 below for baseline logs and Attempt 06 below for EA logs.
 
 ## Source and environment
 
@@ -38,7 +38,7 @@ The runner now reads the pinned source and JSONL data from the ignored, read-onl
 9. The SGLang wrapper retained its default CUDA graph capture through batch size 512 despite `engine_kwargs.sglang.cuda_graph_max_bs=8`. Inspection of `codes/verl/workers/rollout/sglang_rollout/sglang_rollout.py` showed that this wrapper only consumes `attention_backend` from `engine_kwargs`; it passes `max_num_seqs` as SGLang's `max_running_requests`. The runner now sets `max_num_seqs=8` for the smoke.
 10. After adding `.venv/bin` to `PATH`, FlashInfer's JIT compiled CUDA objects but the final host link failed with an undefined reference to `BatchDecodeWithPagedKVCacheKernel`. The next retry selects SGLang Triton attention to avoid the failing FlashInfer JIT path while preserving the model, rollout, reward, and PPO configuration.
 
-All completed attempts stopped before the first training step. The original baseline must pass before any EA-ATPO training-path implementation begins.
+At this point in the chronological log, early EA attempts had not reached a training step. The later baseline and EA training outcomes are recorded in the sections below.
 
 ## Artifacts
 
@@ -144,3 +144,11 @@ The third metric-bridge attempt was installed only in the training driver, while
 ## Real EA training attempt 5
 
 Attempt 5 reproduced the missing `is_valid` field after one PPO update. The bridge was still not on the actual metric path, so it is removed. Attempt 6 instead computes answer validity/correctness in the EA Reward Manager from the completed response and `reward_model.ground_truth`, then returns the exact fields required by the legacy logger. This is post-rollout evaluation metadata and does not change EA reward, Critic returns, Actor advantages, or model-visible context. Attempt 5 artifacts remain under `experiments/ea_atpo_v1_smoke/ea_atpo_v1_attempt05/`.
+
+## Real EA training attempt 6
+
+Attempt 6 completed two PPO updates with Qwen3-8B Actor/Critic FSDP across physical GPUs 4 and 6 and SGLang tensor parallel size 2. At launch, GPU 4 had 111,699 MiB free and GPU 6 had 111,311 MiB free (about 109 GiB per GPU). Peak trainer-reported allocated/reserved memory was 76.30/88.20 GiB, and no OOM occurred. Actor and Critic gradient norms were nonzero on both updates. Complete step-1 and step-2 checkpoints, including model and optimizer shards, were saved locally on PFS.
+
+Across four generated rollouts (two training rows, two trajectories each), the model emitted ASK 6 times, CONSULT 2 times, and ANSWER 2 times; it did not emit DEFER. Two trajectories reached an answer and both were incorrect; two terminated with `ask_budget_exhausted` and no final answer. Step metrics were 2/2 valid and 0/2 correct on step 1, then 0/2 valid and 0/2 correct on step 2. These four rollouts are far too few for any accuracy or learning claim. The deterministic protocol smoke still provides the only DEFER execution coverage.
+
+The launcher exited with code 0 and reported 2/2 training steps. Ray printed a worker-shutdown warning after the progress bar reached 100%; both checkpoint directories and all step metrics were already written. Full evidence and limitations are in `experiments/ea_atpo_v1_smoke/ea_atpo_v1_attempt06/RESULTS.md`; the 353 GiB checkpoint files remain on PFS and are not committed to GitHub.
