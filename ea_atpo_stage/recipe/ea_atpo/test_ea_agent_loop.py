@@ -101,11 +101,46 @@ class _FourStateForcedClient:
         return SimpleNamespace(token_ids=token_ids, log_probs=[-0.02] * len(token_ids))
 
 
+class _RetryExpertClient:
+    def __init__(self, tokenizer):
+        self.tokenizer = tokenizer
+        self.prompts = []
+
+    async def generate(self, *, request_id, prompt_ids, sampling_params):
+        prompt = self.tokenizer.decode(prompt_ids, skip_special_tokens=False)
+        self.prompts.append(prompt)
+        if "You are a senior medical consultant" in prompt:
+            text = (
+                "Expert Advice: Consider the symptom timeline and relevant risk factors."
+                if "Format correction:" in prompt
+                else "Expert Advice: The correct answer is option B."
+            )
+        else:
+            text = "Expert Final Answer: C<|im_end|>"
+        token_ids = self.tokenizer.encode(text, add_special_tokens=False)
+        return SimpleNamespace(token_ids=token_ids, log_probs=[-0.02] * len(token_ids))
+
+
 async def _fixed_critic_value(messages, is_terminal, config):
     return 0.0 if is_terminal else 0.2
 
 
 class EAFourActionLoopSmokeTest(unittest.TestCase):
+    def test_environment_failure_placeholder_has_no_trainable_tokens(self):
+        placeholder = ea_loop._masked_failure_placeholder(
+            [10, 11, 12], SimpleNamespace(eos_token_id=2, pad_token_id=0)
+        )
+        self.assertEqual(placeholder.prompt_ids, [10, 11, 12])
+        self.assertEqual(placeholder.response_ids, [2])
+        self.assertEqual(placeholder.response_mask, [0])
+        self.assertEqual(placeholder.response_logprobs, [0.0])
+        self.assertEqual(placeholder.advantages, [0.0])
+        self.assertEqual(placeholder.returns, [0.0])
+        self.assertEqual(placeholder.value_response_mask, [0.0])
+        self.assertEqual(placeholder.reward_score, 0.0)
+        self.assertEqual(placeholder.verifier_responses, [])
+        self.assertTrue(placeholder.statistics["ea_batch_placeholder"])
+
     def test_legal_action_context_and_failure_training_eligibility(self):
         initial = ea_loop._install_action_protocol(
             [{"role": "user", "content": "Public case."}],
@@ -143,6 +178,64 @@ class EAFourActionLoopSmokeTest(unittest.TestCase):
             "no_remaining_continuation_budget",
         ):
             self.assertEqual(ea_loop._failure_category(reason), "policy_constraint_violation")
+
+    def test_expert_format_retry_and_terminal_marker_normalization(self):
+        model_path = os.environ.get(
+            "EA_ATPO_MODEL_PATH",
+            "/pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO/experiments/real_case_pilot_20261103/assets/models/Qwen3-8B",
+        )
+        if not (Path(model_path) / "tokenizer_config.json").is_file():
+            self.skipTest(f"Qwen3 tokenizer unavailable at {model_path}")
+        tokenizer = AutoTokenizer.from_pretrained(model_path, local_files_only=True)
+        client = _RetryExpertClient(tokenizer)
+        model = ea_loop.EAChatModel.model_construct(
+            model_name="qwen3", client=client, tokenizer=tokenizer, max_tokens=512,
+            temperature=1.0, top_p=0.8, repetition_penalty=1.0,
+        )
+        public = [{"role": "user", "content": "Public vignette. Options A, B, C, D."}]
+        state = PublicState(sample_id="expert-retry", initial_messages=tuple(public), remaining_interaction_budget=1)
+        config = {"configurable": {
+            "model": model,
+            "server_manager": client,
+            "tokenizer": tokenizer,
+            "sampling_params": {"temperature": 1.0, "top_p": 0.8, "logprobs": True},
+            "max_actor_actions": 3,
+            "max_asks": 1,
+            "max_consults": 1,
+            "correctness_reward": 1.0,
+            "atomic_facts": ["private patient fact"],
+            "ground_truth": {"answer": "B", "answer_info": "private gold explanation"},
+        }}
+        runner = ea_loop.EAATPOSearchRunner(
+            convert_to_messages([{"role": "user", "content": "Public vignette."}]),
+            {"M_trajectories": 1, "N_candidates": 1, "variance_threshold": 1.2,
+             "pruning_enabled": False, "call_critic_enabled": False,
+             "only_use_critic_value": True, "gamma": 1.0, "lam": 1.0},
+            model, config, {}, {}, state,
+            {"ask_cost": 0.05, "consult_cost": 0.20, "defer_cost": 0.60,
+             "lambda_ask": 1.0, "lambda_consult": 1.0, "lambda_defer": 1.0},
+        )
+
+        async def run():
+            consult = await runner._expert_response(
+                state, ea_loop.Action.CONSULT, question="What finding should be checked?",
+                facts=["private patient fact"], gold={"answer": "B", "answer_info": "private gold explanation"},
+            )
+            defer = await runner._expert_response(
+                state, ea_loop.Action.DEFER, facts=["private patient fact"],
+                gold={"answer": "B", "answer_info": "private gold explanation"},
+            )
+            return consult, defer
+
+        consult, defer = asyncio.run(run())
+        self.assertEqual(consult["retry_count"], 1)
+        self.assertEqual(consult["request_count"], 2)
+        self.assertEqual(consult["content"], "Expert Advice: Consider the symptom timeline and relevant risk factors.")
+        self.assertEqual(defer["request_count"], 1)
+        self.assertEqual(defer["content"], "Expert Final Answer: C")
+        for prompt in client.prompts:
+            self.assertNotIn("private patient fact", prompt)
+            self.assertNotIn("private gold explanation", prompt)
 
     def test_four_independent_forced_states_cover_protocol_and_token_masks(self):
         """Force each action in a distinct state without creating PPO updates."""
@@ -501,6 +594,18 @@ class EAFourActionLoopSmokeTest(unittest.TestCase):
         self.assertEqual(metrics["custom/num_valid"], 2)
         self.assertEqual(metrics["custom/num_correct"], 1)
         self.assertAlmostEqual(metrics["custom/incorrect_format_rate"], 0.0)
+
+    def test_reward_manager_stops_all_failure_batch_before_ppo(self):
+        data = DataProto.from_dict(
+            tensors={
+                "rm_scores": torch.zeros((2, 4)),
+                "responses": torch.zeros((2, 4), dtype=torch.long),
+                "response_mask": torch.zeros((2, 4), dtype=torch.long),
+            }
+        )
+        manager = EARewardManager(tokenizer=_MetricTokenizer(), num_examine=0)
+        with self.assertRaisesRegex(RuntimeError, "No trainable EA-ATPO Actor tokens"):
+            manager(data)
 
 
 if __name__ == "__main__":

@@ -1,0 +1,12 @@
+/pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO_V1/.venv/lib/python3.12/site-packages/torch/cuda/__init__.py:61: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+test_four_actions_mask_cost_continue_and_isolate_roles (recipe.ea_atpo.test_ea_agent_loop.EAFourActionLoopSmokeTest.test_four_actions_mask_cost_continue_and_isolate_roles) ... ok
+test_four_independent_forced_states_cover_protocol_and_token_masks (recipe.ea_atpo.test_ea_agent_loop.EAFourActionLoopSmokeTest.test_four_independent_forced_states_cover_protocol_and_token_masks)
+Force each action in a distinct state without creating PPO updates. ... ok
+test_legal_action_context_and_failure_training_eligibility (recipe.ea_atpo.test_ea_agent_loop.EAFourActionLoopSmokeTest.test_legal_action_context_and_failure_training_eligibility) ... ok
+test_reward_manager_only_accounts_for_precomputed_ea_score (recipe.ea_atpo.test_ea_agent_loop.EAFourActionLoopSmokeTest.test_reward_manager_only_accounts_for_precomputed_ea_score) ... ok
+
+----------------------------------------------------------------------
+Ran 4 tests in 0.618s
+
+OK

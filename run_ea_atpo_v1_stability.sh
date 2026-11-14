@@ -2,7 +2,7 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-RUN_DIR="${EA_ATPO_RUN_DIR:-$ROOT/experiments/ea_atpo_v1_smoke/ea_atpo_v1_attempt08_stability}"
+RUN_DIR="${EA_ATPO_RUN_DIR:-$ROOT/experiments/ea_atpo_v1_smoke/ea_atpo_v1_attempt09_stability}"
 RUN_DIR="$(realpath -m "$RUN_DIR")"
 GPU_LIST="${EA_ATPO_GPUS:-4,6}"
 
@@ -31,7 +31,7 @@ export EA_ATPO_TEST_FRACTION="${EA_ATPO_TEST_FRACTION:-0.016}"
 export EA_ATPO_TRAIN_BATCH_SIZE="${EA_ATPO_TRAIN_BATCH_SIZE:-2}"
 export EA_ATPO_M_TRAJECTORIES="${EA_ATPO_M_TRAJECTORIES:-4}"
 export EA_ATPO_N_CANDIDATES="${EA_ATPO_N_CANDIDATES:-4}"
-export EA_ATPO_SAVE_FREQ="${EA_ATPO_SAVE_FREQ:-5}"
+export EA_ATPO_SAVE_FREQ="${EA_ATPO_SAVE_FREQ:-1}"
 export EA_ATPO_TOTAL_EPOCHS="${EA_ATPO_TOTAL_EPOCHS:-1}"
 export EA_ATPO_TEST_FREQ="${EA_ATPO_TEST_FREQ:-10}"
 export EA_ATPO_MAX_ACTOR_ACTIONS="${EA_ATPO_MAX_ACTOR_ACTIONS:-3}"
@@ -67,6 +67,7 @@ plan={
     "validation_fraction": float(os.environ['EA_ATPO_TEST_FRACTION']), "expected_validation_cases": 20,
     "train_batch_size": int(os.environ['EA_ATPO_TRAIN_BATCH_SIZE']),
     "ppo_updates": int(20 / int(os.environ['EA_ATPO_TRAIN_BATCH_SIZE'])),
+    "checkpoint_every_steps": int(os.environ['EA_ATPO_SAVE_FREQ']),
     "M_trajectories": int(os.environ['EA_ATPO_M_TRAJECTORIES']),
     "N_candidates": int(os.environ['EA_ATPO_N_CANDIDATES']),
     "ask_cost": float(os.environ['EA_ATPO_ASK_COST']),

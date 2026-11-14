@@ -161,6 +161,9 @@ def validate_expert_response(action: Action, text: str) -> str:
     # Qwen-family reasoning models may wrap private reasoning in think tags. Only
     # the post-thinking answer is exposed to the collaborator and validated.
     value = visible_response(text)
+    # Qwen chat completions may include their stop marker when decoded with
+    # skip_special_tokens=False. It is transport syntax, not expert content.
+    value = re.sub(r"(?:<\|im_end\|>|<\|endoftext\|>|<\|fim_suffix\|>|</s>)+\s*$", "", value, flags=re.IGNORECASE).strip()
     if action is Action.CONSULT:
         if not re.fullmatch(r"Expert Advice:\s*.+", value, re.IGNORECASE | re.DOTALL):
             raise ValueError("CONSULT response must use 'Expert Advice:' format")

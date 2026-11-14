@@ -87,6 +87,66 @@ def _failure_category(reason: str | None) -> str:
     return "other_failure"
 
 
+class ExpertProtocolError(ValueError):
+    """An Expert response remained invalid after one format-only retry."""
+
+    def __init__(self, message: str, *, request_count: int, prompt_tokens: int,
+                 completion_tokens: int, latency_s: float, raw_response: str):
+        super().__init__(message)
+        self.request_count = request_count
+        self.prompt_tokens = prompt_tokens
+        self.completion_tokens = completion_tokens
+        self.latency_s = latency_s
+        self.raw_response = raw_response
+
+
+def _masked_failure_placeholder(prompt_ids: Sequence[int], tokenizer: Any) -> AgentLoopOutput:
+    """Keep one failed sample from aborting valid sibling rollouts.
+
+    The upstream worker expects one ``AgentLoopOutput`` per input and lets an
+    exception from any sample abort its whole ``asyncio.gather``. This row has
+    a zero response mask, so it contributes no Actor or Critic tokens. The
+    actual protocol/environment failures remain in the persisted episode
+    traces; the placeholder is not a strategy trajectory.
+    """
+    terminal_id = getattr(tokenizer, "eos_token_id", None)
+    if terminal_id is None:
+        terminal_id = getattr(tokenizer, "pad_token_id", None)
+    if terminal_id is None:
+        raise RuntimeError("Cannot build an all-masked failure placeholder without an EOS or PAD token")
+    return AgentLoopOutput(
+        prompt_ids=[int(token) for token in prompt_ids],
+        response_ids=[int(terminal_id)],
+        response_mask=[0],
+        response_logprobs=[0.0],
+        advantages=[0.0],
+        returns=[0.0],
+        value_response_mask=[0.0],
+        reward_score=0.0,
+        num_turns=0,
+        metrics=AgentLoopMetrics(),
+        verifier_responses=[],
+        statistics={
+            "ea_batch_placeholder": True,
+            "q_value_variance_list": [],
+            "mdp_value_list": [],
+            "critic_value_list": [],
+        },
+    )
+
+
+def _expert_failure_usage(exc: Exception) -> dict[str, Any]:
+    request_count = int(getattr(exc, "request_count", 1))
+    return {
+        "expert_request_count": request_count,
+        "expert_retry_count": max(0, request_count - 1),
+        "expert_prompt_tokens": int(getattr(exc, "prompt_tokens", 0)),
+        "expert_completion_tokens": int(getattr(exc, "completion_tokens", 0)),
+        "expert_latency_s": float(getattr(exc, "latency_s", 0.0)),
+        "expert_protocol_error_response": str(getattr(exc, "raw_response", ""))[:500],
+    }
+
+
 def _gold_letter(value: Any) -> str:
     if isinstance(value, Mapping):
         value = value.get("answer", "")
@@ -367,15 +427,58 @@ class EAATPOSearchRunner(ATPOTreeSearchRunner):
         facts: Sequence[str],
         gold: Any,
     ) -> dict[str, Any]:
-        messages = build_expert_messages(state, action, consult_question=question)
-        validate_expert_view(
-            messages,
-            atomic_facts=unrevealed_atomic_facts(state, facts),
-            ground_truth=gold,
+        base_messages = build_expert_messages(state, action, consult_question=question)
+        prompt_tokens = completion_tokens = request_count = 0
+        latency_s = 0.0
+        raw_response = ""
+        last_error: ValueError | None = None
+        for attempt in range(2):
+            messages = list(base_messages)
+            if attempt:
+                if action is Action.CONSULT:
+                    correction = (
+                        "Format correction: the prior draft violated the CONSULT contract. Discard it. "
+                        "Return exactly one `Expert Advice: ...` suggestion. Do not name an option letter, "
+                        "state which option is correct, or provide a final answer."
+                    )
+                else:
+                    correction = (
+                        "Format correction: the prior draft was not a parseable DEFER result. Discard it. "
+                        "Choose one option and return exactly `Expert Final Answer: A` (replace A with your choice). "
+                        "Do not include rationale or any other text."
+                    )
+                messages.append({"role": "user", "content": correction})
+            validate_expert_view(
+                messages,
+                atomic_facts=unrevealed_atomic_facts(state, facts),
+                ground_truth=gold,
+            )
+            request_count += 1
+            result = await self._role_generate(messages, max_new_tokens=128)
+            prompt_tokens += int(result["prompt_tokens"])
+            completion_tokens += int(result["completion_tokens"])
+            latency_s += float(result["latency_s"])
+            raw_response = str(result["content"])
+            try:
+                result["content"] = validate_expert_response(action, raw_response)
+                result.update({
+                    "prompt_tokens": prompt_tokens,
+                    "completion_tokens": completion_tokens,
+                    "latency_s": latency_s,
+                    "request_count": request_count,
+                    "retry_count": request_count - 1,
+                })
+                return result
+            except ValueError as exc:
+                last_error = exc
+        raise ExpertProtocolError(
+            str(last_error or "invalid expert response"),
+            request_count=request_count,
+            prompt_tokens=prompt_tokens,
+            completion_tokens=completion_tokens,
+            latency_s=latency_s,
+            raw_response=raw_response,
         )
-        result = await self._role_generate(messages, max_new_tokens=384)
-        result["content"] = validate_expert_response(action, result["content"])
-        return result
 
     def _action_cost(self, action: Action) -> float:
         if action is Action.ASK:
@@ -635,6 +738,8 @@ class EAATPOSearchRunner(ATPOTreeSearchRunner):
                             "expert_prompt_tokens": expert["prompt_tokens"],
                             "expert_completion_tokens": expert["completion_tokens"],
                             "expert_latency_s": expert["latency_s"],
+                            "expert_request_count": expert["request_count"],
+                            "expert_retry_count": expert["retry_count"],
                         })
                     except Exception as exc:
                         node.ea_public_state = public_after_question
@@ -646,6 +751,7 @@ class EAATPOSearchRunner(ATPOTreeSearchRunner):
                             "failure_reason": node.ea_failure_reason,
                             "action_cost": node.ea_action_cost,
                             "consult_question": content,
+                            **_expert_failure_usage(exc),
                         })
                     all_new_nodes.append(node)
                     continue
@@ -684,6 +790,8 @@ class EAATPOSearchRunner(ATPOTreeSearchRunner):
                         "expert_prompt_tokens": expert["prompt_tokens"],
                         "expert_completion_tokens": expert["completion_tokens"],
                         "expert_latency_s": expert["latency_s"],
+                        "expert_request_count": expert["request_count"],
+                        "expert_retry_count": expert["retry_count"],
                     })
                 except Exception as exc:
                     node.ea_public_state = self._state_after(prior_state, action_turn, action=action)
@@ -694,6 +802,7 @@ class EAATPOSearchRunner(ATPOTreeSearchRunner):
                         "termination_reason": "defer_call_failed",
                         "failure_reason": node.ea_failure_reason,
                         "action_cost": node.ea_action_cost,
+                        **_expert_failure_usage(exc),
                     })
                 all_new_nodes.append(node)
         return all_new_nodes
@@ -796,6 +905,8 @@ class EAATPOSearchRunner(ATPOTreeSearchRunner):
                 "measured_serial_latency_s": measured_latency_s,
                 "patient_calls": sum(1 for event in events if event.get("patient_response") is not None),
                 "expert_calls": sum(1 for event in events if event.get("expert_advice") is not None or event.get("expert_final_answer") is not None),
+                "expert_requests": sum(int(event.get("expert_request_count", 0) or 0) for event in events),
+                "expert_retries": sum(int(event.get("expert_retry_count", 0) or 0) for event in events),
             },
         }
 
@@ -896,10 +1007,12 @@ class EAATPOAgentLoop(AgentLoopBase):
             output.statistics["critic_value_list"] = output.statistics.get("critic_value_list", [])
             outputs.append(output)
         if not outputs:
-            raise RuntimeError(
-                "All EA-ATPO leaves in this batch were protocol/environment failures; "
-                "none was sent to PPO. See the persisted episode traces."
-            )
+            # A sibling sample may have valid strategy trajectories. Returning
+            # a zero-mask row lets the upstream per-sample gather preserve those
+            # trajectories instead of failing the entire worker batch. If every
+            # sample in the global PPO batch is a placeholder, EARewardManager
+            # rejects the all-zero Actor mask before any optimizer update.
+            return [_masked_failure_placeholder(prompt, self.tokenizer)]
         return outputs
 
     def _append_terminal_observation(self, output: AgentLoopOutput, leaf: TreeNode, response_length: int) -> None:

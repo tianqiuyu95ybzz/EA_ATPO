@@ -35,6 +35,11 @@ class EARewardManager:
             raise RuntimeError(
                 "EARewardManager requires AgentLoopOutput.reward_score from the EA tree trace"
             )
+        if "response_mask" in data.batch and not bool(data.batch["response_mask"].bool().any().item()):
+            raise RuntimeError(
+                "No trainable EA-ATPO Actor tokens in this batch; all rollouts were protocol/environment "
+                "failures. Episode traces were persisted and no PPO update should run."
+            )
         reward_tensor = data.batch["rm_scores"].to(dtype=torch.float32)
         episode_scores = reward_tensor.sum(dim=-1).detach().cpu().tolist()
         if return_dict:

@@ -1,0 +1,11 @@
+2026-11-14T04:43:11Z Watching GPUs 4,6; each must keep >=105000 MiB free for 5 samples 15s apart. Utilization is recorded but VRAM headroom is the admission gate.
+2026-11-14T04:43:11Z sample=1 gpu=4 free_mib=111325 used_mib=71300 util_pct=100
+2026-11-14T04:43:11Z sample=1 gpu=6 free_mib=111199 used_mib=71426 util_pct=84
+2026-11-14T04:43:27Z sample=2 gpu=4 free_mib=111325 used_mib=71300 util_pct=0
+2026-11-14T04:43:27Z sample=2 gpu=6 free_mib=111199 used_mib=71426 util_pct=0
+2026-11-14T04:43:42Z sample=3 gpu=4 free_mib=111325 used_mib=71300 util_pct=100
+2026-11-14T04:43:42Z sample=3 gpu=6 free_mib=111199 used_mib=71426 util_pct=100
+2026-11-14T04:43:57Z sample=4 gpu=4 free_mib=111325 used_mib=71300 util_pct=100
+2026-11-14T04:43:58Z sample=4 gpu=6 free_mib=111199 used_mib=71426 util_pct=100
+2026-11-14T04:44:13Z sample=5 gpu=4 free_mib=111325 used_mib=71300 util_pct=100
+2026-11-14T04:44:13Z sample=5 gpu=6 free_mib=111199 used_mib=71426 util_pct=100

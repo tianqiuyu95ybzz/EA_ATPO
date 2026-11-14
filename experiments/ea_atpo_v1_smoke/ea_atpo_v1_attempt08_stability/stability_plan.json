@@ -1,0 +1,27 @@
+{
+  "created_at_utc": "2026-11-14T04:43:03.456511+00:00",
+  "status": "preflight_pending",
+  "gpu_indices": [
+    4,
+    6
+  ],
+  "base_model": "Qwen/Qwen3-8B",
+  "official_train_source_sha256": "434a6734dce931262f2ed9e3201a3751e57db3609b1612ab9666835ac8832fdc",
+  "official_validation_source_sha256": "5e10a4dc50802e2dc3c156a3bc9e33111837dd762dff97aaaa0327fc4fdbba46",
+  "planned": {
+    "train_fraction": 0.0014,
+    "expected_train_cases": 20,
+    "validation_fraction": 0.016,
+    "expected_validation_cases": 20,
+    "train_batch_size": 2,
+    "ppo_updates": 10,
+    "M_trajectories": 4,
+    "N_candidates": 4,
+    "ask_cost": 0.05,
+    "consult_cost": 0.2,
+    "defer_cost": 0.6,
+    "forced_actions_in_training": false,
+    "memory_gate_mib_per_gpu": 105000,
+    "attempt07_peak_reserved_gib_per_gpu": 88.19921875
+  }
+}

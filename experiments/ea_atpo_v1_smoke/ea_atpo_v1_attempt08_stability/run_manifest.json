@@ -1,0 +1,79 @@
+{
+  "status": "failed",
+  "created_at_utc": "2026-11-14T04:44:16.441047+00:00",
+  "run_dir": "/pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO_V1/experiments/ea_atpo_v1_smoke/ea_atpo_v1_attempt08_stability",
+  "git_commit": "2bf65f42889c932506ddd3b76401c3c46370fd74",
+  "official_atpo_commit": "unavailable: CalledProcessError: Command '('git', '-C', '/pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO_V1/ATPO-official', 'rev-parse', 'HEAD')' returned non-zero exit status 128.",
+  "gpu_indices": [
+    4,
+    6
+  ],
+  "cuda_visible_devices": "4,6",
+  "gpu_snapshot": "0, NVIDIA B20Z, 88217 MiB, 94408 MiB\n1, NVIDIA B20Z, 65247 MiB, 117378 MiB\n2, NVIDIA B20Z, 70925 MiB, 111700 MiB\n3, NVIDIA B20Z, 65867 MiB, 116758 MiB\n4, NVIDIA B20Z, 111325 MiB, 71300 MiB\n5, NVIDIA B20Z, 65689 MiB, 116936 MiB\n6, NVIDIA B20Z, 111199 MiB, 71426 MiB\n7, NVIDIA B20Z, 66017 MiB, 116608 MiB",
+  "python": "3.12.3 (main, Aug 14 2025, 17:47:21) [GCC 13.3.0]",
+  "packages": {
+    "torch": "2.7.1+cu128",
+    "transformers": "4.54.1",
+    "ray": "2.47.1",
+    "sglang": "0.4.10.post2",
+    "vllm": null,
+    "datasets": "4.0.0",
+    "pyarrow": "19.0.1"
+  },
+  "model": {
+    "path": "/pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO/experiments/real_case_pilot_20261103/assets/models/Qwen3-8B",
+    "config_sha256": "f7c4eadfbbf522470667b797a3c89be2524832d2d599797248dc304fff447c30",
+    "tokenizer_config_sha256": "d5d09f07b48c3086c508b30d1c9114bd1189145b74e982a265350c923acd8101"
+  },
+  "data": {
+    "official_train_jsonl_sha256": "434a6734dce931262f2ed9e3201a3751e57db3609b1612ab9666835ac8832fdc",
+    "official_test_jsonl_sha256": "5e10a4dc50802e2dc3c156a3bc9e33111837dd762dff97aaaa0327fc4fdbba46",
+    "train_parquet": {
+      "path": "/pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO_V1/experiments/ea_atpo_v1_smoke/ea_atpo_v1_attempt08_stability/data/train.parquet",
+      "sha256": "470041c588445ab630cbf492e1682b9dd99af907c91042e3f94e9a52dfd4bb7f"
+    },
+    "test_parquet": {
+      "path": "/pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO_V1/experiments/ea_atpo_v1_smoke/ea_atpo_v1_attempt08_stability/data/test.parquet",
+      "sha256": "419ecd2ce0738f45f7fcf67568a5202fabebf02ce2e1dea61ff65681b1752987"
+    }
+  },
+  "training_config": {
+    "train_rows": 20,
+    "validation_rows": 20,
+    "seed": 1,
+    "actor_critic_model": "Qwen3-8B",
+    "train_batch_size": 2,
+    "max_actor_actions": 3,
+    "max_asks": 1,
+    "max_consults": 1,
+    "M_trajectories": 4,
+    "N_candidates": 4,
+    "response_length": 512,
+    "save_freq": 5,
+    "total_epochs": 1,
+    "test_freq": 10,
+    "costs": {
+      "ask": 0.05,
+      "consult": 0.2,
+      "defer": 0.6
+    },
+    "correctness_reward": 1.0,
+    "action_sampling": "natural stochastic Actor samples; no forced action outcomes are included in PPO",
+    "exploration_coverage": "M candidate trajectories and N candidate generations per active state",
+    "legal_action_context": "state-dependent available-action list is included in the Actor prompt; this is not a decoding-time action override",
+    "costs_charged_in": "EA tree edge rewards only; episode scalar is reporting-only because advantages/returns are precomputed",
+    "agent_loop": "recipe.ea_atpo.ea_agent_loop.EAATPOAgentLoop",
+    "reward_manager": "recipe.ea_atpo.ea_reward_manager.EARewardManager",
+    "reward_accounting": "copied from the EA tree trace once; precomputed Actor advantages and Critic returns are unchanged"
+  },
+  "log_path": "/pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO_V1/experiments/ea_atpo_v1_smoke/ea_atpo_v1_attempt08_stability/logs/ea_atpo_v1_smoke_20261114T044413Z.log",
+  "completed_at_utc": "2026-11-14T04:51:07.741912+00:00",
+  "completion": {
+    "launcher_exit_code": 1,
+    "observed_optimizer_steps": 2,
+    "out_of_memory": false,
+    "validation_metrics_present": false,
+    "log_path": "/pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO_V1/experiments/ea_atpo_v1_smoke/ea_atpo_v1_attempt08_stability/logs/ea_atpo_v1_smoke_20261114T044413Z.log",
+    "latest_checkpointed_iteration": null
+  }
+}
