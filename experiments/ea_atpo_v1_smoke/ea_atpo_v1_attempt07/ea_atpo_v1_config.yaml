@@ -1,0 +1,90 @@
+run:
+  name: ea_atpo_v1_attempt07
+  branch: ea-atpo-v1
+  project_commit_at_launch: 6ea6186d6ea11c2d714bf4799dbc22acb886cf12
+  original_atpo_recorded_revision: 25af83688c06917f94245a4db06be7d0924c090c
+  original_atpo_revision_note: "Source checkout lacks .git metadata; runtime revision could not be independently confirmed."
+  seed: 1
+  output_dir: /pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO_V1/experiments/ea_atpo_v1_smoke/ea_atpo_v1_attempt07
+
+hardware:
+  gpu_indices: [4, 6]
+  actor_critic_fsdp_world_size: 2
+  sglang_tensor_parallel_size: 2
+  minimum_free_memory_mib_per_gpu: 105000
+  memory_gate_stable_samples: 5
+  memory_gate_interval_seconds: 15
+  utilization_used_as_availability_gate: false
+  excluded_gpu_indices: [1, 7]
+
+data:
+  source: ATPO-official/dataset
+  train_file: data/train.parquet
+  train_rows: 2
+  train_sha256: 15155c59e1b69d2fe59fd4944f96cf93241194253f6f74c706affe271dba5c0b
+  validation_file: data/test.parquet
+  validation_rows: 1
+  validation_sha256: eec6d202cbae34ab1695c6f40c7ebdb8e6cc402a97120f3a1523df6c40e4408c
+  parity: "Both Parquet SHA256 hashes equal the original ATPO attempt20 baseline inputs."
+
+model:
+  actor: Qwen3-8B
+  critic: Qwen3-8B
+  reference: Qwen3-8B
+  local_model_path: /pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO/experiments/real_case_pilot_20261103/assets/models/Qwen3-8B
+
+training:
+  total_epochs: 1
+  train_batch_size: 1
+  total_optimizer_steps: 2
+  actor_learning_rate: 0.000001
+  critic_learning_rate: 0.00001
+  actor_micro_batch_size_per_gpu: 1
+  critic_micro_batch_size_per_gpu: 1
+  ppo_mini_batch_size: 2
+  response_length: 512
+  prompt_length: 4096
+  checkpoint_every_steps: 1
+  advantage_estimator_config: gae
+  gamma: 1.0
+  lambda: 1.0
+  precomputed_tree_advantages_and_returns: true
+  kl_in_reward: false
+  actor_kl_loss_coefficient: 0.01
+  critic_warmup_steps: 0
+
+tree_search:
+  trajectories_per_state: 2
+  candidates_per_expansion: 2
+  max_actor_actions: 3
+  max_asks: 1
+  max_consults: 1
+  pruning_enabled: false
+  only_use_critic_value: true
+  call_critic_enabled: true
+
+reward:
+  terminal_correctness_reward: 1.0
+  ask_cost: 0.05
+  consult_cost: 0.20
+  defer_cost: 0.60
+  lambda_ask: 1.0
+  lambda_consult: 1.0
+  lambda_defer: 1.0
+  accounting: "Costs enter EA tree edge rewards once. RewardManager reports the precomputed episode scalar; trainer uses precomputed advantages and returns without another GAE pass."
+
+rollout:
+  backend: SGLang
+  tensor_parallel_size: 2
+  attention_backend: triton
+  gpu_memory_utilization: 0.35
+  max_num_seqs: 2
+  multi_stage_wake_up: true
+  temperature: 1.0
+  top_p: 0.8
+  max_assistant_turns: 3
+
+forced_action_protocol_tests:
+  included_in_ppo_training: false
+  test_cases: 4
+  actions: [ANSWER, ASK, CONSULT, DEFER]

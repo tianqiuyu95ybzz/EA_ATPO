@@ -1,0 +1,5 @@
+action,sampled_action_events,valid_action_events,invalid_action_events,actor_completion_tokens,policy_gradient_eligible_events,policy_gradient_eligible_tokens,critic_value_mask_token_slots,mean_net_action_reward,mean_state_return,mean_advantage,sum_abs_advantage_times_actor_tokens,action_specific_parameter_grad_norm_measured
+ANSWER,2,2,0,10,2,10,10,0.00000000,0.00000000,1.93320312,19.33203125,false
+ASK,6,4,2,128,6,128,30,-0.03333333,-0.06666667,-0.38684896,172.47851562,false
+CONSULT,2,2,0,50,2,50,10,-0.20000000,0.00000000,-0.96093750,47.94843750,false
+DEFER,0,0,0,0,0,0,0,,,,0.00000000,false

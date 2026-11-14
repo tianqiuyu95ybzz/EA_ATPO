@@ -1,0 +1,327 @@
+{
+  "status": "completed",
+  "created_at_utc": "2026-11-14T03:46:15.541382+00:00",
+  "run_dir": "/pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO_V1/experiments/ea_atpo_v1_smoke/ea_atpo_v1_attempt07",
+  "git_commit": "6ea6186d6ea11c2d714bf4799dbc22acb886cf12",
+  "official_atpo_commit": "unavailable: CalledProcessError: Command '('git', '-C', '/pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO_V1/ATPO-official', 'rev-parse', 'HEAD')' returned non-zero exit status 128.",
+  "gpu_indices": [
+    4,
+    6
+  ],
+  "cuda_visible_devices": "4,6",
+  "gpu_snapshot": "0, NVIDIA B20Z, 88079 MiB, 94546 MiB\n1, NVIDIA B20Z, 65829 MiB, 116796 MiB\n2, NVIDIA B20Z, 70775 MiB, 111850 MiB\n3, NVIDIA B20Z, 66031 MiB, 116594 MiB\n4, NVIDIA B20Z, 111409 MiB, 71216 MiB\n5, NVIDIA B20Z, 65311 MiB, 117314 MiB\n6, NVIDIA B20Z, 111423 MiB, 71202 MiB\n7, NVIDIA B20Z, 66213 MiB, 116412 MiB",
+  "python": "3.12.3 (main, Aug 14 2025, 17:47:21) [GCC 13.3.0]",
+  "packages": {
+    "torch": "2.7.1+cu128",
+    "transformers": "4.54.1",
+    "ray": "2.47.1",
+    "sglang": "0.4.10.post2",
+    "vllm": null,
+    "datasets": "4.0.0",
+    "pyarrow": "19.0.1"
+  },
+  "model": {
+    "path": "/pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO/experiments/real_case_pilot_20261103/assets/models/Qwen3-8B",
+    "config_sha256": "f7c4eadfbbf522470667b797a3c89be2524832d2d599797248dc304fff447c30",
+    "tokenizer_config_sha256": "d5d09f07b48c3086c508b30d1c9114bd1189145b74e982a265350c923acd8101"
+  },
+  "data": {
+    "official_train_jsonl_sha256": "434a6734dce931262f2ed9e3201a3751e57db3609b1612ab9666835ac8832fdc",
+    "official_test_jsonl_sha256": "5e10a4dc50802e2dc3c156a3bc9e33111837dd762dff97aaaa0327fc4fdbba46",
+    "train_parquet": {
+      "path": "/pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO_V1/experiments/ea_atpo_v1_smoke/ea_atpo_v1_attempt07/data/train.parquet",
+      "sha256": "15155c59e1b69d2fe59fd4944f96cf93241194253f6f74c706affe271dba5c0b"
+    },
+    "test_parquet": {
+      "path": "/pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO_V1/experiments/ea_atpo_v1_smoke/ea_atpo_v1_attempt07/data/test.parquet",
+      "sha256": "eec6d202cbae34ab1695c6f40c7ebdb8e6cc402a97120f3a1523df6c40e4408c"
+    }
+  },
+  "training_config": {
+    "train_rows": 2,
+    "validation_rows": 1,
+    "seed": 1,
+    "actor_critic_model": "Qwen3-8B",
+    "max_actor_actions": 3,
+    "max_asks": 1,
+    "max_consults": 1,
+    "M_trajectories": 2,
+    "N_candidates": 2,
+    "response_length": 512,
+    "costs": {
+      "ask": 0.05,
+      "consult": 0.2,
+      "defer": 0.6
+    },
+    "correctness_reward": 1.0,
+    "costs_charged_in": "EA tree edge rewards only; episode scalar is reporting-only because advantages/returns are precomputed",
+    "agent_loop": "recipe.ea_atpo.ea_agent_loop.EAATPOAgentLoop",
+    "reward_manager": "recipe.ea_atpo.ea_reward_manager.EARewardManager",
+    "reward_accounting": "copied from the EA tree trace once; precomputed Actor advantages and Critic returns are unchanged"
+  },
+  "log_path": "/pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO_V1/experiments/ea_atpo_v1_smoke/ea_atpo_v1_attempt07/logs/ea_atpo_v1_smoke_20261114T034613Z.log",
+  "completed_at_utc": "2026-11-14T03:53:13Z",
+  "completion": {
+    "launcher_exit_code": 0,
+    "configured_ppo_steps": 2,
+    "completed_ppo_steps": 2,
+    "training_progress": "100%",
+    "validation_metrics": "disabled; Final validation metrics: None",
+    "out_of_memory": false,
+    "tree_advantages_precomputed_and_reused": true,
+    "forced_action_test_rollouts_in_trainer": false,
+    "training_implementation_commit": "6ea6186d6ea11c2d714bf4799dbc22acb886cf12",
+    "uncommitted_non_training_files_at_launch": [
+      "ea_atpo_stage/recipe/ea_atpo/test_ea_agent_loop.py",
+      "run_ea_atpo_v1_validated_smoke.sh"
+    ],
+    "note": "The EA training implementation and run_ea_atpo_v1_smoke.sh were unchanged from the recorded project commit; the new uncommitted files were validation-only tests and an orchestration wrapper."
+  },
+  "validation_result": {
+    "unittest_command": "PYTHONPATH=\"$PWD/ea_atpo_stage:$PWD/ATPO-official/codes\" .venv/bin/python -m unittest recipe.ea_atpo.test_ea_agent_loop -v",
+    "tests_passed": 3,
+    "tests_failed": 0,
+    "forced_states": [
+      "ANSWER",
+      "ASK",
+      "CONSULT",
+      "DEFER"
+    ],
+    "forced_state_tests_entered_ppo": false,
+    "gpu_memory_threshold_mib_per_gpu": 105000,
+    "stable_samples": 5,
+    "sample_interval_seconds": 15,
+    "utilization_used_as_memory_proxy": false
+  },
+  "baseline_parity": {
+    "same_model": "Qwen3-8B",
+    "same_train_parquet_sha256": "15155c59e1b69d2fe59fd4944f96cf93241194253f6f74c706affe271dba5c0b",
+    "same_validation_parquet_sha256": "eec6d202cbae34ab1695c6f40c7ebdb8e6cc402a97120f3a1523df6c40e4408c",
+    "same_physical_gpus": [
+      4,
+      6
+    ],
+    "same_train_batch_size": 1,
+    "same_optimizer_steps": 2,
+    "same_M_trajectories": 2,
+    "same_N_candidates": 2,
+    "response_length_cap_original_atpo": 256,
+    "response_length_cap_ea_atpo": 512,
+    "response_length_cap_note": "EA retains the Attempt 06 multi-turn smoke setting. Measured mean response lengths were 212.5 and 117 tokens with no clipping; this is not a strict matched-cap comparison."
+  },
+  "training_outcome": {
+    "episodes": 4,
+    "episodes_by_sample_id": {
+      "2954": 2,
+      "8845": 2
+    },
+    "episode_outcomes": [
+      {
+        "sample_id": "2954",
+        "actions": [
+          "ASK",
+          "CONSULT",
+          "ANSWER"
+        ],
+        "correct": false,
+        "net_reward": -0.25,
+        "cost": 0.25,
+        "failure": null
+      },
+      {
+        "sample_id": "2954",
+        "actions": [
+          "ASK",
+          "CONSULT",
+          "ANSWER"
+        ],
+        "correct": false,
+        "net_reward": -0.25,
+        "cost": 0.25,
+        "failure": null
+      },
+      {
+        "sample_id": "8845",
+        "actions": [
+          "ASK",
+          "ASK"
+        ],
+        "correct": false,
+        "net_reward": -0.05,
+        "cost": 0.05,
+        "failure": "ask_budget_exhausted"
+      },
+      {
+        "sample_id": "8845",
+        "actions": [
+          "ASK",
+          "ASK"
+        ],
+        "correct": false,
+        "net_reward": -0.05,
+        "cost": 0.05,
+        "failure": "ask_budget_exhausted"
+      }
+    ],
+    "action_coverage": {
+      "ANSWER": {
+        "sampled_events": 2,
+        "valid_events": 2,
+        "invalid_events": 0,
+        "actor_completion_tokens": 10,
+        "policy_gradient_eligible_events": 2,
+        "policy_gradient_eligible_tokens": 10,
+        "expected_critic_value_mask_slots": 10
+      },
+      "ASK": {
+        "sampled_events": 6,
+        "valid_events": 4,
+        "invalid_events": 2,
+        "actor_completion_tokens": 128,
+        "policy_gradient_eligible_events": 6,
+        "policy_gradient_eligible_tokens": 128,
+        "expected_critic_value_mask_slots": 30
+      },
+      "CONSULT": {
+        "sampled_events": 2,
+        "valid_events": 2,
+        "invalid_events": 0,
+        "actor_completion_tokens": 50,
+        "policy_gradient_eligible_events": 2,
+        "policy_gradient_eligible_tokens": 50,
+        "expected_critic_value_mask_slots": 10
+      },
+      "DEFER": {
+        "sampled_events": 0,
+        "valid_events": 0,
+        "invalid_events": 0,
+        "actor_completion_tokens": 0,
+        "policy_gradient_eligible_events": 0,
+        "policy_gradient_eligible_tokens": 0,
+        "expected_critic_value_mask_slots": 0
+      }
+    },
+    "total_correct_final_answers": 0,
+    "total_cost": 0.6,
+    "total_episode_reward": -0.6,
+    "external_calls": {
+      "patient": 4,
+      "expert": 2
+    },
+    "step_metrics": [
+      {
+        "step": 1,
+        "actor_pg_loss": 0.01851714588701725,
+        "actor_grad_norm": 24.015954971313477,
+        "critic_vf_loss": 2.1411001682281494,
+        "critic_grad_norm": 624.5082397460938,
+        "num_sample": 2,
+        "num_valid": 2,
+        "valid_rate": 1.0,
+        "num_correct": 0,
+        "response_length_mean": 212.5,
+        "response_length_clip_ratio": 0.0,
+        "max_memory_allocated_gib": 76.29817914962769,
+        "max_memory_reserved_gib": 88.19921875
+      },
+      {
+        "step": 2,
+        "actor_pg_loss": 1.0968085527420044,
+        "actor_grad_norm": 34.06088638305664,
+        "critic_vf_loss": 12.749711990356445,
+        "critic_grad_norm": 1676.1396484375,
+        "num_sample": 2,
+        "num_valid": 0,
+        "valid_rate": 0.0,
+        "num_correct": 0,
+        "response_length_mean": 117.0,
+        "response_length_clip_ratio": 0.0,
+        "max_memory_allocated_gib": 76.29819679260254,
+        "max_memory_reserved_gib": 88.19921875
+      }
+    ],
+    "total_actor_tokens": 188,
+    "total_policy_gradient_eligible_tokens": 188,
+    "action_specific_parameter_grad_norm_measured": false,
+    "interpretation": "Engineering validation only. Four rollouts from two training rows; no correct answers, no normal-policy DEFER, and step 2 has zero valid episodes."
+  },
+  "checkpoint_result": {
+    "latest_iteration": 2,
+    "location": "PFS, not committed to GitHub",
+    "checkpoints": {
+      "global_step_1": {
+        "file_count": 32,
+        "bytes": 189142648714,
+        "gib": 176.1528185699135,
+        "actor_model_shards": 2,
+        "actor_optimizer_shards": 2,
+        "critic_model_shards": 2,
+        "critic_optimizer_shards": 2
+      },
+      "global_step_2": {
+        "file_count": 32,
+        "bytes": 189142648714,
+        "gib": 176.1528185699135,
+        "actor_model_shards": 2,
+        "actor_optimizer_shards": 2,
+        "critic_model_shards": 2,
+        "critic_optimizer_shards": 2
+      }
+    },
+    "total_bytes": 378285297428,
+    "total_gib": 352.305637139827
+  },
+  "artifact_integrity": {
+    "logs/ea_atpo_v1_smoke_20261114T034613Z.log": {
+      "sha256": "3ac8824eb7345f926a5032771d4849414245063654343821fa544702cf9cd0f2",
+      "bytes": 412967
+    },
+    "traces/train.jsonl": {
+      "sha256": "de38b7c2424d263f17be2efabc6e36b242dc5863cc5c5c5734e03f866e49a618",
+      "bytes": 26501
+    },
+    "rollouts/1.jsonl": {
+      "sha256": "49180160dd31a809ee5d116298416e2f7b88d196931c42753c9473068e287e62",
+      "bytes": 8712
+    },
+    "rollouts/2.jsonl": {
+      "sha256": "4c3134d5e9637a4ff2f899c8b56fe780ca1259ae34db67ea8b5760a83167f1a7",
+      "bytes": 8165
+    },
+    "validation/four_action_protocol_tests.log": {
+      "sha256": "602f7492d6740ffc07fba5a5136e6b573b2cec77da3b0287999eea6c336cd980",
+      "bytes": 1099
+    },
+    "validation/gpu_memory_gate.log": {
+      "sha256": "f853c8568648ed6d192de30e7df0e01ec7685f7a3533da17863dfea30ee44965",
+      "bytes": 957
+    },
+    "ea_atpo_v1_config.yaml": {
+      "sha256": "d1b89c6e69c012be19cd5e76062c506e1020c9012e4d25a9148f54c246476130",
+      "bytes": 2732
+    },
+    "action_gradient_coverage.csv": {
+      "sha256": "3fadd3a149ce8e016af8299de405123b5dc399685f735439443506e18c69d63f",
+      "bytes": 598
+    },
+    "RESULTS.md": {
+      "sha256": "b747043d640ad966febb5f12a55e3317664ce14f0a87f2e3870feaccd9a0e6e4",
+      "bytes": 2729
+    }
+  },
+  "completion_note": "Launcher exited 0 after 2/2 updates and both checkpoints were saved. Final NCCL connection-close messages occurred during shutdown; no traceback or OOM was logged.",
+  "reproduction_files": {
+    "run_ea_atpo_v1_validated_smoke.sh": {
+      "sha256": "c7f391963b3d5aa3be9e9168c5df184c9df8bc10da5615a71267b2200bd14c22",
+      "bytes": 2215
+    },
+    "run_ea_atpo_v1_smoke.sh": {
+      "sha256": "43c8f0ecb95d2e321bd3329ac499ab7ee1b89eb1f1bc77635caae83b948d89b7",
+      "bytes": 12656
+    },
+    "ea_atpo_stage/recipe/ea_atpo/test_ea_agent_loop.py": {
+      "sha256": "359bad958a6d22dbd457af23a5d6816d2a7779f71e1f5f188deb0e12b76e86f8",
+      "bytes": 22298
+    }
+  }
+}

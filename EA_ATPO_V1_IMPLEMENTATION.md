@@ -2,7 +2,7 @@
 
 ## Current status
 
-The original ATPO baseline and deterministic four-action protocol smoke passed. EA Attempt 06 completed two Qwen3-8B PPO updates across GPUs 4 and 6, logged post-rollout metrics, and saved complete step-1 and step-2 Actor/Critic checkpoints without OOM. The adapter derives validity/correctness from the completed response and gold only after rollout; this is logging metadata and does not alter reward targets or model input. Real model rollouts included ASK, CONSULT, and ANSWER, but not DEFER; two of four trajectories exhausted the ASK budget. This is engineering evidence, not a performance result. GPUs 1 and 7 remain excluded.
+The original ATPO baseline and deterministic four-action protocol smoke passed. EA Attempt 07 completed two Qwen3-8B PPO updates across GPUs 4 and 6 after three protocol tests passed. It logged post-rollout metrics and saved complete step-1 and step-2 Actor/Critic checkpoints without OOM. The adapter derives validity/correctness from the completed response and gold only after rollout; this is logging metadata and does not alter reward targets or model input. Real model rollouts included ASK, CONSULT, and ANSWER, but not DEFER; two of four trajectories exhausted the ASK budget. This is engineering evidence, not a performance result. GPUs 1 and 7 remain excluded.
 
 Official ATPO source base: `25af83688c06917f94245a4db06be7d0924c090c`; no file under `ATPO-official/codes/` is modified.
 

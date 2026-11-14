@@ -24,4 +24,10 @@ The four generated trajectories came from two training rows with two trajectorie
 
 See [`Attempt 06 results`](experiments/ea_atpo_v1_smoke/ea_atpo_v1_attempt06/RESULTS.md) and its `run_manifest.json`, JSONL traces, ATPO rollout dumps, and raw log. Actor/Critic checkpoints are retained on PFS at `experiments/ea_atpo_v1_smoke/ea_atpo_v1_attempt06/checkpoints/`; they total approximately 352.3 GiB and are not stored in Git.
 
-No Router or joint ATPO RL training was launched.
+No Router or large-scale joint ATPO RL training was launched; Attempt 07 is limited to a two-step engineering smoke.
+
+## Four-action validation and Attempt 07
+
+Four independent deterministic fixtures now force ANSWER, ASK, CONSULT, and DEFER to verify transitions, terminal behavior, one-time costs, tree returns/Advantages, and Actor/Critic response masks. Three protocol/RewardManager tests pass. These forced fixtures are excluded from PPO.
+
+Attempt 07 then completed two real PPO update steps on the same Qwen3-8B model, two training rows, and exact Parquet hashes used by the original ATPO Attempt 20. The normal policy sampled ASK, CONSULT, and ANSWER but not DEFER. All sampled Actor segments had nonzero Advantage and appeared in the policy-loss mask; aggregate Actor/Critic gradient norms were nonzero on both steps. Step 2 had no valid terminal rollout, and all four final outcomes across both steps were incorrect or missing. This verifies the training pipeline and cost/return wiring only. Full reports and checkpoint locations are in `EA_ATPO_V1_JOINT_TRAINING_SMOKE.md` and the Attempt 07 directory.

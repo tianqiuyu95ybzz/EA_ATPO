@@ -56,11 +56,264 @@ class _MetricTokenizer:
         return answers[token_ids[0]]
 
 
+class _FourStateForcedClient:
+    """Test-only action driver; its outputs never enter the PPO trainer."""
+
+    def __init__(self, tokenizer):
+        self.tokenizer = tokenizer
+        self.prompts = []
+        self.cursors = {}
+        self.actor_scripts = {
+            "FORCED_ANSWER": {0: ["Final Answer: B"], 1: ["Final Answer: A"]},
+            "FORCED_ASK": {
+                0: ["Question: Does the patient report fever?", "Final Answer: B"],
+                1: ["Final Answer: A"],
+            },
+            "FORCED_CONSULT": {
+                0: ["Consult Expert: Which finding favors option B?", "Final Answer: B"],
+                1: ["Final Answer: A"],
+            },
+            "FORCED_DEFER": {0: ["Defer to Expert"], 1: ["Final Answer: A"]},
+        }
+
+    async def generate(self, *, request_id, prompt_ids, sampling_params):
+        prompt = self.tokenizer.decode(prompt_ids, skip_special_tokens=False)
+        self.prompts.append(prompt)
+        if "Patient atomic facts:" in prompt:
+            text = "The patient reports fever."
+        elif "You are a senior medical consultant" in prompt:
+            text = "Expert Advice: Compare the timeline with the listed options."
+        elif "You are the senior clinician taking over this case" in prompt:
+            text = "Expert Final Answer: B"
+        else:
+            case = next((name for name in self.actor_scripts if name in prompt), None)
+            if case is None:
+                raise AssertionError("Actor prompt did not identify one of the four forced test states")
+            candidate = int(request_id.rsplit("-", 1)[-1])
+            key = (case, candidate)
+            cursor = self.cursors.get(key, 0)
+            script = self.actor_scripts[case][candidate]
+            if cursor >= len(script):
+                raise AssertionError(f"Unexpected extra Actor call for {case}, candidate {candidate}")
+            text = script[cursor]
+            self.cursors[key] = cursor + 1
+        token_ids = self.tokenizer.encode(text, add_special_tokens=False)
+        return SimpleNamespace(token_ids=token_ids, log_probs=[-0.02] * len(token_ids))
+
+
 async def _fixed_critic_value(messages, is_terminal, config):
     return 0.0 if is_terminal else 0.2
 
 
 class EAFourActionLoopSmokeTest(unittest.TestCase):
+    def test_four_independent_forced_states_cover_protocol_and_token_masks(self):
+        """Force each action in a distinct state without creating PPO updates."""
+        model_path = os.environ.get(
+            "EA_ATPO_MODEL_PATH",
+            "/pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO/experiments/real_case_pilot_20261103/assets/models/Qwen3-8B",
+        )
+        if not (Path(model_path) / "tokenizer_config.json").is_file():
+            self.skipTest(f"Qwen3 tokenizer unavailable at {model_path}")
+        tokenizer = AutoTokenizer.from_pretrained(model_path, local_files_only=True)
+        client = _FourStateForcedClient(tokenizer)
+        model = ea_loop.EAChatModel.model_construct(
+            model_name="qwen3",
+            client=client,
+            tokenizer=tokenizer,
+            max_tokens=512,
+            temperature=1.0,
+            top_p=0.8,
+            repetition_penalty=1.0,
+        )
+        costs = {
+            "ask_cost": 0.05,
+            "consult_cost": 0.20,
+            "defer_cost": 0.60,
+            "lambda_ask": 1.0,
+            "lambda_consult": 1.0,
+            "lambda_defer": 1.0,
+        }
+        cases = [
+            ("FORCED_ANSWER", ea_loop.Action.ANSWER, 0.0, ["ANSWER"], "base_answer", ""),
+            ("FORCED_ASK", ea_loop.Action.ASK, 0.05, ["ASK", "ANSWER"], "base_answer", "Does the patient report fever?"),
+            ("FORCED_CONSULT", ea_loop.Action.CONSULT, 0.20, ["CONSULT", "ANSWER"], "base_answer", "Which finding favors option B?"),
+            ("FORCED_DEFER", ea_loop.Action.DEFER, 0.60, ["DEFER"], "expert_deferred_answer", ""),
+        ]
+
+        async def run_cases():
+            results = []
+            for case_name, target_action, expected_cost, expected_actions, terminal_reason, _ in cases:
+                prompt = [
+                    {"role": "system", "content": "Use the EA-ATPO action protocol."},
+                    {"role": "user", "content": f"Public vignette {case_name}. Options A, B, C, D."},
+                ]
+                actor_messages = ea_loop._install_action_protocol(
+                    prompt, budget=3, max_asks=1, max_consults=1
+                )
+                messages = convert_to_messages(actor_messages)
+                public_state = PublicState(
+                    sample_id=case_name,
+                    initial_messages=({"role": "user", "content": prompt[1]["content"]},),
+                    remaining_interaction_budget=3,
+                )
+                config = {
+                    "configurable": {
+                        "model": model,
+                        "server_manager": client,
+                        "tokenizer": tokenizer,
+                        "critic_worker": object(),
+                        "sampling_params": {"temperature": 1.0, "top_p": 0.8, "logprobs": True},
+                        "max_assistant_turns": 3,
+                        "max_actor_actions": 3,
+                        "max_asks": 1,
+                        "max_consults": 1,
+                        "atomic_facts": [f"private hidden fact for {case_name}: fever is reported"],
+                        "ground_truth": {"answer": "B", "answer_info": "private gold explanation"},
+                        "correctness_reward": 1.0,
+                    }
+                }
+                params = {
+                    "M_trajectories": 2,
+                    "N_candidates": 2,
+                    "variance_threshold": 1.2,
+                    "pruning_enabled": False,
+                    "call_critic_enabled": True,
+                    "only_use_critic_value": True,
+                    "gamma": 1.0,
+                    "lam": 1.0,
+                }
+                runner = ea_loop.EAATPOSearchRunner(
+                    messages,
+                    params,
+                    model,
+                    config,
+                    {},
+                    {},
+                    public_state,
+                    costs,
+                )
+                leaves = await runner.run()
+                traces = [(leaf, runner.episode_trace(leaf)) for leaf in leaves]
+                target_text = {
+                    ea_loop.Action.ANSWER: "Final Answer: B",
+                    ea_loop.Action.ASK: "Question:",
+                    ea_loop.Action.CONSULT: "Consult Expert:",
+                    ea_loop.Action.DEFER: "Defer to Expert",
+                }[target_action]
+                target_leaf, trace = next(
+                    (leaf, trace)
+                    for leaf, trace in traces
+                    if trace["action_trace"][0]["action"] == target_action.value
+                    and trace["action_trace"][0]["actor_text"].startswith(target_text)
+                )
+                output = convert_to_agent_output(target_leaf, 512)
+                ea_loop.EAATPOAgentLoop._append_terminal_observation(
+                    SimpleNamespace(tokenizer=tokenizer), output, target_leaf, 512
+                )
+                results.append((case_name, target_action, expected_cost, expected_actions, terminal_reason, trace, output, runner))
+            return results
+
+        with patch.object(ea_loop, "call_critic_model", _fixed_critic_value), patch.object(
+            original_loop, "call_critic_model", _fixed_critic_value
+        ):
+            results = asyncio.run(run_cases())
+
+        self.assertEqual([result[1] for result in results], [case[1] for case in cases])
+        for case_name, action, expected_cost, expected_actions, terminal_reason, trace, output, runner in results:
+            events = trace["action_trace"]
+            self.assertEqual([event["action"] for event in events], expected_actions, case_name)
+            self.assertEqual(events[-1]["termination_reason"], terminal_reason, case_name)
+            self.assertTrue(events[-1]["terminated"], case_name)
+            self.assertTrue(trace["evaluation"]["correct"], case_name)
+            self.assertAlmostEqual(trace["evaluation"]["resource_cost_total"], expected_cost, msg=case_name)
+            self.assertAlmostEqual(trace["evaluation"]["net_episode_reward"], 1.0 - expected_cost, msg=case_name)
+            self.assertAlmostEqual(
+                sum(float(event["action_cost"]) for event in events),
+                -expected_cost,
+                msg=f"cost must be charged exactly once: {case_name}",
+            )
+            self.assertTrue(all(event["return"] is not None and event["advantage"] is not None for event in events))
+            expected_first_advantage = {
+                ea_loop.Action.ANSWER: 0.8,
+                ea_loop.Action.ASK: -0.05,
+                ea_loop.Action.CONSULT: -0.20,
+                ea_loop.Action.DEFER: 0.20,
+            }[action]
+            self.assertAlmostEqual(float(events[0]["advantage"]), expected_first_advantage, places=5, msg=case_name)
+            self.assertAlmostEqual(
+                float(runner.root.mdp_state_value), (1.0 - expected_cost) / 2.0, places=5, msg=case_name
+            )
+
+            actor_token_count = sum(int(event["actor_completion_tokens"]) for event in events)
+            self.assertEqual(sum(output.response_mask), actor_token_count, case_name)
+            actor_text = tokenizer.decode(
+                [token for token, mask in zip(output.response_ids, output.response_mask) if mask == 1],
+                skip_special_tokens=False,
+            )
+            observation_text = tokenizer.decode(
+                [token for token, mask in zip(output.response_ids, output.response_mask) if mask == 0],
+                skip_special_tokens=False,
+            )
+            actor_spans = []
+            index = 0
+            while index < len(output.response_mask):
+                if output.response_mask[index] == 0:
+                    self.assertEqual(float(output.advantages[index]), 0.0, case_name)
+                    index += 1
+                    continue
+                start = index
+                while index < len(output.response_mask) and output.response_mask[index] == 1:
+                    index += 1
+                actor_spans.append((start, index))
+            self.assertEqual(
+                [end - start for start, end in actor_spans],
+                [int(event["actor_completion_tokens"]) for event in events],
+                case_name,
+            )
+            for (start, end), event in zip(actor_spans, events):
+                self.assertTrue(
+                    all(abs(float(value) - float(event["advantage"])) < 1e-6 for value in output.advantages[start:end]),
+                    case_name,
+                )
+                value_mask = output.value_response_mask[start:end]
+                self.assertEqual(sum(value_mask), min(5, end - start), case_name)
+                self.assertTrue(all(value == 1 for value in value_mask[:5]), case_name)
+                self.assertTrue(all(value == 0 for value in value_mask[5:]), case_name)
+            self.assertIn(
+                {
+                    ea_loop.Action.ANSWER: "Final Answer:",
+                    ea_loop.Action.ASK: "Question:",
+                    ea_loop.Action.CONSULT: "Consult Expert:",
+                    ea_loop.Action.DEFER: "Defer to Expert",
+                }[action],
+                actor_text,
+                case_name,
+            )
+            self.assertNotIn("Expert Final Answer: B", actor_text, case_name)
+            if action is ea_loop.Action.ASK:
+                self.assertIn("Does the patient report fever?", actor_text)
+                self.assertIn("The patient reports fever.", observation_text)
+            elif action is ea_loop.Action.CONSULT:
+                self.assertIn("Which finding favors option B?", actor_text)
+                self.assertIn("Expert Advice: Compare the timeline", observation_text)
+            elif action is ea_loop.Action.DEFER:
+                self.assertIn("Expert Final Answer: B", observation_text)
+            self.assertEqual(
+                len([1 for event in events if event["action"] == "ASK"]),
+                int(action is ea_loop.Action.ASK),
+                case_name,
+            )
+
+        expert_prompts = [
+            prompt for prompt in client.prompts
+            if "You are a senior medical consultant" in prompt
+            or "You are the senior clinician taking over this case" in prompt
+        ]
+        self.assertEqual(len(expert_prompts), 2)
+        for prompt in expert_prompts:
+            self.assertNotIn("private hidden fact", prompt)
+            self.assertNotIn("private gold explanation", prompt)
+
     def test_four_actions_mask_cost_continue_and_isolate_roles(self):
         model_path = os.environ.get(
             "EA_ATPO_MODEL_PATH",
