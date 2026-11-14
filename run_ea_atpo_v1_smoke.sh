@@ -14,6 +14,21 @@ MODEL_PATH="${EA_ATPO_MODEL_PATH:-/pfs/pfs-spMCeu/image_team/workspace/zjr/EA_AT
 GPU_LIST="${EA_ATPO_GPUS:-${EA_ATPO_GPU:-}}"
 MAX_GPU_UTIL_PCT="${EA_ATPO_MAX_GPU_UTIL_PCT:-15}"
 MIN_GPU_FREE_MIB="${EA_ATPO_MIN_FREE_MIB:-100000}"
+TRAIN_FRACTION="${EA_ATPO_TRAIN_FRACTION:-0.00015}"
+TEST_FRACTION="${EA_ATPO_TEST_FRACTION:-0.001}"
+TRAIN_BATCH_SIZE="${EA_ATPO_TRAIN_BATCH_SIZE:-1}"
+M_TRAJECTORIES="${EA_ATPO_M_TRAJECTORIES:-2}"
+N_CANDIDATES="${EA_ATPO_N_CANDIDATES:-2}"
+SAVE_FREQ="${EA_ATPO_SAVE_FREQ:-1}"
+TOTAL_EPOCHS="${EA_ATPO_TOTAL_EPOCHS:-1}"
+TEST_FREQ="${EA_ATPO_TEST_FREQ:--1}"
+MAX_ACTOR_ACTIONS="${EA_ATPO_MAX_ACTOR_ACTIONS:-3}"
+MAX_ASKS="${EA_ATPO_MAX_ASKS:-1}"
+MAX_CONSULTS="${EA_ATPO_MAX_CONSULTS:-1}"
+ASK_COST="${EA_ATPO_ASK_COST:-0.05}"
+CONSULT_COST="${EA_ATPO_CONSULT_COST:-0.20}"
+DEFER_COST="${EA_ATPO_DEFER_COST:-0.60}"
+CORRECTNESS_REWARD="${EA_ATPO_CORRECTNESS_REWARD:-1.0}"
 
 if [[ -z "$GPU_LIST" ]]; then
   echo "Set EA_ATPO_GPU or EA_ATPO_GPUS to allowed GPU index/indices with sufficient free memory." >&2
@@ -103,14 +118,17 @@ PY
 LOCAL_SMOKE_API_KEY="ea-atpo-local-smoke-placeholder"
 if [[ ! -s "$TRAIN_PARQUET" ]] || ! has_api_key_column "$TRAIN_PARQUET"; then
   API_KEY="$LOCAL_SMOKE_API_KEY" "$PYTHON" "$CODE_ROOT/recipe/atpo/data_utils/mix_data_jsonl.py" \
-    train "$TRAIN_PARQUET" 0.00015 "$DATA_ROOT/merged_train_dataset"
+    train "$TRAIN_PARQUET" "$TRAIN_FRACTION" "$DATA_ROOT/merged_train_dataset"
 fi
 if [[ ! -s "$TEST_PARQUET" ]] || ! has_api_key_column "$TEST_PARQUET"; then
   API_KEY="$LOCAL_SMOKE_API_KEY" "$PYTHON" "$CODE_ROOT/recipe/atpo/data_utils/mix_data_jsonl.py" \
-    test "$TEST_PARQUET" 0.001 "$DATA_ROOT/medqa_test_dataset"
+    test "$TEST_PARQUET" "$TEST_FRACTION" "$DATA_ROOT/medqa_test_dataset"
 fi
 
-"$PYTHON" - "$RUN_DIR/run_manifest.json" "$TRAIN_PARQUET" "$TEST_PARQUET" "$MODEL_PATH" "$GPU_LIST" "$LOG_FILE" <<'PY'
+"$PYTHON" - "$RUN_DIR/run_manifest.json" "$TRAIN_PARQUET" "$TEST_PARQUET" "$MODEL_PATH" "$GPU_LIST" "$LOG_FILE" \
+  "$TRAIN_BATCH_SIZE" "$M_TRAJECTORIES" "$N_CANDIDATES" "$SAVE_FREQ" "$TOTAL_EPOCHS" "$TEST_FREQ" \
+  "$MAX_ACTOR_ACTIONS" "$MAX_ASKS" "$MAX_CONSULTS" "$ASK_COST" "$CONSULT_COST" "$DEFER_COST" \
+  "$CORRECTNESS_REWARD" <<'PY'
 import hashlib
 import importlib.metadata
 import json
@@ -119,8 +137,14 @@ import subprocess
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
+import pyarrow.parquet as pq
 
-manifest_path, train_path, test_path, model_path, gpu_list, log_path = sys.argv[1:]
+(
+    manifest_path, train_path, test_path, model_path, gpu_list, log_path,
+    train_batch_size, m_trajectories, n_candidates, save_freq, total_epochs, test_freq,
+    max_actor_actions, max_asks, max_consults, ask_cost, consult_cost, defer_cost,
+    correctness_reward,
+) = sys.argv[1:]
 
 def sha256(path):
     digest = hashlib.sha256()
@@ -165,18 +189,25 @@ manifest = {
         "test_parquet": {"path": test_path, "sha256": sha256(test_path)},
     },
     "training_config": {
-        "train_rows": 2,
-        "validation_rows": 1,
+        "train_rows": pq.read_metadata(train_path).num_rows,
+        "validation_rows": pq.read_metadata(test_path).num_rows,
         "seed": 1,
         "actor_critic_model": "Qwen3-8B",
-        "max_actor_actions": 3,
-        "max_asks": 1,
-        "max_consults": 1,
-        "M_trajectories": 2,
-        "N_candidates": 2,
+        "train_batch_size": int(train_batch_size),
+        "max_actor_actions": int(max_actor_actions),
+        "max_asks": int(max_asks),
+        "max_consults": int(max_consults),
+        "M_trajectories": int(m_trajectories),
+        "N_candidates": int(n_candidates),
         "response_length": 512,
-        "costs": {"ask": 0.05, "consult": 0.20, "defer": 0.60},
-        "correctness_reward": 1.0,
+        "save_freq": int(save_freq),
+        "total_epochs": int(total_epochs),
+        "test_freq": int(test_freq),
+        "costs": {"ask": float(ask_cost), "consult": float(consult_cost), "defer": float(defer_cost)},
+        "correctness_reward": float(correctness_reward),
+        "action_sampling": "natural stochastic Actor samples; no forced action outcomes are included in PPO",
+        "exploration_coverage": "M candidate trajectories and N candidate generations per active state",
+        "legal_action_context": "state-dependent available-action list is included in the Actor prompt; this is not a decoding-time action override",
         "costs_charged_in": "EA tree edge rewards only; episode scalar is reporting-only because advantages/returns are precomputed",
         "agent_loop": "recipe.ea_atpo.ea_agent_loop.EAATPOAgentLoop",
         "reward_manager": "recipe.ea_atpo.ea_reward_manager.EARewardManager",
@@ -200,11 +231,12 @@ set -o pipefail
 # fallback avoids the old sgl-kernel wheel's missing SM100 cubin.
 # Critic updates before Actor in the trainer. Its manual FSDP parameter and
 # optimizer offload releases Critic state before Actor's first Adam allocation.
+set +e
 "$PYTHON" -m recipe.ea_atpo.mt_main_ea \
   data.train_files="[$TRAIN_PARQUET]" \
   data.val_files="[$TEST_PARQUET]" \
   data.return_raw_chat=True \
-  data.train_batch_size=1 \
+  data.train_batch_size="$TRAIN_BATCH_SIZE" \
   data.max_prompt_length=4096 \
   data.max_response_length=512 \
   data.filter_overlong_prompts=True \
@@ -263,21 +295,21 @@ set -o pipefail
   critic.ppo_max_token_len_per_gpu=4608 \
   critic.ppo_epochs=1 \
   critic.loss_agg_mode=token-mean \
-  tree_search.M_trajectories=2 \
-  tree_search.N_candidates=2 \
+  tree_search.M_trajectories="$M_TRAJECTORIES" \
+  tree_search.N_candidates="$N_CANDIDATES" \
   tree_search.variance_threshold=1.2 \
   tree_search.pruning_enabled=False \
   tree_search.only_use_critic_value=True \
   tree_search.call_critic_enabled=True \
   extra_params.use_critic_in_loop=True \
   reward_coefficients.correctness_score=1 \
-  +ea_atpo.max_actor_actions=3 \
-  +ea_atpo.max_asks=1 \
-  +ea_atpo.max_consults=1 \
-  +ea_atpo.ask_cost=0.05 \
-  +ea_atpo.consult_cost=0.20 \
-  +ea_atpo.defer_cost=0.60 \
-  +ea_atpo.correctness_reward=1.0 \
+  +ea_atpo.max_actor_actions="$MAX_ACTOR_ACTIONS" \
+  +ea_atpo.max_asks="$MAX_ASKS" \
+  +ea_atpo.max_consults="$MAX_CONSULTS" \
+  +ea_atpo.ask_cost="$ASK_COST" \
+  +ea_atpo.consult_cost="$CONSULT_COST" \
+  +ea_atpo.defer_cost="$DEFER_COST" \
+  +ea_atpo.correctness_reward="$CORRECTNESS_REWARD" \
   +ea_atpo.trace_path="$RUN_DIR/traces/train.jsonl" \
   reward_model.reward_manager=ea_atpo \
   trainer.logger='[console]' \
@@ -288,10 +320,35 @@ set -o pipefail
   trainer.nnodes=1 \
   trainer.critic_warmup=0 \
   trainer.val_before_train=False \
-  trainer.save_freq=1 \
-  trainer.test_freq=-1 \
+  trainer.save_freq="$SAVE_FREQ" \
+  trainer.test_freq="$TEST_FREQ" \
   trainer.default_local_dir="$RUN_DIR/checkpoints" \
   trainer.rollout_data_dir="$RUN_DIR/rollouts" \
   trainer.validation_data_dir="$RUN_DIR/validation" \
-  trainer.total_epochs=1 \
+  trainer.total_epochs="$TOTAL_EPOCHS" \
   2>&1 | tee "$LOG_FILE"
+TRAIN_EXIT=$?
+set -e
+
+"$PYTHON" - "$RUN_DIR/run_manifest.json" "$TRAIN_EXIT" "$LOG_FILE" <<'PY'
+import json, pathlib, re, sys
+from datetime import datetime, timezone
+
+manifest_path, exit_code, log_path = sys.argv[1:]
+manifest = json.loads(pathlib.Path(manifest_path).read_text())
+log = pathlib.Path(log_path).read_text(errors="replace")
+steps = [int(x) for x in re.findall(r"training/global_step:(\d+)", log)]
+manifest["status"] = "completed" if int(exit_code) == 0 else "failed"
+manifest["completed_at_utc"] = datetime.now(timezone.utc).isoformat()
+manifest["completion"] = {
+    "launcher_exit_code": int(exit_code),
+    "observed_optimizer_steps": max(steps, default=0),
+    "out_of_memory": "out of memory" in log.lower() or "cuda oom" in log.lower(),
+    "validation_metrics_present": "Final validation metrics: None" not in log and "Validation" in log,
+    "log_path": log_path,
+}
+latest = pathlib.Path(manifest["run_dir"]) / "checkpoints" / "latest_checkpointed_iteration.txt"
+manifest["completion"]["latest_checkpointed_iteration"] = latest.read_text().strip() if latest.exists() else None
+pathlib.Path(manifest_path).write_text(json.dumps(manifest, indent=2, ensure_ascii=False) + "\n")
+PY
+exit "$TRAIN_EXIT"

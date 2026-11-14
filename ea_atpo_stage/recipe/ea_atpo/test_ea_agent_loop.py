@@ -106,6 +106,44 @@ async def _fixed_critic_value(messages, is_terminal, config):
 
 
 class EAFourActionLoopSmokeTest(unittest.TestCase):
+    def test_legal_action_context_and_failure_training_eligibility(self):
+        initial = ea_loop._install_action_protocol(
+            [{"role": "user", "content": "Public case."}],
+            budget=3,
+            max_asks=1,
+            max_consults=1,
+        )
+        self.assertIn("Legal actions: ANSWER, ASK, CONSULT, DEFER", initial[0]["content"])
+
+        after_ask = ea_loop._decision_observation(
+            "Patient", "Cannot answer.", actor_actions_used=1, remaining=2,
+            asked=1, max_asks=1, consulted=0, max_consults=1,
+        )
+        self.assertIn("Legal actions: ANSWER, CONSULT, DEFER", after_ask)
+        self.assertNotIn("Legal actions: ANSWER, ASK,", after_ask)
+
+        last_decision = ea_loop._decision_observation(
+            "Expert advice", "Consider the options.", actor_actions_used=2, remaining=1,
+            asked=1, max_asks=1, consulted=1, max_consults=1,
+        )
+        self.assertIn("Legal actions: ANSWER, DEFER", last_decision)
+
+        for reason in ("invalid_actor_action: unsupported response",):
+            self.assertEqual(ea_loop._failure_category(reason), "protocol_error")
+        for reason in (
+            "actor_generation_failed: timeout",
+            "patient_call_failed: timeout",
+            "consult_call_failed: timeout",
+            "defer_call_failed: timeout",
+        ):
+            self.assertEqual(ea_loop._failure_category(reason), "environment_error")
+        for reason in (
+            "ask_budget_exhausted",
+            "consult_budget_exhausted",
+            "no_remaining_continuation_budget",
+        ):
+            self.assertEqual(ea_loop._failure_category(reason), "policy_constraint_violation")
+
     def test_four_independent_forced_states_cover_protocol_and_token_masks(self):
         """Force each action in a distinct state without creating PPO updates."""
         model_path = os.environ.get(
@@ -206,6 +244,7 @@ class EAFourActionLoopSmokeTest(unittest.TestCase):
                     if trace["action_trace"][0]["action"] == target_action.value
                     and trace["action_trace"][0]["actor_text"].startswith(target_text)
                 )
+                self.assertTrue(trace["evaluation"]["training_eligible"])
                 output = convert_to_agent_output(target_leaf, 512)
                 ea_loop.EAATPOAgentLoop._append_terminal_observation(
                     SimpleNamespace(tokenizer=tokenizer), output, target_leaf, 512

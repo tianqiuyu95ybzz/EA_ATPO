@@ -48,12 +48,43 @@ At each turn output exactly one action, and do not output other action formats:
 - Final Answer: <A|B|C|D>
 - Question: <one specific question for the patient>
 - Consult Expert: <one specific question for the expert>
-- Defer to Expert
+- Defer to Expert (the expert independently selects the final answer)
 ASK and CONSULT return one observation and then you continue deciding. DEFER is
 terminal: the expert independently selects the answer. Only the visible case and
 messages are available to you; never claim to know unasked patient facts. Keep the
-answer concise. The episode has a fixed action budget; obey the latest decision
-state and use a terminal action when only one decision remains."""
+answer concise. Treat DEFER as an ordinary legal option when specialist judgment
+is appropriate. The episode has a fixed action budget; obey the latest decision
+state and select only from the listed legal actions."""
+
+
+def _legal_actions(
+    *, actor_actions_used: int, budget: int, asked: int, max_asks: int,
+    consulted: int, max_consults: int,
+) -> list[str]:
+    remaining = max(0, budget - actor_actions_used)
+    actions = ["ANSWER", "DEFER"]
+    if remaining > 1:
+        if asked < max_asks:
+            actions.insert(1, "ASK")
+        if consulted < max_consults:
+            actions.insert(-1, "CONSULT")
+    return actions
+
+
+def _failure_category(reason: str | None) -> str:
+    if not reason:
+        return "none"
+    if reason.startswith("invalid_actor_action"):
+        return "protocol_error"
+    if reason.startswith((
+        "actor_generation_failed", "patient_call_failed", "consult_call_failed", "defer_call_failed"
+    )):
+        return "environment_error"
+    if reason in {
+        "ask_budget_exhausted", "consult_budget_exhausted", "no_remaining_continuation_budget"
+    }:
+        return "policy_constraint_violation"
+    return "other_failure"
 
 
 def _gold_letter(value: Any) -> str:
@@ -91,10 +122,15 @@ def _render_public_initial(prompt: Sequence[Mapping[str, Any]]) -> tuple[dict[st
 
 def _install_action_protocol(prompt: Sequence[Mapping[str, Any]], *, budget: int, max_asks: int, max_consults: int) -> list[dict[str, str]]:
     messages = [{"role": str(m.get("role", "user")), "content": str(m.get("content", ""))} for m in prompt]
+    legal_actions = _legal_actions(
+        actor_actions_used=0, budget=budget, asked=0, max_asks=max_asks,
+        consulted=0, max_consults=max_consults,
+    )
     rule = (
         ACTION_PROTOCOL
         + f"\nInitial decision state: actor actions used=0/{budget}; remaining={budget}; "
-        + f"ASK used=0/{max_asks}; CONSULT used=0/{max_consults}."
+        + f"ASK used=0/{max_asks}; CONSULT used=0/{max_consults}. "
+        + f"Legal actions: {', '.join(legal_actions)}."
     )
     system_idx = next((i for i, message in enumerate(messages) if message["role"] == "system"), None)
     if system_idx is None:
@@ -115,12 +151,20 @@ def _decision_observation(
     consulted: int,
     max_consults: int,
 ) -> str:
+    legal_actions = _legal_actions(
+        actor_actions_used=actor_actions_used,
+        budget=actor_actions_used + remaining,
+        asked=asked,
+        max_asks=max_asks,
+        consulted=consulted,
+        max_consults=max_consults,
+    )
     return (
         f"{role} response:\n{response}\n\n"
         "EA-ATPO decision state (follow these limits): "
         f"actor actions used={actor_actions_used}; remaining={remaining}; "
         f"ASK used={asked}/{max_asks}; CONSULT used={consulted}/{max_consults}. "
-        "Choose exactly one next action from the action protocol."
+        f"Legal actions: {', '.join(legal_actions)}. Choose exactly one of them."
     )
 
 
@@ -730,6 +774,7 @@ class EAATPOSearchRunner(ATPOTreeSearchRunner):
         gold = _gold_letter(self.config["configurable"]["ground_truth"])
         answer = leaf.ea_terminal_answer
         correctness = self.correctness_reward * float(answer is not None and answer == gold)
+        failure_category = _failure_category(leaf.ea_failure_reason)
         return {
             "sample_id": leaf.ea_public_state.sample_id,
             "public_initial_state": list(leaf.ea_public_state.initial_messages),
@@ -742,6 +787,8 @@ class EAATPOSearchRunner(ATPOTreeSearchRunner):
                 "resource_cost_total": total_cost,
                 "net_episode_reward": sum(float(n.action_reward or 0.0) for n in path),
                 "failure_reason": leaf.ea_failure_reason,
+                "failure_category": failure_category,
+                "training_eligible": failure_category not in {"protocol_error", "environment_error"},
             },
             "resource_usage": {
                 **token_usage,
@@ -828,6 +875,11 @@ class EAATPOAgentLoop(AgentLoopBase):
         outputs: list[AgentLoopOutput] = []
         trace_path = str(ea_config.get("trace_path", ""))
         for leaf in trajectories:
+            episode = runner.episode_trace(leaf)
+            if trace_path:
+                self._append_jsonl(trace_path, episode)
+            if not episode["evaluation"]["training_eligible"]:
+                continue
             output = convert_to_agent_output(leaf, int(rollout.response_length))
             self._append_terminal_observation(output, leaf, int(rollout.response_length))
             last_ai = next((m for m in reversed(leaf.messages) if m.type == "ai"), None)
@@ -836,7 +888,6 @@ class EAATPOAgentLoop(AgentLoopBase):
                 if logprobs is not None:
                     valid_len = len(output.response_mask)
                     output.response_logprobs = list(logprobs[:valid_len]) + [0.0] * max(0, valid_len - len(logprobs))
-            episode = runner.episode_trace(leaf)
             output.statistics = output.statistics or {}
             output.statistics["ea_episode"] = episode
             output.reward_score = float(episode["evaluation"]["net_episode_reward"])
@@ -844,8 +895,11 @@ class EAATPOAgentLoop(AgentLoopBase):
             output.statistics["mdp_value_list"] = output.statistics.get("mdp_value_list", [])
             output.statistics["critic_value_list"] = output.statistics.get("critic_value_list", [])
             outputs.append(output)
-            if trace_path:
-                self._append_jsonl(trace_path, episode)
+        if not outputs:
+            raise RuntimeError(
+                "All EA-ATPO leaves in this batch were protocol/environment failures; "
+                "none was sent to PPO. See the persisted episode traces."
+            )
         return outputs
 
     def _append_terminal_observation(self, output: AgentLoopOutput, leaf: TreeNode, response_length: int) -> None:
