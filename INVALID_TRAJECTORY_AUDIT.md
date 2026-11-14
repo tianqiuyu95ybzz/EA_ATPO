@@ -46,11 +46,23 @@ Attempt07 没有观察到协议解析或 Patient/Expert 服务异常。不过，
 
 Attempt08 暴露了原过滤实现的批次级副作用：AgentLoop 为每个输入样本独立生成候选，但一个样本的所有叶子都不可训练时会抛异常。`asyncio.gather` 随即取消整个 worker batch，导致同批其他样本的有效策略轨迹不能进入 PPO。Attempt08 的第三个训练 batch 中，`case_id=6886` 的 4 条候选全部 DEFER 专家格式错误；`case_id=4256` 的 4 条重复 ASK 轨迹虽是可训练策略失败，也随 batch 中止而没有进入更新。原始 trace 仍完整保留。
 
+### Expert 解析失败定位与证据边界
+
+Attempt08 记录了 7 个 Expert 协议失败：6 个 DEFER，错误为 `DEFER response must contain exactly one final option`；1 个 CONSULT，错误为 `CONSULT leaked or asserted a final answer`。但当时失败事件没有保存 Expert 原始文本、completion token 数或 finish reason，Attempt08 主日志也没有这些内容。因此无法恢复“原始输出是什么”，也不能断言实际输出是 JSON、思维文本、某个具体字段缺失，或被截断。错误信息仅能证明输出不符合当时严格校验：DEFER 未完整匹配 `Expert Final Answer: <A-D>`；CONSULT 触发了 `Final Answer`、`correct answer/option` 或 `option A-D` 的泄漏检测之一。
+
+按动作级专家请求计，26 次 Expert 调用有 7 次协议失败，Attempt08 未重试前失败率为 26.9%；按 episode 计，7/24=29.2%。
+
+Attempt08 的 `_role_generate` 使用 chat template 的 `enable_thinking=False`，Expert 每次上限为 384 tokens。Thinking 因此不是预期格式，但由于原文未保存，不能排除模型仍生成非预期标签。旧 `TokenOutput` 只提供 token IDs 和 log-prob，没有 finish reason；失败轨迹又未记 token 数，所以也无法审计截断。原解析器没有 JSON 解析或容错；DEFER 的严格全文匹配也会拒绝带有额外文本或尾部传输标记的答案。
+
+脱敏回归输入见 `ea_atpo_stage/recipe/ea_atpo/testdata/attempt08_expert_failures.jsonl`。文件保留真实错误类别，但明确标记原始响应不可恢复；测试文本只是代表性 parser trigger，不冒充 Qwen3-8B 的原始输出。CONSULT 测试覆盖“建议中断言正确答案”；DEFER 测试覆盖 Qwen 传输终止符归一化。
+
 ### EA 层最小修复
 
-为避免改动 `ATPO-official`，EA AgentLoop 现在在“单个样本没有任何可训练叶子”时返回一条全零 response mask 的占位行。它只满足上游批次结构，不包含 Actor 训练 token；原始失败原因仍写在逐 episode JSONL。有效兄弟样本继续进入 PPO。`EARewardManager` 在整个 batch 的 Actor mask 全零时于 PPO 前抛出明确异常，避免 Critic/Actor 在无有效 token 时产生 NaN 更新。
+为避免改动 `ATPO-official`，EA AgentLoop 现在在“单个样本没有任何可训练叶子”时返回一条全零 response mask 的占位行。它只满足上游批次结构，不包含 Actor/Critic 训练 token；原始失败原因仍写在逐 episode JSONL。有效兄弟样本继续进入 PPO。`EARewardManager` 在整个 batch 的 Actor mask 全零时于 PPO 前抛出明确异常，避免 Critic/Actor 在无有效 token 时产生 NaN 更新。
 
-回归测试覆盖了占位行 mask、Reward Manager 的全失败拦截，以及四动作现有工程测试，7/7 通过。此修复尚未在真实多样本模型 rollout 中验证；由于 GPU4 当前被其他训练任务占用，不能据此声称 Attempt08 问题已通过端到端复验。
+Expert 侧现在每次解析失败只做一次格式修复重试，固定温度 0，不向提示词加入 gold 或 hidden facts。若重试仍失败，错误类型记为环境/协议失败并隔离 episode。失败事件现在记录最多 500 字符的原始响应、请求与重试次数、prompt/completion token 数和延迟。由于 TokenOutput 没有 finish reason，另外记录 `completion_at_token_cap` 作为触顶代理，不把它冒称为准确的截断原因。
+
+回归测试覆盖了 Attempt08 两种解析失败类别、一次有限重试、尾部终止符归一化、占位行 mask、Reward Manager 的全失败拦截，以及四动作工程测试，8/8 通过。修复尚未在真实多样本模型 rollout 中验证；本轮检查时 GPU4/6 都只有约 56 GiB 可用且利用率为 100%，不能据此声称 Attempt08 问题已通过端到端复验。
 
 ## 证据文件
 

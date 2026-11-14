@@ -91,13 +91,16 @@ class ExpertProtocolError(ValueError):
     """An Expert response remained invalid after one format-only retry."""
 
     def __init__(self, message: str, *, request_count: int, prompt_tokens: int,
-                 completion_tokens: int, latency_s: float, raw_response: str):
+                 completion_tokens: int, latency_s: float, raw_response: str,
+                 completion_at_token_cap: bool, max_new_tokens: int):
         super().__init__(message)
         self.request_count = request_count
         self.prompt_tokens = prompt_tokens
         self.completion_tokens = completion_tokens
         self.latency_s = latency_s
         self.raw_response = raw_response
+        self.completion_at_token_cap = completion_at_token_cap
+        self.max_new_tokens = max_new_tokens
 
 
 def _masked_failure_placeholder(prompt_ids: Sequence[int], tokenizer: Any) -> AgentLoopOutput:
@@ -143,6 +146,9 @@ def _expert_failure_usage(exc: Exception) -> dict[str, Any]:
         "expert_prompt_tokens": int(getattr(exc, "prompt_tokens", 0)),
         "expert_completion_tokens": int(getattr(exc, "completion_tokens", 0)),
         "expert_latency_s": float(getattr(exc, "latency_s", 0.0)),
+        "expert_max_new_tokens": int(getattr(exc, "max_new_tokens", 0)),
+        "expert_completion_at_token_cap": bool(getattr(exc, "completion_at_token_cap", False)),
+        "expert_protocol_failure": isinstance(exc, ExpertProtocolError),
         "expert_protocol_error_response": str(getattr(exc, "raw_response", ""))[:500],
     }
 
@@ -406,6 +412,10 @@ class EAATPOSearchRunner(ATPOTreeSearchRunner):
             "prompt_tokens": len(prompt_ids),
             "completion_tokens": len(token_ids),
             "latency_s": float(elapsed),
+            "max_new_tokens": int(max_new_tokens),
+            # TokenOutput does not expose finish_reason. This records whether
+            # the response reached its configured cap as a truncation proxy.
+            "completion_at_token_cap": len(token_ids) >= int(max_new_tokens),
         }
 
     async def _patient_response(self, facts: Sequence[str], question: str) -> dict[str, Any]:
@@ -430,8 +440,10 @@ class EAATPOSearchRunner(ATPOTreeSearchRunner):
         base_messages = build_expert_messages(state, action, consult_question=question)
         prompt_tokens = completion_tokens = request_count = 0
         latency_s = 0.0
+        completion_at_token_cap = False
         raw_response = ""
         last_error: ValueError | None = None
+        expert_max_new_tokens = 128
         for attempt in range(2):
             messages = list(base_messages)
             if attempt:
@@ -454,10 +466,11 @@ class EAATPOSearchRunner(ATPOTreeSearchRunner):
                 ground_truth=gold,
             )
             request_count += 1
-            result = await self._role_generate(messages, max_new_tokens=128)
+            result = await self._role_generate(messages, max_new_tokens=expert_max_new_tokens)
             prompt_tokens += int(result["prompt_tokens"])
             completion_tokens += int(result["completion_tokens"])
             latency_s += float(result["latency_s"])
+            completion_at_token_cap = completion_at_token_cap or bool(result["completion_at_token_cap"])
             raw_response = str(result["content"])
             try:
                 result["content"] = validate_expert_response(action, raw_response)
@@ -467,6 +480,8 @@ class EAATPOSearchRunner(ATPOTreeSearchRunner):
                     "latency_s": latency_s,
                     "request_count": request_count,
                     "retry_count": request_count - 1,
+                    "max_new_tokens": expert_max_new_tokens,
+                    "completion_at_token_cap": completion_at_token_cap,
                 })
                 return result
             except ValueError as exc:
@@ -478,6 +493,8 @@ class EAATPOSearchRunner(ATPOTreeSearchRunner):
             completion_tokens=completion_tokens,
             latency_s=latency_s,
             raw_response=raw_response,
+            completion_at_token_cap=completion_at_token_cap,
+            max_new_tokens=expert_max_new_tokens,
         )
 
     def _action_cost(self, action: Action) -> float:
@@ -740,6 +757,8 @@ class EAATPOSearchRunner(ATPOTreeSearchRunner):
                             "expert_latency_s": expert["latency_s"],
                             "expert_request_count": expert["request_count"],
                             "expert_retry_count": expert["retry_count"],
+                            "expert_max_new_tokens": expert["max_new_tokens"],
+                            "expert_completion_at_token_cap": expert["completion_at_token_cap"],
                         })
                     except Exception as exc:
                         node.ea_public_state = public_after_question
@@ -792,6 +811,8 @@ class EAATPOSearchRunner(ATPOTreeSearchRunner):
                         "expert_latency_s": expert["latency_s"],
                         "expert_request_count": expert["request_count"],
                         "expert_retry_count": expert["retry_count"],
+                        "expert_max_new_tokens": expert["max_new_tokens"],
+                        "expert_completion_at_token_cap": expert["completion_at_token_cap"],
                     })
                 except Exception as exc:
                     node.ea_public_state = self._state_after(prior_state, action_turn, action=action)
@@ -907,6 +928,8 @@ class EAATPOSearchRunner(ATPOTreeSearchRunner):
                 "expert_calls": sum(1 for event in events if event.get("expert_advice") is not None or event.get("expert_final_answer") is not None),
                 "expert_requests": sum(int(event.get("expert_request_count", 0) or 0) for event in events),
                 "expert_retries": sum(int(event.get("expert_retry_count", 0) or 0) for event in events),
+                "expert_protocol_failures": sum(bool(event.get("expert_protocol_failure")) for event in events),
+                "expert_outputs_at_token_cap": sum(bool(event.get("expert_completion_at_token_cap")) for event in events),
             },
         }
 

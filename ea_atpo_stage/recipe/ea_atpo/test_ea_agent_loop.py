@@ -1,6 +1,7 @@
 """Deterministic protocol smoke for the EA tree loop (not a model-quality test)."""
 
 import asyncio
+import json
 import os
 import unittest
 from pathlib import Path
@@ -16,7 +17,7 @@ from verl import DataProto
 import recipe.atpo.user_assistant_agent_loop as original_loop
 import recipe.ea_atpo.ea_agent_loop as ea_loop
 from recipe.ea_atpo.ea_reward_manager import EARewardManager
-from recipe.ea_atpo.protocol import PublicState
+from recipe.ea_atpo.protocol import Action, PublicState, validate_expert_response
 from recipe.atpo.chat_model import convert_to_agent_output
 from recipe.atpo.mt_metric_utils import compute_accuracy_metrics
 
@@ -102,6 +103,8 @@ class _FourStateForcedClient:
 
 
 class _RetryExpertClient:
+    """Synthetic, deidentified parser-trigger examples; not recovered model outputs."""
+
     def __init__(self, tokenizer):
         self.tokenizer = tokenizer
         self.prompts = []
@@ -116,7 +119,7 @@ class _RetryExpertClient:
                 else "Expert Advice: The correct answer is option B."
             )
         else:
-            text = "Expert Final Answer: C<|im_end|>"
+            text = "Expert Final Answer: C<|im_end|>" if "Format correction:" in prompt else "C"
         token_ids = self.tokenizer.encode(text, add_special_tokens=False)
         return SimpleNamespace(token_ids=token_ids, log_probs=[-0.02] * len(token_ids))
 
@@ -126,6 +129,40 @@ async def _fixed_critic_value(messages, is_terminal, config):
 
 
 class EAFourActionLoopSmokeTest(unittest.TestCase):
+    def test_attempt08_expert_failure_regression_inputs(self):
+        fixture = Path(__file__).parent / "testdata" / "attempt08_expert_failures.jsonl"
+        cases = [json.loads(line) for line in fixture.read_text().splitlines() if line.strip()]
+        self.assertEqual({case["action"] for case in cases}, {"CONSULT", "DEFER"})
+        for case in cases:
+            self.assertFalse(case["original_response_recorded"])
+            self.assertFalse(case["representative_input_is_recovered_output"])
+            action = Action[case["action"]]
+            if action is Action.CONSULT:
+                with self.assertRaisesRegex(ValueError, case["observed_error"]):
+                    validate_expert_response(action, case["representative_parser_input"])
+            else:
+                self.assertEqual(
+                    validate_expert_response(action, case["representative_parser_input"]),
+                    "Expert Final Answer: C",
+                )
+        failure = ea_loop.ExpertProtocolError(
+            "DEFER response must contain exactly one final option",
+            request_count=2,
+            prompt_tokens=300,
+            completion_tokens=256,
+            latency_s=1.25,
+            raw_response="x" * 600,
+            completion_at_token_cap=True,
+            max_new_tokens=128,
+        )
+        usage = ea_loop._expert_failure_usage(failure)
+        self.assertEqual(usage["expert_request_count"], 2)
+        self.assertEqual(usage["expert_retry_count"], 1)
+        self.assertEqual(usage["expert_completion_tokens"], 256)
+        self.assertTrue(usage["expert_completion_at_token_cap"])
+        self.assertTrue(usage["expert_protocol_failure"])
+        self.assertEqual(len(usage["expert_protocol_error_response"]), 500)
+
     def test_environment_failure_placeholder_has_no_trainable_tokens(self):
         placeholder = ea_loop._masked_failure_placeholder(
             [10, 11, 12], SimpleNamespace(eos_token_id=2, pad_token_id=0)
@@ -231,8 +268,11 @@ class EAFourActionLoopSmokeTest(unittest.TestCase):
         self.assertEqual(consult["retry_count"], 1)
         self.assertEqual(consult["request_count"], 2)
         self.assertEqual(consult["content"], "Expert Advice: Consider the symptom timeline and relevant risk factors.")
-        self.assertEqual(defer["request_count"], 1)
+        self.assertEqual(defer["request_count"], 2)
+        self.assertEqual(defer["retry_count"], 1)
         self.assertEqual(defer["content"], "Expert Final Answer: C")
+        self.assertEqual(defer["max_new_tokens"], 128)
+        self.assertFalse(defer["completion_at_token_cap"])
         for prompt in client.prompts:
             self.assertNotIn("private patient fact", prompt)
             self.assertNotIn("private gold explanation", prompt)

@@ -25,7 +25,15 @@ Attempt08 使用状态提示中的合法动作列表，并把 `M_trajectories=N_
 
 Attempt08 的每步 PPO 日志显示完成 2 步，分别有 6 和 8 条 rollout 输出；`custom/num_valid` 为 6/6、8/8，正确数为 0/6 和 4/8。这个指标统计可解析终局答案，不是动作协议成功率。总 episode trace 中有 17 条策略结果可训练、7 条专家协议/环境错误不可训练，其中 4 条 ASK 上限违规轨迹属于可训练策略结果。因第三个 batch 中一个病例的所有 DEFER 专家调用失败，旧样本级异常中止了整批，另一病例的 4 条重复 ASK 轨迹没能进入 PPO。Attempt08 未通过 10 步稳定性验证，不能用两步结果声称四动作学习成功。
 
-修复后，失败样本用全零 Actor response mask 占位，使其同批有效兄弟样本能够保留；若全批都没有可训练 Actor token，自定义 Reward Manager 会在 PPO 前停止。该修复通过 7/7 单测，真实模型的端到端确认仍待资源允许后进行。
+修复后，失败样本用全零 Actor response mask 占位，使其同批有效兄弟样本能够保留；若全批都没有可训练 Actor token，自定义 Reward Manager 会在 PPO 前停止。该修复通过 8/8 单测，真实模型的端到端确认仍待资源允许后进行。
+
+## Expert 输出失败定位补充
+
+Attempt08 的原始 Expert 文本没有写入 trace 或主日志，不能恢复精确字符串。可确认的内容只有 6 次 DEFER 严格格式校验失败，以及 1 次 CONSULT 命中“泄露/断言答案”正则。Attempt08 的 tokenizer template 显式设置 `enable_thinking=False`，并将 Expert generation cap 设为 384 tokens；但失败事件没有 token 数或 stop reason，无法归因到 JSON、thinking 片段或截断。
+
+现在的解析顺序是先去除完整的 `<think>...</think>` 前缀，再移除 Qwen 传输结束符，随后校验角色格式；格式失败最多进行一次只包含格式说明的重试。CONSULT 仍拒绝最终答案泄漏；DEFER 仍只接收一项 A-D 答案。失败原文最多保存 500 字符，prompt/completion token、重试数及“达到 token cap”代理都进入事件记录。`TokenOutput` 不提供 finish reason，所以 token cap 只用于告警统计，不等同已证实截断。
+
+Attempt08 回归输入位于 `ea_atpo_stage/recipe/ea_atpo/testdata/attempt08_expert_failures.jsonl`。其中只保留真实错误类别；示例字符串明确标记为代表性 parser 输入，不是恢复出来的模型输出。当前测试 **8/8 通过**，但 GPU4/6 的显存门槛未满足，尚无修复后的自然 DEFER 成功或 retry 失败率数据。
 
 ## 不做的推断
 
@@ -34,3 +42,4 @@ Attempt08 的每步 PPO 日志显示完成 2 步，分别有 6 和 8 条 rollout
 - 不能把独立的强制动作测试计入自然 rollout 统计。
 - 若后续加入 epsilon 强制动作或改写动作 token 分布，必须按实际混合行为策略校正 PPO log-probability；Attempt08 没有采用这种方式。
 - Attempt08 虽自然采样 6 次 DEFER，但均因专家输出格式失败，不能算有效 DEFER reward/advantage/梯度覆盖。
+- Attempt08 的失败原文未保留，代表性回归输入不能当作真实 Qwen 输出或用于判断错误成因。

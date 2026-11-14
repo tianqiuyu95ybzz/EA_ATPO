@@ -74,6 +74,14 @@ Attempt08 使用 20 个训练病例、batch size 2、每状态 `M=N=4`，计划 
 
 `grad_clip=1.0`，日志记录的是裁剪前 norm；裁剪后 norm 没有单独测量。没有发现非有限 loss 或梯度。两步的 Critic explained variance 都大幅为负，说明当前两步不足以证明 Critic 拟合有效；单步 batch 也很小，不能据此可靠调参。Step 1/2 `custom/num_valid` 的 6/6、8/8 表示提交给评估器的文本能解析答案，不等于 episode 训练资格，也不等于这些答案正确。
 
-失败原因不是显存或优化器异常，而是第三个 batch 内一个样本的 4 个候选全部遇到 DEFER Expert 格式解析错误。旧代码在单样本全失败时抛异常，连带丢弃了同 batch 另一病例的 4 条重复 ASK 策略轨迹。EA 层现已改为返回零 response mask 占位行以保留同批有效轨迹，并在全 batch 无 Actor token 时由自定义 Reward Manager 于 PPO 前停止。单元/协议回归测试 7/7 通过，端到端重跑仍未完成。
+失败原因不是显存或优化器异常，而是第三个 batch 内一个样本的 4 个候选全部遇到 DEFER Expert 格式解析错误。旧代码在单样本全失败时抛异常，连带丢弃了同 batch 另一病例的 4 条重复 ASK 策略轨迹。EA 层现已改为返回零 response mask 占位行以保留同批有效轨迹，并在全 batch 无 Actor token 时由自定义 Reward Manager 于 PPO 前停止。单元/协议回归测试 8/8 通过，端到端重跑仍未完成。
 
-GPU 资源是明确阻塞：检查时 GPU4 有约 77 GiB 可用、GPU6 约 108 GiB 可用，两个卡各有其他用户的训练进程占用约 71 GiB；Attempt09 启动门槛要求两卡连续 5 次采样均至少有 105000 MiB 可用。训练没有启动。后续必须等资源门槛满足，再运行保存频率为每步的 10 步实验；如仍出现连续全失败 batch、非有限数值或严重 Critic 发散，应立即停止。
+GPU 资源是明确阻塞：本轮复查时 GPU4/6 各只有约 56 GiB 可用且利用率均为 100%，并且检测到其他训练进程。Attempt09 启动门槛要求两卡连续 5 次采样均至少有 105000 MiB 可用，所以没有启动训练，也没有触碰其他进程。后续必须等资源门槛满足，再运行保存频率为每步的 10 步实验；如仍出现连续全失败 batch、非有限数值或严重 Critic 发散，应立即停止。
+
+## Attempt08 Expert 协议修复验证状态
+
+失败 trace 中保存了错误类别而没有原始 Expert 响应，所以无法对 Attempt08 的具体 DEFER 文本、JSON、thinking 标记或截断做事实判断。旧解析器要求 DEFER 全文严格匹配 `Expert Final Answer: A-D`；CONSULT 不允许出现明确正确答案表述。Attempt08 的生成模板关闭 thinking，Expert 输出预算为 384 tokens，但失败记录没有生成 token 数和 finish reason。
+
+当前 EA 层在不加入 gold/hidden facts 的前提下最多重试一次，并保存失败原文（最多 500 字符）、请求数、重试数、token 数和 latency。模型服务的 TokenOutput 没有 finish reason；`completion_at_token_cap` 只作为触顶代理写入 trace。脱敏解析触发样本明确标为代表性测试输入，不冒充 Attempt08 原输出。Attempt08 本身不可重跑复原；真实重试效果应由新的训练 run 统计。
+
+本轮重新执行后，协议与 AgentLoop 测试为 **8/8 通过**，Shell 语法检查和 Python 编译检查通过。GPU 门槛不满足，Attempt09 没有启动；因此目前没有重试成功率、新 checkpoint、10 步 Actor/Critic 更新或验证集对照结果。
