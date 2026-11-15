@@ -1,6 +1,6 @@
 # EA-ATPO 实验结果索引
 
-此提交整理了已完成的 Pilot、CONSULT 审计、强 Expert 对照和四动作 Router 实验。报告、逐例轨迹、CSV 汇总、模型配置、checkpoint 与必要的运行代码均已纳入版本控制。
+此索引整理已完成的 Pilot、CONSULT 审计、专家对照和四动作 Router 实验。报告与必要运行代码纳入版本控制；含病例内容的逐条轨迹、模型权重、数据集和大 checkpoint 按实验说明留在 PFS 或被 Git 忽略，公开报告只引用聚合指标和复现哈希。
 
 ## 真实模型 Pilot 与审计
 
@@ -24,6 +24,14 @@
 - 阶段报告：`BASELINE_PAIRED_EVALUATION.md`、`CRITIC_DIAGNOSIS.md`、`ACTION_DISTRIBUTION_ANALYSIS.md`、`NEXT_EXPERIMENT_DECISION.md`
 - 当前结论：恢复后的 EA-ATPO 在 20 例上答对 4 例；没有证明优于 Always Answer，且低于当前两步 Original ATPO checkpoint。CONSULT 独立收益未显示，DEFER 没有验证成功案例，Critic 10/10 步 EV 为负；不据此扩展 PPO。
 - 大模型权重、恢复 checkpoint 与 Parquet 病例数据保留在 PFS，不纳入 Git；Git 中只有哈希、匿名配对指标、报告与运行脚本。
+
+## 公开医疗 Qwen 专家筛选（2026-11-16）
+
+- [候选专家模型配对评估与 L2D DEFER 验证](experiments/real_case_pilot_20261103/audit/MEDICAL_EXPERT_CANDIDATE_EVALUATION_2026-11-16.md)
+- [断点续传与模型分片哈希脚本](experiments/real_case_pilot_20261103/audit/download_medical_candidates.py)
+- [200 例直接问答配对评估](experiments/real_case_pilot_20261103/audit/run_medical_candidate_eval.py)
+- [20 例 DEFER 专家协议评估](experiments/real_case_pilot_20261103/audit/run_medical_candidate_defer_dev_eval.py)
+- 探索性筛选中暂选 Qwen3-4B-ReMeDi 进入下一轮小规模 L2D 验证；它在 20 例 DEFER 开发集答对 6/20，Base-DEFER 为 5/20，差值只有一个病例。按 DEFER 成本 0.60 计算，当前仍不优于 Always Answer。没有因此启动 Router、PPO 或 ATPO RL。
 
 ## 大文件排除说明
 
