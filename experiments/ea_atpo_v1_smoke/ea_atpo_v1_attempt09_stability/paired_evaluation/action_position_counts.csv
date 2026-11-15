@@ -1,0 +1,9 @@
+actor_decision_position,action,count,decision_states_at_position,predecessor_action_counts_json
+1,ANSWER,6,80,"{""ASK"": 6, ""CONSULT"": 61, ""START"": 6}"
+1,ASK,74,80,"{""ASK"": 2, ""START"": 74}"
+2,ANSWER,6,74,"{""ASK"": 6, ""CONSULT"": 61, ""START"": 6}"
+2,ASK,2,74,"{""ASK"": 2, ""START"": 74}"
+2,CONSULT,66,74,"{""ASK"": 66}"
+3,ANSWER,61,66,"{""ASK"": 6, ""CONSULT"": 61, ""START"": 6}"
+3,DEFER,4,66,"{""CONSULT"": 4}"
+3,INVALID,1,66,"{""CONSULT"": 1}"

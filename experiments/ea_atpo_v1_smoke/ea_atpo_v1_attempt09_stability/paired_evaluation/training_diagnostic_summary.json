@@ -1,0 +1,165 @@
+{
+  "training_episode_count": 80,
+  "ppo_eligible_episode_count": 79,
+  "ineligible_episode_count": 1,
+  "episode_accuracy": 0.45,
+  "initial_action_counts": {
+    "ASK": 74,
+    "ANSWER": 6
+  },
+  "action_counts_by_step": {
+    "1": {
+      "ASK": 8,
+      "CONSULT": 8,
+      "ANSWER": 7,
+      "DEFER": 1
+    },
+    "2": {
+      "ASK": 8,
+      "CONSULT": 8,
+      "ANSWER": 8
+    },
+    "3": {
+      "ASK": 10,
+      "ANSWER": 3,
+      "CONSULT": 4,
+      "DEFER": 3
+    },
+    "4": {
+      "ASK": 8,
+      "CONSULT": 8,
+      "ANSWER": 8
+    },
+    "5": {
+      "ASK": 8,
+      "CONSULT": 8,
+      "ANSWER": 8
+    },
+    "6": {
+      "ANSWER": 8,
+      "ASK": 4,
+      "CONSULT": 4
+    },
+    "7": {
+      "ASK": 8,
+      "CONSULT": 8,
+      "ANSWER": 8
+    },
+    "8": {
+      "ASK": 8,
+      "ANSWER": 8,
+      "CONSULT": 4
+    },
+    "9": {
+      "ASK": 8,
+      "CONSULT": 8,
+      "ANSWER": 7,
+      "INVALID": 1
+    },
+    "10": {
+      "ANSWER": 8,
+      "ASK": 6,
+      "CONSULT": 6
+    }
+  },
+  "action_position_counts": {
+    "1_ANSWER": 6,
+    "1_ASK": 74,
+    "2_ANSWER": 6,
+    "2_ASK": 2,
+    "2_CONSULT": 66,
+    "3_ANSWER": 61,
+    "3_DEFER": 4,
+    "3_INVALID": 1
+  },
+  "predecessor_action_counts": {
+    "ASK_to_ANSWER": 6,
+    "ASK_to_ASK": 2,
+    "ASK_to_CONSULT": 66,
+    "CONSULT_to_ANSWER": 61,
+    "CONSULT_to_DEFER": 4,
+    "CONSULT_to_INVALID": 1,
+    "START_to_ANSWER": 6,
+    "START_to_ASK": 74
+  },
+  "defer_events": [
+    {
+      "training_step": 1,
+      "action_position": 3,
+      "previous_actions": [
+        "ASK",
+        "CONSULT"
+      ],
+      "case_id_sha256": "00fcb2d718c2116664250ce2",
+      "correct": false,
+      "net_episode_reward": -0.85,
+      "action_cost": -0.6,
+      "net_action_reward": -0.6,
+      "return": 0.0,
+      "advantage": 0.7140624999999999,
+      "full_response_probability": 0.9662505124312487
+    },
+    {
+      "training_step": 3,
+      "action_position": 3,
+      "previous_actions": [
+        "ASK",
+        "CONSULT"
+      ],
+      "case_id_sha256": "14b2f094410528924d7d11ec",
+      "correct": false,
+      "net_episode_reward": -0.85,
+      "action_cost": -0.6,
+      "net_action_reward": -0.6,
+      "return": 0.0,
+      "advantage": -2.1701171875,
+      "full_response_probability": 0.772044355438936
+    },
+    {
+      "training_step": 3,
+      "action_position": 3,
+      "previous_actions": [
+        "ASK",
+        "CONSULT"
+      ],
+      "case_id_sha256": "14b2f094410528924d7d11ec",
+      "correct": false,
+      "net_episode_reward": -0.85,
+      "action_cost": -0.6,
+      "net_action_reward": -0.6,
+      "return": 0.0,
+      "advantage": -2.2109375,
+      "full_response_probability": 0.9440227902583457
+    },
+    {
+      "training_step": 3,
+      "action_position": 3,
+      "previous_actions": [
+        "ASK",
+        "CONSULT"
+      ],
+      "case_id_sha256": "14b2f094410528924d7d11ec",
+      "correct": false,
+      "net_episode_reward": -0.85,
+      "action_cost": -0.6,
+      "net_action_reward": -0.6,
+      "return": 0.0,
+      "advantage": -2.2791015625,
+      "full_response_probability": 0.9893826791286638
+    }
+  ],
+  "reward_cost_identity_failures": [],
+  "critic": {
+    "steps": 10,
+    "all_explained_variance_negative": true,
+    "mean_explained_variance": -28.845304107666017,
+    "final_explained_variance": -2.1577625274658203,
+    "min_explained_variance": -203.59185791015625,
+    "max_explained_variance": -0.5604933500289917,
+    "mean_vf_loss": 2.1717178689781576,
+    "min_return_variance": 0.009494949132204056,
+    "max_residual_variance": 3.3686461448669434,
+    "explained_variance_formula_max_abs_error": 1.7065147517314472e-06
+  },
+  "privacy": "Hashed case IDs and numerical/action metadata only; no public text, hidden facts, gold, patient response, consult question, or expert advice."
+}

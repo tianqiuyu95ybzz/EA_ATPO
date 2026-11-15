@@ -17,6 +17,14 @@
 - 强 Expert 32B 与 8B 配对评估：`experiments/ea_atpo_value_router_20261105/outputs/strong_expert_awq/`
 - 汇总决策：`experiments/ea_atpo_value_router_20261105/CORE_METHOD_DECISION.md`
 
+## EA-ATPO V1 Attempt09
+
+- 10 步 PPO 烟测与 Critic 稳定性记录：`experiments/ea_atpo_v1_smoke/ea_atpo_v1_attempt09_stability/`
+- 配对开发集结果、checkpoint / tokenizer 哈希与复现 manifest：`experiments/ea_atpo_v1_smoke/ea_atpo_v1_attempt09_stability/paired_evaluation/`
+- 阶段报告：`BASELINE_PAIRED_EVALUATION.md`、`CRITIC_DIAGNOSIS.md`、`ACTION_DISTRIBUTION_ANALYSIS.md`、`NEXT_EXPERIMENT_DECISION.md`
+- 当前结论：恢复后的 EA-ATPO 在 20 例上答对 4 例；没有证明优于 Always Answer，且低于当前两步 Original ATPO checkpoint。CONSULT 独立收益未显示，DEFER 没有验证成功案例，Critic 10/10 步 EV 为负；不据此扩展 PPO。
+- 大模型权重、恢复 checkpoint 与 Parquet 病例数据保留在 PFS，不纳入 Git；Git 中只有哈希、匿名配对指标、报告与运行脚本。
+
 ## 大文件排除说明
 
 Qwen 模型权重、下载缓存、Python 环境和源数据集副本未放入 Git。Qwen3-32B-AWQ 的 Hugging Face 与 ModelScope 固定 revision、分片 SHA-256 和来源信息记录在 `experiments/real_case_pilot_20261103/assets/models/Qwen3-32B-AWQ/model_source_lock.json`；断点下载脚本在 Router 实验目录中。

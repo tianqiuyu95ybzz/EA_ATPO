@@ -1,0 +1,275 @@
+{
+  "methods": {
+    "always_answer": {
+      "cases": 20,
+      "correct": 2,
+      "accuracy": 0.1,
+      "parseable": 6,
+      "action_events": {
+        "ANSWER": 20,
+        "ASK": 0,
+        "CONSULT": 0,
+        "DEFER": 0
+      },
+      "action_rate_per_case": {
+        "ANSWER": 1.0,
+        "ASK": 0.0,
+        "CONSULT": 0.0,
+        "DEFER": 0.0
+      },
+      "mean_tokens": 530.35,
+      "mean_actor_decisions": 1.0,
+      "mean_latency_s": 0.6893511162721552,
+      "patient_calls": 0,
+      "expert_calls": 0,
+      "expert_retries": 0,
+      "expert_protocol_failures": 0,
+      "mean_clinical_action_cost": 0.0
+    },
+    "original_atpo_attempt20": {
+      "cases": 20,
+      "correct": 7,
+      "accuracy": 0.35,
+      "parseable": 20,
+      "action_events": {
+        "ANSWER": 20,
+        "ASK": 20,
+        "CONSULT": 0,
+        "DEFER": 0
+      },
+      "action_rate_per_case": {
+        "ANSWER": 1.0,
+        "ASK": 1.0,
+        "CONSULT": 0.0,
+        "DEFER": 0.0
+      },
+      "mean_tokens": 1382.8,
+      "mean_actor_decisions": 2.0,
+      "mean_latency_s": 0.9589992459048517,
+      "patient_calls": 20,
+      "expert_calls": 0,
+      "expert_retries": 0,
+      "expert_protocol_failures": 0,
+      "mean_clinical_action_cost": 0.05
+    },
+    "ea_atpo_attempt09": {
+      "cases": 20,
+      "correct": 4,
+      "accuracy": 0.2,
+      "parseable": 20,
+      "action_events": {
+        "ANSWER": 20,
+        "ASK": 3,
+        "CONSULT": 3,
+        "DEFER": 0
+      },
+      "action_rate_per_case": {
+        "ANSWER": 1.0,
+        "ASK": 0.15,
+        "CONSULT": 0.15,
+        "DEFER": 0.0
+      },
+      "mean_tokens": 1034.15,
+      "mean_actor_decisions": 1.3,
+      "mean_latency_s": 0.5455913356039673,
+      "patient_calls": 3,
+      "expert_calls": 3,
+      "expert_retries": 0,
+      "expert_protocol_failures": 0,
+      "mean_clinical_action_cost": 0.0375
+    }
+  },
+  "paired": {
+    "ea_vs_always_answer": {
+      "mean_accuracy_difference": 0.1,
+      "ci95_percentile": [
+        0.0,
+        0.25
+      ],
+      "wins": 2,
+      "ties": 18,
+      "losses": 0
+    },
+    "ea_vs_original_atpo_attempt20": {
+      "mean_accuracy_difference": -0.15,
+      "ci95_percentile": [
+        -0.3,
+        0.0
+      ],
+      "wins": 0,
+      "ties": 17,
+      "losses": 3
+    },
+    "original_atpo_attempt20_vs_always_answer": {
+      "mean_accuracy_difference": 0.25,
+      "ci95_percentile": [
+        0.1,
+        0.45
+      ],
+      "wins": 5,
+      "ties": 15,
+      "losses": 0
+    }
+  },
+  "consult": {
+    "cases_with_consult": 3,
+    "cases_with_parseable_same_state_answer_only_counterfactual": 3,
+    "corrected_wrong_to_right": 0,
+    "degraded_right_to_wrong": 1,
+    "unchanged_correctness": 2,
+    "consult_counterfactual_unparseable": 0,
+    "correction_rate_given_consult": 0.0,
+    "degradation_rate_given_consult": 0.3333333333333333
+  },
+  "attempt09_consistency": {
+    "saved_sglang_validation_cases": 20,
+    "reproduced_cases": 20,
+    "action_sequence_matches": 19,
+    "final_correctness_matches": 20,
+    "final_answer_matches": 20,
+    "per_case": [
+      {
+        "case_id_sha256": "cbfad02f9ed2a8d1e08d8f74",
+        "action_sequence_matches": true,
+        "final_correctness_matches": true,
+        "final_answer_matches": true
+      },
+      {
+        "case_id_sha256": "477f4b2cdd3fe2b9fdd7dfb8",
+        "action_sequence_matches": true,
+        "final_correctness_matches": true,
+        "final_answer_matches": true
+      },
+      {
+        "case_id_sha256": "5658b88806a236b6439a7ecd",
+        "action_sequence_matches": true,
+        "final_correctness_matches": true,
+        "final_answer_matches": true
+      },
+      {
+        "case_id_sha256": "51cfe39433c33d8144a4d466",
+        "action_sequence_matches": true,
+        "final_correctness_matches": true,
+        "final_answer_matches": true
+      },
+      {
+        "case_id_sha256": "d72a11d264e746464ed45f73",
+        "action_sequence_matches": true,
+        "final_correctness_matches": true,
+        "final_answer_matches": true
+      },
+      {
+        "case_id_sha256": "5620e84be3e5141819e0d9e4",
+        "action_sequence_matches": true,
+        "final_correctness_matches": true,
+        "final_answer_matches": true
+      },
+      {
+        "case_id_sha256": "535fa30d7e25dd8a49f15367",
+        "action_sequence_matches": true,
+        "final_correctness_matches": true,
+        "final_answer_matches": true
+      },
+      {
+        "case_id_sha256": "a73b320dc0d3a57c03f897eb",
+        "action_sequence_matches": true,
+        "final_correctness_matches": true,
+        "final_answer_matches": true
+      },
+      {
+        "case_id_sha256": "44cb730c420480a0477b505a",
+        "action_sequence_matches": true,
+        "final_correctness_matches": true,
+        "final_answer_matches": true
+      },
+      {
+        "case_id_sha256": "4299da7466df09516d290f7a",
+        "action_sequence_matches": true,
+        "final_correctness_matches": true,
+        "final_answer_matches": true
+      },
+      {
+        "case_id_sha256": "b910260d6ccd1fedb9919e99",
+        "action_sequence_matches": false,
+        "final_correctness_matches": true,
+        "final_answer_matches": true
+      },
+      {
+        "case_id_sha256": "cc6bb91d4a9aec9fe2e20ae4",
+        "action_sequence_matches": true,
+        "final_correctness_matches": true,
+        "final_answer_matches": true
+      },
+      {
+        "case_id_sha256": "be1722b1d104ffb275326068",
+        "action_sequence_matches": true,
+        "final_correctness_matches": true,
+        "final_answer_matches": true
+      },
+      {
+        "case_id_sha256": "48a1706eca5ee6148f748ca9",
+        "action_sequence_matches": true,
+        "final_correctness_matches": true,
+        "final_answer_matches": true
+      },
+      {
+        "case_id_sha256": "f65ccfbfec288565c1d41427",
+        "action_sequence_matches": true,
+        "final_correctness_matches": true,
+        "final_answer_matches": true
+      },
+      {
+        "case_id_sha256": "28955b1fb53203e2ff246fd2",
+        "action_sequence_matches": true,
+        "final_correctness_matches": true,
+        "final_answer_matches": true
+      },
+      {
+        "case_id_sha256": "cbd02d97b0731d88c78d30c2",
+        "action_sequence_matches": true,
+        "final_correctness_matches": true,
+        "final_answer_matches": true
+      },
+      {
+        "case_id_sha256": "349c41201b62db851192665c",
+        "action_sequence_matches": true,
+        "final_correctness_matches": true,
+        "final_answer_matches": true
+      },
+      {
+        "case_id_sha256": "1f594da9b409f7f4b9dc5015",
+        "action_sequence_matches": true,
+        "final_correctness_matches": true,
+        "final_answer_matches": true
+      },
+      {
+        "case_id_sha256": "6629ddae3736e894e89cb4a1",
+        "action_sequence_matches": true,
+        "final_correctness_matches": true,
+        "final_answer_matches": true
+      }
+    ]
+  },
+  "action_prefix_summary": {
+    "ANSWER": {
+      "observed_events": 20,
+      "mean_prefix_only_softmax_on_selected_action": 0.9996929616148401,
+      "note": "Conditional likelihood of the exact literal label prefix, softmaxed over four labels; not a four-way Actor head probability."
+    },
+    "ASK": {
+      "observed_events": 3,
+      "mean_prefix_only_softmax_on_selected_action": 0.0013931632209090129,
+      "note": "Conditional likelihood of the exact literal label prefix, softmaxed over four labels; not a four-way Actor head probability."
+    },
+    "CONSULT": {
+      "observed_events": 3,
+      "mean_prefix_only_softmax_on_selected_action": 0.9999977225664889,
+      "note": "Conditional likelihood of the exact literal label prefix, softmaxed over four labels; not a four-way Actor head probability."
+    },
+    "DEFER": {
+      "observed_events": 0,
+      "mean_prefix_only_softmax_on_selected_action": null,
+      "note": "Conditional likelihood of the exact literal label prefix, softmaxed over four labels; not a four-way Actor head probability."
+    }
+  }
+}

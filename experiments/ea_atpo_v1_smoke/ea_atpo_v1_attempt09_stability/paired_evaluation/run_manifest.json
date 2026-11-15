@@ -1,0 +1,672 @@
+{
+  "evaluation_date": "2026-11-15",
+  "attempt09_run_manifest_sha256": "6694e50342352f45e7b657306f2b458c3a3056c014420d02d32ef8cf6423428b",
+  "attempt09_git_commit": "70015b3e9272becf5d73b3b4975a62d8d583651d",
+  "data": {
+    "path": "experiments/ea_atpo_v1_smoke/ea_atpo_v1_attempt09_stability/data/test.parquet",
+    "sha256": "419ecd2ce0738f45f7fcf67568a5202fabebf02ce2e1dea61ff65681b1752987",
+    "cases": 20,
+    "case_hashes": [
+      "1f594da9b409f7f4b9dc5015",
+      "28955b1fb53203e2ff246fd2",
+      "349c41201b62db851192665c",
+      "4299da7466df09516d290f7a",
+      "44cb730c420480a0477b505a",
+      "477f4b2cdd3fe2b9fdd7dfb8",
+      "48a1706eca5ee6148f748ca9",
+      "51cfe39433c33d8144a4d466",
+      "535fa30d7e25dd8a49f15367",
+      "5620e84be3e5141819e0d9e4",
+      "5658b88806a236b6439a7ecd",
+      "6629ddae3736e894e89cb4a1",
+      "a73b320dc0d3a57c03f897eb",
+      "b910260d6ccd1fedb9919e99",
+      "be1722b1d104ffb275326068",
+      "cbd02d97b0731d88c78d30c2",
+      "cbfad02f9ed2a8d1e08d8f74",
+      "cc6bb91d4a9aec9fe2e20ae4",
+      "d72a11d264e746464ed45f73",
+      "f65ccfbfec288565c1d41427"
+    ]
+  },
+  "checkpoints": {
+    "attempt09_actor_fsdp_step10": {
+      "path": "experiments/ea_atpo_v1_smoke/ea_atpo_v1_attempt09_stability/checkpoints/global_step_10/actor",
+      "file_count": 16,
+      "total_bytes": 98305277113,
+      "files": [
+        {
+          "path": "extra_state_world_size_2_rank_0.pt",
+          "bytes": 15141
+        },
+        {
+          "path": "extra_state_world_size_2_rank_1.pt",
+          "bytes": 15141
+        },
+        {
+          "path": "fsdp_config.json",
+          "bytes": 46
+        },
+        {
+          "path": "huggingface/added_tokens.json",
+          "bytes": 707
+        },
+        {
+          "path": "huggingface/chat_template.jinja",
+          "bytes": 4168
+        },
+        {
+          "path": "huggingface/config.json",
+          "bytes": 1543
+        },
+        {
+          "path": "huggingface/generation_config.json",
+          "bytes": 214
+        },
+        {
+          "path": "huggingface/merges.txt",
+          "bytes": 1671853
+        },
+        {
+          "path": "huggingface/special_tokens_map.json",
+          "bytes": 613
+        },
+        {
+          "path": "huggingface/tokenizer.json",
+          "bytes": 11422654
+        },
+        {
+          "path": "huggingface/tokenizer_config.json",
+          "bytes": 5404
+        },
+        {
+          "path": "huggingface/vocab.json",
+          "bytes": 2776833
+        },
+        {
+          "path": "model_world_size_2_rank_0.pt",
+          "bytes": 16381705963
+        },
+        {
+          "path": "model_world_size_2_rank_1.pt",
+          "bytes": 16381705963
+        },
+        {
+          "path": "optim_world_size_2_rank_0.pt",
+          "bytes": 32762975435
+        },
+        {
+          "path": "optim_world_size_2_rank_1.pt",
+          "bytes": 32762975435
+        }
+      ]
+    },
+    "attempt09_critic_fsdp_step10": {
+      "path": "experiments/ea_atpo_v1_smoke/ea_atpo_v1_attempt09_stability/checkpoints/global_step_10/critic",
+      "file_count": 15,
+      "total_bytes": 90837369782,
+      "files": [
+        {
+          "path": "extra_state_world_size_2_rank_0.pt",
+          "bytes": 15141
+        },
+        {
+          "path": "extra_state_world_size_2_rank_1.pt",
+          "bytes": 15141
+        },
+        {
+          "path": "fsdp_config.json",
+          "bytes": 46
+        },
+        {
+          "path": "huggingface/added_tokens.json",
+          "bytes": 707
+        },
+        {
+          "path": "huggingface/chat_template.jinja",
+          "bytes": 4168
+        },
+        {
+          "path": "huggingface/config.json",
+          "bytes": 1706
+        },
+        {
+          "path": "huggingface/merges.txt",
+          "bytes": 1671853
+        },
+        {
+          "path": "huggingface/special_tokens_map.json",
+          "bytes": 613
+        },
+        {
+          "path": "huggingface/tokenizer.json",
+          "bytes": 11422654
+        },
+        {
+          "path": "huggingface/tokenizer_config.json",
+          "bytes": 5404
+        },
+        {
+          "path": "huggingface/vocab.json",
+          "bytes": 2776833
+        },
+        {
+          "path": "model_world_size_2_rank_0.pt",
+          "bytes": 15137063651
+        },
+        {
+          "path": "model_world_size_2_rank_1.pt",
+          "bytes": 15137047267
+        },
+        {
+          "path": "optim_world_size_2_rank_0.pt",
+          "bytes": 30273672299
+        },
+        {
+          "path": "optim_world_size_2_rank_1.pt",
+          "bytes": 30273672299
+        }
+      ]
+    },
+    "attempt09_actor_hf_merged": {
+      "path": "experiments/ea_atpo_v1_smoke/ea_atpo_v1_attempt09_stability/recovery/hf/attempt09_actor",
+      "sha256_by_file": {
+        "added_tokens.json": "c0284b582e14987fbd3d5a2cb2bd139084371ed9acbae488829a1c900833c680",
+        "config.json": "e728fe8a0e70f5de4624317fda9b771cbf7f271394dbd04a66076eea6b1fa5b3",
+        "generation_config.json": "85eb7aa4abab67dfbc3898a53616cd1c039f63d97c456becc2deb65286c037e8",
+        "merges.txt": "8831e4f1a044471340f7c0a83d7bd71306a5b867e95fd870f74d0c5308a904d5",
+        "model-00001-of-00004.safetensors": "6e49c2a0835692260a221bdb9654833e28edcc559d2dfeda8cdf289469e7fef6",
+        "model-00002-of-00004.safetensors": "bfc97fafd22828f31a0d118900bc263e0320f7812d7081a28196ac203d348c32",
+        "model-00003-of-00004.safetensors": "96181d449e75e68c36bbbf649db01df50dbca6be852c52470701c81b55d852e7",
+        "model-00004-of-00004.safetensors": "daffac930c1b524c04a9d387bfac4ab930bc4e04987ab3613e448797a498546a",
+        "model.safetensors.index.json": "70aa0b0ea82bc2ef13b3e1164c00f120716b149d9fa4ae8369ac981edb710dfa",
+        "special_tokens_map.json": "76862e765266b85aa9459767e33cbaf13970f327a0e88d1c65846c2ddd3a1ecd",
+        "tokenizer.json": "aeb13307a71acd8fe81861d94ad54ab689df773318809eed3cbe794b4492dae4",
+        "tokenizer_config.json": "443bfa629eb16387a12edbf92a76f6a6f10b2af3b53d87ba1550adfcf45f7fa0",
+        "vocab.json": "ca10d7e9fb3ed18575dd1e277a2579c16d108e32f27439684afa0e10b1440910"
+      }
+    },
+    "attempt09_critic_hf_merged": {
+      "path": "experiments/ea_atpo_v1_smoke/ea_atpo_v1_attempt09_stability/recovery/hf/attempt09_critic",
+      "sha256_by_file": {
+        "added_tokens.json": "c0284b582e14987fbd3d5a2cb2bd139084371ed9acbae488829a1c900833c680",
+        "config.json": "e0c8bc57f69f326332d40b63a62486745fc75336c163dcf87891214a333a0f3f",
+        "merges.txt": "8831e4f1a044471340f7c0a83d7bd71306a5b867e95fd870f74d0c5308a904d5",
+        "model-00001-of-00004.safetensors": "5ab69f52a09ed9faccac87bfd413a161dd511f95ec53e361fc56c9ce6654f387",
+        "model-00002-of-00004.safetensors": "63c4f65aedd640b2b614776464ca04e420b2c90d961b56fc4ac09cd962abb5ff",
+        "model-00003-of-00004.safetensors": "ae676c409f8a2b010c540dffc0527ede0cca479abe93ce2dd1bd9f173c47cd15",
+        "model-00004-of-00004.safetensors": "3e583bea7b69fdf33761bbe37c0060387df3780458a5ed591cf69c5154863a37",
+        "model.safetensors.index.json": "2724094cc6aafd5cce27312ed338f3bce279d0ece80b0509b5997f08c8266e3a",
+        "special_tokens_map.json": "76862e765266b85aa9459767e33cbaf13970f327a0e88d1c65846c2ddd3a1ecd",
+        "tokenizer.json": "aeb13307a71acd8fe81861d94ad54ab689df773318809eed3cbe794b4492dae4",
+        "tokenizer_config.json": "443bfa629eb16387a12edbf92a76f6a6f10b2af3b53d87ba1550adfcf45f7fa0",
+        "vocab.json": "ca10d7e9fb3ed18575dd1e277a2579c16d108e32f27439684afa0e10b1440910"
+      }
+    },
+    "original_atpo_attempt20_actor_fsdp_step2": {
+      "path": "experiments/ea_atpo_v1_smoke/original_atpo_attempt20/checkpoints/global_step_2/actor",
+      "file_count": 16,
+      "total_bytes": 98305277049,
+      "files": [
+        {
+          "path": "extra_state_world_size_2_rank_0.pt",
+          "bytes": 15077
+        },
+        {
+          "path": "extra_state_world_size_2_rank_1.pt",
+          "bytes": 15141
+        },
+        {
+          "path": "fsdp_config.json",
+          "bytes": 46
+        },
+        {
+          "path": "huggingface/added_tokens.json",
+          "bytes": 707
+        },
+        {
+          "path": "huggingface/chat_template.jinja",
+          "bytes": 4168
+        },
+        {
+          "path": "huggingface/config.json",
+          "bytes": 1543
+        },
+        {
+          "path": "huggingface/generation_config.json",
+          "bytes": 214
+        },
+        {
+          "path": "huggingface/merges.txt",
+          "bytes": 1671853
+        },
+        {
+          "path": "huggingface/special_tokens_map.json",
+          "bytes": 613
+        },
+        {
+          "path": "huggingface/tokenizer.json",
+          "bytes": 11422654
+        },
+        {
+          "path": "huggingface/tokenizer_config.json",
+          "bytes": 5404
+        },
+        {
+          "path": "huggingface/vocab.json",
+          "bytes": 2776833
+        },
+        {
+          "path": "model_world_size_2_rank_0.pt",
+          "bytes": 16381705963
+        },
+        {
+          "path": "model_world_size_2_rank_1.pt",
+          "bytes": 16381705963
+        },
+        {
+          "path": "optim_world_size_2_rank_0.pt",
+          "bytes": 32762975435
+        },
+        {
+          "path": "optim_world_size_2_rank_1.pt",
+          "bytes": 32762975435
+        }
+      ]
+    },
+    "original_atpo_attempt20_actor_hf_merged": {
+      "path": "experiments/ea_atpo_v1_smoke/ea_atpo_v1_attempt09_stability/recovery/hf/original_atpo_attempt20_actor",
+      "sha256_by_file": {
+        "added_tokens.json": "c0284b582e14987fbd3d5a2cb2bd139084371ed9acbae488829a1c900833c680",
+        "config.json": "e728fe8a0e70f5de4624317fda9b771cbf7f271394dbd04a66076eea6b1fa5b3",
+        "generation_config.json": "85eb7aa4abab67dfbc3898a53616cd1c039f63d97c456becc2deb65286c037e8",
+        "merges.txt": "8831e4f1a044471340f7c0a83d7bd71306a5b867e95fd870f74d0c5308a904d5",
+        "model-00001-of-00004.safetensors": "06993396b0702e9bcdbf2d1f6102ad3a4f487f96fe642bb18f50e00ae3f4623c",
+        "model-00002-of-00004.safetensors": "340dbcf5b713a841a156f1f37b7cad3cc22272ca92ca487706f0628d159c22b9",
+        "model-00003-of-00004.safetensors": "83e347802ce2f27d33db1de9dafb643b9684b2e79beb79aee722297e8b55394e",
+        "model-00004-of-00004.safetensors": "a4629804be4b9afd068dd0ad2dc86ec2e1fa0fda5f14fde557a0c2cd71207a5f",
+        "model.safetensors.index.json": "a708cedeea485829cda3a6aeb6c19741883b4bd8144a426dbbe74544a7ee9d3d",
+        "special_tokens_map.json": "76862e765266b85aa9459767e33cbaf13970f327a0e88d1c65846c2ddd3a1ecd",
+        "tokenizer.json": "aeb13307a71acd8fe81861d94ad54ab689df773318809eed3cbe794b4492dae4",
+        "tokenizer_config.json": "443bfa629eb16387a12edbf92a76f6a6f10b2af3b53d87ba1550adfcf45f7fa0",
+        "vocab.json": "ca10d7e9fb3ed18575dd1e277a2579c16d108e32f27439684afa0e10b1440910"
+      }
+    }
+  },
+  "model_recovery": {
+    "attempt09_critic_probe": {
+      "loaded_class": "Qwen3ForTokenClassification",
+      "parameter_count": 7568409601,
+      "probe_value_finite": true,
+      "probe_value_last": 0.51953125,
+      "critic_score_head_shape": [
+        1,
+        4096
+      ]
+    },
+    "tokenizer_files_sha256": {
+      "base_tokenizer": {
+        "merges.txt": "8831e4f1a044471340f7c0a83d7bd71306a5b867e95fd870f74d0c5308a904d5",
+        "tokenizer.json": "aeb13307a71acd8fe81861d94ad54ab689df773318809eed3cbe794b4492dae4",
+        "tokenizer_config.json": "d5d09f07b48c3086c508b30d1c9114bd1189145b74e982a265350c923acd8101",
+        "vocab.json": "ca10d7e9fb3ed18575dd1e277a2579c16d108e32f27439684afa0e10b1440910"
+      },
+      "attempt09_tokenizer": {
+        "added_tokens.json": "c0284b582e14987fbd3d5a2cb2bd139084371ed9acbae488829a1c900833c680",
+        "merges.txt": "8831e4f1a044471340f7c0a83d7bd71306a5b867e95fd870f74d0c5308a904d5",
+        "special_tokens_map.json": "76862e765266b85aa9459767e33cbaf13970f327a0e88d1c65846c2ddd3a1ecd",
+        "tokenizer.json": "aeb13307a71acd8fe81861d94ad54ab689df773318809eed3cbe794b4492dae4",
+        "tokenizer_config.json": "443bfa629eb16387a12edbf92a76f6a6f10b2af3b53d87ba1550adfcf45f7fa0",
+        "vocab.json": "ca10d7e9fb3ed18575dd1e277a2579c16d108e32f27439684afa0e10b1440910"
+      },
+      "original_attempt20_tokenizer": {
+        "added_tokens.json": "c0284b582e14987fbd3d5a2cb2bd139084371ed9acbae488829a1c900833c680",
+        "merges.txt": "8831e4f1a044471340f7c0a83d7bd71306a5b867e95fd870f74d0c5308a904d5",
+        "special_tokens_map.json": "76862e765266b85aa9459767e33cbaf13970f327a0e88d1c65846c2ddd3a1ecd",
+        "tokenizer.json": "aeb13307a71acd8fe81861d94ad54ab689df773318809eed3cbe794b4492dae4",
+        "tokenizer_config.json": "443bfa629eb16387a12edbf92a76f6a6f10b2af3b53d87ba1550adfcf45f7fa0",
+        "vocab.json": "ca10d7e9fb3ed18575dd1e277a2579c16d108e32f27439684afa0e10b1440910"
+      }
+    },
+    "base_model_config_sha256": "f7c4eadfbbf522470667b797a3c89be2524832d2d599797248dc304fff447c30"
+  },
+  "generation": {
+    "do_sample": false,
+    "temperature": 0.0,
+    "top_p": 1.0,
+    "patient_max_new_tokens": 256,
+    "expert_max_new_tokens": 128,
+    "actor_actions_budget": 3,
+    "max_asks": 1,
+    "max_consults": 1,
+    "torch_dtype": "bfloat16",
+    "attention_implementation": "sdpa",
+    "device": "single allowed GPU (physical GPU4)",
+    "attempt09_actor_chat_template": "enable_thinking=False, matching EAATPOAgentLoop",
+    "original_atpo_chat_template": "enable_thinking=False, standardized with the other evaluated policies",
+    "always_answer_chat_template": "enable_thinking=False; direct-answer system directive",
+    "actor_episode_response_observation_token_budget": 512,
+    "actor_token_budget_note": "Cumulative generated responses plus observation tokens; subsequent Actor calls are capped to the remaining budget."
+  },
+  "simulator": {
+    "patient_model": "Qwen3-8B base checkpoint",
+    "expert_model": "same Qwen3-8B base checkpoint",
+    "greedy": true,
+    "patient_prompt": "Attempt09 PATIENT_SYSTEM contract",
+    "expert_prompt": "Attempt09 build_expert_messages contract"
+  },
+  "clinical_action_costs_for_reporting_only": {
+    "ASK": 0.05,
+    "CONSULT": 0.2,
+    "DEFER": 0.6
+  },
+  "summaries": {
+    "always_answer": {
+      "cases": 20,
+      "correct": 2,
+      "accuracy": 0.1,
+      "parseable": 6,
+      "action_events": {
+        "ANSWER": 20,
+        "ASK": 0,
+        "CONSULT": 0,
+        "DEFER": 0
+      },
+      "action_rate_per_case": {
+        "ANSWER": 1.0,
+        "ASK": 0.0,
+        "CONSULT": 0.0,
+        "DEFER": 0.0
+      },
+      "mean_tokens": 530.35,
+      "mean_actor_decisions": 1.0,
+      "mean_latency_s": 0.6893511162721552,
+      "patient_calls": 0,
+      "expert_calls": 0,
+      "expert_retries": 0,
+      "expert_protocol_failures": 0,
+      "mean_clinical_action_cost": 0.0
+    },
+    "original_atpo_attempt20": {
+      "cases": 20,
+      "correct": 7,
+      "accuracy": 0.35,
+      "parseable": 20,
+      "action_events": {
+        "ANSWER": 20,
+        "ASK": 20,
+        "CONSULT": 0,
+        "DEFER": 0
+      },
+      "action_rate_per_case": {
+        "ANSWER": 1.0,
+        "ASK": 1.0,
+        "CONSULT": 0.0,
+        "DEFER": 0.0
+      },
+      "mean_tokens": 1382.8,
+      "mean_actor_decisions": 2.0,
+      "mean_latency_s": 0.9589992459048517,
+      "patient_calls": 20,
+      "expert_calls": 0,
+      "expert_retries": 0,
+      "expert_protocol_failures": 0,
+      "mean_clinical_action_cost": 0.05
+    },
+    "ea_atpo_attempt09": {
+      "cases": 20,
+      "correct": 4,
+      "accuracy": 0.2,
+      "parseable": 20,
+      "action_events": {
+        "ANSWER": 20,
+        "ASK": 3,
+        "CONSULT": 3,
+        "DEFER": 0
+      },
+      "action_rate_per_case": {
+        "ANSWER": 1.0,
+        "ASK": 0.15,
+        "CONSULT": 0.15,
+        "DEFER": 0.0
+      },
+      "mean_tokens": 1034.15,
+      "mean_actor_decisions": 1.3,
+      "mean_latency_s": 0.5455913356039673,
+      "patient_calls": 3,
+      "expert_calls": 3,
+      "expert_retries": 0,
+      "expert_protocol_failures": 0,
+      "mean_clinical_action_cost": 0.0375
+    }
+  },
+  "paired_accuracy_differences": {
+    "ea_vs_always_answer": {
+      "mean_accuracy_difference": 0.1,
+      "ci95_percentile": [
+        0.0,
+        0.25
+      ],
+      "wins": 2,
+      "ties": 18,
+      "losses": 0
+    },
+    "ea_vs_original_atpo_attempt20": {
+      "mean_accuracy_difference": -0.15,
+      "ci95_percentile": [
+        -0.3,
+        0.0
+      ],
+      "wins": 0,
+      "ties": 17,
+      "losses": 3
+    },
+    "original_atpo_attempt20_vs_always_answer": {
+      "mean_accuracy_difference": 0.25,
+      "ci95_percentile": [
+        0.1,
+        0.45
+      ],
+      "wins": 5,
+      "ties": 15,
+      "losses": 0
+    }
+  },
+  "consult_same_state_counterfactual": {
+    "cases_with_consult": 3,
+    "cases_with_parseable_same_state_answer_only_counterfactual": 3,
+    "corrected_wrong_to_right": 0,
+    "degraded_right_to_wrong": 1,
+    "unchanged_correctness": 2,
+    "consult_counterfactual_unparseable": 0,
+    "correction_rate_given_consult": 0.0,
+    "degradation_rate_given_consult": 0.3333333333333333
+  },
+  "attempt09_sglang_vs_hf_recovery_consistency": {
+    "saved_sglang_validation_cases": 20,
+    "reproduced_cases": 20,
+    "action_sequence_matches": 19,
+    "final_correctness_matches": 20,
+    "final_answer_matches": 20,
+    "per_case": [
+      {
+        "case_id_sha256": "cbfad02f9ed2a8d1e08d8f74",
+        "action_sequence_matches": true,
+        "final_correctness_matches": true,
+        "final_answer_matches": true
+      },
+      {
+        "case_id_sha256": "477f4b2cdd3fe2b9fdd7dfb8",
+        "action_sequence_matches": true,
+        "final_correctness_matches": true,
+        "final_answer_matches": true
+      },
+      {
+        "case_id_sha256": "5658b88806a236b6439a7ecd",
+        "action_sequence_matches": true,
+        "final_correctness_matches": true,
+        "final_answer_matches": true
+      },
+      {
+        "case_id_sha256": "51cfe39433c33d8144a4d466",
+        "action_sequence_matches": true,
+        "final_correctness_matches": true,
+        "final_answer_matches": true
+      },
+      {
+        "case_id_sha256": "d72a11d264e746464ed45f73",
+        "action_sequence_matches": true,
+        "final_correctness_matches": true,
+        "final_answer_matches": true
+      },
+      {
+        "case_id_sha256": "5620e84be3e5141819e0d9e4",
+        "action_sequence_matches": true,
+        "final_correctness_matches": true,
+        "final_answer_matches": true
+      },
+      {
+        "case_id_sha256": "535fa30d7e25dd8a49f15367",
+        "action_sequence_matches": true,
+        "final_correctness_matches": true,
+        "final_answer_matches": true
+      },
+      {
+        "case_id_sha256": "a73b320dc0d3a57c03f897eb",
+        "action_sequence_matches": true,
+        "final_correctness_matches": true,
+        "final_answer_matches": true
+      },
+      {
+        "case_id_sha256": "44cb730c420480a0477b505a",
+        "action_sequence_matches": true,
+        "final_correctness_matches": true,
+        "final_answer_matches": true
+      },
+      {
+        "case_id_sha256": "4299da7466df09516d290f7a",
+        "action_sequence_matches": true,
+        "final_correctness_matches": true,
+        "final_answer_matches": true
+      },
+      {
+        "case_id_sha256": "b910260d6ccd1fedb9919e99",
+        "action_sequence_matches": false,
+        "final_correctness_matches": true,
+        "final_answer_matches": true
+      },
+      {
+        "case_id_sha256": "cc6bb91d4a9aec9fe2e20ae4",
+        "action_sequence_matches": true,
+        "final_correctness_matches": true,
+        "final_answer_matches": true
+      },
+      {
+        "case_id_sha256": "be1722b1d104ffb275326068",
+        "action_sequence_matches": true,
+        "final_correctness_matches": true,
+        "final_answer_matches": true
+      },
+      {
+        "case_id_sha256": "48a1706eca5ee6148f748ca9",
+        "action_sequence_matches": true,
+        "final_correctness_matches": true,
+        "final_answer_matches": true
+      },
+      {
+        "case_id_sha256": "f65ccfbfec288565c1d41427",
+        "action_sequence_matches": true,
+        "final_correctness_matches": true,
+        "final_answer_matches": true
+      },
+      {
+        "case_id_sha256": "28955b1fb53203e2ff246fd2",
+        "action_sequence_matches": true,
+        "final_correctness_matches": true,
+        "final_answer_matches": true
+      },
+      {
+        "case_id_sha256": "cbd02d97b0731d88c78d30c2",
+        "action_sequence_matches": true,
+        "final_correctness_matches": true,
+        "final_answer_matches": true
+      },
+      {
+        "case_id_sha256": "349c41201b62db851192665c",
+        "action_sequence_matches": true,
+        "final_correctness_matches": true,
+        "final_answer_matches": true
+      },
+      {
+        "case_id_sha256": "1f594da9b409f7f4b9dc5015",
+        "action_sequence_matches": true,
+        "final_correctness_matches": true,
+        "final_answer_matches": true
+      },
+      {
+        "case_id_sha256": "6629ddae3736e894e89cb4a1",
+        "action_sequence_matches": true,
+        "final_correctness_matches": true,
+        "final_answer_matches": true
+      }
+    ]
+  },
+  "attempt09_action_prefix_relative_likelihoods": {
+    "ANSWER": {
+      "observed_events": 20,
+      "mean_prefix_only_softmax_on_selected_action": 0.9996929616148401,
+      "note": "Conditional likelihood of the exact literal label prefix, softmaxed over four labels; not a four-way Actor head probability."
+    },
+    "ASK": {
+      "observed_events": 3,
+      "mean_prefix_only_softmax_on_selected_action": 0.0013931632209090129,
+      "note": "Conditional likelihood of the exact literal label prefix, softmaxed over four labels; not a four-way Actor head probability."
+    },
+    "CONSULT": {
+      "observed_events": 3,
+      "mean_prefix_only_softmax_on_selected_action": 0.9999977225664889,
+      "note": "Conditional likelihood of the exact literal label prefix, softmaxed over four labels; not a four-way Actor head probability."
+    },
+    "DEFER": {
+      "observed_events": 0,
+      "mean_prefix_only_softmax_on_selected_action": null,
+      "note": "Conditional likelihood of the exact literal label prefix, softmaxed over four labels; not a four-way Actor head probability."
+    }
+  },
+  "original_atpo_checkpoint_caveat": "Attempt20 Original ATPO checkpoint is a 2-update engineering smoke trained on 2 cases with one assistant turn; its same-case comparison is descriptive and not a budget-matched baseline.",
+  "privacy": [
+    "case level contains hashes, action labels, answer letters, correctness, and numeric telemetry only; no prompt, gold, atomic facts, patient text, or expert advice is stored."
+  ],
+  "evaluation_protocol": {
+    "action_budget_by_method": {
+      "always_answer": {
+        "actor_decisions": 1,
+        "ask": 0,
+        "consult": 0,
+        "defer": 0
+      },
+      "original_atpo_attempt20": {
+        "actor_decisions": 3,
+        "ask": 1,
+        "consult": 0,
+        "defer": 0
+      },
+      "ea_atpo_attempt09": {
+        "actor_decisions": 3,
+        "ask": 1,
+        "consult": 1,
+        "defer": 1,
+        "defer_is_terminal": true
+      }
+    },
+    "answer_parser": "Shared parse_evaluation_action: native action markers, with a bare single A-D letter fallback; unparseable result counts incorrect.",
+    "raw_generation_text_saved": false,
+    "method_prompt_note": "Each method uses its own action protocol instructions while receiving the same underlying case prompt."
+  },
+  "evaluation_runner": {
+    "path": "ea_atpo_stage/scripts/run_attempt09_paired_evaluation.py",
+    "executed_sha256": "7c0d3310599b55f5d56ceea4d3582df3d11b8d862fad543a9ea885b170b62d1f",
+    "note": "executed_sha256 is the exact code at inference time; committed_source_sha256 includes only post-run manifest-field documentation updates and leaves evaluation behavior unchanged.",
+    "committed_source_sha256": "a183b9b01f59aed3a96fce359ee2afa58293abe39a660b53970deeff6d0866c2"
+  }
+}
