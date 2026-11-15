@@ -1,0 +1,137 @@
+{
+  "status": "completed",
+  "created_at_utc": "2026-11-15T10:14:29.710323+00:00",
+  "run_dir": "experiments/ea_atpo_v1_smoke/ea_atpo_v1_attempt09_stability",
+  "git_commit": "70015b3e9272becf5d73b3b4975a62d8d583651d",
+  "official_atpo_commit": "unavailable: nested checkout git rev-parse failed during preflight",
+  "gpu_indices": [
+    4,
+    6
+  ],
+  "cuda_visible_devices": "4,6",
+  "gpu_snapshot": "NVIDIA B20Z GPUs 4 and 6; stable start gate: 110933 MiB and 110729 MiB free, each above the 105000 MiB threshold. Other GPU allocation details omitted.",
+  "python": "3.12.3 (main, Aug 14 2025, 17:47:21) [GCC 13.3.0]",
+  "packages": {
+    "torch": "2.7.1+cu128",
+    "transformers": "4.54.1",
+    "ray": "2.47.1",
+    "sglang": "0.4.10.post2",
+    "vllm": null,
+    "datasets": "4.0.0",
+    "pyarrow": "19.0.1"
+  },
+  "model": {
+    "path": "Qwen3-8B; cache path intentionally omitted from public manifest",
+    "config_sha256": "f7c4eadfbbf522470667b797a3c89be2524832d2d599797248dc304fff447c30",
+    "tokenizer_config_sha256": "d5d09f07b48c3086c508b30d1c9114bd1189145b74e982a265350c923acd8101"
+  },
+  "data": {
+    "official_train_jsonl_sha256": "434a6734dce931262f2ed9e3201a3751e57db3609b1612ab9666835ac8832fdc",
+    "official_test_jsonl_sha256": "5e10a4dc50802e2dc3c156a3bc9e33111837dd762dff97aaaa0327fc4fdbba46",
+    "train_parquet": {
+      "path": "experiments/ea_atpo_v1_smoke/ea_atpo_v1_attempt09_stability/data/train.parquet",
+      "sha256": "470041c588445ab630cbf492e1682b9dd99af907c91042e3f94e9a52dfd4bb7f"
+    },
+    "test_parquet": {
+      "path": "experiments/ea_atpo_v1_smoke/ea_atpo_v1_attempt09_stability/data/test.parquet",
+      "sha256": "419ecd2ce0738f45f7fcf67568a5202fabebf02ce2e1dea61ff65681b1752987"
+    }
+  },
+  "training_config": {
+    "train_rows": 20,
+    "validation_rows": 20,
+    "seed": 1,
+    "actor_critic_model": "Qwen3-8B",
+    "train_batch_size": 2,
+    "max_actor_actions": 3,
+    "max_asks": 1,
+    "max_consults": 1,
+    "M_trajectories": 4,
+    "N_candidates": 4,
+    "response_length": 512,
+    "save_freq": 1,
+    "total_epochs": 1,
+    "test_freq": 10,
+    "costs": {
+      "ask": 0.05,
+      "consult": 0.2,
+      "defer": 0.6
+    },
+    "correctness_reward": 1.0,
+    "action_sampling": "natural stochastic Actor samples; no forced action outcomes are included in PPO",
+    "exploration_coverage": "M candidate trajectories and N candidate generations per active state",
+    "legal_action_context": "state-dependent available-action list is included in the Actor prompt; this is not a decoding-time action override",
+    "costs_charged_in": "EA tree edge rewards only; episode scalar is reporting-only because advantages/returns are precomputed",
+    "agent_loop": "recipe.ea_atpo.ea_agent_loop.EAATPOAgentLoop",
+    "reward_manager": "recipe.ea_atpo.ea_reward_manager.EARewardManager",
+    "reward_accounting": "copied from the EA tree trace once; precomputed Actor advantages and Critic returns are unchanged"
+  },
+  "log_path": "experiments/ea_atpo_v1_smoke/ea_atpo_v1_attempt09_stability/logs/ea_atpo_v1_smoke_20261115T101426Z.log",
+  "completed_at_utc": "2026-11-15T10:36:39.289922+00:00",
+  "completion": {
+    "launcher_exit_code": 0,
+    "observed_optimizer_steps": 10,
+    "out_of_memory": false,
+    "validation_metrics_present": true,
+    "log_path": "experiments/ea_atpo_v1_smoke/ea_atpo_v1_attempt09_stability/logs/ea_atpo_v1_smoke_20261115T101426Z.log",
+    "latest_checkpointed_iteration": "10",
+    "validation_accuracy": 0.2,
+    "validation_correct_cases": 4,
+    "validation_case_count": 20,
+    "validation_parseable_answer_rate": 1.0,
+    "training_eligible_trajectories": 79,
+    "training_trajectory_count": 80,
+    "natural_training_action_events": {
+      "ASK": 76,
+      "CONSULT": 66,
+      "ANSWER": 73,
+      "DEFER": 4,
+      "INVALID": 1
+    },
+    "natural_training_initial_actions": {
+      "ASK": 74,
+      "ANSWER": 6
+    },
+    "expert_finish_reasons": {
+      "stop": 74
+    },
+    "expert_parse_failures": 0,
+    "expert_retries": 0,
+    "consult_answer_leaks": 0,
+    "defer_format_failures": 0,
+    "max_reported_memory_allocated_gb": 76.2981972694397,
+    "max_reported_memory_reserved_gb": 89.138671875,
+    "trace_privacy_audit": {
+      "forbidden_gold_or_hidden_state_keys": [],
+      "possible_pii_pattern_hits": {
+        "email_like": 0,
+        "phone_like": 0,
+        "ssn_like": 0
+      },
+      "raw_expert_responses_saved": 74
+    },
+    "artifact_sha256": {
+      "traces/all_rollouts.jsonl": "3d454dceb2fb897ee82d1f556a7d97745e79796269425e66306a76113cc7f75e",
+      "traces/train.jsonl": "bf66be56c15f7c53c604ab378e3e5432c5aa6a42e4f5c88a77ba75aac70e077b",
+      "traces/validation.jsonl": "348768299373b3348669824a4080871aa264ef479569407a22cbb1d60f216d3e",
+      "ppo_step_metrics.csv": "2792bb00f17a847aed9afdbb1a26f8d771846c2e0e5f823d654300fa4d1b3fc8",
+      "action_coverage.csv": "96eeacaf3012b3ee05139cb0ef7801b9329303cf927064a7ffea004981a90e5d",
+      "validation_summary.json": "b81853b99d4ef1dab20ce8782428eed9625da4ac43f8d9d7fa61f75fe19d98c2",
+      "logs/ea_atpo_v1_smoke_20261115T101426Z.log": "f7676a0f63b6edd7a44cc64f046437db29e4a37d5759ae9af58006763957897f",
+      "logs/ea_atpo_v1_smoke_20261115T101426Z_redacted.log": "4c4c5ff6a0798cc82eca4aa818dbc99144ad1573ca9cc447f531a66e68741b9e"
+    }
+  },
+  "artifact_paths": [
+    "traces/all_rollouts.jsonl",
+    "traces/train.jsonl",
+    "traces/validation.jsonl",
+    "ppo_step_metrics.csv",
+    "action_coverage.csv",
+    "validation_summary.json",
+    "logs/ea_atpo_v1_smoke_20261115T101426Z_redacted.log"
+  ],
+  "git_commit_at_launch": "ccef797745d2eaef51c0b797d62276e30e90c0bf",
+  "runtime_code_snapshot_commit": "70015b3e9272becf5d73b3b4975a62d8d583651d",
+  "run_git_note": "Finish-reason telemetry source was present in the working tree before launch and committed as 70015b3 during the run; git commit time 2026-11-15T10:21:30Z UTC. The recorded runtime code snapshot is 70015b3.",
+  "pushed_redacted_log_path": "experiments/ea_atpo_v1_smoke/ea_atpo_v1_attempt09_stability/logs/ea_atpo_v1_smoke_20261115T101426Z_redacted.log"
+}

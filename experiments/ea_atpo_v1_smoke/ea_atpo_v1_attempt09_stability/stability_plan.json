@@ -1,0 +1,40 @@
+{
+  "created_at_utc": "2026-11-15T10:13:16.049674+00:00",
+  "status": "completed",
+  "gpu_indices": [
+    4,
+    6
+  ],
+  "base_model": "Qwen/Qwen3-8B",
+  "official_train_source_sha256": "434a6734dce931262f2ed9e3201a3751e57db3609b1612ab9666835ac8832fdc",
+  "official_validation_source_sha256": "5e10a4dc50802e2dc3c156a3bc9e33111837dd762dff97aaaa0327fc4fdbba46",
+  "planned": {
+    "train_fraction": 0.0014,
+    "expected_train_cases": 20,
+    "validation_fraction": 0.016,
+    "expected_validation_cases": 20,
+    "train_batch_size": 2,
+    "ppo_updates": 10,
+    "checkpoint_every_steps": 1,
+    "M_trajectories": 4,
+    "N_candidates": 4,
+    "ask_cost": 0.05,
+    "consult_cost": 0.2,
+    "defer_cost": 0.6,
+    "forced_actions_in_training": false,
+    "memory_gate_mib_per_gpu": 105000,
+    "attempt07_peak_reserved_gib_per_gpu": 88.19921875
+  },
+  "actual": {
+    "optimizer_steps": 10,
+    "exit_code": 0,
+    "out_of_memory": false,
+    "training_rollouts": 80,
+    "training_eligible_rollouts": 79,
+    "validation_cases": 20,
+    "validation_correct": 4,
+    "peak_allocated_gib": 76.2981972694397,
+    "peak_reserved_gib": 89.138671875,
+    "result_report": "ATTEMPT09_RESULTS.md"
+  }
+}

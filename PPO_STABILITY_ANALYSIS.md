@@ -1,6 +1,31 @@
-# Attempt07/08 PPO 稳定性分析
+# Attempt07/08/09 PPO 稳定性分析
 
-## 结果
+## Attempt09 最新结果：10 步完成，但 Critic 稳定性未通过
+
+Attempt09 于 2026-11-15 在 GPU4/6 完成 10/10 次 PPO 更新，退出码为 0，无 OOM。Actor/Critic 的 loss、Return、Advantage 和梯度均为有限值；80 条训练 rollout 中 79 条进入 PPO（98.75%）。每一步至少有 7 条有效轨迹；第 9 步的一条协议无效 Actor 输出被排除，两条 ASK 预算违规作为策略结果保留。
+
+| 指标 | Attempt09 结果 |
+|---|---:|
+| Actor PG loss 范围 | -0.705 至 0.373 |
+| Critic VF loss 范围 | 0.0297 至 8.097 |
+| Actor grad norm（裁剪前） | 4.34 至 117.16 |
+| Critic grad norm（裁剪前） | 12.58 至 1064.72 |
+| Return 范围 / step 均值范围 | [-0.80, 1.00] / -0.355 至 0.865 |
+| Advantage 范围 / step 均值范围 | [-2.279, 2.991] / -0.274 至 0.648 |
+| Critic explained variance | -203.59 至 -0.56，10 步均为负 |
+| 峰值 allocated / reserved | 76.30 / 89.14 GiB |
+
+梯度范数是裁剪前记录值，配置 `grad_clip=1.0`。10 步都没有非有限值，但 Critic explained variance 始终为负，故这次验证的是训练链路可完成，而非 Critic 已稳定学习。Step 10 的 Actor 梯度范数为 117.16；需要保留这一异常偏大的裁剪前数值，不将“无 NaN”写成稳定性通过。
+
+自然决策事件为 ANSWER 73、ASK 76、CONSULT 66、DEFER 4；DEFER 只在第 1 步采样 1 次、第 3 步采样 3 次，第 4–10 步没有再出现。初始决策中 ASK 74/80、ANSWER 6/80，CONSULT 与 DEFER 均为 0。四动作都有过训练轨迹覆盖，但 DEFER 极少，不足以支持其已学会。
+
+Expert 共收到 74 次请求（训练 70、验证 4），每次原始输出、生成 token 数、延迟、finish_reason 和解析错误均保存在 trace。74 次 finish_reason 均为 `stop`；重试、token cap、解析错误、CONSULT 显式答案泄漏和 DEFER 格式失败均为 0。泄漏率统计依赖当前协议的显式模式检测，不等同人工语义审查。
+
+最后一步在 20 个病例隔离验证病例上得到 4/20 正确（20%），20/20 答案可解析，平均净 reward 0.15。该 run 没有同预算 Original ATPO 对照，不能声称性能提升。分步 CSV、验证摘要、轨迹和 checkpoint 路径见 [Attempt09 结果报告](experiments/ea_atpo_v1_smoke/ea_atpo_v1_attempt09_stability/ATTEMPT09_RESULTS.md)。
+
+## Attempt07 历史两步结果
+
+### 结果
 
 两步更新均正常结束，Actor 和 Critic 梯度均有限且非零，checkpoint 已保存，无 OOM。两步各只有 2 条 rollout，且每个 step 的两条 rollout 都来自同一个重复采样病例；因此这些统计只能诊断工程链路，不能证明 Critic 或策略已稳定。
 
@@ -76,7 +101,7 @@ Attempt08 使用 20 个训练病例、batch size 2、每状态 `M=N=4`，计划 
 
 失败原因不是显存或优化器异常，而是第三个 batch 内一个样本的 4 个候选全部遇到 DEFER Expert 格式解析错误。旧代码在单样本全失败时抛异常，连带丢弃了同 batch 另一病例的 4 条重复 ASK 策略轨迹。EA 层现已改为返回零 response mask 占位行以保留同批有效轨迹，并在全 batch 无 Actor token 时由自定义 Reward Manager 于 PPO 前停止。单元/协议回归测试 8/8 通过，端到端重跑仍未完成。
 
-GPU 资源是明确阻塞：本轮复查时 GPU4/6 各只有约 56 GiB 可用且利用率均为 100%，并且检测到其他训练进程。Attempt09 启动门槛要求两卡连续 5 次采样均至少有 105000 MiB 可用，所以没有启动训练，也没有触碰其他进程。后续必须等资源门槛满足，再运行保存频率为每步的 10 步实验；如仍出现连续全失败 batch、非有限数值或严重 Critic 发散，应立即停止。
+在 Attempt08 结束时，GPU4/6 各只有约 56 GiB 可用且利用率均为 100%，检测到其他训练进程。Attempt09 启动门槛要求两卡连续 5 次采样均至少有 105000 MiB 可用，所以当时没有启动，也没有触碰其他进程。Attempt09 后续在门槛满足后完成；显存余量和结果见本报告开头。
 
 ## Attempt08 Expert 协议修复验证状态
 
@@ -84,4 +109,4 @@ GPU 资源是明确阻塞：本轮复查时 GPU4/6 各只有约 56 GiB 可用且
 
 当前 EA 层在不加入 gold/hidden facts 的前提下最多重试一次，并保存失败原文（最多 500 字符）、请求数、重试数、token 数和 latency。模型服务的 TokenOutput 没有 finish reason；`completion_at_token_cap` 只作为触顶代理写入 trace。脱敏解析触发样本明确标为代表性测试输入，不冒充 Attempt08 原输出。Attempt08 本身不可重跑复原；真实重试效果应由新的训练 run 统计。
 
-本轮重新执行后，协议与 AgentLoop 测试为 **8/8 通过**，Shell 语法检查和 Python 编译检查通过。GPU 门槛不满足，Attempt09 没有启动；因此目前没有重试成功率、新 checkpoint、10 步 Actor/Critic 更新或验证集对照结果。
+Attempt08 结束时协议与 AgentLoop 回归测试为 **8/8 通过**，Shell 语法检查和 Python 编译检查通过；但当时还没有 Attempt09 的重试率、新 checkpoint、10 步更新或验证集结果。以上状态已由 Attempt09 的真实运行记录更新。

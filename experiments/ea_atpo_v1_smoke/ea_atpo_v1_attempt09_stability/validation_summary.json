@@ -1,0 +1,22 @@
+{
+  "validation_cases": 20,
+  "unique_hashed_cases": 20,
+  "correct": 4,
+  "accuracy": 0.2,
+  "parseable_answer_rate": 1.0,
+  "trainer_reported_accuracy": 0.2,
+  "mean_total_tokens": 1162.4,
+  "mean_measured_serial_latency_s": 1.6902682909974829,
+  "expert_requests": 4,
+  "action_event_counts": {
+    "ANSWER": 20,
+    "ASK": 4,
+    "CONSULT": 4
+  },
+  "initial_action_counts": {
+    "ANSWER": 16,
+    "ASK": 4
+  },
+  "mean_net_episode_reward": 0.15,
+  "train_validation_case_hash_overlap": 0
+}

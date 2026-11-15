@@ -1,12 +1,14 @@
-# EA-ATPO V1 小规模训练结果
+# EA-ATPO V1 小规模训练结果（Attempt07–09）
 
-## 结论
+## 最新结论
 
-Attempt07 通过了四动作协议和两步 PPO 工程 smoke，但不是稳定性或策略质量验证。Attempt08 从官方数据和真实 Qwen3-8B 服务生成了 24 条自然策略 episode，完成 2 次 PPO 更新后，在第三批被 Expert 输出格式错误中止。没有 OOM 或非有限 loss/gradient；没有完成计划的 10 步，没有验证集评估，也没有匹配的 Original ATPO / 无协作成本 baseline。
+Attempt09 完成了 10/10 次 PPO 更新，保存了每步 checkpoint，并在 20 个病例隔离验证集上运行了一次评估。80 条训练轨迹中 79 条有效进入 PPO；Expert 的 74 次原始 completion 都记录了 token 数、finish_reason、解析结果和延迟，未出现格式失败或显式答案泄漏。GPU4/6 峰值显存约为 76.30/89.14 GiB allocated/reserved。
 
-当前不应开始大规模训练或把现有结果写成四动作训练成功。Attempt08 没有 checkpoint；Attempt07 原始 checkpoint 和日志保持不变。
+这只是小规模链路和协议验证，**不代表 Critic 稳定，也没有证明策略优于原始 ATPO**。Critic explained variance 在全部 10 步均为负（-203.59 至 -0.56），DEFER 只自然采样 4 次，验证集准确率为 4/20（20%）。本阶段没有同预算 baseline，不应据此开始大规模训练或声称性能提升。
 
-## 数据和实验范围
+Attempt07/08 的历史报告和 checkpoint 保留不变；Attempt09 的完整记录见 [Attempt09 结果](experiments/ea_atpo_v1_smoke/ea_atpo_v1_attempt09_stability/ATTEMPT09_RESULTS.md)。
+
+## Attempt08 历史实验范围
 
 - Base/Actor/Critic：Qwen3-8B；Patient/Expert 与 Base 通过同一推理服务、不同角色提示隔离。
 - 数据：ATPO 官方 train/test；Attempt08 抽取 20 个训练病例与 20 个独立测试病例。官方 JSONL 哈希和转换后 Parquet 哈希记录在 Attempt08 `run_manifest.json`。
@@ -14,13 +16,13 @@ Attempt07 通过了四动作协议和两步 PPO 工程 smoke，但不是稳定�
 - EA 成本：ASK 0.05、CONSULT 0.20、DEFER 0.60；终局正确奖励 1.0。成本只在树边奖励扣一次；预计算 Return/Advantage 被训练器直接使用。
 - 自然采样：没有强制动作结果进入 PPO。独立四动作强制协议测试只验证工程转移和 mask。
 
-## Attempt08 轨迹和动作覆盖
+## Attempt08 历史轨迹和动作覆盖
 
 24 条原始轨迹中，17 条属于可训练策略结果，7 条属于专家协议/环境错误。17 条包括答错终局和 4 条重复 ASK 上限违规；7 条环境错误由 6 次 DEFER Expert 格式失败和 1 次 CONSULT 最终答案泄漏构成。所有轨迹连同 `failure_reason`、成本和最终答案均留存在 `traces/train.jsonl`。
 
 自然 Actor 事件计数：ASK 28、CONSULT 20、ANSWER 13、DEFER 6。每条轨迹第一步都选择 ASK；4 条轨迹重复 ASK，越过 `max_asks=1`，但没有产生额外 Patient 调用或重复成本。20 次 CONSULT 中 19 次得到可解析建议，1 次泄露最终选项被隔离。6 次自然 DEFER 都因 Expert 没有给出可解析的单一答案失败，所以有效 DEFER 终局、Return 和策略梯度覆盖仍为 0。
 
-## PPO 数值
+## Attempt08 历史 PPO 数值
 
 | 指标 | Step 1 | Step 2 |
 |---|---:|---:|
@@ -37,7 +39,7 @@ Attempt07 通过了四动作协议和两步 PPO 工程 smoke，但不是稳定�
 
 所有记录的 loss、Return、Advantage 和梯度都是有限值，两步都有 Actor/Critic 更新。Critic explained variance 仍强烈为负，且训练只涵盖两步和少数病例，无法证明价值估计稳定。`custom/num_valid` 是终局答案格式可解析数，不是训练样本有效率。
 
-## 中止原因和最小修复
+## Attempt08 中止原因和最小修复
 
 第三批病例 `6886` 的 4 个候选全都在 DEFER Expert 阶段因最终答案格式错误被判为环境失败。旧代码在单个样本没有可训练叶子时抛异常，导致同 batch 的 `4256` 四条有效策略失败（重复 ASK 违规）也没能进入 PPO；原始轨迹仍保存。进程在 2/10 次更新后退出，`save_freq=5` 因而没有 checkpoint。
 
@@ -51,13 +53,13 @@ Attempt08 使用 Qwen chat template `enable_thinking=False`，Expert 上限为 3
 
 按 20 次 CONSULT 和 6 次 DEFER 计算，Attempt08 的 Expert 协议失败率为 7/26（26.9%）；episode 级环境失败率为 7/24（29.2%）。这是未启用有限重试时的历史观测值，不能代替修复后的失败率。
 
-当前每个 Expert 响应最多进行一次格式重试，温度固定 0，不加入 gold 或 hidden facts；解析仍失败时按环境/协议错误隔离。失败事件保存最多 500 字符的响应、请求/重试次数、token 数和延迟。因为上游不返回 finish reason，另写 `completion_at_token_cap` 作为“输出达到上限”的代理，不能当作精确截断标签。
+Attempt08 修复版本当时将每个 Expert 响应最多重试一次，温度固定 0，不加入 gold 或 hidden facts；解析仍失败时按环境/协议错误隔离。失败事件保存最多 500 字符的响应、请求/重试次数、token 数和延迟。因当时上游 TokenOutput 不返回 finish_reason，写入 `completion_at_token_cap` 作为触顶代理；Attempt09 已增加原生 finish_reason 遥测。
 
-## 验证状态与后续
+## Attempt08 当时的验证状态（已由 Attempt09 更新）
 
-本次没有完成病例隔离验证，也没有 Original ATPO / 四动作无成本 / EA 成本三组同预算比较。Attempt08 manifest 记录 `observed_optimizer_steps=2`、退出码 1、无 OOM、无 checkpoint；请不要将它当作 10 步稳定性结果。
+Attempt08 没有完成病例隔离验证，也没有 Original ATPO / 四动作无成本 / EA 成本三组同预算比较。其 manifest 记录 `observed_optimizer_steps=2`、退出码 1、无 OOM、无 checkpoint。Attempt09 随后已完成单独的 10 步小规模运行，但仍没有上述匹配 baseline。
 
-GPU 检查时，GPU4/6 各约 56 GiB 空闲且利用率均为 100%，检测到其他训练进程。Attempt09 启动器要求两卡连续 5 次采样分别至少有 105000 MiB 可用，故本次没有启动，未终止或清理其他用户进程。满足门槛后，下一步才以每步 checkpoint 运行 10 步自然采样，监控全失败 batch、有限性和 Critic 指标，再运行独立验证与匹配 baseline。
+在 Attempt08 检查时 GPU4/6 各约 56 GiB 空闲，因安全门槛未启动 Attempt09；这段状态只描述 Attempt08 当时。Attempt09 后续等到连续显存门槛满足才运行，没有终止或清理其他进程。
 
 ## 工程验证
 
@@ -70,8 +72,8 @@ bash -n run_ea_atpo_v1_stability.sh run_ea_atpo_v1_smoke.sh run_ea_atpo_v1_valid
 .venv/bin/python -m compileall -q ea_atpo_stage/recipe/ea_atpo
 ```
 
-结果：8/8 单测通过；Shell 语法检查和 Python 编译检查通过。测试包含 Attempt08 两种错误类别的代表性 parser 输入、尾部 Qwen 标记归一化、有限重试、失败隔离和全无效 batch 拦截。单测使用本地 tokenizer 和确定性 mock，不能替代真实模型训练结果。
+Attempt08 修复时的结果：8/8 单测通过；Shell 语法检查和 Python 编译检查通过。测试包含 Attempt08 两种错误类别的代表性 parser 输入、尾部 Qwen 标记归一化、有限重试、失败隔离和全无效 batch 拦截。单测使用本地 tokenizer 和确定性 mock，不能替代真实模型训练结果。
 
-复现实验命令：`./run_ea_atpo_v1_stability.sh`。默认固定 GPU4/6、需要每卡至少 105000 MiB 连续 5 次采样、每个 PPO step 保存 checkpoint；本轮门槛不满足，因此未启动 Attempt09，亦无新 checkpoint。Attempt07 checkpoint 路径见 `experiments/ea_atpo_v1_smoke/ea_atpo_v1_attempt07/checkpoints/`；Attempt08 无 checkpoint。
+复现实验命令：`./run_ea_atpo_v1_stability.sh`。默认固定 GPU4/6、需要每卡至少 105000 MiB 连续 5 次采样、每个 PPO step 保存 checkpoint。Attempt08 没有 checkpoint；Attempt09 checkpoint 位于 `experiments/ea_atpo_v1_smoke/ea_atpo_v1_attempt09_stability/checkpoints/`。Attempt07 checkpoint 路径见 `experiments/ea_atpo_v1_smoke/ea_atpo_v1_attempt07/checkpoints/`。
 
 代码和 Attempt08 结果已提交并推送到 `ea-atpo-v1`，当前更新提交详见 Git 记录。GitHub API 身份检查得到 `GMRainZ`，仓库权限 `push=true`；先前 403 来自本机缓存凭据 `Seven11111`，禁用 credential helper 并读取 `.env/github_pat.txt` 后推送成功。
