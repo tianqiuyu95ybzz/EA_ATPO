@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import asyncio
 import fcntl
+import hashlib
 import json
 import math
 import re
@@ -92,7 +93,8 @@ class ExpertProtocolError(ValueError):
 
     def __init__(self, message: str, *, request_count: int, prompt_tokens: int,
                  completion_tokens: int, latency_s: float, raw_response: str,
-                 completion_at_token_cap: bool, max_new_tokens: int):
+                 completion_at_token_cap: bool, max_new_tokens: int,
+                 attempts: Sequence[Mapping[str, Any]] = ()):
         super().__init__(message)
         self.request_count = request_count
         self.prompt_tokens = prompt_tokens
@@ -101,6 +103,7 @@ class ExpertProtocolError(ValueError):
         self.raw_response = raw_response
         self.completion_at_token_cap = completion_at_token_cap
         self.max_new_tokens = max_new_tokens
+        self.attempts = [dict(item) for item in attempts]
 
 
 def _masked_failure_placeholder(prompt_ids: Sequence[int], tokenizer: Any) -> AgentLoopOutput:
@@ -150,6 +153,7 @@ def _expert_failure_usage(exc: Exception) -> dict[str, Any]:
         "expert_completion_at_token_cap": bool(getattr(exc, "completion_at_token_cap", False)),
         "expert_protocol_failure": isinstance(exc, ExpertProtocolError),
         "expert_protocol_error_response": str(getattr(exc, "raw_response", ""))[:500],
+        "expert_attempts": [dict(item) for item in getattr(exc, "attempts", [])],
     }
 
 
@@ -157,6 +161,13 @@ def _gold_letter(value: Any) -> str:
     if isinstance(value, Mapping):
         value = value.get("answer", "")
     return str(value).strip().upper()
+
+
+def _trace_digest(value: Any) -> str:
+    """Stable pseudonymous identifier for a trace field; never persist its text."""
+    if isinstance(value, (dict, list, tuple)):
+        value = json.dumps(value, ensure_ascii=False, sort_keys=True, default=str)
+    return hashlib.sha256(str(value).encode("utf-8")).hexdigest()
 
 
 def _public_action(action: Action, content: str) -> str:
@@ -413,8 +424,7 @@ class EAATPOSearchRunner(ATPOTreeSearchRunner):
             "completion_tokens": len(token_ids),
             "latency_s": float(elapsed),
             "max_new_tokens": int(max_new_tokens),
-            # TokenOutput does not expose finish_reason. This records whether
-            # the response reached its configured cap as a truncation proxy.
+            "finish_reason": getattr(output, "finish_reason", None),
             "completion_at_token_cap": len(token_ids) >= int(max_new_tokens),
         }
 
@@ -442,6 +452,7 @@ class EAATPOSearchRunner(ATPOTreeSearchRunner):
         latency_s = 0.0
         completion_at_token_cap = False
         raw_response = ""
+        attempts: list[dict[str, Any]] = []
         last_error: ValueError | None = None
         expert_max_new_tokens = 128
         for attempt in range(2):
@@ -466,7 +477,19 @@ class EAATPOSearchRunner(ATPOTreeSearchRunner):
                 ground_truth=gold,
             )
             request_count += 1
-            result = await self._role_generate(messages, max_new_tokens=expert_max_new_tokens)
+            try:
+                result = await self._role_generate(messages, max_new_tokens=expert_max_new_tokens)
+            except Exception as exc:
+                attempts.append({
+                    "attempt": attempt + 1,
+                    "finish_reason": None,
+                    "raw_response": None,
+                    "completion_tokens": 0,
+                    "generation_error_type": type(exc).__name__,
+                })
+                setattr(exc, "request_count", request_count)
+                setattr(exc, "attempts", attempts)
+                raise
             prompt_tokens += int(result["prompt_tokens"])
             completion_tokens += int(result["completion_tokens"])
             latency_s += float(result["latency_s"])
@@ -474,6 +497,15 @@ class EAATPOSearchRunner(ATPOTreeSearchRunner):
             raw_response = str(result["content"])
             try:
                 result["content"] = validate_expert_response(action, raw_response)
+                attempts.append({
+                    "attempt": attempt + 1,
+                    "raw_response": raw_response,
+                    "prompt_tokens": int(result["prompt_tokens"]),
+                    "completion_tokens": int(result["completion_tokens"]),
+                    "latency_s": float(result["latency_s"]),
+                    "finish_reason": result.get("finish_reason"),
+                    "parse_error": None,
+                })
                 result.update({
                     "prompt_tokens": prompt_tokens,
                     "completion_tokens": completion_tokens,
@@ -482,10 +514,20 @@ class EAATPOSearchRunner(ATPOTreeSearchRunner):
                     "retry_count": request_count - 1,
                     "max_new_tokens": expert_max_new_tokens,
                     "completion_at_token_cap": completion_at_token_cap,
+                    "expert_attempts": attempts,
                 })
                 return result
             except ValueError as exc:
                 last_error = exc
+                attempts.append({
+                    "attempt": attempt + 1,
+                    "raw_response": raw_response,
+                    "prompt_tokens": int(result["prompt_tokens"]),
+                    "completion_tokens": int(result["completion_tokens"]),
+                    "latency_s": float(result["latency_s"]),
+                    "finish_reason": result.get("finish_reason"),
+                    "parse_error": str(exc),
+                })
         raise ExpertProtocolError(
             str(last_error or "invalid expert response"),
             request_count=request_count,
@@ -495,6 +537,7 @@ class EAATPOSearchRunner(ATPOTreeSearchRunner):
             raw_response=raw_response,
             completion_at_token_cap=completion_at_token_cap,
             max_new_tokens=expert_max_new_tokens,
+            attempts=attempts,
         )
 
     def _action_cost(self, action: Action) -> float:
@@ -759,6 +802,7 @@ class EAATPOSearchRunner(ATPOTreeSearchRunner):
                             "expert_retry_count": expert["retry_count"],
                             "expert_max_new_tokens": expert["max_new_tokens"],
                             "expert_completion_at_token_cap": expert["completion_at_token_cap"],
+                            "expert_attempts": expert["expert_attempts"],
                         })
                     except Exception as exc:
                         node.ea_public_state = public_after_question
@@ -813,6 +857,7 @@ class EAATPOSearchRunner(ATPOTreeSearchRunner):
                         "expert_retry_count": expert["retry_count"],
                         "expert_max_new_tokens": expert["max_new_tokens"],
                         "expert_completion_at_token_cap": expert["completion_at_token_cap"],
+                        "expert_attempts": expert["expert_attempts"],
                     })
                 except Exception as exc:
                     node.ea_public_state = self._state_after(prior_state, action_turn, action=action)
@@ -881,11 +926,24 @@ class EAATPOSearchRunner(ATPOTreeSearchRunner):
         for node in path:
             event = dict(node.ea_event or {})
             before = node.parent.ea_public_state if node.parent is not None else node.ea_public_state
+            after = node.ea_public_state
+            event.pop("public_state_before", None)
+            event.pop("public_state_after", None)
+            event.pop("patient_response", None)
+            failure_reason = event.pop("failure_reason", None)
+            if failure_reason:
+                event["failure_reason_code"] = str(failure_reason).split(":", 1)[0]
+            for sensitive_text_key in ("consult_question", "actor_text"):
+                sensitive_text = event.pop(sensitive_text_key, None)
+                if sensitive_text is not None:
+                    event[f"{sensitive_text_key}_sha256"] = _trace_digest(sensitive_text)
+                    event[f"{sensitive_text_key}_chars"] = len(str(sensitive_text))
             event.update({
-                "public_state_id_before": before.state_id,
-                "public_state_before": before.messages,
-                "public_state_id_after": node.ea_public_state.state_id,
-                "public_state_after": node.ea_public_state.messages,
+                "public_state_id_before": _trace_digest(before.state_id)[:24],
+                "public_state_id_after": _trace_digest(after.state_id)[:24],
+                "public_message_count_before": len(before.messages),
+                "public_message_count_after": len(after.messages),
+                "patient_response_observed": node.ea_patient_response is not None,
                 "actor_actions_used": node.ea_actor_actions_used,
                 "asked_count": node.ea_asked_count,
                 "consulted_count": node.ea_consulted_count,
@@ -906,17 +964,17 @@ class EAATPOSearchRunner(ATPOTreeSearchRunner):
         correctness = self.correctness_reward * float(answer is not None and answer == gold)
         failure_category = _failure_category(leaf.ea_failure_reason)
         return {
-            "sample_id": leaf.ea_public_state.sample_id,
-            "public_initial_state": list(leaf.ea_public_state.initial_messages),
+            "case_id_sha256": _trace_digest(leaf.ea_public_state.sample_id)[:24],
+            "public_initial_state_sha256": _trace_digest(leaf.ea_public_state.initial_messages),
+            "public_initial_message_count": len(leaf.ea_public_state.initial_messages),
             "action_trace": events,
             "final_answer": answer,
             "evaluation": {
-                "gold": gold,
                 "correct": bool(answer is not None and answer == gold),
                 "terminal_correctness_reward": correctness,
                 "resource_cost_total": total_cost,
                 "net_episode_reward": sum(float(n.action_reward or 0.0) for n in path),
-                "failure_reason": leaf.ea_failure_reason,
+                "failure_reason": str(leaf.ea_failure_reason).split(":", 1)[0] if leaf.ea_failure_reason else None,
                 "failure_category": failure_category,
                 "training_eligible": failure_category not in {"protocol_error", "environment_error"},
             },
@@ -924,7 +982,7 @@ class EAATPOSearchRunner(ATPOTreeSearchRunner):
                 **token_usage,
                 "total_tokens": sum(token_usage.values()),
                 "measured_serial_latency_s": measured_latency_s,
-                "patient_calls": sum(1 for event in events if event.get("patient_response") is not None),
+                "patient_calls": sum(1 for event in events if event.get("patient_response_observed")),
                 "expert_calls": sum(1 for event in events if event.get("expert_advice") is not None or event.get("expert_final_answer") is not None),
                 "expert_requests": sum(int(event.get("expert_request_count", 0) or 0) for event in events),
                 "expert_retries": sum(int(event.get("expert_retry_count", 0) or 0) for event in events),

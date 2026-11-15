@@ -71,6 +71,10 @@ if [[ ! -f "$DATA_ROOT/merged_train_dataset.jsonl" || ! -f "$DATA_ROOT/medqa_tes
   exit 2
 fi
 
+# The pinned TokenOutput otherwise drops SGLang's native finish_reason. This
+# telemetry-only overlay does not alter rollout sampling, PPO, or model weights.
+"$PYTHON" "$ROOT/ea_atpo_stage/apply_finish_reason_overlay.py" "$CODE_ROOT"
+
 for GPU_INDEX in "${GPU_IDS[@]}"; do
   GPU_STATUS="$(nvidia-smi -i "$GPU_INDEX" --query-gpu=memory.free,utilization.gpu --format=csv,noheader,nounits)"
   FREE_MIB="${GPU_STATUS%%,*}"
@@ -320,11 +324,10 @@ set +e
   trainer.nnodes=1 \
   trainer.critic_warmup=0 \
   trainer.val_before_train=False \
+  trainer.log_val_generations=0 \
   trainer.save_freq="$SAVE_FREQ" \
   trainer.test_freq="$TEST_FREQ" \
   trainer.default_local_dir="$RUN_DIR/checkpoints" \
-  trainer.rollout_data_dir="$RUN_DIR/rollouts" \
-  trainer.validation_data_dir="$RUN_DIR/validation" \
   trainer.total_epochs="$TOTAL_EPOCHS" \
   2>&1 | tee "$LOG_FILE"
 TRAIN_EXIT=$?

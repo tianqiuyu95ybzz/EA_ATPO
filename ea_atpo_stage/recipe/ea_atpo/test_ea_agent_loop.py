@@ -121,7 +121,7 @@ class _RetryExpertClient:
         else:
             text = "Expert Final Answer: C<|im_end|>" if "Format correction:" in prompt else "C"
         token_ids = self.tokenizer.encode(text, add_special_tokens=False)
-        return SimpleNamespace(token_ids=token_ids, log_probs=[-0.02] * len(token_ids))
+        return SimpleNamespace(token_ids=token_ids, log_probs=[-0.02] * len(token_ids), finish_reason="stop")
 
 
 async def _fixed_critic_value(messages, is_terminal, config):
@@ -268,6 +268,11 @@ class EAFourActionLoopSmokeTest(unittest.TestCase):
         self.assertEqual(consult["retry_count"], 1)
         self.assertEqual(consult["request_count"], 2)
         self.assertEqual(consult["content"], "Expert Advice: Consider the symptom timeline and relevant risk factors.")
+        self.assertEqual(len(consult["expert_attempts"]), 2)
+        self.assertEqual(consult["expert_attempts"][0]["raw_response"], "Expert Advice: The correct answer is option B.")
+        self.assertIn("leak", consult["expert_attempts"][0]["parse_error"])
+        self.assertEqual(consult["expert_attempts"][0]["finish_reason"], "stop")
+        self.assertIsNone(consult["expert_attempts"][1]["parse_error"])
         self.assertEqual(defer["request_count"], 2)
         self.assertEqual(defer["retry_count"], 1)
         self.assertEqual(defer["content"], "Expert Final Answer: C")
@@ -365,17 +370,11 @@ class EAFourActionLoopSmokeTest(unittest.TestCase):
                 )
                 leaves = await runner.run()
                 traces = [(leaf, runner.episode_trace(leaf)) for leaf in leaves]
-                target_text = {
-                    ea_loop.Action.ANSWER: "Final Answer: B",
-                    ea_loop.Action.ASK: "Question:",
-                    ea_loop.Action.CONSULT: "Consult Expert:",
-                    ea_loop.Action.DEFER: "Defer to Expert",
-                }[target_action]
                 target_leaf, trace = next(
                     (leaf, trace)
                     for leaf, trace in traces
                     if trace["action_trace"][0]["action"] == target_action.value
-                    and trace["action_trace"][0]["actor_text"].startswith(target_text)
+                    and trace["final_answer"] == "B"
                 )
                 self.assertTrue(trace["evaluation"]["training_eligible"])
                 output = convert_to_agent_output(target_leaf, 512)
@@ -571,12 +570,18 @@ class EAFourActionLoopSmokeTest(unittest.TestCase):
         expected_cost = {"ANSWER": 0.0, "ASK": 0.05, "CONSULT": 0.20, "DEFER": 0.60}
         expected_answer = {"ANSWER": "A", "ASK": "B", "CONSULT": "B", "DEFER": "B"}
         for leaf, trace in zip(leaves, traces):
+            trace_text = json.dumps(trace, ensure_ascii=False)
+            self.assertNotIn("gold", trace["evaluation"])
+            self.assertNotIn("private gold explanation", trace_text)
+            self.assertNotIn("private patient fact", trace_text)
+            self.assertNotIn("The patient reports fever.", trace_text)
+            self.assertNotIn("public_initial_state", trace)
             first_action = trace["action_trace"][0]["action"]
             self.assertAlmostEqual(trace["evaluation"]["resource_cost_total"], expected_cost[first_action])
             self.assertEqual(trace["final_answer"], expected_answer[first_action])
             for event in trace["action_trace"]:
-                state_text = repr(event["public_state_before"]) + repr(event["public_state_after"])
-                self.assertNotIn("private gold explanation", state_text)
+                self.assertNotIn("public_state_before", event)
+                self.assertNotIn("public_state_after", event)
                 if event["action"] in {"ANSWER", "ASK", "CONSULT", "DEFER"}:
                     self.assertGreater(event["actor_completion_tokens"], 0)
 
