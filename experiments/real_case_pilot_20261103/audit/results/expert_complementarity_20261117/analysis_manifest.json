@@ -1,0 +1,37 @@
+{
+  "analysis": "case-paired expert complementarity and normalized cost reanalysis",
+  "cost_grid": [
+    0.0,
+    0.15,
+    0.3,
+    0.45,
+    0.6,
+    0.75,
+    0.9,
+    1.0
+  ],
+  "bootstrap_replicates": 10000,
+  "bootstrap_unit": "case, within each saved cohort",
+  "cohort_policy": "Every source experiment remains a distinct cohort; no pooled accuracy across unmatched samples.",
+  "input_sha256": {
+    "/pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO_V1/experiments/real_case_pilot_20261103/audit/outputs/medical_expert_candidates_20261116/candidate_trajectories.jsonl": "6ff74a291eb2eb9600152c8f33d250956afe78f14273e9b75f70e46e5a25a9db",
+    "/pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO_V1/experiments/real_case_pilot_20261103/audit/outputs/medical_candidate_defer_dev_20261116/defer_dev_trajectories.jsonl": "7ebc02e8d92bd6899fd12be926fe7b31e9176db2a68f50796da0e1599c9e90a3",
+    "/pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO_V1/experiments/real_case_pilot_20261103/audit/outputs/l2d_remedi_confirmation_20261117_gpu6_full/trajectories.jsonl": "99844a25ae957697471e7e2d48ad2b16ff4b0261b783c6d91ddcd89b012bdfd9",
+    "/pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO_V1/experiments/real_case_pilot_20261103/audit/outputs/l2d_prior_candidates_defer_20261118_gpu5/trajectories.jsonl": "c3d81a2b5f2bef31f07fb05a2bd41eeeef7a861ebad4690a44d21787aaef19d6",
+    "/pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO/experiments/ea_atpo_value_router_20261105/outputs/strong_expert_awq/qwen3_32b_direct_answers.jsonl": "7ac5654b0a9a2e2c9124257c320d922e6bcf7e302d78d786c26f26c8e205c8db",
+    "/pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO/experiments/ea_atpo_value_router_20261105/outputs/strong_expert_awq/run_manifest.json": "5770270f0b74d6af7ba8385bc1d5d4e80efa4558122b27ff0495671f0af07d8f",
+    "/pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO_V1/experiments/real_case_pilot_20261103/audit/outputs/l2d_consult_hint_pilot20_20261118_cpu/trajectories.jsonl": "d0541f66d6096d31ece611cef24fcc8e9c17d4d58f8725189d96b02738a6067b",
+    "/pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO_V1/experiments/real_case_pilot_20261103/audit/outputs/advice_utilization/advice_utilization_summary.csv": "29c153033e45db1e349f5cdfeae2661d7034135409cb3706e8d28a54fd928fa8",
+    "/pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO_V1/experiments/real_case_pilot_20261103/audit/outputs/advice_utilization/advice_utilization_cost_summary.csv": "e3278d696ab5c4a821eda6b4580d8d383317b12c14200057b455df51a329a0a8",
+    "/pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO_V1/experiments/real_case_pilot_20261103/audit/outputs/advice_utilization/advice_utilization_paired_differences.csv": "cc8ed50236969de1d1788c6daad15189b36aa34a81eb58a39b954ee00dbb60bf",
+    "/pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO_V1/experiments/real_case_pilot_20261103/audit/outputs/consult_quality_summary_v2.csv": "877892394227a4939e11143007764e0429b44751146aef0d632dec9bc5dd5f84"
+  },
+  "outputs": {
+    "paired_expert_summary.csv": "9fd5f8d99a030fa41560bf32e43a68ec3caacc5346c212c8296aef8f9aaa13d9",
+    "expert_paired_case_results.csv": "7d63e5c6ea6bc7b46c14496f16fb4e77c16dc9195cb8c1f55dffd0daf3920c3d",
+    "expert_cost_sensitivity.csv": "ad76c15cf32e17ddc280f218054eff572ced3f192e7649197d6562bc456b9d65",
+    "consult20_case_results.csv": "35e979aa5a6a33b4613f0198e3cb195e0330343e8d01e1e858bf0970d4645177",
+    "consult_cost_sensitivity.csv": "b5b5e5ea664b04743de4e41946d0cbee983f3f83f679213997991b5857428982"
+  },
+  "med_qwen_and_new_32b_defer_not_included": "med_qwen had no retrievable checkpoint; new Qwen3-32B-AWQ DEFER run was blocked before service startup. See the separate resource attempt manifest."
+}

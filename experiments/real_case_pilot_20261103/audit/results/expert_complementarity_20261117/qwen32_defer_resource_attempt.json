@@ -1,0 +1,44 @@
+{
+  "status": "blocked_before_service_start",
+  "created_at_utc": "2026-11-17T09:57:33Z",
+  "experiment": "Qwen3-32B-AWQ DEFER paired 200-case rerun and 200/100 train-validation public-feature router capture",
+  "locked_model_revision": "0499c3ac83fdef8810b907a23894ba91e95eddd8",
+  "existing_direct_evaluation": "200 paired cases, frozen results retained; no new direct inference in this attempt",
+  "preflight_split": {
+    "train_data_sha256": "c586d8653460e8bef102f7c6231a1356dbfa88b5b35c3538219724efd4c1a5c5",
+    "test_data_sha256": "3783ebd70d2282ab31c19f5030bf122301d34465516dee222438835e57c9c051",
+    "seed_for_train_and_validation": 20261117,
+    "seed_for_frozen_test": 20261104,
+    "counts": {"train": 200, "validation": 100, "test": 200},
+    "unique_public_prompts": 500,
+    "overlap_across_splits": 0
+  },
+  "new_defer_inference_started": false,
+  "base_service_started": false,
+  "expert_service_started": false,
+  "checkpoint_written": false,
+  "latest_resource_observation_mib_and_utilization": {
+    "gpu3": {
+      "free_mib": 10513,
+      "utilization_percent": 100
+    },
+    "gpu7": {
+      "free_mib": 66540,
+      "utilization_percent": 100
+    }
+  },
+  "start_gates": {
+    "gpu3_base_service": {
+      "minimum_free_mib": 31000,
+      "maximum_utilization_percent": 35
+    },
+    "gpu7_32b_service": {
+      "minimum_free_mib": 70000,
+      "maximum_utilization_percent": 30
+    }
+  },
+  "stop_reason": "Latest read-only GPU snapshot failed both service gates. No process was launched and no GPU process was interrupted.",
+  "safe_output_dir": "experiments/real_case_pilot_20261103/audit/outputs/qwen32_awq_complementarity_20261117_gpu7",
+  "modelscope_candidate_status": "Metadata verified, files not retrievable; see med_qwen_modelscope_verification.json",
+  "no_rl_or_ppo": true
+}

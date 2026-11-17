@@ -1,0 +1,81 @@
+{
+  "verified_at_utc": "2026-11-17T09:57:33Z",
+  "source": "ModelScope official model API",
+  "model_id": "zky001/med_qwen",
+  "model_page": "https://www.modelscope.cn/models/zky001/med_qwen",
+  "api_http_status": 200,
+  "model_name": "med_qwen",
+  "display_name": "千问医疗问答模型",
+  "revision": "master",
+  "last_updated_unix": 1716007472,
+  "architecture": [
+    "Qwen2ForCausalLM"
+  ],
+  "base_model_field": [],
+  "backbone_field": [],
+  "base_model_relation": "",
+  "license": "",
+  "license_name": "",
+  "modelscope_chat_template": "{% if messages[0]['role'] == 'system' %}{% set system_message = messages[0]['content'] %}{% endif %}{% if system_message is defined %}{{ system_message + '\\n' }}{% endif %}{% for message in messages %}{% set content = message['content'] %}{% if message['role'] == 'user' %}{{ 'Human: ' + content + '\\nAssistant: ' }}{% elif message['role'] == 'assistant' %}{{ content + '<|im_end|>' + '\\n' }}{% endif %}{% endfor %}",
+  "metadata_safetensors_files": [
+    {
+      "name": "model-00001-of-00008.safetensors",
+      "size_bytes": 1964050920,
+      "sha256": "f5a7b14259a9e110ae8eaa45c7e8fd20c835f3f9c2ac83f38921c07d822773bf"
+    },
+    {
+      "name": "model-00002-of-00008.safetensors",
+      "size_bytes": 1933785648,
+      "sha256": "8b26bd7606a517bbfead3ba991a1e1c7b40614932f6d2052a216d3837ab4a07b"
+    },
+    {
+      "name": "model-00003-of-00008.safetensors",
+      "size_bytes": 1933785672,
+      "sha256": "6a896545d31a7762064db5eb93725023ac0abbc7407e70110e34743cd6c4e450"
+    },
+    {
+      "name": "model-00004-of-00008.safetensors",
+      "size_bytes": 1990408824,
+      "sha256": "2dcda543b4a410301be037d8e2abbc67bbfe2a33ff9a2ffdc499fee7b4a1548c"
+    },
+    {
+      "name": "model-00005-of-00008.safetensors",
+      "size_bytes": 1990400520,
+      "sha256": "92a13df26937b20c11b4bc5a9d150ea3fe7e40ab383df6e05c22180d56b8325d"
+    },
+    {
+      "name": "model-00006-of-00008.safetensors",
+      "size_bytes": 1990400520,
+      "sha256": "ff569ce12f625401dcfefc00a50fd6fb7c4aa1e968284d29759b4b11457838a3"
+    },
+    {
+      "name": "model-00007-of-00008.safetensors",
+      "size_bytes": 1990400520,
+      "sha256": "2accd4c2b75c89ebc636df3eaa696428b77f99ad788a3625b8060c9a0b832df1"
+    },
+    {
+      "name": "model-00008-of-00008.safetensors",
+      "size_bytes": 1649460808,
+      "sha256": "7b9177f631f19320ca81b054bf882194e65239222bbe7fd92adc1eacb2ae5827"
+    }
+  ],
+  "metadata_index_files": [
+    {
+      "name": "model.safetensors.index.json",
+      "size_bytes": 31696,
+      "sha256": "38c08c275d431d8af0204322f791e603fce2ae99b0ed8ee6a67bfe7a72e1b55d"
+    }
+  ],
+  "shard_bytes_sum": 15442693432,
+  "metadata_storage_size_bytes": 15447784731,
+  "available_local_weights": false,
+  "download_status": "blocked_before_inference",
+  "repo_file_tree_http_status": 404,
+  "repo_file_tree_error_code": 10010200001,
+  "repo_file_tree_request_id": "96cba815-346b-4cd4-8f18-f8f8395780f6",
+  "repo_file_tree_message": "获取模型目录树失败，信息：获取模型失败",
+  "snapshot_download_observation": "ModelScope SDK snapshot_download for master failed because the model repository file-tree endpoint returned Code 10010200001; no model files were produced locally.",
+  "runtime_verification": "Not performed: repository did not yield config/tokenizer and weight files. Qwen2ForCausalLM metadata alone does not establish a loadable checkpoint or serving compatibility.",
+  "metadata_response_sha256": "4c879c62d97c4926e34996d95854c7435e4f96e13168ed82bd784971d139c998",
+  "file_tree_response_sha256": "cb3215477e5138710bd9e40d0cc73484f44217a3572659097b4dc1c86b8830fe"
+}

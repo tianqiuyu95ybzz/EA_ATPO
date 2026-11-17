@@ -21,6 +21,8 @@
 - [公开医疗 Qwen 专家候选评估与 L2D DEFER 结果](experiments/real_case_pilot_20261103/audit/MEDICAL_EXPERT_CANDIDATE_EVALUATION_2026-11-16.md)
 - [ReMeDi 100 例独立确认与 32B-AWQ 部署尝试](experiments/real_case_pilot_20261103/audit/L2D_REMEDI_CONFIRMATION_2026-11-17.md)
 - [其他候选 DEFER 与 CONSULT 小提示分析](experiments/real_case_pilot_20261103/audit/L2D_EXPERT_AND_CONSULT_HINT_ANALYSIS_2026-11-17.md)
+- [专家条件互补性、成本敏感性与 Router 可行性审计](EXPERT_CONDITIONED_COMPLEMENTARITY_COST_ANALYSIS.md)
+- [med_qwen 模型核验与待执行配对评估计划](MED_QWEN_EXPERT_EVALUATION.md)
 
 ## 实验记录与复现脚本
 

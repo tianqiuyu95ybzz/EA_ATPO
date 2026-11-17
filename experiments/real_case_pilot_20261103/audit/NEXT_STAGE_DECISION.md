@@ -1,5 +1,7 @@
 # EA-ATPO 下一阶段决策
 
+> **专家互补性成本审计补充（2026-11-17）：** 以下较早版本中的 pooled 100+100 指标只保留为历史描述，不作为当前配对推断。请按 cohort 阅读[最新分组审计](../../../EXPERT_CONDITIONED_COMPLEMENTARITY_COST_ANALYSIS.md)：ReMeDi 的两个 100 例 DEFER cohort 分别为 40% vs Base 54%、41% vs Base 41%。最新审计还将“完美 Expert 始终接管”和“知道 Base 错误时才调用的选择性 Oracle”分开；后者仅是不可部署上界。Qwen3-32B-AWQ 目前仍只有直接回答分数，没有 DEFER 结果。
+
 > **最新状态（2026-11-18）：** 暂停 Router、PPO 和 ATPO RL，也不把 32B-AWQ 设为默认 Expert。新 100 例筛选中 Qwen3-8B Base-DEFER 为 44%，Always Answer 为 41%，ReMeDi 为 41%，PopiT 为 40%；未显示某个候选有稳定 DEFER 优势。跨两个独立 100 例集合，ReMeDi 为 40.5%，低于 Always Answer 的 47.5%，配对差 −7 pp（95% CI −13.5 至 −0.5）。Huatuo 候选在当前协议下全部解析失败。20 例 CONSULT 小提示探索实验中，提示合规率和准确率均未支持继续采用这些候选。Gold 直接生成的“正确 DEFER”只能作为理论上界，不是模型实验或训练样本。完整分析见 [`L2D_EXPERT_AND_CONSULT_HINT_ANALYSIS_2026-11-17.md`](L2D_EXPERT_AND_CONSULT_HINT_ANALYSIS_2026-11-17.md)。
 >
 > **历史状态（2026-11-06）：** 下文记录强 Expert 和 Router 实验完成前的阶段性决策。Qwen3-32B-AWQ 已完成冻结 200 例配对直接答题评估，四动作 Router 也已完成独立病例逐轮测试；强专家直接答题结果见 [`STRONG_EXPERT_EVALUATION.md`](../../ea_atpo_value_router_20261105/outputs/strong_expert_awq/STRONG_EXPERT_EVALUATION.md)。

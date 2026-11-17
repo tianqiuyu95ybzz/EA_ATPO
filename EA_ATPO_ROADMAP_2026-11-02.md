@@ -1,6 +1,18 @@
 # EA-ATPO 后续计划与创新点
 
-更新日期：2026-11-02
+更新日期：2026-11-17（本次仅追加阶段状态，历史计划保留）
+
+## 最新阶段更新（2026-11-17）
+
+本节覆盖 2026-11-02 计划表中过期的资源/数据状态；下方旧路线表保留作历史记录。本项目当前继续暂停 PPO、ATPO RL 和 Router 大规模训练。专家互补性与成本审计保留每个独立病例 cohort，不把不同抽样的准确率拼接。现有 Qwen3-32B-AWQ 冻结 200 例直接作答为 48.0%，Base 配对为 44.0%，差值 +4.0 pp，95% CI [−2.5, +10.5]；这只是直接作答结果，尚无 32B DEFER 测试。ReMeDi 和 PopiT 两个独立 100 例 DEFER 结果没有稳定净收益。
+
+`med_qwen` 已纳入公开 Expert 候选验证计划。ModelScope 元数据标记 Qwen2ForCausalLM 并列出 8 个 safetensors 分片，但 BaseModel/License 字段为空，文件树 API 与 SDK 下载均失败；没有本地权重，也没有推理结果。详见 [med_qwen 专家核验](MED_QWEN_EXPERT_EVALUATION.md)。
+
+成本报告分别列出 Always Answer、Always Expert、基于结果的 Oracle 上界和理论完美选择性 Oracle。`λ_DEFER=.60` 下始终调用成本不划算；事后 Oracle 的正收益不能作为可部署 Router 结果。CONSULT 20 例仍是探索性，且既有 200 状态对照中 Critical 准确率差只有 +0.5 pp（95% CI [−5.9, +6.8]），成本较高；暂不扩大相同提示方案，但也不宣称 CONSULT 普遍无效。
+
+预决策 Router 的 train/validation/test 样本设计已做数据预检：从 ATPO train split 留出 200/100 例，测试使用冻结 200 例，公开 prompt hash 无交叉。但本轮 GPU3/7 在服务启动前已不满足安全显存和利用率门槛，故没有收集新 Expert 标签、拟合阈值或评价 Router。详细结果与复现文件见[专家互补性与成本报告](EXPERT_CONDITIONED_COMPLEMENTARITY_COST_ANALYSIS.md)。
+
+**近期进入标准：** 先恢复 med_qwen 权重或完成 32B DEFER；完成 200/100/200 病例隔离实验；确认预决策 Router 在独立测试的成本净值为正，再讨论是否恢复 PPO。当前不启动任何 RL，也不把 LLM 模拟专家称为真实医生。
 
 ## 一、研究创新点
 

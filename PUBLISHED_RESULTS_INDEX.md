@@ -36,7 +36,9 @@
 - [100 例 ReMeDi 确认 runner](experiments/real_case_pilot_20261103/audit/run_l2d_remedi_confirmation.py)
 - [Qwen3-32B-AWQ 新鲜病例筛选 runner 与单卡服务脚本](experiments/real_case_pilot_20261103/audit/run_l2d_expert_screen_32b.py)、[启动服务](experiments/real_case_pilot_20261103/audit/start_l2d_32b_awq_service.sh)
 - ReMeDi 的 20 例开发集优势没有复现：新 100 例上 ReMeDi-DEFER 为 40%，Always Answer 为 54%，配对差 −14 pp（95% CI −23 至 −5）。当前没有通过验证的 DEFER Expert。Qwen3-32B-AWQ 的新 DEFER 确认因 GPU 资源变化未能启动完成；既有直接答题结果不能代替 DEFER 验证。未启动 Router、PPO 或 ATPO RL。
-- 更新的候选筛选中，Base-DEFER/ReMeDi/PopiT 分别为 44%/41%/40%，Always Answer 为 41%；合并两个独立 ReMeDi 100 例集合后为 40.5% 对 47.5% Always Answer（配对 −7 pp，95% CI −13.5 至 −0.5）。20 例 CONSULT 小提示探索结果未显示收益，候选提示合规率为 30%–85%。没有通过验证的生产式 DEFER Expert，也没有将 Gold 作为输出或训练数据。
+- 两个独立 100 例 DEFER cohort 分别报告：第一组 ReMeDi 为 40% 对 Always Answer 54%；第二组 ReMeDi 为 41% 对 Always Answer 41%，PopiT 为 40% 对 Always Answer 41%。不将两组病例合并成一个配对估计。20 例 CONSULT 小提示仍是探索结果，提示有效率因候选和协议而异。没有通过验证的生产式 DEFER Expert，也没有将 Gold 作为输出或训练数据。
+- [专家互补性与成本敏感性审计](EXPERT_CONDITIONED_COMPLEMENTARITY_COST_ANALYSIS.md) 重算直接作答及 DEFER 的病例级四格表，并保留不同 cohort。Qwen3-32B-AWQ 的直接作答为 48% 对 Base 44%，配对 CI 跨零；本轮 32B DEFER 与预决策 Router 因 GPU 门槛未启动。产物含匿名病例级 CSV、成本曲线和复现脚本。
+- [med_qwen 候选核验](MED_QWEN_EXPERT_EVALUATION.md)：官方元数据有架构和分片清单，但模型文件树不可获取，Base/许可信息缺失；没有任何新推理分数。
 
 ## 大文件排除说明
 
