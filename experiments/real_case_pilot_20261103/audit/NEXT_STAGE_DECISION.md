@@ -1,8 +1,16 @@
 # EA-ATPO 下一阶段决策
 
+## 最新更新（2026-11-18）：Qwen3-32B-AWQ 独立 DEFER 验证已完成
+
+Qwen3-32B-AWQ 在冻结 200 例上为 55.5%，配对 Qwen3-8B Base 为 46.0%，差 +9.5 pp（95% CI +2.5–+16.5）。Expert 修正 35 个 Base 错误，也破坏 16 个 Base 正确答案。该 cohort 支持初步互补性，但还没有第二个独立 cohort 复现。
+
+决策前特征对专家优势的独立预测弱（Pearson r=0.054，95% CI −0.084–0.194；纠错 AUC=0.596，95% CI 0.489–0.697）。在预注册成本网格内，Learned Router 没有可靠胜过 Uncertainty/Random 等简单基线；λ=0.60 时它低于 Always Answer 和 Uncertainty。因此**不启动 PPO/ATPO RL，也不把该 Router 作为可部署策略**。下一步若继续验证，应冻结当前 Router，在一个新的未使用 cohort 上外部复现；不得拿已解封测试集调阈值。
+
+Oracle Selective DEFER 的正结果仅是 Gold 事后选择的上界。med_qwen 仍是待核验候选，没有运行结果。完整统计、风险—覆盖分析、六成本表与复现位置见[验证报告](QWEN32_DEFER_VALIDATION_RESULTS_20261119.md)和[阶段决策记录](QWEN32_DEFER_VALIDATION_DECISION_20261119.md)。
+
 > **专家互补性成本审计补充（2026-11-17）：** 以下较早版本中的 pooled 100+100 指标只保留为历史描述，不作为当前配对推断。请按 cohort 阅读[最新分组审计](../../../EXPERT_CONDITIONED_COMPLEMENTARITY_COST_ANALYSIS.md)：ReMeDi 的两个 100 例 DEFER cohort 分别为 40% vs Base 54%、41% vs Base 41%。最新审计还将“完美 Expert 始终接管”和“知道 Base 错误时才调用的选择性 Oracle”分开；后者仅是不可部署上界。Qwen3-32B-AWQ 目前仍只有直接回答分数，没有 DEFER 结果。
 
-> **最新状态（2026-11-18）：** 暂停 Router、PPO 和 ATPO RL，也不把 32B-AWQ 设为默认 Expert。新 100 例筛选中 Qwen3-8B Base-DEFER 为 44%，Always Answer 为 41%，ReMeDi 为 41%，PopiT 为 40%；未显示某个候选有稳定 DEFER 优势。跨两个独立 100 例集合，ReMeDi 为 40.5%，低于 Always Answer 的 47.5%，配对差 −7 pp（95% CI −13.5 至 −0.5）。Huatuo 候选在当前协议下全部解析失败。20 例 CONSULT 小提示探索实验中，提示合规率和准确率均未支持继续采用这些候选。Gold 直接生成的“正确 DEFER”只能作为理论上界，不是模型实验或训练样本。完整分析见 [`L2D_EXPERT_AND_CONSULT_HINT_ANALYSIS_2026-11-17.md`](L2D_EXPERT_AND_CONSULT_HINT_ANALYSIS_2026-11-17.md)。
+> **此前状态（2026-11-18，本次 32B 配对实验前）：** 暂停 Router、PPO 和 ATPO RL，也不把 32B-AWQ 设为默认 Expert。新 100 例筛选中 Qwen3-8B Base-DEFER 为 44%，Always Answer 为 41%，ReMeDi 为 41%，PopiT 为 40%；未显示某个候选有稳定 DEFER 优势。跨两个独立 100 例集合，ReMeDi 为 40.5%，低于 Always Answer 的 47.5%，配对差 −7 pp（95% CI −13.5 至 −0.5）。Huatuo 候选在当前协议下全部解析失败。20 例 CONSULT 小提示探索实验中，提示合规率和准确率均未支持继续采用这些候选。Gold 直接生成的“正确 DEFER”只能作为理论上界，不是模型实验或训练样本。完整分析见 [`L2D_EXPERT_AND_CONSULT_HINT_ANALYSIS_2026-11-17.md`](L2D_EXPERT_AND_CONSULT_HINT_ANALYSIS_2026-11-17.md)。
 >
 > **历史状态（2026-11-06）：** 下文记录强 Expert 和 Router 实验完成前的阶段性决策。Qwen3-32B-AWQ 已完成冻结 200 例配对直接答题评估，四动作 Router 也已完成独立病例逐轮测试；强专家直接答题结果见 [`STRONG_EXPERT_EVALUATION.md`](../../ea_atpo_value_router_20261105/outputs/strong_expert_awq/STRONG_EXPERT_EVALUATION.md)。
 

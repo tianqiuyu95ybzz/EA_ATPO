@@ -1,6 +1,16 @@
 # EA-ATPO 后续计划与创新点
 
-更新日期：2026-11-17（本次仅追加阶段状态，历史计划保留）
+更新日期：2026-11-18（仅追加阶段状态，历史计划保留）
+
+## 最新阶段更新（2026-11-18）：Qwen3-32B-AWQ DEFER 验证
+
+六阶段配对验证已完成。Qwen3-32B-AWQ 在一个独立 200 例 cohort 上准确率 55.5%，Qwen3-8B Base 为 46.0%，配对差 +9.5 pp（病例级 bootstrap 95% CI +2.5–+16.5）。四格表为 76/16/35/73；Expert 修正 35/108 个 Base 错误，同时破坏 16/92 个 Base 正确答案。结果支持该 Expert 有初步互补性，但单一 cohort 尚不能证明可重复。
+
+基于预决策公开病例与 Base 信心特征拟合的 Ridge Router，在独立测试上相关性 r=0.054（95% CI −0.084–0.194），纠错 AUC=0.596（95% CI 0.489–0.697）。区间包含无预测能力水平。六档成本分析中，Learned Router 没有一个成本点能可靠优于所有简单策略；λ=0.60 下 Utility 0.443，低于 Always Answer 和 Uncertainty DEFER 的 0.460。Oracle Selective DEFER 在 λ=0.60 的 Accuracy/Utility 为 63.5%/0.530，但使用 Gold 事后选病例，仅是不可部署理论上界。
+
+**决策：继续暂停 Router/PPO/ATPO RL。** 需要先在新的未使用病例 cohort 上冻结模型与策略、复现专家互补性，并证明冻结 Learned Router 相对 Always Answer、Uncertainty 和 Random 的成本效用优势。若 Router 仍不能识别专家优势，则停止当前 Learned Router 训练主线。完整结果见 [Qwen32 DEFER 验证报告](experiments/real_case_pilot_20261103/audit/QWEN32_DEFER_VALIDATION_RESULTS_20261119.md) 和 [阶段决策](experiments/real_case_pilot_20261103/audit/QWEN32_DEFER_VALIDATION_DECISION_20261119.md)。
+
+`med_qwen` 继续保留为候选，权重、基座、模板和配置核验通过并完成独立评估前，不报告性能。原始运行日志和 rollout 存在本地 PFS `experiments/real_case_pilot_20261103/audit/outputs/qwen32_defer_validation_20261119_attempt01/`；没有上传病例级输出或模型权重。
 
 ## 最新阶段更新（2026-11-17）
 
