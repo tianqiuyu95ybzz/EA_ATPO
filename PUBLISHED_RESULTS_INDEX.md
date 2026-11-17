@@ -25,16 +25,18 @@
 - 当前结论：恢复后的 EA-ATPO 在 20 例上答对 4 例；没有证明优于 Always Answer，且低于当前两步 Original ATPO checkpoint。CONSULT 独立收益未显示，DEFER 没有验证成功案例，Critic 10/10 步 EV 为负；不据此扩展 PPO。
 - 大模型权重、恢复 checkpoint 与 Parquet 病例数据保留在 PFS，不纳入 Git；Git 中只有哈希、匿名配对指标、报告与运行脚本。
 
-## 公开医疗 Qwen 专家筛选（2026-11-16）
+## 公开医疗 Qwen 专家筛选（2026-11-16 至 2026-11-18）
 
 - [ReMeDi 100 例独立 L2D DEFER 确认与 32B 后续尝试](experiments/real_case_pilot_20261103/audit/L2D_REMEDI_CONFIRMATION_2026-11-17.md)
 - [候选专家模型配对评估与 L2D DEFER 验证](experiments/real_case_pilot_20261103/audit/MEDICAL_EXPERT_CANDIDATE_EVALUATION_2026-11-16.md)
+- [ReMeDi、PopiT、Huatuo DEFER 复测与 CONSULT 小提示 pilot](experiments/real_case_pilot_20261103/audit/L2D_EXPERT_AND_CONSULT_HINT_ANALYSIS_2026-11-17.md)
 - [断点续传与模型分片哈希脚本](experiments/real_case_pilot_20261103/audit/download_medical_candidates.py)
 - [200 例直接问答配对评估](experiments/real_case_pilot_20261103/audit/run_medical_candidate_eval.py)
 - [20 例 DEFER 专家协议评估](experiments/real_case_pilot_20261103/audit/run_medical_candidate_defer_dev_eval.py)
 - [100 例 ReMeDi 确认 runner](experiments/real_case_pilot_20261103/audit/run_l2d_remedi_confirmation.py)
 - [Qwen3-32B-AWQ 新鲜病例筛选 runner 与单卡服务脚本](experiments/real_case_pilot_20261103/audit/run_l2d_expert_screen_32b.py)、[启动服务](experiments/real_case_pilot_20261103/audit/start_l2d_32b_awq_service.sh)
 - ReMeDi 的 20 例开发集优势没有复现：新 100 例上 ReMeDi-DEFER 为 40%，Always Answer 为 54%，配对差 −14 pp（95% CI −23 至 −5）。当前没有通过验证的 DEFER Expert。Qwen3-32B-AWQ 的新 DEFER 确认因 GPU 资源变化未能启动完成；既有直接答题结果不能代替 DEFER 验证。未启动 Router、PPO 或 ATPO RL。
+- 更新的候选筛选中，Base-DEFER/ReMeDi/PopiT 分别为 44%/41%/40%，Always Answer 为 41%；合并两个独立 ReMeDi 100 例集合后为 40.5% 对 47.5% Always Answer（配对 −7 pp，95% CI −13.5 至 −0.5）。20 例 CONSULT 小提示探索结果未显示收益，候选提示合规率为 30%–85%。没有通过验证的生产式 DEFER Expert，也没有将 Gold 作为输出或训练数据。
 
 ## 大文件排除说明
 

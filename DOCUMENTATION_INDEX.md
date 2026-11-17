@@ -20,6 +20,7 @@
 - [Pilot 数据和协议说明](experiments/real_case_pilot_20261103/README.md)
 - [公开医疗 Qwen 专家候选评估与 L2D DEFER 结果](experiments/real_case_pilot_20261103/audit/MEDICAL_EXPERT_CANDIDATE_EVALUATION_2026-11-16.md)
 - [ReMeDi 100 例独立确认与 32B-AWQ 部署尝试](experiments/real_case_pilot_20261103/audit/L2D_REMEDI_CONFIRMATION_2026-11-17.md)
+- [其他候选 DEFER 与 CONSULT 小提示分析](experiments/real_case_pilot_20261103/audit/L2D_EXPERT_AND_CONSULT_HINT_ANALYSIS_2026-11-17.md)
 
 ## 实验记录与复现脚本
 
