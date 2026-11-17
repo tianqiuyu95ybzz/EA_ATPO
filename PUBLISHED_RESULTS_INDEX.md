@@ -27,11 +27,14 @@
 
 ## 公开医疗 Qwen 专家筛选（2026-11-16）
 
+- [ReMeDi 100 例独立 L2D DEFER 确认与 32B 后续尝试](experiments/real_case_pilot_20261103/audit/L2D_REMEDI_CONFIRMATION_2026-11-17.md)
 - [候选专家模型配对评估与 L2D DEFER 验证](experiments/real_case_pilot_20261103/audit/MEDICAL_EXPERT_CANDIDATE_EVALUATION_2026-11-16.md)
 - [断点续传与模型分片哈希脚本](experiments/real_case_pilot_20261103/audit/download_medical_candidates.py)
 - [200 例直接问答配对评估](experiments/real_case_pilot_20261103/audit/run_medical_candidate_eval.py)
 - [20 例 DEFER 专家协议评估](experiments/real_case_pilot_20261103/audit/run_medical_candidate_defer_dev_eval.py)
-- 探索性筛选中暂选 Qwen3-4B-ReMeDi 进入下一轮小规模 L2D 验证；它在 20 例 DEFER 开发集答对 6/20，Base-DEFER 为 5/20，差值只有一个病例。按 DEFER 成本 0.60 计算，当前仍不优于 Always Answer。没有因此启动 Router、PPO 或 ATPO RL。
+- [100 例 ReMeDi 确认 runner](experiments/real_case_pilot_20261103/audit/run_l2d_remedi_confirmation.py)
+- [Qwen3-32B-AWQ 新鲜病例筛选 runner 与单卡服务脚本](experiments/real_case_pilot_20261103/audit/run_l2d_expert_screen_32b.py)、[启动服务](experiments/real_case_pilot_20261103/audit/start_l2d_32b_awq_service.sh)
+- ReMeDi 的 20 例开发集优势没有复现：新 100 例上 ReMeDi-DEFER 为 40%，Always Answer 为 54%，配对差 −14 pp（95% CI −23 至 −5）。当前没有通过验证的 DEFER Expert。Qwen3-32B-AWQ 的新 DEFER 确认因 GPU 资源变化未能启动完成；既有直接答题结果不能代替 DEFER 验证。未启动 Router、PPO 或 ATPO RL。
 
 ## 大文件排除说明
 

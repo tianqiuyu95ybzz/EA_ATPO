@@ -1,6 +1,8 @@
 # EA-ATPO 下一阶段决策
 
-> **状态更新（2026-11-06）：** 本文是强 Expert 和 Router 实验完成前的阶段性决策，以下内容保留作研究过程记录。Qwen3-32B-AWQ 已完成冻结 200 例配对评估，四动作 Router 也已完成独立病例逐轮测试。当前结论与数字以 [`CORE_METHOD_DECISION.md`](../../ea_atpo_value_router_20261105/CORE_METHOD_DECISION.md) 和 [`STRONG_EXPERT_EVALUATION.md`](../../ea_atpo_value_router_20261105/outputs/strong_expert_awq/STRONG_EXPERT_EVALUATION.md) 为准。
+> **最新状态（2026-11-17）：** 不启动 Router、PPO 或 ATPO RL。100 例独立 L2D 确认中，Always Answer 为 54%，Base-DEFER 为 53%，ReMeDi-DEFER 为 40%；ReMeDi 相对 Always Answer 的配对差 −14 pp（95% CI −23 至 −5），因此撤销此前临时选择 ReMeDi 的结论。Qwen3-32B-AWQ 新 DEFER 评估因共享 GPU 上可用 KV cache 不足而未产生推理结果。当前没有通过验证的 DEFER Expert。见 [`L2D_REMEDI_CONFIRMATION_2026-11-17.md`](L2D_REMEDI_CONFIRMATION_2026-11-17.md)。
+>
+> **历史状态（2026-11-06）：** 下文记录强 Expert 和 Router 实验完成前的阶段性决策。Qwen3-32B-AWQ 已完成冻结 200 例配对直接答题评估，四动作 Router 也已完成独立病例逐轮测试；强专家直接答题结果见 [`STRONG_EXPERT_EVALUATION.md`](../../ea_atpo_value_router_20261105/outputs/strong_expert_awq/STRONG_EXPERT_EVALUATION.md)。
 
 ## 决策
 

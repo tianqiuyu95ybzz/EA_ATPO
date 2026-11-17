@@ -1,6 +1,6 @@
 # EA-ATPO 文档索引
 
-更新日期：2026-11-16
+更新日期：2026-11-17
 
 此页标出当前有效的研究口径、实验结果和复现入口。历史计划与中间实验保留在对应目录或 Git 历史；若与较新的结果冲突，以带日期的原始实验报告和 `PUBLISHED_RESULTS_INDEX.md` 为准。
 
@@ -19,6 +19,7 @@
 - [Attempt09 配对评估与 Critic 诊断](experiments/ea_atpo_v1_smoke/ea_atpo_v1_attempt09_stability/paired_evaluation/)
 - [Pilot 数据和协议说明](experiments/real_case_pilot_20261103/README.md)
 - [公开医疗 Qwen 专家候选评估与 L2D DEFER 结果](experiments/real_case_pilot_20261103/audit/MEDICAL_EXPERT_CANDIDATE_EVALUATION_2026-11-16.md)
+- [ReMeDi 100 例独立确认与 32B-AWQ 部署尝试](experiments/real_case_pilot_20261103/audit/L2D_REMEDI_CONFIRMATION_2026-11-17.md)
 
 ## 实验记录与复现脚本
 
