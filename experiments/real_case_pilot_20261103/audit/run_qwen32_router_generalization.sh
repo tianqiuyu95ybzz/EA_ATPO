@@ -12,7 +12,7 @@ BASE_PORT=30257 EXPERT_PORT=30256
 BASE_ALIAS="qwen3-8b-generalization-base" EXPERT_ALIAS="qwen3-32b-awq-generalization-expert"
 EXPERT_GPU="" BASE_GPU="" EXPERT_PID="" BASE_PID="" MON_PID="" RESUME=0 SERVICE_ATTEMPT=""
 
-usage() { echo "Usage: $0 --expert-gpu {0|2|3|4} --base-gpu {0|2|3|4} [--resume]" >&2; }
+usage() { echo "Usage: $0 --expert-gpu {1|2|5} --base-gpu {1|2|5} [--resume]" >&2; }
 while (($#)); do
   case "$1" in
     --expert-gpu) EXPERT_GPU="$2"; shift 2 ;;
@@ -23,7 +23,7 @@ while (($#)); do
 done
 [[ -n "$EXPERT_GPU" && -n "$BASE_GPU" && "$EXPERT_GPU" != "$BASE_GPU" ]] || { usage; exit 2; }
 for gpu in "$EXPERT_GPU" "$BASE_GPU"; do
-  case "$gpu" in 0|2|3|4) ;; *) echo "GPU $gpu is outside the currently approved pool {0,2,3,4}." >&2; exit 2 ;; esac
+  case "$gpu" in 1|2|5) ;; *) echo "GPU $gpu is outside the currently approved pool {1,2,5}." >&2; exit 2 ;; esac
 done
 [[ -x "$VENV/bin/vllm" ]] || { echo "Pinned vLLM is missing: $VENV/bin/vllm" >&2; exit 3; }
 [[ -f "$RUN_DIR/case_selection.json" ]] || { echo "Frozen Attempt04 case selection is missing; no service started." >&2; exit 3; }
@@ -77,23 +77,32 @@ resource_gate "$BASE_GPU" base 46080 >/dev/null
 
 start_service() {
   local role="$1" gpu="$2" min_free="$3" port="$4" alias="$5" model="$6" memory_fraction="$7" dtype="$8" quant="$9"
-  local out="$RUN_DIR/services/$SERVICE_ATTEMPT/$role" free util pid gate_output
+  local out="$RUN_DIR/services/$SERVICE_ATTEMPT/$role" free util pid gate_output short_tmp short_role
   if ! gate_output="$(resource_gate "$gpu" "$role" "$min_free")"; then return 6; fi
   read -r free util _ <<< "$gate_output"
   [[ ! -e "$out/service.log" && ! -e "$out/service.pid" && ! -e "$out/service_manifest.json" ]] || { echo "Service artifact exists; refusing overwrite: $out" >&2; return 7; }
   mkdir -p "$out"/{xdg,torch,triton,cuda,vllm,tmp,flashinfer}
+  short_role="E"
+  [[ "$role" == "base" ]] && short_role="B"
+  short_tmp="/pfs/pfs-spMCeu/image_team/workspace/zjr/.q32_${short_role}_${SERVICE_ATTEMPT}"
+  if [[ -e "$short_tmp" || -L "$short_tmp" ]]; then
+    [[ -L "$short_tmp" && "$(readlink "$short_tmp")" == "$out/tmp" ]] || { echo "Short TMP path belongs to another target: $short_tmp" >&2; return 7; }
+  else
+    ln -s "$out/tmp" "$short_tmp"
+  fi
   local args=(serve "$model" --host 127.0.0.1 --port "$port" --served-model-name "$alias" --max-model-len 4096 --max-num-seqs 1 --attention-backend TRITON_ATTN --gpu-memory-utilization "$memory_fraction")
   if [[ "$role" == "expert" ]]; then args+=(--dtype auto --quantization awq); else args+=(--dtype bfloat16 --disable-flashinfer-autotune); fi
   nohup env \
     CUDA_VISIBLE_DEVICES="$gpu" CUDA_HOME="$CUDA_TOOLKIT" PATH="$VENV/bin:$CUDA_TOOLKIT/bin:$PATH" \
     HF_HOME="$out/hf_home" HF_HUB_CACHE="$out/hf_home/hub" HF_HUB_DISABLE_TELEMETRY=1 \
     XDG_CACHE_HOME="$out/xdg" TORCH_HOME="$out/torch" TRITON_CACHE_DIR="$out/triton" CUDA_CACHE_PATH="$out/cuda" \
-    VLLM_CACHE_ROOT="$out/vllm" TMPDIR="$out/tmp" FLASHINFER_WORKSPACE_BASE="$out/flashinfer" VLLM_USE_FLASHINFER_SAMPLER=0 \
+    VLLM_CACHE_ROOT="$out/vllm" TMPDIR="$short_tmp" FLASHINFER_WORKSPACE_BASE="$out/flashinfer" VLLM_USE_FLASHINFER_SAMPLER=0 \
     "$VENV/bin/vllm" "${args[@]}" >"$out/service.log" 2>&1 </dev/null &
   pid=$!; printf '%s\n' "$pid" > "$out/service.pid"
   if [[ "$role" == "expert" ]]; then EXPERT_PID="$pid"; else BASE_PID="$pid"; fi
   for _ in $(seq 1 600); do
-    if curl -fsS --max-time 3 "http://127.0.0.1:$port/v1/models" | "$VENV/bin/python" -c 'import json,sys; alias=sys.argv[1]; data=json.load(sys.stdin); sys.exit(0 if alias in [x.get("id") for x in data.get("data",[])] else 1)' "$alias"; then
+    health_json="$(curl -fsS --max-time 3 "http://127.0.0.1:$port/v1/models" 2>/dev/null || true)"
+    if [[ -n "$health_json" ]] && printf '%s' "$health_json" | "$VENV/bin/python" -c 'import json,sys; alias=sys.argv[1]; data=json.load(sys.stdin); sys.exit(0 if alias in [x.get("id") for x in data.get("data",[])] else 1)' "$alias" 2>/dev/null; then
       "$VENV/bin/python" - "$out/service_manifest.json" "$gpu" "$port" "$free" "$util" "$alias" "$role" <<'PY'
 import importlib.metadata,json,sys
 from datetime import datetime,timezone

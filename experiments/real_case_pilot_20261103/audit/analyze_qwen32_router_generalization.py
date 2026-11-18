@@ -344,6 +344,8 @@ def main() -> None:
     primary = [r for r in policy_rows if r["policy"] == "logistic_relative_value" and r["cost"] == 0.60][0]
     pairings = {(r["comparator"], r["cost"]): r for r in comparison_rows if r["policy"] == "logistic_relative_value"}
     comparable = [pairings[(name, 0.60)] for name in ("always_answer", "uncertainty_defer", "random_defer_budget_matched_realized")]
+    # Build the lookup before the decision rule uses the primary Router's AUC.
+    auc_by_model = {(m["model_or_feature"], m["target"]): m for m in feature_metrics}
     primary_auc = auc_by_model.get(("logistic_relative_value", "positive_relative_advantage"))
     reliable = all(float(r["paired_ci_low"]) > 0.0 for r in comparable) and primary_auc is not None and float(primary_auc["auc_ci_low"]) > 0.5
     decision = "Evidence supports a stable learned conditional advantage at primary cost 0.60; replication is still required before any RL." if reliable else "The primary Learned Router does not show reliable positive utility over every simple comparator at cost 0.60; do not start PPO/ATPO RL."
@@ -354,7 +356,6 @@ def main() -> None:
     for s in summaries:
         report.append(f"| {s['split']} | {s['n']} | {s['base_correct']} ({s['base_accuracy']:.3f}) | {s['expert_correct']} ({s['expert_accuracy']:.3f}) | {s['base_wrong_expert_right']} | {s['base_right_expert_wrong']} | {s['delta_minus_1']}/{s['delta_0']}/{s['delta_plus_1']} |")
     report += ["", "## 主成本 0.60 的策略结果", "", "| 策略 | Accuracy (95% CI) | Utility (95% CI) | DEFER率 | 平均成本 | AUROC (正相对收益) |", "|---|---:|---:|---:|---:|---:|"]
-    auc_by_model = {(m["model_or_feature"], m["target"]): m for m in feature_metrics}
     auc_policy_map = {"uncertainty_defer": "uncertainty_threshold"}
     for r in policy_rows:
         if r["cost"] != 0.60:

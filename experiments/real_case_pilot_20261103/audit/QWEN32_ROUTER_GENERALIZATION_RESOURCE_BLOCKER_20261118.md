@@ -1,9 +1,18 @@
-# Qwen3-32B Router 泛化扩展：资源阻塞记录
+# Qwen3-32B Router 泛化扩展：资源阻塞历史与实际资源记录
 
 **当前 Attempt:** `qwen32_router_generalization_20261118_attempt04`
 
 **检查时间：** 2026-11-18（Asia/Shanghai）
-**状态：** 新病例选择已冻结；模型推理和 Router 实验尚未运行。
+**状态：** 早期 GPU 阻塞已解除。用户授权 GPU1/2/5 后，Attempt04 使用 GPU1 部署 Qwen3-32B-AWQ、GPU5 部署 Qwen3-8B，完成 smoke 和 1,700 例配对采集；GPU2 未使用。完整结果见 [Attempt04 报告](QWEN32_ROUTER_GENERALIZATION_20261118_RESULTS.md)。
+
+## Attempt04 实际资源使用
+
+- 启动前：GPU1 空闲 108,823 MiB、利用率 0%；GPU5 空闲 182,625 MiB、利用率 0%。
+- 50 次 GPU telemetry 采样中的峰值：GPU1 已用 118,862 MiB（最低空闲 63,763 MiB），GPU5 已用 27,238 MiB（最低空闲 155,387 MiB）。
+- 32B 服务为 AWQ、`gpu_memory_utilization=0.25`；8B 为 BF16、`gpu_memory_utilization=0.12`。两项服务已由本次运行器关闭；未停止或改动其他进程。
+- Attempt01 曾因 ZMQ IPC socket 路径过长而在推理前失败；Attempt02 在 `TMPDIR` 使用短路径修复后正常部署。此次实验无 OOM。
+
+以下内容保留当时资源尚未满足门槛的历史记录，不表示当前仍阻塞。
 
 ## 已完成
 

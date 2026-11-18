@@ -2,7 +2,7 @@
 
 **当前 Attempt:** `qwen32_router_generalization_20261118_attempt04`
 
-**状态：** 全历史审计和病例选择已冻结；配对推理因 GPU 安全余量不足而暂停。Attempt02 在推理前发现 34 个历史 test-cohort 重叠，Attempt03 发现官方 test split 只剩 8 个全新病例；两者均未启动模型，保留为审计记录。
+**状态：** Attempt04 已完成 20 例协议 smoke、1,700 例配对推理、train/validation Router 拟合和一次性 400 例 test 分析。实际结果与限制见 [最终结果报告](QWEN32_ROUTER_GENERALIZATION_20261118_RESULTS.md)。Attempt02/03 在推理前作废，仅保留为病例历史审计记录。
 **目标：** 在新病例上检验轻量 Router 是否能学习 Qwen3-32B-AWQ 相对 Qwen3-8B Base 的条件优势。不启动 PPO/ATPO RL，不修改原始 ATPO。
 
 ## 固定模型和协议
@@ -53,8 +53,16 @@
 
 即使新 Router 表现更好，本阶段也不启动 PPO/ATPO RL。只有冻结策略在另一个新独立病例队列复现专家条件互补性，且 Learned Router 在新测试上相对 Always Answer、Uncertainty、Random 的 Utility 增益有病例级配对支持，才重新讨论 RL。若没有，则报告负面泛化结果并停止当前 Router 主线。
 
-## 执行状态补充（2026-11-18，推理前）
+## 历史状态记录（2026-11-18，推理前）
 
 全局历史审计覆盖 EA_ATPO 与 EA_ATPO_V1 两个工作区，检查 84 个历史 JSONL、35,684 条记录、2 个旧 `case_selection.json` 和 1 个旧 `sample_selection_manifest.json`。Attempt02 的首轮清单有 34/400 个 test source row 与旧选择重叠；Attempt03 在纳入完整旧 cohort 后，官方 test split 只有 8 个未暴露病例。两次均在推理前作废。Attempt04 从 train split 冻结 1,000/300/400，种子 `20261128`；`case_id`、case hash、prompt hash 均跨集合互斥，且无历史 hash/训练 source-index 重叠。清单 SHA256 为 `11d95c40d8c34bcbeae4dd8c18698fcee726f22db77b7f718d457d9527bc0cfa`，仅保存在共享 PFS 的 `outputs/qwen32_router_generalization_20261118_attempt04/case_selection.json`，不上传含病例标识的清单。
 
-尚未调用任何模型，本阶段没有新增 Base/Expert 输出、Router 训练结果或病例级配对结果。2026-11-18 03:21 UTC 的一次性启动门槛显示 GPU3 仅 56,783 MiB 空闲、利用率 100%；启动脚本在加载前退出，没有启动服务。之前 GPU2 快照为 111.8 GiB 空闲、100% 利用率。没有影响其他 GPU 任务。重扫历史产生的 hash/source-index cache 仅在本地 PFS。准备好的采集、拟合和一次性分析脚本见 [复现说明](QWEN32_ROUTER_GENERALIZATION_REPRODUCE.md)；资源阻塞详见 [资源记录](QWEN32_ROUTER_GENERALIZATION_RESOURCE_BLOCKER_20261118.md)。
+当时尚未调用模型；GPU3 仅有 56,783 MiB 空闲且利用率 100%，启动脚本在加载前退出。该资源阻塞后来解除。历史审计 cache 和病例清单仍只保留在 PFS。脚本和最终结果见 [复现说明](QWEN32_ROUTER_GENERALIZATION_REPRODUCE.md) 与 [最终结果报告](QWEN32_ROUTER_GENERALIZATION_20261118_RESULTS.md)。
+
+## 执行结果补充（2026-11-18）
+
+- User 授权使用 GPU1/2/5 后，固定 Qwen3-32B-AWQ 运行于 GPU1，Qwen3-8B 运行于 GPU5；Attempt02 服务目录绕过了 Attempt01 长 IPC socket 路径启动失败。GPU2 未使用。
+- Smoke 为 20/20 配对病例，Base/Expert parser failures 均为 0。正式 1,700 例配对采集完成：Base invalid 3，Expert invalid 66。Expert invalid 按“部署时没有可评分答案”计入端到端失败；没有事后修复。
+- 按原定 1,000/300/400 train-source holdout 划分。策略只在 train 拟合、validation 选阈值，test 在 policy lock 后一次性打开。模型、成本、病例级配对差异和 bootstrap CI 见最终报告及本地 analysis CSV。
+- Test 中 Base accuracy 48.5%，Expert 端到端 accuracy 57.75%，配对提升 9.25 pp（病例级 95% CI 4.49–14.25 pp）。但主成本 0.60 的 Logistic Relative Value Router 在 validation 选出的调用率为 0，未优于 Always Answer；不启动 PPO/ATPO RL。简单 uncertainty threshold 在预注册成本 0.10/0.20 有正的配对 Utility 差，需在新病例复现。
+- 原分析器已生成完整 CSV 和 manifest 后，在 Markdown 汇总阶段遇到 `auc_by_model` 初始化顺序 bug。已修复源码，并从既有汇总表生成报告；未重新拟合、选阈值或重算 test bootstrap。完整处理记录见最终报告。

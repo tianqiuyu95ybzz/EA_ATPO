@@ -3,7 +3,7 @@
 **Attempt:** `qwen32_router_generalization_20261118_attempt04`
 
 **日期：** 2026-11-18
-**结果状态：** 预注册与病例划分已完成；模型实验因 GPU 资源门槛未执行。本报告不是性能结果报告。
+**结果状态：** Attempt04 模型实验和一次性测试集分析已完成。下方更新的结果摘要和 [最终结果报告](QWEN32_ROUTER_GENERALIZATION_20261118_RESULTS.md) 为当前有效结论；较早的资源阻塞记录只说明实验启动前状态。
 
 ## 研究问题与历史基线
 
@@ -22,16 +22,18 @@
 
 完整方法与指标预注册见 [实验计划](QWEN32_ROUTER_GENERALIZATION_PLAN_20261118.md)。
 
-## 本阶段实际完成和未完成
+## 历史病例选择与资源阻塞
 
 已完成全历史病例暴露审计和 1,700 例 Attempt04 队列冻结。扫描覆盖 84 个历史 JSONL/35,684 条记录、2 个旧 case-selection manifests 和 1 个旧 sample-selection manifest；已检查 case_id、prompt/case hash、源数据哈希与 source row index。Attempt04 清单 hash 为 `11d95c40d8c34bcbeae4dd8c18698fcee726f22db77b7f718d457d9527bc0cfa`。病例清单及历史排除 cache 保存在 PFS 的 Attempt04 `outputs` 目录，不上传 GitHub；仓库只保留不含病例 ID/hash 的选择脚本和协议文档。
 
-最近的单次启动检查显示 GPU3 仅有 55.5 GiB 空闲、利用率 100%，未达到 Expert 门槛；启动脚本在加载模型前退出。前一快照的 GPU2/3/6/7 分别只有 111.8/56.9/56.4/56.3 GiB 空闲且均 100% 利用率。没有启动模型、改变模型配置或影响其他用户的进程。
+Attempt02/03 在模型推理前分别因历史病例重叠和官方 test pool 剩余病例不足而作废。最初一次 GPU 快照也未达到安全门槛，故当时没有模型启动或推理；之后用户明确授权 GPU1/2/5，Attempt04 在 GPU1/5 完成。具体资源历史见 [资源记录](QWEN32_ROUTER_GENERALIZATION_RESOURCE_BLOCKER_20261118.md)。
 
-因此，本次没有任何新的推理轨迹、模型拟合、测试集读取或策略性能统计。要求中的 Accuracy、纠错率、退化率、AUROC、成本/Utility、病例级置信区间和 paired case result 均尚无新实验数值。不会用历史数据、人工标签或概率模拟补齐。已准备采集、验证集拟合、测试集锁定分析和资源门槛脚本；三例真实病例的 case/prompt hash 构造与冻结清单相符，未调用模型。
+## Attempt04 实际结果
 
-资源与恢复条件详见 [GPU 资源阻塞记录](QWEN32_ROUTER_GENERALIZATION_RESOURCE_BLOCKER_20261118.md)。
+- 20 例 smoke 通过，Base 和 Expert 解析失败均为 0；随后完成 1,700 例真实模型配对推理，train/validation/test 分别为 1,000/300/400，全部来自 ATPO train split 的全新 case_id holdout，不是官方 ATPO test split。
+- Test：Base 48.5%；Qwen3-32B-AWQ DEFER 端到端 57.75%；配对差 +9.25 pp，病例级 95% CI [+4.49, +14.25] pp。Expert 修正 72/206 个 Base 错误；在 Base 正确病例中退化 35/194。
+- Expert parser failure 为 66/1,700（train 38、validation 13、test 15）；全部正常结束但给出非 A-D 的答案文字，部署管线将其作为未答对，报告同时列出 parse coverage 和仅在有效解析回复上的条件准确率。
+- 主成本 0.60 下 Logistic Relative Value Router 的 validation 选择为零调用，test 与 Always Answer 相同。Simple uncertainty threshold 在成本 0.10/0.20 的配对 Utility 相对 Always Answer 分别为 +0.0198 [+0.0070,+0.0348] 和 +0.0130 [+0.0025,+0.0250]；需用新病例复现。
+- **研究决策：不启动 PPO/ATPO RL。** Expert 有平均配对互补性，简单 uncertainty policy 有成本条件下的初步信号，但 Learned Router 在预注册主成本没有可部署收益。Router AUROC、成本网格、配对置信区间、类别/特征分布和 MAE/MSE/Pearson 见 [最终结果报告](QWEN32_ROUTER_GENERALIZATION_20261118_RESULTS.md) 与 PFS 本地 analysis CSV。
 
-## 当前结论
-
-基于本阶段数据，无法判断 Router 是否能在独立病例上学习稳定的专家条件优势；不启动 PPO/ATPO RL。下一步必须在固定队列上完成真实 Base/Expert 配对推理，然后按锁定 train/validation/test 流程训练、选阈值并一次性评价测试集。
+首次分析器已写好一次性分析 CSV 和 manifest，但 Markdown 汇总遇到 `auc_by_model` 变量初始化顺序错误。已修复并仅从现有汇总 CSV 生成报告；没有重新训练、调阈值或重算 test 指标。PFS 中的 raw rollout、case-level CSV、日志和 GPU telemetry 未上传 GitHub。
