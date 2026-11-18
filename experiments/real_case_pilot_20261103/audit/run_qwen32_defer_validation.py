@@ -9,7 +9,6 @@ from __future__ import annotations
 import argparse
 import asyncio
 import hashlib
-import importlib.util
 import json
 import math
 import re
@@ -27,6 +26,11 @@ HERE = Path(__file__).resolve().parent
 ROOT = Path(__file__).resolve().parents[3]
 OUT = HERE / "outputs/qwen32_defer_validation_20261119_attempt01"
 SELECTION = OUT / "case_selection.json"
+DATA_CANDIDATES = (
+    HERE.parent / "assets" / "test.pilot.parquet",
+    Path("/pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO/experiments/real_case_pilot_20261103/assets/test.pilot.parquet"),
+)
+DATA_PATH = next((path for path in DATA_CANDIDATES if path.is_file()), DATA_CANDIDATES[0])
 BASE_URL = "http://127.0.0.1:30157/v1"
 EXPERT_URL = "http://127.0.0.1:30156/v1"
 BASE_ALIAS = "qwen3-8b-defer-validation-base"
@@ -38,15 +42,7 @@ BASE_REV = "b968826d9c46dd6066d109eabc6255188de91218"
 sys.path.insert(0, str(HERE))
 sys.path.insert(0, str(ROOT / "ea_atpo_stage"))
 import run_direct_reliability_eval as direct  # noqa: E402
-import run_l2d_remedi_confirmation as l2d  # noqa: E402
-import run_medical_candidate_eval as candidate  # noqa: E402
-
-_spec = importlib.util.spec_from_file_location("defer_protocol_validation", HERE / "run_medical_candidate_defer_dev_eval.py")
-if _spec is None or _spec.loader is None:
-    raise ImportError("DEFER protocol helper cannot be loaded")
-defer_helper = importlib.util.module_from_spec(_spec)
-sys.modules[_spec.name] = defer_helper
-_spec.loader.exec_module(defer_helper)
+import qwen32_defer_light_helpers as defer_helper  # noqa: E402
 
 
 def sha_file(path: Path) -> str:
@@ -227,15 +223,13 @@ async def infer(session: aiohttp.ClientSession, role: str, messages: list[dict[s
 def build_case(frame: pd.DataFrame, spec: dict[str, Any], split: str) -> dict[str, Any]:
     ix = int(spec["source_row_index"])
     row = frame.iloc[ix].to_dict()
-    digest, gold, facts, base_messages, defer_messages = l2d.case_key(row, ix)
+    digest, gold, facts, base_messages, defer_messages = defer_helper.case_key(row, ix, direct)
     if digest != spec["case_hash"]:
         raise RuntimeError(f"Case hash changed after selection: {spec['case_id']}")
     ph = hashlib.sha256(json.dumps(base_messages, ensure_ascii=False, sort_keys=True).encode("utf-8")).hexdigest()
     if ph != spec["prompt_hash"]:
         raise RuntimeError(f"Public prompt hash changed after selection: {spec['case_id']}")
-    hidden = defer_helper.unrevealed_atomic_facts(
-        defer_helper.public_state(row, ix)[0], facts
-    )
+    hidden = defer_helper.unrevealed_atomic_facts(defer_helper.public_state(row, ix)[0], facts)
     defer_helper.validate_expert_view(base_messages, atomic_facts=hidden, ground_truth=gold)
     defer_helper.validate_expert_view(defer_messages, atomic_facts=hidden, ground_truth=gold)
     return {
@@ -300,7 +294,7 @@ def load_cases(smoke: bool) -> tuple[list[dict[str, Any]], dict[str, Any]]:
         cases: list[dict[str, Any]] = []
         for i in range(len(frame)):
             row = frame.iloc[i].to_dict()
-            digest, _, _, _, _ = l2d.case_key(row, int(i))
+            digest, _, _, _, _ = defer_helper.case_key(row, int(i), direct)
             cases.append({"source_row_index": i, "case_hash": digest, "prompt_hash": hashlib.sha256(json.dumps(direct.build_messages(row), ensure_ascii=False, sort_keys=True).encode()).hexdigest(), "case_id": f"attempt09-smoke-row-{i}"})
         import random
         random.Random(SMOKE_SEED).shuffle(cases)
@@ -314,13 +308,19 @@ def load_cases(smoke: bool) -> tuple[list[dict[str, Any]], dict[str, Any]]:
     if not SELECTION.is_file():
         raise FileNotFoundError(f"Frozen case selection missing: {SELECTION}")
     selection = json.loads(SELECTION.read_text(encoding="utf-8"))
-    train_frame = pd.read_parquet(candidate.DATA_PATH.parent / "train.pilot.parquet")
-    test_frame = pd.read_parquet(candidate.DATA_PATH)
+    train_frame = pd.read_parquet(DATA_PATH.parent / "train.pilot.parquet")
+    test_specs = selection["rows"]["test"]
+    test_source = selection.get("source_parquet_split", {}).get("test")
+    test_is_train_source = test_source == "train" or all(str(spec.get("case_id", "")).startswith("train-row-") for spec in test_specs)
+    if test_is_train_source:
+        test_frame = train_frame
+    else:
+        test_frame = pd.read_parquet(DATA_PATH)
     built = []
     for split in ("train", "validation"):
         built.extend(build_case(train_frame, spec, split) for spec in selection["rows"][split])
     built.extend(build_case(test_frame, spec, "test") for spec in selection["rows"]["test"])
-    return built, {"selection_sha256": sha_file(SELECTION), "counts": selection["counts"], "source_data": selection["source_data"], "split_hashes": selection["split_hashes"]}
+    return built, {"selection_sha256": sha_file(SELECTION), "counts": selection["counts"], "source_data": selection["source_data"], "split_hashes": selection["split_hashes"], "split_source": selection.get("split_source"), "source_parquet_split": selection.get("source_parquet_split")}
 
 
 def write_manifest(cases: list[dict[str, Any]], meta: dict[str, Any], outdir: Path, smoke: bool) -> None:
