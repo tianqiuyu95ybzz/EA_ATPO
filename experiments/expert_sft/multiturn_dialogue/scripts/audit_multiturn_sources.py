@@ -389,6 +389,10 @@ def main() -> None:
         and all(actions[a] == 3 for a in ("ANSWER", "ASK", "CONSULT", "DEFER"))
         for actions in trajectory_state_actions.values()
     )
+    deepest_public_depth_by_case = Counter(
+        max((len(state.get("dialogue", [])) // 2 for state in case_states), default=0)
+        for case_states in case_to_states.values()
+    )
     all_trajectory_gold_single = all(len(labels) == 1 for labels in case_gold.values())
     train_state_count = sum(1 for s in states if str(s.get("case_id")) in split_ids["train"])
     nonempty_states = sum(1 for s in states if len(s.get("dialogue", [])) > 0)
@@ -467,6 +471,12 @@ def main() -> None:
             "patient_reply_turns_across_states": total_public_rounds,
             "mean_patient_reply_turns_all_states": round(total_public_rounds / max(1, len(states)), 4),
             "mean_patient_reply_turns_nonempty_states": round(total_public_rounds / max(1, nonempty_states), 4),
+            "deepest_public_patient_reply_turns_per_case": dict(sorted(deepest_public_depth_by_case.items())),
+            "mean_deepest_public_patient_reply_turns_per_case": round(
+                sum(depth * count for depth, count in deepest_public_depth_by_case.items()) /
+                max(1, len(public_case_ids)), 4
+            ),
+            "mean_public_states_per_case": round(len(states) / max(1, len(public_case_ids)), 4),
             "source_row_index_links_found": source_link_found,
             "source_prompt_matches": source_prompt_match,
             "trajectory_rows": len(trajectories), "nontrajectory_status_rows": len(status_rows),
@@ -530,6 +540,8 @@ def main() -> None:
 The official ATPO train source at the pinned project commit contains **{len(source_rows):,} training cases**. Every prompt has the two-role shape `system/user`; this restored source has no multi-turn dialogue fields. Its stable row key is `index`, unique and sequential over 0–{len(source_rows)-1}. All {len(source_rows):,} official answer labels parse to A–D. The existing reconstructed Parquets are audited separately in `data_audit.json`; none was overwritten.
 
 The multi-turn material available locally is from the prior 100-case EA-ATPO Pilot, where Base and Patient simulators generated public dialogue states. These are **simulated model conversations, not human patient transcripts**. The 100 cases have {len(states)} public states; {nonempty_states} states include at least one Patient reply and {total_public_rounds} Patient replies appear across snapshots. Public state IDs map to stable ATPO source indices and their source prompt text matched for {source_prompt_match}/{len(states)} states.
+
+Across the 100 cases, the deepest archived state has an average of **{sum(depth * count for depth, count in deepest_public_depth_by_case.items()) / max(1, len(public_case_ids)):.2f} patient-reply turns per case**. This uses the deepest state snapshot per case so earlier turns repeated in later snapshots are not double-counted. Each case contributes an average of {len(states) / max(1, len(public_case_ids)):.2f} public-state snapshots.
 
 ## Extractable Expert SFT data
 

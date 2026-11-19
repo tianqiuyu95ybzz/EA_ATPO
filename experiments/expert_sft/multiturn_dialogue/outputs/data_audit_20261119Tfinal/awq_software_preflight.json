@@ -1,0 +1,109 @@
+{
+  "status": "cpu_software_preflight_passed",
+  "weights_loaded": false,
+  "cuda_touched": false,
+  "model_alias": "Qwen/Qwen3-32B-AWQ",
+  "configured_local_model_path": "../EA_ATPO/experiments/real_case_pilot_20261103/assets/models/Qwen3-32B-AWQ",
+  "huggingface_revision": "0499c3ac83fdef8810b907a23894ba91e95eddd8",
+  "modelscope_revision": "c14568581d436715d61d40f471dee3cac433d1d9",
+  "model_type": "qwen3",
+  "architectures": [
+    "Qwen3ForCausalLM"
+  ],
+  "quantization_config": {
+    "quant_method": "awq",
+    "bits": 4,
+    "group_size": 128,
+    "version": "gemm",
+    "zero_point": true,
+    "backend": "torch_awq"
+  },
+  "model_files": {
+    "model-00001-of-00004.safetensors": {
+      "exists": true,
+      "size_matches_source_lock": true
+    },
+    "model-00002-of-00004.safetensors": {
+      "exists": true,
+      "size_matches_source_lock": true
+    },
+    "model-00003-of-00004.safetensors": {
+      "exists": true,
+      "size_matches_source_lock": true
+    },
+    "model-00004-of-00004.safetensors": {
+      "exists": true,
+      "size_matches_source_lock": true
+    },
+    "config.json": {
+      "exists": true,
+      "size_matches_source_lock": true,
+      "sha256_matches_source_lock": true
+    },
+    "generation_config.json": {
+      "exists": true,
+      "size_matches_source_lock": true
+    },
+    "merges.txt": {
+      "exists": true,
+      "size_matches_source_lock": true
+    },
+    "model.safetensors.index.json": {
+      "exists": true,
+      "size_matches_source_lock": true,
+      "sha256_matches_source_lock": true
+    },
+    "tokenizer.json": {
+      "exists": true,
+      "size_matches_source_lock": true,
+      "sha256_matches_source_lock": true
+    },
+    "tokenizer_config.json": {
+      "exists": true,
+      "size_matches_source_lock": true,
+      "sha256_matches_source_lock": true
+    },
+    "vocab.json": {
+      "exists": true,
+      "size_matches_source_lock": true
+    }
+  },
+  "tokenizer": {
+    "vocab_size": 151669,
+    "chat_template_present": true,
+    "pad_token_id": 151643,
+    "eos_token_id": 151645
+  },
+  "packages": {
+    "torch": "2.15.0+cu132",
+    "transformers": "5.22.2",
+    "peft": "0.21.3",
+    "accelerate": "1.15.0",
+    "gptqmodel": "7.12.0",
+    "optimum": "2.3.0",
+    "safetensors": "0.8.0"
+  },
+  "splits": {
+    "train": {
+      "examples": 205,
+      "prompt_prefix_matches": 205,
+      "valid_answer_targets": 205,
+      "max_full_sequence_tokens": 346,
+      "dataset_sha256": "d59681b2d00f4357794e0c2f69c719e1aa787a772ff96bf545ef46792192f3f3"
+    },
+    "validation": {
+      "examples": 42,
+      "prompt_prefix_matches": 42,
+      "valid_answer_targets": 42,
+      "max_full_sequence_tokens": 322,
+      "dataset_sha256": "e9c66de6d9249d8ffd717b9ea411702de58ecf6220fd3739dc90663183439372"
+    },
+    "internal_test": {
+      "examples": 44,
+      "prompt_prefix_matches": 44,
+      "valid_answer_targets": 44,
+      "max_full_sequence_tokens": 299,
+      "dataset_sha256": "4491d9acf031dd4c5c2cd8286fc573ff055551684d412e18c674ee900a2abae7"
+    }
+  }
+}

@@ -29,11 +29,11 @@ Consequently, AWQ weights were not loaded; LoRA injection, backward, gradient ch
 
 ## Recovery evidence
 
-- Aggregate data audit: `experiments/expert_sft/multiturn_dialogue/outputs/data_audit_20261119Tverified/AUDIT_REPORT.md`
+- Aggregate data audit: `experiments/expert_sft/multiturn_dialogue/outputs/data_audit_20261119Tfinal/AUDIT_REPORT.md`
 - Integrity/split details: adjacent `data_audit.json`, `split_summary.csv`, and `rollout_validity_by_action.csv`
 - AWQ tokenizer-only test: adjacent `tokenizer_cpu_smoke.json`
 - Transformers/GPTQModel local config preflight: adjacent `awq_software_preflight.json`
-- Full execution record: adjacent `EXECUTION_STATUS.md`
+- Full execution record: `experiments/expert_sft/multiturn_dialogue/outputs/data_audit_20261119Tfinal/EXECUTION_STATUS.md`
 - Resolved environment: `experiments/expert_sft/multiturn_dialogue/environment.lock.txt`
 
 ## Next authorized operation
