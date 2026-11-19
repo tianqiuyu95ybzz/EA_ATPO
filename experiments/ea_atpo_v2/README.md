@@ -33,6 +33,9 @@ All run artifacts and raw trajectories stay under the ignored, project-local `ou
 
 ```bash
 python3 experiments/ea_atpo_v2/scripts/run_counterfactual_pilot.py --preflight --cases 10
+# After both pinned services pass preflight, exercise all three real roles on one state first.
+python3 experiments/ea_atpo_v2/scripts/run_counterfactual_pilot.py --execute --smoke
+# Run the frozen 10-case / 29-state pilot only after the role smoke passes.
 python3 experiments/ea_atpo_v2/scripts/run_counterfactual_pilot.py --execute --cases 10
 python3 experiments/ea_atpo_v2/scripts/build_q_dataset.py \
   --trajectories experiments/ea_atpo_v2/outputs/<run>/pilot_trajectories.jsonl \
@@ -40,7 +43,7 @@ python3 experiments/ea_atpo_v2/scripts/build_q_dataset.py \
 python3 -m unittest discover -s experiments/ea_atpo_v2/tests -v
 ```
 
-`--execute` first requires both configured `/v1/models` endpoints to respond and match their pinned aliases. It refuses to start model calls if that check fails. It never starts or stops a service. Select 10–20 training cases only; the 400-case Frozen Holdout is not opened.
+`--execute` first requires both configured `/v1/models` endpoints to respond and match their pinned aliases. Loopback requests explicitly bypass shell HTTP proxy variables, so a local proxy cannot impersonate a model-service response. It refuses to start model calls if that check fails. `--smoke` exercises Base ANSWER, Expert DEFER, and Base ASK → Patient reply → Base answer without scoring Gold; it must pass before the paired pilot. The runner never starts or stops a service. Select 10–20 training cases only; the 400-case Frozen Holdout is not opened.
 
 ## Q-regression interface
 

@@ -51,6 +51,11 @@ def utc_now() -> str:
     return datetime.now(timezone.utc).isoformat(timespec="seconds")
 
 
+def direct_loopback_opener() -> urllib.request.OpenerDirector:
+    """Model endpoints are loopback services; never route them through HTTP_PROXY."""
+    return urllib.request.build_opener(urllib.request.ProxyHandler({}))
+
+
 def read_jsonl(path: Path) -> list[dict[str, Any]]:
     with path.open(encoding="utf-8") as handle:
         return [json.loads(line) for line in handle if line.strip()]
@@ -64,7 +69,7 @@ def endpoint_status(role: str, settings: Mapping[str, Any]) -> dict[str, Any]:
     headers = {"Authorization": f"Bearer {key}"} if key else {}
     request = urllib.request.Request(url, headers=headers)
     try:
-        with urllib.request.urlopen(request, timeout=3) as response:
+        with direct_loopback_opener().open(request, timeout=3) as response:
             payload = json.loads(response.read().decode("utf-8"))
         model_ids = [str(item.get("id", "")) for item in payload.get("data", [])]
         expected = str(settings["model"])
@@ -91,6 +96,24 @@ def endpoint_status(role: str, settings: Mapping[str, Any]) -> dict[str, Any]:
             "api_key_env": key_env or None,
             "api_key_present": bool(key),
             "error": "endpoint returned HTTP error; response body intentionally omitted",
+        }
+    except urllib.error.URLError as exc:
+        reason = exc.reason
+        if isinstance(reason, OSError):
+            error = f"{type(reason).__name__} errno={reason.errno}: {reason.strerror}"
+        else:
+            error = type(reason).__name__
+        return {
+            "role": role,
+            "url": url,
+            "http_status": None,
+            "reachable": False,
+            "expected_model": str(settings["model"]),
+            "model_ids": [],
+            "model_match": False,
+            "api_key_env": key_env or None,
+            "api_key_present": bool(key),
+            "error": error,
         }
     except Exception as exc:
         return {
@@ -270,7 +293,7 @@ def chat_completion(role: str, settings: Mapping[str, Any], messages: Sequence[M
         request = urllib.request.Request(url, data=encoded, headers=headers, method="POST")
         started = time.perf_counter()
         try:
-            with urllib.request.urlopen(request, timeout=timeout_seconds) as response:
+            with direct_loopback_opener().open(request, timeout=timeout_seconds) as response:
                 body = json.loads(response.read().decode("utf-8"))
             total_elapsed += time.perf_counter() - started
             choice = body["choices"][0]
@@ -610,6 +633,50 @@ def run_selected_states(config: Mapping[str, Any], states: Sequence[Mapping[str,
     }
 
 
+def run_role_smoke(config: Mapping[str, Any], state_row: Mapping[str, Any],
+                   source_row: Mapping[str, Any], output_path: Path) -> dict[str, Any]:
+    """Exercise Base ANSWER, Base ASK -> Patient -> Base, and Expert DEFER once.
+
+    This service smoke never reads or scores Gold and does not enter the pilot data file.
+    """
+    state = public_state_from_row(
+        state_row, max_asks=int(config["policy"]["max_asks_per_episode"])
+    )
+    facts = hidden_facts_for_row(source_row)
+    results = {}
+    for action in (Action.ANSWER, Action.ASK, Action.DEFER):
+        seed_material = f"{config['seed']}:service-smoke:{state.state_id}:{action.value}".encode("utf-8")
+        rollout_seed = int.from_bytes(hashlib.sha256(seed_material).digest()[:4], "big") % 2**31
+        results[action.value] = run_action(action, state, facts, config=config, rollout_seed=rollout_seed)
+
+    ask = results["ASK"]
+    checks = {
+        "base_answer_parsed": bool(results["ANSWER"]["valid"]),
+        "expert_defer_parsed": bool(results["DEFER"]["valid"]),
+        "ask_question_parsed": bool(ask["ask_question"]),
+        "patient_reply_nonempty": bool(ask["ask_response_nonempty"]),
+        "patient_reply_received_once": int(ask["api_call_counts"].get("patient", 0)) == 1,
+        "base_answer_after_ask_parsed": bool(ask["valid"] and ask["final_answer"]),
+    }
+    smoke = {
+        "record_type": "v2_service_role_smoke",
+        "case_id": state.case_id,
+        "state_id": state.state_id,
+        "public_state_digest": state.digest,
+        "continuation_policy_id": config["policy"]["continuation_policy_id"],
+        "services": {
+            role: {key: settings.get(key) for key in ("base_url", "model", "model_revision", "shared_service")}
+            for role, settings in config["roles"].items()
+        },
+        "checks": checks,
+        "passed": all(checks.values()),
+        "gold_read": False,
+        "actions": results,
+    }
+    output_path.write_text(json.dumps(smoke, ensure_ascii=False, indent=2), encoding="utf-8")
+    return {"passed": smoke["passed"], "checks": checks, "smoke_file": str(output_path)}
+
+
 def make_manifest(config_path: Path, config: Mapping[str, Any], cases: int, *, execute: bool) -> dict[str, Any]:
     audit, selected_states, source_rows = audit_and_select(config, cases)
     endpoint_roles = {role: endpoint_status(role, settings) for role, settings in config["roles"].items()
@@ -659,12 +726,19 @@ def main() -> None:
     parser.add_argument("--cases", type=int, default=10)
     parser.add_argument("--preflight", action="store_true", help="audit inputs and configured services; do not generate")
     parser.add_argument("--execute", action="store_true", help="run real model calls after all gates pass")
+    parser.add_argument("--smoke", action="store_true", help="run one paired state across the three real service roles; no Gold scoring")
     parser.add_argument("--output-dir", type=Path)
     args = parser.parse_args()
-    if not 10 <= args.cases <= 20:
-        parser.error("--cases must be between 10 and 20 for this phase")
     if args.preflight == args.execute:
         parser.error("choose exactly one of --preflight or --execute")
+    if args.smoke and not args.execute:
+        parser.error("--smoke requires --execute")
+    if args.smoke:
+        cases_requested = 1
+    else:
+        if not 10 <= args.cases <= 20:
+            parser.error("--cases must be between 10 and 20 for the full pilot")
+        cases_requested = args.cases
 
     config_path = args.config.resolve()
     config = json.loads(config_path.read_text(encoding="utf-8"))
@@ -672,13 +746,13 @@ def main() -> None:
     output_dir = args.output_dir or (V2_DIR / "outputs" / f"phase1_{stamp}")
     output_dir = output_dir.resolve()
     output_dir.mkdir(parents=True, exist_ok=False)
-    manifest = make_manifest(config_path, config, args.cases, execute=args.execute)
+    manifest = make_manifest(config_path, config, cases_requested, execute=args.execute)
     manifest_path = output_dir / "run_manifest.json"
     if args.preflight:
         manifest["status"] = "preflight_ready" if manifest["status"] == "preflight_ready" else "blocked_endpoint_preflight"
         manifest["model_execution_started"] = False
         manifest_path.write_text(json.dumps(manifest, ensure_ascii=False, indent=2), encoding="utf-8")
-        print(json.dumps({"status": manifest["status"], "selected_cases": args.cases,
+        print(json.dumps({"status": manifest["status"], "selected_cases": cases_requested,
                           "selected_states": manifest["selected_state_count"],
                           "output_dir": str(output_dir)}, indent=2))
         return
@@ -689,14 +763,23 @@ def main() -> None:
         manifest_path.write_text(json.dumps(manifest, ensure_ascii=False, indent=2), encoding="utf-8")
         raise SystemExit("configured Base/Expert endpoints are unavailable or model aliases mismatch; no rollouts started")
 
-    audit, selected_states, source_rows = audit_and_select(config, args.cases)
+    audit, selected_states, source_rows = audit_and_select(config, cases_requested)
     manifest["status"] = "running"
     manifest["model_execution_started"] = True
     manifest_path.write_text(json.dumps(manifest, ensure_ascii=False, indent=2), encoding="utf-8")
     try:
-        summary = run_selected_states(config, selected_states, source_rows, output_dir / "pilot_trajectories.jsonl")
-        manifest["status"] = "completed"
-        manifest["rollout_summary"] = summary
+        if args.smoke:
+            first_state = min(selected_states, key=lambda row: int(row["state_index"]))
+            summary = run_role_smoke(
+                config, first_state, source_rows[int(first_state["source_row_index"])],
+                output_dir / "service_role_smoke.json",
+            )
+            manifest["status"] = "completed" if summary["passed"] else "role_smoke_failed"
+            manifest["role_smoke_summary"] = summary
+        else:
+            summary = run_selected_states(config, selected_states, source_rows, output_dir / "pilot_trajectories.jsonl")
+            manifest["status"] = "completed"
+            manifest["rollout_summary"] = summary
     except Exception as exc:
         manifest["status"] = "failed"
         manifest["failure_class"] = type(exc).__name__
@@ -705,7 +788,9 @@ def main() -> None:
     finally:
         manifest["finished_at_utc"] = utc_now()
         manifest_path.write_text(json.dumps(manifest, ensure_ascii=False, indent=2), encoding="utf-8")
-    print(json.dumps(manifest["rollout_summary"], indent=2))
+    print(json.dumps(manifest.get("role_smoke_summary", manifest.get("rollout_summary", {})), indent=2))
+    if args.smoke and manifest.get("status") != "completed":
+        raise SystemExit("real-service role smoke failed; full pilot not started")
 
 
 if __name__ == "__main__":

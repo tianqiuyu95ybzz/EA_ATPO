@@ -9,7 +9,7 @@
 
 The V2 implementation is isolated under `experiments/ea_atpo_v2/`. It reuses the frozen 70/15/15 case split and existing public-state snapshots, and defines only ASK / ANSWER / DEFER. The protocol forces one deterministic continuation after ASK: the Patient simulator answers from hidden atomic facts, then the same Qwen3-8B Base service gives a terminal answer. ANSWER and DEFER terminate immediately. DEFER calls the Qwen3-32B-AWQ Expert only with the visible state.
 
-Ten frozen training cases contain **29 public states** in the deterministic Phase 1 sample. The data and role-boundary preflight passed, including **116 static Base/Expert/Patient prompt-boundary checks**. The configured Base and Expert endpoints both returned HTTP 503. The `--execute` gate therefore stopped before any completion request; **zero new model rollouts were produced**. No model process was started, and no existing process was stopped or modified.
+Ten frozen training cases contain **29 public states** in the deterministic Phase 1 sample. The data and role-boundary preflight passed, including **116 static Base/Expert/Patient prompt-boundary checks**. Initial endpoint probes showed HTTP 503, but follow-up identified those responses as coming from the local HTTP proxy, not the model services. Direct loopback checks show the configured services are not listening. The `--execute` gate stopped before any completion request; **zero new model rollouts were produced**. No model process was started, and no existing process was stopped or modified.
 
 The existing 3,492-rollout V1 file is not treated as V2 supervision: it contains the old four-action protocol, including CONSULT, and its ASK continuation semantics do not match this frozen V2 policy. Those results remain intact and are used only as historical context.
 
@@ -65,21 +65,27 @@ The preflight created the Base ANSWER, Base ASK, Patient, and Expert DEFER promp
 - No CONSULT action exists in the V2 enum or configuration.
 - The Expert route is only entered by the DEFER branch.
 
-Ten CPU-only engineering tests passed, covering action legality, terminal behavior, strict parsing, legacy action-prompt removal, role separation, one-time cost application, Q-target masking, case split enforcement, and mixed-policy rejection. These are protocol tests; they are not model outputs or evidence of clinical performance.
+Eleven CPU-only engineering tests passed, covering action legality, terminal behavior, strict parsing, legacy action-prompt removal, role separation, one-time cost application, Q-target masking, case split enforcement, mixed-policy rejection, and loopback proxy bypass. These are protocol tests; they are not model outputs or evidence of clinical performance.
 
 ## Actual service and resource checks
 
 Read-only endpoint checks were made against the configured services:
 
-| Role | Configured alias | Result |
+| Role | Configured alias | Direct result |
 |---|---|---|
-| Base | `vi-qwen3-8b-base` at port 30481 | HTTP 503; unavailable |
-| Patient | shared Base endpoint | HTTP 503; unavailable |
-| Expert | `vi-qwen3-32b-awq-expert` at port 30482 | HTTP 503; unavailable |
+| Base | `vi-qwen3-8b-base` at port 30481 | Connection refused; no listener |
+| Patient | shared Base endpoint | Connection refused; no listener |
+| Expert | `vi-qwen3-32b-awq-expert` at port 30482 | Connection refused; no listener |
 
-The pinned local model directories and the previously verified runtime environment exist, but models were not loaded. The read-only GPU snapshot showed the project’s eligible cards occupied by existing compute processes; GPUs 1 and 7 remain excluded. Although GPU 3 and GPU 6 had nominal free memory, each had an existing foreign process, and the prior service preflight explicitly disallows sharing such a card. Other eligible cards failed utilization or memory headroom. No process was interrupted or service started by this V2 run. All V2 artifacts were written under the project PFS; no system-disk cache or output was written.
+### 503 source and parallel-service startup failure
 
-The final static preflight is saved in the ignored local manifest at `outputs/phase1_20261119T135524432917Z/run_manifest.json`; the explicit execution-gate attempt is recorded at `outputs/phase1_20261119T135525746355Z/run_manifest.json`. These local artifacts include selected case identifiers and must not be committed. The folder is covered by the existing `**/outputs/` ignore rule.
+The shell has `HTTP_PROXY`, `HTTPS_PROXY`, and `ALL_PROXY` pointed at `127.0.0.1:18118`, without localhost excluded. Requests through that proxy returned an empty-body HTTP 503 for ports 30481/30482. With proxying explicitly bypassed, both ports return `ConnectionRefusedError [Errno 111]`; `ss` shows no service listener. The V2 runner used Python's environment-aware `urllib` before this diagnosis, so it could mistake the proxy's 503 for an origin-service response. It now uses an explicit empty `ProxyHandler` for loopback model requests and records direct connection errors. The new regression test covers this behavior.
+
+I also checked the parallel task without modifying its code, logs, or output. Its attempted services used ports 32106 and 32107 with aliases `ea-atpo-v2-base8b-gpu6` and `ea-atpo-v2-expert32b-gpu7`; neither port was listening. Its Base and Expert startup logs both report `zmq.error.ZMQError: ipc path is longer than 107 characters (sizeof(sockaddr_un.sun_path))`. The VLLM service processes exited before serving requests. This is an IPC socket-path failure, not a malformed OpenAI request or confirmed model-weight load error. No healthy Base/Expert endpoint was available to reuse.
+
+The pinned model directories and runtime executable exist. The established launch command is `bash experiments/vi_ea_atpo/phase2/start_vi_services.sh`; it uses `manage_vi_services.py start` with `experiments/vi_ea_atpo/configs/model_services.yaml`, serving Qwen3-8B on 30481 and Qwen3-32B-AWQ on 30482. The config maps both services to physical GPU2, allocates 0.12 and 0.25 GPU memory fractions, and requires at least 100,000 MiB free, at most 20% utilization before startup, and no foreign compute processes. GPU2 currently has about 127,675 MiB free but 100% utilization and another compute process, so this launch command would refuse. GPU6 has about 168,173 MiB free and 0% utilization, but a foreign process still uses about 14 GiB; it fails the same no-sharing gate. GPU7 is excluded and has a foreign process. No safe card is available, so neither existing launcher nor a new V2 service was started. No process was interrupted. All V2 artifacts remain under project PFS; no system-disk cache or output was written.
+
+The final proxy-bypassing static preflight is saved in the ignored local manifest at `outputs/phase1_20261119T140623460757Z/run_manifest.json`; the execution-gate attempt is recorded at `outputs/phase1_20261119T140623978525Z/run_manifest.json`. These local artifacts include selected case identifiers and must not be committed. The folder is covered by the existing `**/outputs/` ignore rule.
 
 ## Q Regression readiness and scale estimate
 
@@ -117,7 +123,7 @@ python3 experiments/ea_atpo_v2/scripts/build_q_dataset.py \
 
 - **Real model execution:** none in V2 Phase 1; service gate blocked it before generation.
 - **Static data audit:** passed on the restored source and frozen training-state subset.
-- **Protocol and boundary tests:** 9/9 passed; engineering-only.
+- **Protocol and boundary tests:** 11/11 passed; engineering-only.
 - **ASK produces a clinically useful new fact:** not evaluated; no Patient calls ran.
 - **Three action values:** not available; no V2 returns exist.
 - **Q Regression:** interface exists, but fitting is not justified yet.
@@ -125,3 +131,15 @@ python3 experiments/ea_atpo_v2/scripts/build_q_dataset.py \
 - **Frozen Holdout:** unopened.
 
 The next executable step is to restore the two pinned services on a safely available dedicated card, rerun `--preflight`, then run the frozen 10-case pilot. Do not advance to Q Regression training until the paired rollouts are valid and continuation-policy-consistent.
+
+## Live service and resource recheck (2026-11-19 14:20 UTC)
+
+The service state was rechecked after the earlier endpoint diagnosis. The V2 configuration still pins Base to `vi-qwen3-8b-base` at `127.0.0.1:30481` (revision `b968826d9c46dd6066d109eabc6255188de91218`) and Expert to `vi-qwen3-32b-awq-expert` at `127.0.0.1:30482` (revision `0499c3ac83fdef8810b907a23894ba91e95eddd8`); Patient shares Base. Both local model directories are present with their configs, tokenizer files, indexes, and weight shards (5 Base shards, 4 Expert shards).
+
+At this recheck, `HTTP_PROXY`/`ALL_PROXY` still point to `127.0.0.1:18118`, where the proxy listener is active. A proxied GET to Base returned HTTP 503 from `127.0.0.1:18118`; the same GET with proxy bypass returned connection refused to port 30481. Direct checks found no listeners on 30481, 30482, 32106, or 32107. No Base/Expert generation request was sent. This confirms the observed 503 is generated by the local proxy while the configured model endpoints are absent; it does not indicate a malformed inference payload. The origin request format and model-load behavior therefore remain untested. The previous parallel-service attempt's logs recorded a separate startup failure, `zmq.error.ZMQError: ipc path is longer than 107 characters (sizeof(sockaddr_un.sun_path))`; those service processes are no longer listening. Its code and output were not changed.
+
+GPU6 had 166,879 MiB free and GPU7 had 179,357 MiB free, both at 0% utilization, but neither meets the no-foreign-process condition: another user's `rtdm_facescore_continue100` process held about 15,726 MiB on GPU6 and processes held about 3,238 MiB on GPU7. GPU7 also remains excluded by the prior project constraint. The other GPUs were not safe substitutes under the existing deployment gate: GPU2 had 127,675 MiB free but 90% utilization and foreign compute processes; GPU3 had 106,885 MiB free with a foreign process; GPU4 had only 51,119 MiB free; GPU0/1/5 were heavily utilized. No GPU process was stopped, and no inference request was sent to any foreign service. The only other listening VLLM endpoint found was port 18951 serving `Qwen/Qwen3-VL-8B-Instruct`, which is not the pinned Base model and was not reused.
+
+The established launcher remains `bash experiments/vi_ea_atpo/phase2/start_vi_services.sh`; its config targets GPU2 and ports 30481/30482, so its utilization/foreign-process preflight would fail on the current snapshot. That config also sets `runtime.tmp_root` to `/tmp/vi-ea-atpo`; it must be redirected to a project-local path before any future launch, consistent with the storage constraint. No service was started.
+
+A fresh read-only V2 preflight at `outputs/phase1_20261119T142044510359Z/run_manifest.json` selected the frozen 10 training cases / 29 public states and ended as `blocked_endpoint_preflight`; `model_execution_started` is false. The unchanged CPU regression suite passed 11/11 tests and Python compilation passed. The smoke path is implemented but has not run against a model. Consequently there are still zero V2 real trajectories, zero action returns, zero empirical Q labels out of the potential 87 state-action labels, no measured token/latency costs, and no observed ASK response. No Q Regression, distillation, PPO, or SFT work was started.

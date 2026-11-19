@@ -4,8 +4,10 @@ from pathlib import Path
 
 V2_DIR = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(V2_DIR / "src"))
+sys.path.insert(0, str(V2_DIR / "scripts"))
 
 from q_dataset import build_q_dataset, q_dataset_for_state  # noqa: E402
+from run_counterfactual_pilot import direct_loopback_opener  # noqa: E402
 from v2_protocol import (  # noqa: E402
     Action,
     PublicState,
@@ -81,6 +83,11 @@ class ProtocolTests(unittest.TestCase):
         self.assertAlmostEqual(result["return"], 0.95)
         deferred = action_net_return(1.0, ask_count=0, defer_count=1, ask_cost=0.05, defer_cost=0.60)
         self.assertAlmostEqual(deferred["return"], 0.40)
+
+    def test_loopback_endpoints_bypass_http_proxy(self):
+        opener = direct_loopback_opener()
+        handlers = [handler for handler in opener.handlers if handler.__class__.__name__ == "ProxyHandler"]
+        self.assertTrue(not handlers or all(handler.proxies == {} for handler in handlers))
 
 
 class QDatasetTests(unittest.TestCase):
