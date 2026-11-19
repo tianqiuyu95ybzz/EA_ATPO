@@ -8,6 +8,7 @@
 venv/
 env/
 **/.venv/
+**/.venv_awq/
 **/__pycache__/
 *.pyc
 *.pyo

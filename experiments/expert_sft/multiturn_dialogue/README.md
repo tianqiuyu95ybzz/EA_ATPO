@@ -41,3 +41,7 @@ Use the exact same visible prompt and greedy generation settings for Base8B, ori
 
 - `data/qwen3_32b_awq_source_lock.json` records the pinned original AWQ model revisions and hashes. The model weights remain in their existing PFS model directory and are not copied or committed.
 - Do not commit generated dialogue JSONL/Parquet, model weights, adapters, optimizer states, runtime caches, credentials, or any holdout predictions. Commit scripts, configs, source/model hashes, safe reports and manifests so the data can be reconstructed from the tracked project inputs.
+
+## Latest execution status (2026-11-19)
+
+The audit of the restored official ATPO train source found 14,256 indexed single-turn cases; the public multi-turn data are the existing 100-case simulated Pilot snapshots, not human transcripts. The Pilot-derived SFT split has 205/42/44 state samples from 70/15/15 isolated cases. The source audit, current AWQ software/tokenizer preflight, and the reason model-level training did not run are recorded in [`outputs/data_audit_20261119Tverified/EXECUTION_STATUS.md`](outputs/data_audit_20261119Tverified/EXECUTION_STATUS.md). The independent AWQ environment is installed under this directory and locked in `environment.lock.txt`; the AWQ model has not been loaded into CUDA and no LoRA update or SFT has run because no eligible GPU passed the no-other-process and memory gate.

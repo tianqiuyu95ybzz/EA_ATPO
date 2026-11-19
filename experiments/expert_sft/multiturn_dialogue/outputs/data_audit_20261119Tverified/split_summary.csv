@@ -1,0 +1,4 @@
+split,cases,samples,samples_with_patient_reply,zero_reply_samples,mean_public_patient_turns,target_format_valid,target_matches_official_gold
+train,70,205,135,70,0.9756,205,205
+validation,15,42,27,15,0.9524,42,42
+internal_test,15,44,29,15,0.9773,44,44

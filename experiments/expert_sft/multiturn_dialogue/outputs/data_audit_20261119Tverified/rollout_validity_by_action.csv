@@ -1,0 +1,5 @@
+action,rollouts,valid_rollouts,invalid_rollouts,strict_final_option_parse,strict_final_option_parse_rate,failure_format_or_parse,failure_timeout,failure_budget_or_turn_limit,failure_other_or_protocol
+ANSWER,873,873,0,873,1.0,0,0,0,0
+ASK,873,868,5,868,0.994273,0,0,0,5
+CONSULT,873,865,8,865,0.990836,1,0,0,7
+DEFER,873,859,14,859,0.983963,0,0,0,14

@@ -1,0 +1,294 @@
+{
+  "audit_status": "completed",
+  "created_at_utc": "2026-11-19T12:53:06+00:00",
+  "source_files": {
+    "official_train_jsonl": {
+      "path": "experiments/expert_sft/data/source/dataset/merged_train_dataset.jsonl",
+      "bytes": 43067603,
+      "sha256": "434a6734dce931262f2ed9e3201a3751e57db3609b1612ab9666835ac8832fdc",
+      "rows": 14256
+    },
+    "public_states_jsonl": {
+      "path": "experiments/real_case_pilot_20261103/outputs/full/pilot_public_states.jsonl",
+      "bytes": 930397,
+      "sha256": "c2d77685dc3d6a82926fb2a7545dc4bfabd16df98e9fea3ca74ab4a170f8c507",
+      "rows": 291
+    },
+    "pilot_trajectories_jsonl": {
+      "path": "experiments/real_case_pilot_20261103/outputs/full/pilot_trajectories.jsonl",
+      "bytes": 31473621,
+      "sha256": "9ab625088db8beeae74fa6f314013dbf6b78499e133d114cfee0407e2ac036df",
+      "rows": 3494
+    },
+    "frozen_case_split": {
+      "path": "experiments/ea_atpo_value_router_20261105/artifacts/case_split.json",
+      "sha256": "b55d889a713b2b1d32afc25d89aaf9205891a1ee5fbaae470702ff31a9f81267"
+    },
+    "fresh_holdout_selection": {
+      "path": "experiments/expert_sft/data/fresh_test_selection.json",
+      "sha256": "13ed6251d05a77f016746d44a3a13d1a48271c7eeeb9395caecca35469c7a005",
+      "status": "frozen_before_sft_checkpoint_selection",
+      "cases": 400,
+      "gold_or_atomic_facts_stored": false
+    }
+  },
+  "official_atpo_train": {
+    "cases": 14256,
+    "stable_index_field": "index",
+    "stable_index_unique": 14256,
+    "stable_index_sequential_0_to_n_minus_1": true,
+    "duplicate_stable_indices": 0,
+    "prompt_role_shapes": {
+      "('system', 'user')": 14256
+    },
+    "multi_turn_prompt_count": 0,
+    "duplicate_full_prompts": 17,
+    "duplicate_user_case_texts": 17,
+    "duplicate_source_text_groups_in_selected_pilot": 0,
+    "selected_duplicate_source_text_cross_split_groups": 0,
+    "ground_truth_A_D_parse_counts": {
+      "C": 3588,
+      "A": 3586,
+      "B": 3551,
+      "D": 3531
+    },
+    "ground_truth_A_D_parse_rate": 1.0,
+    "parquets": [
+      {
+        "path": "experiments/expert_sft/data/reconstructed/train.parquet",
+        "exists": true,
+        "sha256": "eeeaac4c11f2889e56764f4d5b29ebce27a232615cb1c93e2fc12f843faaa7d4",
+        "bytes": 10351671,
+        "rows": 14256,
+        "row_groups": 15,
+        "columns": [
+          "prompt",
+          "ground_truth",
+          "agent_name",
+          "extra_info",
+          "data_source",
+          "index",
+          "reward_model"
+        ],
+        "has_stable_index": true,
+        "index_unique": true,
+        "all_expected_rows": true,
+        "row_ids_found_in_source": 14256,
+        "prompt_user_text_matches_source": 14256,
+        "gold_A_D_parseable": 14256,
+        "gold_matches_source": 14256
+      },
+      {
+        "path": "experiments/expert_sft/data/reconstructed/train.pilot.parquet",
+        "exists": true,
+        "sha256": "932b05b2f847600249c116bdcd5b088f85e3b0b364ba083b56fd36f766478494",
+        "bytes": 13328466,
+        "rows": 14256,
+        "row_groups": 1,
+        "columns": [
+          "prompt",
+          "ground_truth",
+          "agent_name",
+          "extra_info",
+          "data_source",
+          "index",
+          "reward_model"
+        ],
+        "has_stable_index": true,
+        "index_unique": true,
+        "all_expected_rows": true,
+        "row_ids_found_in_source": 14256,
+        "prompt_user_text_matches_source": 14256,
+        "gold_A_D_parseable": 14256,
+        "gold_matches_source": 14256
+      },
+      {
+        "path": "experiments/expert_sft/data/reconstructed_compat/train.parquet",
+        "exists": true,
+        "sha256": "7467f9afc1c294066e487bc16b0e4f0f9cd6fa57704703d8bb8ce83ba7b385ca",
+        "bytes": 13231697,
+        "rows": 14256,
+        "row_groups": 1,
+        "columns": [
+          "prompt",
+          "ground_truth",
+          "agent_name",
+          "extra_info",
+          "data_source",
+          "index",
+          "reward_model"
+        ],
+        "has_stable_index": true,
+        "index_unique": true,
+        "all_expected_rows": true,
+        "row_ids_found_in_source": 14256,
+        "prompt_user_text_matches_source": 14256,
+        "gold_A_D_parseable": 14256,
+        "gold_matches_source": 14256
+      },
+      {
+        "path": "experiments/expert_sft/data/reconstructed_compat/train.pilot.parquet",
+        "exists": true,
+        "sha256": "c586d8653460e8bef102f7c6231a1356dbfa88b5b35c3538219724efd4c1a5c5",
+        "bytes": 13213514,
+        "rows": 14256,
+        "row_groups": 1,
+        "columns": [
+          "prompt",
+          "ground_truth",
+          "agent_name",
+          "extra_info",
+          "data_source",
+          "index",
+          "reward_model"
+        ],
+        "has_stable_index": true,
+        "index_unique": true,
+        "all_expected_rows": true,
+        "row_ids_found_in_source": 14256,
+        "prompt_user_text_matches_source": 14256,
+        "gold_A_D_parseable": 14256,
+        "gold_matches_source": 14256
+      }
+    ]
+  },
+  "existing_pilot_multi_turn_data": {
+    "cases": 100,
+    "public_states": 291,
+    "states_per_case_distribution": {
+      "3": 92,
+      "2": 7,
+      "1": 1
+    },
+    "duplicate_state_ids": 0,
+    "state_validation": {
+      "valid": 291
+    },
+    "dialogue_rounds_per_state": {
+      "0": 100,
+      "1": 99,
+      "2": 92
+    },
+    "states_with_at_least_one_patient_reply": 191,
+    "patient_reply_turns_across_states": 283,
+    "mean_patient_reply_turns_all_states": 0.9725,
+    "mean_patient_reply_turns_nonempty_states": 1.4817,
+    "source_row_index_links_found": 291,
+    "source_prompt_matches": 291,
+    "trajectory_rows": 3492,
+    "nontrajectory_status_rows": 2,
+    "trajectory_actions": {
+      "ANSWER": 873,
+      "ASK": 873,
+      "CONSULT": 873,
+      "DEFER": 873
+    },
+    "trajectory_valid": 3465,
+    "trajectory_invalid": 27,
+    "trajectory_final_answer_strict_A_D_parse": 3465,
+    "trajectory_final_answer_parse_rate": 0.992268,
+    "trajectory_gold_A_D_parse": 3492,
+    "trajectory_gold_matches_official_source": 3492,
+    "trajectory_source_row_links_found": 3492,
+    "gold_single_value_per_case": true,
+    "action_grid_three_repetitions_per_state": true
+  },
+  "case_split": {
+    "unit": "case_id",
+    "seed": 20261105,
+    "case_counts": {
+      "train": 70,
+      "validation": 15,
+      "internal_test": 15
+    },
+    "cross_split_case_overlap": 0,
+    "all_public_cases_covered": true,
+    "pilot_cases_have_split": true,
+    "selected_duplicate_source_text_cross_split_groups": 0,
+    "sft": {
+      "train": {
+        "path": "experiments/expert_sft/multiturn_dialogue/data/train_sft.jsonl",
+        "sha256": "d59681b2d00f4357794e0c2f69c719e1aa787a772ff96bf545ef46792192f3f3",
+        "examples": 205,
+        "unique_cases": 70,
+        "case_ids_match_frozen_split": true,
+        "case_id_overlap_with_other_sft_splits": 0,
+        "unique_state_ids": 205,
+        "duplicate_prompt_hashes": 0,
+        "target_format_valid": 205,
+        "target_matches_official_source_gold": 205,
+        "examples_with_patient_reply": 135,
+        "zero_reply_examples": 70,
+        "mean_public_patient_turns": 0.9756,
+        "exact_current_public_state_input_match": 205,
+        "state_public_input_matches": 205,
+        "input_target_role_boundary_valid": 205,
+        "message_role_shapes": {
+          "('system', 'user', 'assistant')": 205
+        }
+      },
+      "validation": {
+        "path": "experiments/expert_sft/multiturn_dialogue/data/validation_sft.jsonl",
+        "sha256": "e9c66de6d9249d8ffd717b9ea411702de58ecf6220fd3739dc90663183439372",
+        "examples": 42,
+        "unique_cases": 15,
+        "case_ids_match_frozen_split": true,
+        "case_id_overlap_with_other_sft_splits": 0,
+        "unique_state_ids": 42,
+        "duplicate_prompt_hashes": 0,
+        "target_format_valid": 42,
+        "target_matches_official_source_gold": 42,
+        "examples_with_patient_reply": 27,
+        "zero_reply_examples": 15,
+        "mean_public_patient_turns": 0.9524,
+        "exact_current_public_state_input_match": 42,
+        "state_public_input_matches": 42,
+        "input_target_role_boundary_valid": 42,
+        "message_role_shapes": {
+          "('system', 'user', 'assistant')": 42
+        }
+      },
+      "internal_test": {
+        "path": "experiments/expert_sft/multiturn_dialogue/data/internal_test_sft.jsonl",
+        "sha256": "4491d9acf031dd4c5c2cd8286fc573ff055551684d412e18c674ee900a2abae7",
+        "examples": 44,
+        "unique_cases": 15,
+        "case_ids_match_frozen_split": true,
+        "case_id_overlap_with_other_sft_splits": 0,
+        "unique_state_ids": 44,
+        "duplicate_prompt_hashes": 0,
+        "target_format_valid": 44,
+        "target_matches_official_source_gold": 44,
+        "examples_with_patient_reply": 29,
+        "zero_reply_examples": 15,
+        "mean_public_patient_turns": 0.9773,
+        "exact_current_public_state_input_match": 44,
+        "state_public_input_matches": 44,
+        "input_target_role_boundary_valid": 44,
+        "message_role_shapes": {
+          "('system', 'user', 'assistant')": 44
+        }
+      }
+    }
+  },
+  "clean_holdout_isolation": {
+    "status": "frozen_before_sft_checkpoint_selection",
+    "cases": 400,
+    "source_rows_overlap_sft_state_cases": 0,
+    "source_rows_overlap_pilot_state_cases": 0,
+    "case_ids_overlap_pilot": 0,
+    "gold_or_atomic_facts_read_for_selection": false,
+    "gold_or_atomic_facts_stored": false,
+    "checkpoint_selection_or_training_use": false
+  },
+  "boundary": {
+    "original_atpo_source_has_multi_turn_dialogue": false,
+    "pilot_states_are_llm_simulator_generated_not_human_transcripts": true,
+    "sft_input_source": "case prompt + current public state messages only",
+    "gold_in_input": false,
+    "hidden_atomic_facts_in_input": false,
+    "future_patient_replies_in_input": false,
+    "expert_advice_or_final_answers_in_input": false,
+    "gold_in_supervised_target_only": true
+  }
+}
