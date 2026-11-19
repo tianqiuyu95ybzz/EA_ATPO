@@ -1,0 +1,132 @@
+{
+  "timestamp_utc": "2026-11-19T04:42:55+00:00",
+  "workspace_root": "/pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO_V1",
+  "experiment_root": "/pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO_V1/experiments/expert_sft",
+  "python": "3.12.3 (main, Aug 14 2025, 17:47:21) [GCC 13.3.0]",
+  "platform": "linux",
+  "packages": {
+    "torch": "2.7.1+cu128",
+    "transformers": "4.54.1",
+    "peft": "0.21.2",
+    "accelerate": "1.15.0",
+    "datasets": "4.0.0",
+    "pandas": "2.3.3",
+    "pyarrow": "19.0.1",
+    "huggingface_hub": "0.36.2",
+    "trl": null,
+    "bitsandbytes": null
+  },
+  "cuda": {
+    "nvidia_smi_available": true,
+    "torch_package_cuda_build": "cu128",
+    "bf16_supported": null,
+    "bf16_support_check": "deferred to CUDA smoke because importing torch for inventory is slow in this environment"
+  },
+  "gpus": [
+    {
+      "index": 0,
+      "name": "NVIDIA B20Z",
+      "uuid": "GPU-6703ee35-71b2-d9fc-fd6c-81ac146a5140",
+      "total_mib": 183359,
+      "used_mib": 71790,
+      "free_mib": 110835,
+      "utilization_pct": 0,
+      "compute_process_count": 1
+    },
+    {
+      "index": 1,
+      "name": "NVIDIA B20Z",
+      "uuid": "GPU-27ca2315-a12e-5dba-533f-5915d2992799",
+      "total_mib": 183359,
+      "used_mib": 71790,
+      "free_mib": 110835,
+      "utilization_pct": 61,
+      "compute_process_count": 1
+    },
+    {
+      "index": 2,
+      "name": "NVIDIA B20Z",
+      "uuid": "GPU-3d6f9568-ef41-3eb1-b4c3-bac1f8dc3e1f",
+      "total_mib": 183359,
+      "used_mib": 138554,
+      "free_mib": 44071,
+      "utilization_pct": 0,
+      "compute_process_count": 3
+    },
+    {
+      "index": 3,
+      "name": "NVIDIA B20Z",
+      "uuid": "GPU-e3d30d85-620d-1339-6a7d-fdb71de4e5ed",
+      "total_mib": 183359,
+      "used_mib": 81388,
+      "free_mib": 101237,
+      "utilization_pct": 1,
+      "compute_process_count": 1
+    },
+    {
+      "index": 4,
+      "name": "NVIDIA B20Z",
+      "uuid": "GPU-8ec4d144-7384-888e-fef2-7970055daabe",
+      "total_mib": 183359,
+      "used_mib": 85900,
+      "free_mib": 96725,
+      "utilization_pct": 98,
+      "compute_process_count": 4
+    },
+    {
+      "index": 5,
+      "name": "NVIDIA B20Z",
+      "uuid": "GPU-bb228ccf-0f43-d4f7-034d-a6720bf06d2a",
+      "total_mib": 183359,
+      "used_mib": 64578,
+      "free_mib": 118047,
+      "utilization_pct": 82,
+      "compute_process_count": 3
+    },
+    {
+      "index": 6,
+      "name": "NVIDIA B20Z",
+      "uuid": "GPU-70b81d32-6899-3117-5a70-b876d4f6d200",
+      "total_mib": 183359,
+      "used_mib": 63896,
+      "free_mib": 118729,
+      "utilization_pct": 74,
+      "compute_process_count": 2
+    },
+    {
+      "index": 7,
+      "name": "NVIDIA B20Z",
+      "uuid": "GPU-176619f2-832b-01a7-2006-f9639ba0c340",
+      "total_mib": 183359,
+      "used_mib": 76556,
+      "free_mib": 106069,
+      "utilization_pct": 76,
+      "compute_process_count": 2
+    }
+  ],
+  "disk_at_workspace": {
+    "total_bytes": 220137743450112,
+    "used_bytes": 173704210284544,
+    "free_bytes": 46433533165568
+  },
+  "model": {
+    "repo_id": "Qwen/Qwen3-32B",
+    "revision": "9216db5781bf21249d130ec9da846c4624c16137",
+    "configured_local_path": "/pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO_V1/experiments/expert_sft/assets/models/Qwen3-32B",
+    "local_safetensors_count": 0,
+    "expected_shards_from_index": null,
+    "local_safetensors_bytes": 0,
+    "model_directory_bytes_including_partial": 8809565036,
+    "incomplete_hf_files": 8,
+    "incomplete_hf_bytes": 8807862064,
+    "config_present": true,
+    "index_present": false,
+    "tokenizer_config_present": false,
+    "download_complete": false
+  },
+  "data": {
+    "train_jsonl_sha256": "8390c9c383610c2b0358f393d8f0fb109fa76b0d53ffbabbc751d9d97e879834",
+    "validation_jsonl_sha256": "e2d406f744afce1b7ba9984053492c5fd39ae8085dc2092ccd86c83839e4042a",
+    "fresh_test_selection_sha256": "13ed6251d05a77f016746d44a3a13d1a48271c7eeeb9395caecca35469c7a005"
+  }
+}

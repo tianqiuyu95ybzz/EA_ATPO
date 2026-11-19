@@ -1,0 +1,17 @@
+cache/
+assets/models/
+data/source/
+data/reconstructed/
+data/reconstructed_compat/
+data/train_sft.jsonl
+data/validation_sft.jsonl
+data/fresh_test_sft.jsonl
+data/*selection*.json
+data/*asset_manifest*.json
+data/sft_data_manifest.json
+data/fresh_test_sft.manifest.json
+checkpoints/
+evaluations/
+logs/
+*.parquet
+*.safetensors

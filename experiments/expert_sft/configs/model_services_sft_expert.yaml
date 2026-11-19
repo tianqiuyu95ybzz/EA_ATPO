@@ -1,0 +1,57 @@
+schema_version: 1
+purpose: VI-EA-ATPO Domain-SFT Expert adapter inference; standalone service, does not manage existing Base/Patient or AWQ Expert services
+
+project:
+  root: /pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO_V1
+  experiment_dir: /pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO_V1/experiments/expert_sft
+
+runtime:
+  python: /pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO/.venv-real-pilot/bin/python
+  vllm: /pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO/.venv-real-pilot/bin/vllm
+  expected_vllm_version: 0.33.0
+  expected_torch_version: 2.14.0
+  cache_root: /pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO_V1/experiments/expert_sft/cache/vllm_runtime
+  tmp_root: /pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO_V1/experiments/expert_sft/cache/tmp
+
+network:
+  host: 127.0.0.1
+  port: 30483
+  served_model_name: vi-qwen3-32b-domain-sft-expert
+  request_timeout_seconds: 180
+
+model:
+  repo_id: Qwen/Qwen3-32B
+  revision: 9216db5781bf21249d130ec9da846c4624c16137
+  local_path: /pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO_V1/experiments/expert_sft/assets/models/Qwen3-32B
+  adapter_path: /pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO_V1/experiments/expert_sft/checkpoints/qwen3_32b_domain_sft/selected
+  adapter_revision: resolved_from_selected_checkpoint_lock.json
+  dtype: bfloat16
+  quantization: null
+  trust_remote_code: false
+  chat_template: model_native_tokenizer_template
+  default_chat_template_kwargs:
+    enable_thinking: false
+
+serving:
+  tensor_parallel_size: 1
+  max_model_len: 4096
+  max_num_seqs: 1
+  gpu_memory_utilization: 0.60
+  enable_lora: true
+  max_lora_rank: 16
+  max_loras: 1
+  disable_request_logging: true
+  temperature: 0.0
+  top_p: 1.0
+
+gpu_safety:
+  physical_index: 5
+  min_free_mib_before_start: 150000
+  max_utilization_pct_before_start: 20
+  require_no_compute_processes: true
+  required_free_mib_after_load: 32768
+
+artifacts:
+  pid_file: /pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO_V1/experiments/expert_sft/logs/sft_expert_vllm.pid
+  log_file: /pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO_V1/experiments/expert_sft/logs/sft_expert_vllm.log
+  manifest_file: /pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO_V1/experiments/expert_sft/logs/sft_expert_service_manifest.json

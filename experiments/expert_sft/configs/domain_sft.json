@@ -1,0 +1,72 @@
+{
+  "experiment": "EA-ATPO Qwen3-32B Domain-SFT Expert",
+  "seed": 20261119,
+  "data": {
+    "atpo_repository": "https://github.com/Quark-Medical/ATPO",
+    "atpo_commit": "25af83688c06917f94245a4db06be7d0924c090c",
+    "source_jsonl": "experiments/expert_sft/data/source/dataset/merged_train_dataset.jsonl",
+    "source_parquet": "experiments/expert_sft/data/reconstructed_compat/train.pilot.parquet",
+    "selection_manifest": "experiments/real_case_pilot_20261103/audit/outputs/qwen32_router_generalization_20261118_attempt04/case_selection.json",
+    "expected_source_sha256": "c586d8653460e8bef102f7c6231a1356dbfa88b5b35c3538219724efd4c1a5c5",
+    "train_count": 1000,
+    "validation_count": 300,
+    "never_read_selection_test_rows_for_training": true
+  },
+  "model": {
+    "repo_id": "Qwen/Qwen3-32B",
+    "revision": "9216db5781bf21249d130ec9da846c4624c16137",
+    "local_path": "experiments/expert_sft/assets/models/Qwen3-32B",
+    "dtype": "bfloat16",
+    "architecture": "Qwen3ForCausalLM",
+    "enable_thinking": false,
+    "trust_remote_code": false
+  },
+  "format": {
+    "system_prompt": "You are a medical multiple-choice expert. Use only the visible case and answer options. Do not assume hidden patient facts or access an answer key. Output exactly one line: Expert Final Answer: <one uppercase option letter A-D>. Do not include an explanation.",
+    "assistant_target": "Expert Final Answer: {answer}",
+    "answer_only": true,
+    "assistant_only_loss": true,
+    "source_reasoning_used": false,
+    "patient_atomic_facts_used": false
+  },
+  "lora": {
+    "r": 16,
+    "alpha": 32,
+    "dropout": 0.05,
+    "target_modules": ["q_proj", "k_proj", "v_proj", "o_proj", "gate_proj", "up_proj", "down_proj"]
+  },
+  "training": {
+    "epochs": 3,
+    "learning_rate": 0.0001,
+    "per_device_train_batch_size": 1,
+    "per_device_eval_batch_size": 1,
+    "gradient_accumulation_steps": 8,
+    "gradient_checkpointing": true,
+    "bf16": true,
+    "max_sequence_length": 4096,
+    "warmup_ratio": 0.03,
+    "weight_decay": 0.01,
+    "max_grad_norm": 1.0,
+    "logging_steps": 10,
+    "save_strategy": "epoch",
+    "evaluation_strategy": "epoch",
+    "optimizer": "adamw_torch",
+    "scheduler": "cosine",
+    "dataloader_num_workers": 0
+  },
+  "resources": {
+    "training_physical_gpu": 5,
+    "min_free_mib_before_model_load": 150000,
+    "max_utilization_pct_before_model_load": 20,
+    "reserve_mib_after_load": 32768,
+    "cache_root": "experiments/expert_sft/cache",
+    "all_temp_and_model_cache_under_project": true
+  },
+  "outputs": {
+    "train_jsonl": "experiments/expert_sft/data/train_sft.jsonl",
+    "validation_jsonl": "experiments/expert_sft/data/validation_sft.jsonl",
+    "checkpoint_dir": "experiments/expert_sft/checkpoints/qwen3_32b_domain_sft",
+    "evaluation_dir": "experiments/expert_sft/evaluations/validation",
+    "log_dir": "experiments/expert_sft/logs"
+  }
+}
