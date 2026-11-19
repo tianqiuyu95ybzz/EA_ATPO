@@ -1,0 +1,116 @@
+schema_version: 1
+purpose: VI-EA-ATPO Phase 2 inference-only ASK/CONSULT pilot
+
+project:
+  root: /pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO_V1
+  phase2_dir: /pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO_V1/experiments/vi_ea_atpo/phase2
+
+runtime:
+  environment_root: /pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO/.venv-real-pilot
+  python: /pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO/.venv-real-pilot/bin/python
+  vllm: /pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO/.venv-real-pilot/bin/vllm
+  expected_vllm_version: 0.33.0
+  expected_torch_version: 2.14.0
+  cuda_home: /pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO/.venv-real-pilot/lib/python3.12/site-packages/nvidia/cu13
+  cache_root: /pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO_V1/experiments/vi_ea_atpo/phase2/services/runtime
+  tmp_root: /tmp/vi-ea-atpo
+  disable_flashinfer_sampler: true
+
+network:
+  host: 127.0.0.1
+  base_port: 30481
+  expert_port: 30482
+  request_timeout_seconds: 180
+
+gpu:
+  physical_index: 2
+  cuda_visible_devices: "2"
+  expected_name: NVIDIA B20Z
+  min_free_mib_before_any_new_service: 100000
+  min_free_mib_before_expert: 70000
+  max_utilization_pct_before_start: 20
+  max_utilization_pct_before_expert: 50
+  allow_foreign_compute_processes: false
+  tensor_parallel_size: 1
+
+sampling:
+  temperature: 0.0
+  top_p: 1.0
+  seed: null
+  chat_template: model_native_tokenizer_template
+
+services:
+  base:
+    model_id: Qwen/Qwen3-8B
+    model_revision: b968826d9c46dd6066d109eabc6255188de91218
+    model_path: /pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO/experiments/real_case_pilot_20261103/assets/models/Qwen3-8B
+    served_model_name: vi-qwen3-8b-base
+    port: 30481
+    dtype: bfloat16
+    quantization: null
+    quantization_config: null
+    max_model_len: 4096
+    max_num_seqs: 1
+    gpu_memory_utilization: 0.12
+    attention_backend: TRITON_ATTN
+    role_chat_template_kwargs:
+      base: {enable_thinking: false}
+      patient: {enable_thinking: false}
+    token_limits:
+      terminal_answer: 16
+      action: 256
+      patient_response: 256
+  expert:
+    model_id: Qwen/Qwen3-32B-AWQ
+    model_revision: 0499c3ac83fdef8810b907a23894ba91e95eddd8
+    model_path: /pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO/experiments/real_case_pilot_20261103/assets/models/Qwen3-32B-AWQ
+    served_model_name: vi-qwen3-32b-awq-expert
+    port: 30482
+    dtype: auto
+    quantization: awq
+    quantization_config:
+      source: model_path/config.json
+      quant_method: awq
+      bits: 4
+      group_size: 128
+      version: gemm
+      zero_point: true
+    max_model_len: 4096
+    max_num_seqs: 1
+    gpu_memory_utilization: 0.25
+    attention_backend: TRITON_ATTN
+    role_chat_template_kwargs:
+      expert: {enable_thinking: false}
+    token_limits:
+      consultation_advice: 384
+      terminal_answer: 384
+
+roles:
+  patient:
+    mode: shared_model_role
+    shared_service: base
+    served_model_name: vi-qwen3-8b-base
+    endpoint: http://127.0.0.1:30481/v1
+    enable_thinking: false
+    max_tokens: 256
+    input_policy: source_row_atomic_facts_and_doctor_question_only
+    implementation: ea_atpo_stage/recipe/ea_atpo/collect_counterfactuals.py::_patient_messages
+
+resources:
+  estimated_weight_bytes:
+    base: 16381516776
+    expert: 19325481744
+  expected_vllm_memory_budget_mib:
+    base_fraction_of_gpu: 0.12
+    expert_fraction_of_gpu: 0.25
+    shared_gpu_total_fraction: 0.37
+  reserve_mib_after_load: 24576
+  no_test_or_rl_inference: true
+
+artifacts:
+  service_dir: /pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO_V1/experiments/vi_ea_atpo/phase2/services
+  base_log: /pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO_V1/experiments/vi_ea_atpo/phase2/services/logs/base_vllm.log
+  patient_role_log: /pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO_V1/experiments/vi_ea_atpo/phase2/services/logs/patient_role.log
+  expert_log: /pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO_V1/experiments/vi_ea_atpo/phase2/services/logs/expert_vllm.log
+  state_file: /pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO_V1/experiments/vi_ea_atpo/phase2/services/state.json
+  start_timeout_seconds: 1200

@@ -1,0 +1,56 @@
+{
+  "experiment": "VI-EA-ATPO one-step information acquisition pilot",
+  "seed": 20261118,
+  "sample_counts": {"train": 100, "validation": 50},
+  "temperature": 0.0,
+  "sampling": {"temperature": 0.0, "top_p": 1.0, "seed": null},
+  "max_active_acquisitions": 1,
+  "continuations": ["forced_answer_task_improvement", "answer_or_defer_decision_improvement"],
+  "max_terminal_decision_tokens": 16,
+  "max_action_tokens": 256,
+  "endpoints": {
+    "base": {
+      "base_url": "http://127.0.0.1:30481/v1",
+      "model": "vi-qwen3-8b-base",
+      "revision": "b968826d9c46dd6066d109eabc6255188de91218",
+      "vllm_version": "0.33.0",
+      "service_manifest": "experiments/vi_ea_atpo/phase2/services/base/service_manifest.json",
+      "enable_thinking": false
+    },
+    "patient": {
+      "base_url": "http://127.0.0.1:30481/v1",
+      "model": "vi-qwen3-8b-base",
+      "revision": "b968826d9c46dd6066d109eabc6255188de91218",
+      "vllm_version": "0.33.0",
+      "service_manifest": "experiments/vi_ea_atpo/phase2/services/base/service_manifest.json",
+      "enable_thinking": false
+    },
+    "expert": {
+      "base_url": "http://127.0.0.1:30482/v1",
+      "model": "vi-qwen3-32b-awq-expert",
+      "revision": "0499c3ac83fdef8810b907a23894ba91e95eddd8",
+      "vllm_version": "0.33.0",
+      "service_manifest": "experiments/vi_ea_atpo/phase2/services/expert/service_manifest.json",
+      "enable_thinking": false
+    }
+  },
+  "costs": {
+    "ask": 0.05,
+    "consult": 0.20,
+    "defer_grid": [0.0, 0.05, 0.10, 0.20, 0.40, 0.60],
+    "primary_defer": 0.60
+  },
+  "utility": "terminal_correct - c_A*N_ASK - c_C*N_CONSULT - c_D*N_DEFER",
+  "token_cost_in_primary_utility": false,
+  "model_version_note": "Revision must match the local service manifest and the /v1/models served alias; Base/Patient share Qwen3-8B, Expert is Qwen3-32B-AWQ.",
+  "request_budget": {
+    "nominal_total_api_calls_for_150_cases": 1800,
+    "nominal_base_calls": 1050,
+    "nominal_patient_calls": 150,
+    "nominal_expert_calls_max": 600,
+    "excludes_retries": true,
+    "smoke_cases_max": 2
+  },
+  "historical_model_pair_config_source": "experiments/real_case_pilot_20261103/audit/run_direct_reliability_eval.py",
+  "test_policy": "No test split. Uniform fresh cases from the ATPO training parquet after excluding historical case IDs, hashes and prompts."
+}

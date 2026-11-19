@@ -1,0 +1,50 @@
+{
+  "experiment": "VI-EA-ATPO InitialDeferralValueEstimator offline audit",
+  "created_at_utc": "2026-11-18T11:59:53+00:00",
+  "repo_head": "2aebfa8ce33db872b9b4c204377a4a11cfb09c97",
+  "input_source_run": "/pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO_V1/experiments/real_case_pilot_20261103/audit/outputs/qwen32_router_generalization_20261118_attempt04",
+  "input_data_path": "/pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO/experiments/real_case_pilot_20261103/assets/train.pilot.parquet",
+  "input_data_sha256": "c586d8653460e8bef102f7c6231a1356dbfa88b5b35c3538219724efd4c1a5c5",
+  "paired_split_counts": {
+    "train": 1000,
+    "validation": 300,
+    "test": 400
+  },
+  "paired_test_is_official_test": false,
+  "paired_test_previously_examined": true,
+  "router_tuning": "train-only preprocessing and fitting; validation-only model/cost threshold selection; test descriptive final scoring only",
+  "predecision_features": [
+    "log_public_chars",
+    "log_public_words",
+    "question_marks",
+    "digit_count",
+    "clinical_lexicon_count",
+    "base_confidence",
+    "base_entropy_normalized",
+    "base_top1_top2_margin",
+    "base_uncertainty_missing",
+    "base_valid",
+    "log_base_prompt_tokens",
+    "log_base_completion_tokens"
+  ],
+  "option_features": "Unavailable; prior audit found parser fallback zero, excluded from all estimators.",
+  "cost_grid": [
+    0.0,
+    0.05,
+    0.1,
+    0.2,
+    0.4,
+    0.6
+  ],
+  "cost_utility": "mean(deferred? expert_correct : base_correct) - cost_defer * defer_rate",
+  "selected_logistic": {
+    "l2": 0.1,
+    "balanced": false
+  },
+  "selected_ridge_alpha": 100.0,
+  "bootstrap_replicates": 2500,
+  "estimation_uncertainty_replicates": 24,
+  "no_gpu_or_inference": true,
+  "observable_file_sha256": "443a1e11236b48bea5bb8dcf91b87a75e7a9b598f915d95dc75048e53ba47891",
+  "offline_label_file_sha256": "d0c2e707901898ee02288f5a328edbb75b6d9b4772fa9c03060ab6bd16dfcc5f"
+}

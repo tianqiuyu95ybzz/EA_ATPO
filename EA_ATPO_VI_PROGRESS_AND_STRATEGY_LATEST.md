@@ -2,7 +2,7 @@
 
 **Updated:** 2026-11-19 (Asia/Shanghai)
 **Repository:** `/pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO_V1`
-**Branch / base HEAD:** `ea-atpo-v1` / `2aebfa8ce33db872b9b4c204377a4a11cfb09c97`
+**Branch / recorded upstream base:** `ea-atpo-v1` / `2aebfa8ce33db872b9b4c204377a4a11cfb09c97`
 
 ## Current research route
 
@@ -97,3 +97,24 @@ Official ATPO data at commit `25af83688c06917f94245a4db06be7d0924c090c` was rest
 ## Context recovery prompt
 
 > Continue the EA-ATPO Domain-SFT task from `EA_ATPO_VI_PROGRESS_AND_STRATEGY_LATEST.md`. Keep all artifacts under `/pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO_V1`. Preserve the frozen 1,000/300 SFT split and fresh 400-case holdout; never open the fresh test before the validation-selected SFT checkpoint and Router lock are written. Do not stop existing GPU jobs or services. Resume the pinned Qwen3-32B BF16 revision download, recheck the process-free GPU gate, run the requested SFT smoke, and start formal SFT only after the smoke passes. No PPO/ATPO RL until the new Expert, paired Router, Patient/CONSULT smoke, and VOI validation gates pass.
+
+## 2026-11-19 steering update: multi-turn states and AWQ LoRA first
+
+This update supersedes the earlier SFT model order. The Expert's main SFT data now comes from existing multi-turn ATPO public-state snapshots, not the earlier 1,000/300 one-turn answer-only corpus. The earlier corpus remains intact as a separate experiment.
+
+- New frozen case-level split: 70 Train / 15 Validation / 15 Internal Test cases. From 100 historical Pilot cases the builder creates 205 / 42 / 44 current-public-state samples; one example per state. Gold appears only as the assistant answer target. Hidden facts, future replies, expert advice and Base final answers are excluded from input.
+- First candidate is the existing locked `Qwen/Qwen3-32B-AWQ`, tested only through a new isolated LoRA-training environment with GPTQModel `torch_awq`. The BF16 Qwen3-32B path remains the fallback only if a real AWQ gradient/save/reload smoke demonstrates a model/backend incompatibility. A busy GPU is not an AWQ incompatibility.
+- Added `experiments/expert_sft/multiturn_dialogue/`: data builder, AWQ/BF16 configs, isolated environment setup, 10-step gradient/save/reload smoke, training script, validation loss checkpoint lock, same-prompt evaluator, case-cluster paired analysis, clean-holdout gate, source-lock and recovery manifests.
+- CPU tokenizer/chat-template check passed for all 291 samples; max full token lengths were 346 (train), 322 (validation), and 299 (internal test), below the 4096 limit. Case IDs are disjoint. No AWQ model load, LoRA injection, backward pass, optimizer update, adapter round-trip, SFT, or paired model evaluation has run.
+- At the last resource check, all eligible GPUs 0,2,3,4,5,6 had other compute processes and failed the no-process/150,000-MiB-free/20%-utilization gate. GPU1 and GPU7 remain excluded. No active process/service was touched.
+- Safe cleanup replaced only exact SHA-256 duplicate Parquets/metadata outputs with relative links while preserving original paths. Unique checkpoints and active service compile caches remain untouched. Generated medical JSONL/Parquet remains local and ignored; the source inputs and regeneration metadata are already in the repository.
+- The AWQ compatibility report is `experiments/expert_sft/multiturn_dialogue/reports/MULTITURN_SFT_AND_DATA_RECOVERY_20261119.md`. GitHub upload should contain code, configs, source/model hash locks, split counts and recovery docs, not weights, case text, Gold-bearing SFT JSONL, caches or optimizer states.
+
+Next: use `bash experiments/expert_sft/multiturn_dialogue/scripts/setup_awq_env.sh`, then wait for a safe card and run `EA_ATPO_AWQ_GPU=<eligible-card> bash experiments/expert_sft/multiturn_dialogue/scripts/run_awq_lora_smoke.sh`. Only a passing real 10-step AWQ adapter round-trip smoke unlocks the AWQ formal SFT runner. Do not materialize the fresh 400-case holdout until the formal validation checkpoint lock exists. No Router/ATPO RL is authorized by this update.
+
+## 2026-11-19 cleanup and GitHub recovery bundle
+
+- Exact-SHA deduplication is now repeatable with `experiments/expert_sft/multiturn_dialogue/scripts/deduplicate_project_artifacts.py`. It preserves all original paths as relative symlinks and records hashes. It covers the 22 repeated Attempt Parquet paths, duplicate selection/metric files, the duplicate ModelScope package-cache body, and identical tokenizer/config assets in the Attempt09 recovery tree. Estimated duplicate payload shared: 54,332,055 bytes. Two stale Python bytecode files (104,507 bytes) and the task-created 15 MB dependency/tokenizer cache were removed.
+- Unique Attempt06/07/09 model and optimizer checkpoints, clinical rollout records, logs, and potentially active CUDA/Triton caches remain intact. GPU1 and GPU7 remain excluded. `.task_cache` and service runtime/pid paths are now ignored by Git.
+- The frozen source state/trajectory JSONL and case split are already present on the GitHub branch, so the 291-row generated SFT JSONLs can be reconstructed from the committed builder and local hashes; the case text and Gold-bearing derivatives are not duplicated into the upload.
+- The AWQ/LoRA compatibility test, 10-step SFT smoke, formal SFT, and SFT model evaluation remain unrun. The upload is recovery code/config/manifest/report material only; no model or optimizer checkpoint is being pushed.

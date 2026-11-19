@@ -1,0 +1,133 @@
+{
+  "experiment": "EA-ATPO Expert relative-gain predictability audit",
+  "created_at_utc": "2026-11-18T08:18:45+00:00",
+  "input_run": "/pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO_V1/experiments/real_case_pilot_20261103/audit/outputs/qwen32_router_generalization_20261118_attempt04",
+  "input_paired_sha256": {
+    "train": "0f873d410c102c148829a5512ce2141fe72fc9f7b46c093305a6716adcf6dd28",
+    "validation": "ea4f38cd36b73ce08de3a05a21421cd5daff35fb2c4b71385e9ed8eda3711f59",
+    "test": "944a4056105201b0f07f8cb0a0ca4b7fd14788d634bc75d0e5ddda0bcf07c969"
+  },
+  "source_prompt_asset": {
+    "path": "/pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO/experiments/real_case_pilot_20261103/assets/train.pilot.parquet",
+    "sha256": "c586d8653460e8bef102f7c6231a1356dbfa88b5b35c3538219724efd4c1a5c5"
+  },
+  "split_counts": {
+    "train": 1000,
+    "validation": 300,
+    "test": 400
+  },
+  "test_is_official_test": false,
+  "cost_grid": [
+    0.0,
+    0.05,
+    0.1,
+    0.2,
+    0.4,
+    0.6
+  ],
+  "utility": "mean(final correctness - cost * Expert call indicator)",
+  "base_answer_is_always_generated": true,
+  "labels": {
+    "base_error": "1(base_correct == 0)",
+    "helpful": "1(expert_correct - base_correct == +1)",
+    "harmful": "1(expert_correct - base_correct == -1)",
+    "relative_gain": "expert_correct - base_correct"
+  },
+  "decision_time_features": "prompt-only fields and Base completion state before optional Expert call; no Expert outputs or correctness labels",
+  "preprocessor_fit_split": "train only",
+  "hyperparameter_and_threshold_selection_split": "validation only",
+  "test_policy_lock_before_read": true,
+  "test_used_for_tuning_or_feature_selection": false,
+  "logistic_candidates": {
+    "l2": [
+      0.001,
+      0.01,
+      0.1,
+      1.0
+    ],
+    "class_weight": [
+      "none",
+      "balanced"
+    ],
+    "selection": "validation unweighted log loss"
+  },
+  "ridge_candidates": {
+    "alpha": [
+      0.01,
+      0.1,
+      1.0,
+      10.0,
+      100.0
+    ],
+    "selection": "validation MSE"
+  },
+  "mlp_candidates": {
+    "hidden_units": 16,
+    "weight_decay": [
+      0.0001,
+      0.001,
+      0.01
+    ],
+    "class_weight": [
+      "none",
+      "balanced"
+    ],
+    "max_epochs": 500,
+    "early_stopping_patience": 30,
+    "selection": "validation unweighted three-class log loss"
+  },
+  "random_baseline": {
+    "seeds": [
+      20261118,
+      20261119,
+      20261120,
+      20261121,
+      20261122,
+      20261123,
+      20261124,
+      20261125,
+      20261126,
+      20261127,
+      20261128,
+      20261129,
+      20261130,
+      20261131,
+      20261132,
+      20261133,
+      20261134,
+      20261135,
+      20261136,
+      20261137
+    ],
+    "n_seeds": 20,
+    "matching": "validation-selected call rate per method and cost; fixed call count in each test randomization",
+    "seed_interval": "2.5-97.5 percentile interval across 20 seed-level outcomes; paired-case bootstrap CI for the seed-average policy outcome also reported"
+  },
+  "bootstrap": {
+    "paired_case_replicates": 10000,
+    "seed": 20261119,
+    "auc_replicates": 2000,
+    "ci": "percentile 95%"
+  },
+  "option_features": "unavailable due zero parser matches; legacy zeros excluded",
+  "artifacts": [
+    "feature_audit.csv",
+    "paired_outcomes.csv",
+    "split_summary.csv",
+    "predictive_targets.csv",
+    "router_metrics.csv",
+    "cost_sensitivity.csv",
+    "risk_coverage.csv",
+    "failure_attribution.md",
+    "RELATIVE_GAIN_PREDICTABILITY_REPORT.md",
+    "integrity_audit.json",
+    "policy_lock.json",
+    "risk_coverage_accuracy.png",
+    "risk_coverage_utility_by_cost.png",
+    "topk_helpful_harmful.png"
+  ],
+  "commands": [
+    "OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 /pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO/.venv-real-pilot/bin/python experiments/real_case_pilot_20261103/audit/relative_gain_predictability_20261118/run_relative_gain_predictability.py"
+  ],
+  "finalize_existing_command": "OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 /pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO/.venv-real-pilot/bin/python experiments/real_case_pilot_20261103/audit/relative_gain_predictability_20261118/run_relative_gain_predictability.py --finalize-existing"
+}

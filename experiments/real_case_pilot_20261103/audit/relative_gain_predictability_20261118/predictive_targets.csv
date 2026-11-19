@@ -1,0 +1,52 @@
+split,model_or_score,target,score_direction,n,positive_count,auroc,auc_ci_low,auc_ci_high,relative_gain_spearman
+train,base_uncertainty,base_error,higher means event more likely,1000,522,0.6556513409961686,nan,nan,
+train,base_uncertainty,helpful,higher means event more likely,1000,155,0.6720061080358847,nan,nan,
+train,base_uncertainty,harmful,higher means event more likely,1000,105,0.6349986698590051,nan,nan,
+train,base_uncertainty,relative_gain,higher means more positive expert-minus-base gain,1000,,,,,0.07376840289761637
+train,logistic_base_error,base_error,higher means event more likely,1000,522,0.6166578495968195,nan,nan,
+train,logistic_base_error,helpful,higher means event more likely,1000,155,0.609246039320481,nan,nan,
+train,logistic_base_error,harmful,higher means event more likely,1000,105,0.5605214152700186,nan,nan,
+train,logistic_base_error,relative_gain,higher means more positive expert-minus-base gain,1000,,,,,0.062497624404859974
+train,logistic_relative_gain,helpful,higher means event more likely,1000,155,0.62986066043138,nan,nan,
+train,logistic_relative_gain,harmful,higher means event more likely,1000,105,0.6094493216280926,nan,nan,
+train,logistic_relative_gain,relative_gain,higher means more positive expert-minus-base gain,1000,,,,,0.07120429593205309
+train,ridge_relative_gain,helpful,higher means event more likely,1000,155,0.6271349494178279,nan,nan,
+train,ridge_relative_gain,harmful,higher means event more likely,1000,105,0.4947273210960362,nan,nan,
+train,ridge_relative_gain,relative_gain,higher means more positive expert-minus-base gain,1000,,,,,0.11315263031180985
+train,mlp_relative_gain,helpful,higher means event more likely,1000,155,0.6753578927276198,nan,nan,
+train,mlp_relative_gain,harmful,higher means event more likely,1000,105,0.6879169992019154,nan,nan,
+train,mlp_relative_gain,relative_gain,higher means more positive expert-minus-base gain,1000,,,,,0.14834042783297913
+validation,base_uncertainty,base_error,higher means event more likely,300,167,0.6992931430372338,nan,nan,
+validation,base_uncertainty,helpful,higher means event more likely,300,52,0.6341501240694789,nan,nan,
+validation,base_uncertainty,harmful,higher means event more likely,300,25,0.6728727272727273,nan,nan,
+validation,base_uncertainty,relative_gain,higher means more positive expert-minus-base gain,300,,,,,0.05265710485796663
+validation,logistic_base_error,base_error,higher means event more likely,300,167,0.6142451938228806,nan,nan,
+validation,logistic_base_error,helpful,higher means event more likely,300,52,0.5681606699751861,nan,nan,
+validation,logistic_base_error,harmful,higher means event more likely,300,25,0.6692363636363636,nan,nan,
+validation,logistic_base_error,relative_gain,higher means more positive expert-minus-base gain,300,,,,,-0.013621747940710995
+validation,logistic_relative_gain,helpful,higher means event more likely,300,52,0.5684708436724566,nan,nan,
+validation,logistic_relative_gain,harmful,higher means event more likely,300,25,0.6096,nan,nan,
+validation,logistic_relative_gain,relative_gain,higher means more positive expert-minus-base gain,300,,,,,0.05172877908476097
+validation,ridge_relative_gain,helpful,higher means event more likely,300,52,0.5494727047146402,nan,nan,
+validation,ridge_relative_gain,harmful,higher means event more likely,300,25,0.38894545454545454,nan,nan,
+validation,ridge_relative_gain,relative_gain,higher means more positive expert-minus-base gain,300,,,,,-0.00404320639173059
+validation,mlp_relative_gain,helpful,higher means event more likely,300,52,0.5814981389578163,nan,nan,
+validation,mlp_relative_gain,harmful,higher means event more likely,300,25,0.5832727272727273,nan,nan,
+validation,mlp_relative_gain,relative_gain,higher means more positive expert-minus-base gain,300,,,,,-0.018142644999819744
+test,base_uncertainty,base_error,higher means event more likely,400,206,0.6864177759983986,0.6331818413044312,0.7373614759224516,
+test,base_uncertainty,helpful,higher means event more likely,400,72,0.7097306910569106,0.6452820419103313,0.7707406235116817,
+test,base_uncertainty,harmful,higher means event more likely,400,35,0.6139334637964775,0.53934839178021,0.6877709367885022,
+test,base_uncertainty,relative_gain,higher means more positive expert-minus-base gain,400,,,,,0.16096163331502925
+test,logistic_base_error,base_error,higher means event more likely,400,206,0.6263887498748874,0.5699513572714225,0.6823403250922425,
+test,logistic_base_error,helpful,higher means event more likely,400,72,0.5968834688346883,0.5223049246692756,0.6676261612438271,
+test,logistic_base_error,harmful,higher means event more likely,400,35,0.5418395303326811,0.4374435172167692,0.6396423110708825,
+test,logistic_base_error,relative_gain,higher means more positive expert-minus-base gain,400,,,,,0.07982550861540613
+test,logistic_relative_gain,helpful,higher means event more likely,400,72,0.5827828590785907,0.5047972769946856,0.6595843644608441,
+test,logistic_relative_gain,harmful,higher means event more likely,400,35,0.46833659491193735,0.36617759937861766,0.5707080433306999,
+test,logistic_relative_gain,relative_gain,higher means more positive expert-minus-base gain,400,,,,,-0.0517635886023019
+test,ridge_relative_gain,helpful,higher means event more likely,400,72,0.5743563685636857,0.49943662652932924,0.6479013146917849,
+test,ridge_relative_gain,harmful,higher means event more likely,400,35,0.4200391389432485,0.31300567512903743,0.5228864495367304,
+test,ridge_relative_gain,relative_gain,higher means more positive expert-minus-base gain,400,,,,,0.03700745248490362
+test,mlp_relative_gain,helpful,higher means event more likely,400,72,0.6134823848238482,0.5324146868166812,0.6892058083953199,
+test,mlp_relative_gain,harmful,higher means event more likely,400,35,0.4802348336594912,0.3797201197145581,0.5877595100869064,
+test,mlp_relative_gain,relative_gain,higher means more positive expert-minus-base gain,400,,,,,-0.017972365969039006

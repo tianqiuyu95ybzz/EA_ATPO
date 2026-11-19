@@ -1,0 +1,74 @@
+{
+  "status": "built_from_existing_public_multiturn_pilot_states",
+  "source": {
+    "pilot_public_states": "experiments/real_case_pilot_20261103/outputs/full/pilot_public_states.jsonl",
+    "pilot_public_states_sha256": "c2d77685dc3d6a82926fb2a7545dc4bfabd16df98e9fea3ca74ab4a170f8c507",
+    "pilot_trajectories": "experiments/real_case_pilot_20261103/outputs/full/pilot_trajectories.jsonl",
+    "pilot_trajectories_sha256": "9ab625088db8beeae74fa6f314013dbf6b78499e133d114cfee0407e2ac036df",
+    "frozen_case_split": "experiments/ea_atpo_value_router_20261105/artifacts/case_split.json",
+    "frozen_case_split_sha256": "b55d889a713b2b1d32afc25d89aaf9205891a1ee5fbaae470702ff31a9f81267",
+    "fresh_holdout_selection_sha256": "13ed6251d05a77f016746d44a3a13d1a48271c7eeeb9395caecca35469c7a005"
+  },
+  "case_split": {
+    "train": {
+      "cases": 70,
+      "states": 205,
+      "cases_sha256": "777316c15b6ad4af972afee8ad7d2c48aa673d117630aa262e10a643db896a5e"
+    },
+    "validation": {
+      "cases": 15,
+      "states": 42,
+      "cases_sha256": "197fd40ee459d81101b247524993a2eede5595bd8fb43a7b363daf37314e4cc3"
+    },
+    "internal_test": {
+      "cases": 15,
+      "states": 44,
+      "cases_sha256": "191f0a92af6569eb26cbcafa661bf4d353ef2a6a28edc2a153ef2e05f94c54b3"
+    }
+  },
+  "total": {
+    "cases": 100,
+    "states": 291,
+    "trajectory_rollouts": 3492,
+    "holdout_cases": 400
+  },
+  "dialogue_turn_counts": {
+    "0": 100,
+    "1": 99,
+    "2": 92
+  },
+  "files": {
+    "train": {
+      "path": "train_sft.jsonl",
+      "rows": 205,
+      "sha256": "d59681b2d00f4357794e0c2f69c719e1aa787a772ff96bf545ef46792192f3f3"
+    },
+    "validation": {
+      "path": "validation_sft.jsonl",
+      "rows": 42,
+      "sha256": "e9c66de6d9249d8ffd717b9ea411702de58ecf6220fd3739dc90663183439372"
+    },
+    "internal_test": {
+      "path": "internal_test_sft.jsonl",
+      "rows": 44,
+      "sha256": "4491d9acf031dd4c5c2cd8286fc573ff055551684d412e18c674ee900a2abae7"
+    }
+  },
+  "input_boundary": {
+    "state_source": "pilot_public_states.initial_messages[user] + public dialogue messages only",
+    "public_dialogue_actor_mapping_verified": "assistant/base -> Clinician question; user/patient -> Patient reply",
+    "hidden_atomic_facts_read": false,
+    "gold_read_for_input": false,
+    "gold_used_only_as_assistant_target": true,
+    "future_patient_replies_or_action_traces_in_input": false,
+    "expert_advice_or_base_final_answers_in_input": false
+  },
+  "holdout": {
+    "selection_status": "frozen_before_sft_checkpoint_selection",
+    "fresh_holdout_cases": 400,
+    "source_row_overlap_with_dialogue_cases": 0,
+    "gold_materialized": false
+  },
+  "target_protocol": "Expert Final Answer: A-D; assistant-only causal cross-entropy",
+  "no_synthetic_or_rephrased_dialogue": true
+}

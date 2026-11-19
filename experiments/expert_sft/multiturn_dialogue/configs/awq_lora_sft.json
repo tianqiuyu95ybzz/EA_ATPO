@@ -1,0 +1,64 @@
+{
+  "experiment": "EA-ATPO multi-turn dialogue Qwen3-32B-AWQ LoRA Expert",
+  "seed": 20261119,
+  "model": {
+    "repo_id": "Qwen/Qwen3-32B-AWQ",
+    "huggingface_revision": "0499c3ac83fdef8810b907a23894ba91e95eddd8",
+    "modelscope_revision": "c14568581d436715d61d40f471dee3cac433d1d9",
+    "local_path": "../EA_ATPO/experiments/real_case_pilot_20261103/assets/models/Qwen3-32B-AWQ",
+    "source_lock": "experiments/expert_sft/multiturn_dialogue/data/qwen3_32b_awq_source_lock.json",
+    "expected_model_type": "qwen3",
+    "expected_architecture": "Qwen3ForCausalLM",
+    "quant_method": "awq",
+    "training_backend": "torch_awq",
+    "dtype": "float16",
+    "tokenizer_from_base_model": true,
+    "trust_remote_code": false
+  },
+  "data": {
+    "train": "experiments/expert_sft/multiturn_dialogue/data/train_sft.jsonl",
+    "validation": "experiments/expert_sft/multiturn_dialogue/data/validation_sft.jsonl",
+    "internal_test": "experiments/expert_sft/multiturn_dialogue/data/internal_test_sft.jsonl",
+    "max_sequence_length": 4096,
+    "assistant_only_loss": true,
+    "gold_is_target_only": true,
+    "future_dialogue_is_input": false
+  },
+  "lora": {
+    "r": 16,
+    "alpha": 32,
+    "dropout": 0.05,
+    "target_modules": ["q_proj", "k_proj", "v_proj", "o_proj", "gate_proj", "up_proj", "down_proj"],
+    "bias": "none"
+  },
+  "training": {
+    "epochs": 3,
+    "learning_rate": 0.0001,
+    "per_device_batch_size": 1,
+    "gradient_accumulation_steps": 8,
+    "gradient_checkpointing": true,
+    "max_grad_norm": 1.0,
+    "weight_decay": 0.01,
+    "scheduler": "cosine",
+    "warmup_ratio": 0.03,
+    "optimizer": "adamw_torch",
+    "dataloader_workers": 0,
+    "selection_metric": "minimum_validation_assistant_token_cross_entropy",
+    "checkpoint_each_epoch": true
+  },
+  "resources": {
+    "excluded_physical_gpus": [1, 7],
+    "minimum_free_mib_before_load": 150000,
+    "maximum_utilization_pct_before_load": 20,
+    "require_zero_other_compute_processes": true,
+    "minimum_free_mib_after_load_and_preflight": 32768,
+    "single_gpu_logical_device": "cuda:0"
+  },
+  "outputs": {
+    "root": "experiments/expert_sft/multiturn_dialogue/checkpoints/awq_lora",
+    "smoke": "experiments/expert_sft/multiturn_dialogue/checkpoints/awq_lora/smoke",
+    "formal": "experiments/expert_sft/multiturn_dialogue/checkpoints/awq_lora/formal",
+    "logs": "experiments/expert_sft/multiturn_dialogue/logs",
+    "cache": "experiments/expert_sft/multiturn_dialogue/.cache"
+  }
+}

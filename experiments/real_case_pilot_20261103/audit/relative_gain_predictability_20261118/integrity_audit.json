@@ -1,0 +1,137 @@
+{
+  "split_counts": {
+    "train": 1000,
+    "validation": 300,
+    "test": 400
+  },
+  "train_unique": {
+    "unique_case_id": 1000,
+    "unique_case_hash": 1000,
+    "unique_prompt_hash": 1000
+  },
+  "validation_unique": {
+    "unique_case_id": 300,
+    "unique_case_hash": 300,
+    "unique_prompt_hash": 300
+  },
+  "test_unique": {
+    "unique_case_id": 400,
+    "unique_case_hash": 400,
+    "unique_prompt_hash": 400
+  },
+  "all_case_hashes_unique": true,
+  "all_prompt_hashes_unique": true,
+  "train_validation_test_overlap": false,
+  "paired_rows": 1700,
+  "base_trajectory_rows": 1700,
+  "expert_trajectory_rows": 1700,
+  "trajectory_pairing": {
+    "train": {
+      "missing_base": 0,
+      "missing_expert": 0,
+      "identity_mismatch": 0,
+      "base_label_mismatch": 0,
+      "expert_label_mismatch": 0
+    },
+    "validation": {
+      "missing_base": 0,
+      "missing_expert": 0,
+      "identity_mismatch": 0,
+      "base_label_mismatch": 0,
+      "expert_label_mismatch": 0
+    },
+    "test": {
+      "missing_base": 0,
+      "missing_expert": 0,
+      "identity_mismatch": 0,
+      "base_label_mismatch": 0,
+      "expert_label_mismatch": 0
+    }
+  },
+  "uncertainty_audit": {
+    "valid_probability_rows": 1697,
+    "uncertainty_invalid_rows": 3,
+    "probability_sum_failures": 0,
+    "entropy_formula_mismatches": 0,
+    "margin_formula_mismatches": 0
+  },
+  "policy_lock_written_before_test_read": true,
+  "test_opened_by_this_script_after_lock": true,
+  "base_and_expert_use_same_gold": "verified in frozen producer source: one Gold per built case reused for both correct comparisons",
+  "source_prompt_audit": {
+    "source_path": "/pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO/experiments/real_case_pilot_20261103/assets/train.pilot.parquet",
+    "source_sha256": "c586d8653460e8bef102f7c6231a1356dbfa88b5b35c3538219724efd4c1a5c5",
+    "source_row_count": 14256,
+    "public_feature_reconstruction": {
+      "log_public_chars": {
+        "match": 1700,
+        "n": 1700
+      },
+      "log_public_words": {
+        "match": 1700,
+        "n": 1700
+      },
+      "question_marks": {
+        "match": 1700,
+        "n": 1700
+      },
+      "digit_count": {
+        "match": 1700,
+        "n": 1700
+      },
+      "clinical_lexicon_count": {
+        "match": 1700,
+        "n": 1700
+      }
+    },
+    "option_line_pattern_audit": {
+      "train": {
+        "legacy_ascii_rows_with_matches": 0,
+        "expanded_pattern_rows_with_matches": 0,
+        "any_pattern_rows_with_matches": 0,
+        "rows_with_all_four_labels": 0,
+        "n": 1000
+      },
+      "validation": {
+        "legacy_ascii_rows_with_matches": 0,
+        "expanded_pattern_rows_with_matches": 0,
+        "any_pattern_rows_with_matches": 0,
+        "rows_with_all_four_labels": 0,
+        "n": 300
+      },
+      "test": {
+        "legacy_ascii_rows_with_matches": 0,
+        "expanded_pattern_rows_with_matches": 0,
+        "any_pattern_rows_with_matches": 0,
+        "rows_with_all_four_labels": 0,
+        "n": 400
+      }
+    },
+    "prompt_text_saved_or_printed": false,
+    "test_prompts_used_for_model_or_threshold_selection": false
+  },
+  "prior_test_reuse": "same frozen 400-case holdout was evaluated in the prior report; this is not a new independent holdout",
+  "uncertainty_audit_by_split": {
+    "train": {
+      "valid_probability_rows": 997,
+      "uncertainty_invalid_rows": 3,
+      "probability_sum_failures": 0,
+      "entropy_formula_mismatches": 0,
+      "margin_formula_mismatches": 0
+    },
+    "validation": {
+      "valid_probability_rows": 300,
+      "uncertainty_invalid_rows": 0,
+      "probability_sum_failures": 0,
+      "entropy_formula_mismatches": 0,
+      "margin_formula_mismatches": 0
+    },
+    "test": {
+      "valid_probability_rows": 400,
+      "uncertainty_invalid_rows": 0,
+      "probability_sum_failures": 0,
+      "entropy_formula_mismatches": 0,
+      "margin_formula_mismatches": 0
+    }
+  }
+}

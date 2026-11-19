@@ -1,0 +1,10 @@
+# Dedicated AWQ-LoRA environment. Install PyTorch from the CUDA wheel index
+# matching the host driver first; never install into the serving environment.
+# GPTQModel's official HF LoRA bridge requires a current Transformers/Optimum
+# stack and the trainable torch_awq backend. Existing project .venv is too old.
+gptqmodel[hf]==7.12.0
+transformers==5.22.2
+peft==0.21.3
+accelerate==1.15.0
+optimum==2.3.0
+safetensors==0.8.0

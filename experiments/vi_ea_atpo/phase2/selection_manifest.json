@@ -1,0 +1,43 @@
+{
+  "experiment": "VI-EA-ATPO active information acquisition pilot case selection",
+  "created_at_utc": "2026-11-18T12:00:47+00:00",
+  "repo_head": "2aebfa8ce33db872b9b4c204377a4a11cfb09c97",
+  "sample_seed": 20261118,
+  "source_train_path": "/pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO/experiments/real_case_pilot_20261103/assets/train.pilot.parquet",
+  "source_train_sha256": "c586d8653460e8bef102f7c6231a1356dbfa88b5b35c3538219724efd4c1a5c5",
+  "source_train_rows": 14256,
+  "attempt09_development_rows_excluded_by_identity": 20,
+  "historical_scan_roots": [
+    "/pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO_V1/experiments",
+    "/pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO/experiments"
+  ],
+  "historical_scan_counts": {
+    "files": 95,
+    "rows": 44264,
+    "selection_manifests": 3,
+    "sample_selection_manifests": 1,
+    "sample_selection_rows_excluded": 250
+  },
+  "historical_unique_public_hash_count": 9687,
+  "historical_train_source_index_count": 3095,
+  "ambiguous_source_index_count": 200,
+  "exclusion_counts": {
+    "historical_source_index": 44,
+    "ambiguous_source_index": 5,
+    "historical_hash_or_prompt": 4,
+    "duplicate_within_new_selection": 0
+  },
+  "selected": {
+    "train": 100,
+    "validation": 50,
+    "test": 0
+  },
+  "selection_rule": "uniform seeded sample from ATPO train rows after historical case-index/hash exclusion; no outcome labels or uncertainty used",
+  "previous_attempt04_400_holdout_excluded": true,
+  "official_test_used": false,
+  "case_ids_sha256": "1112b1c997a489d4149ed50d662e522313bcf00500f50535597f2483419042b6",
+  "prompt_hashes_sha256": "fb349d28df943220f4aac18bcd726ff4d3df9da6cf3497479e63837822533a39",
+  "pilot_cases_csv_sha256": "9dc7863a26e94fb3909690741e4c769e1c9b476afb5d6a98ea7007440488f875",
+  "case_ids_are_prompt_hashes": true,
+  "gold_or_atomic_facts_stored": false
+}

@@ -1,0 +1,82 @@
+{
+  "status": "passed",
+  "created_at_utc": "2026-11-18T12:12:43+00:00",
+  "source_data_path": "/pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO/experiments/real_case_pilot_20261103/assets/train.pilot.parquet",
+  "source_data_sha256": "c586d8653460e8bef102f7c6231a1356dbfa88b5b35c3538219724efd4c1a5c5",
+  "split_counts": {
+    "train": 1000,
+    "validation": 300,
+    "test": 400
+  },
+  "case_ids_unique_across_splits": true,
+  "prompt_hashes_unique_across_splits": true,
+  "source_indices_unique_across_splits": true,
+  "outcomes_recomputed_from_shared_gold": true,
+  "relative_gain_recomputed_as_expert_minus_base_correct": true,
+  "four_cell_counts": {
+    "train": {
+      "base_wrong_expert_wrong": 367,
+      "base_wrong_expert_correct_helpful": 155,
+      "base_correct_expert_wrong_harmful": 105,
+      "both_correct": 373
+    },
+    "validation": {
+      "base_wrong_expert_wrong": 115,
+      "base_wrong_expert_correct_helpful": 52,
+      "base_correct_expert_wrong_harmful": 25,
+      "both_correct": 108
+    },
+    "test": {
+      "base_wrong_expert_wrong": 134,
+      "base_wrong_expert_correct_helpful": 72,
+      "base_correct_expert_wrong_harmful": 35,
+      "both_correct": 159
+    }
+  },
+  "parse_failures_by_split": {
+    "train": {
+      "base": 3,
+      "expert": 38
+    },
+    "validation": {
+      "base": 0,
+      "expert": 13
+    },
+    "test": {
+      "base": 0,
+      "expert": 15
+    }
+  },
+  "test_is_official_test": false,
+  "test_holdout_previously_examined": true,
+  "inference_performed": false,
+  "paired_accuracy_by_split": {
+    "train": {
+      "base_accuracy": 0.478,
+      "expert_accuracy": 0.528,
+      "paired_accuracy_gain": 0.05,
+      "paired_gain_bootstrap_ci95": [
+        0.019,
+        0.081
+      ]
+    },
+    "validation": {
+      "base_accuracy": 0.44333333333333336,
+      "expert_accuracy": 0.5333333333333333,
+      "paired_accuracy_gain": 0.09,
+      "paired_gain_bootstrap_ci95": [
+        0.03333333333333333,
+        0.14666666666666667
+      ]
+    },
+    "test": {
+      "base_accuracy": 0.485,
+      "expert_accuracy": 0.5775,
+      "paired_accuracy_gain": 0.0925,
+      "paired_gain_bootstrap_ci95": [
+        0.0425,
+        0.1425
+      ]
+    }
+  }
+}

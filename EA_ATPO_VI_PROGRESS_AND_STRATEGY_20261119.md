@@ -16,3 +16,13 @@ For the maintained latest status and context-recovery prompt, see [EA_ATPO_VI_PR
 - Code and configs for the gated steps are under `experiments/expert_sft/`; no original ATPO algorithm code was modified.
 
 The current progress file is maintained incrementally. Historical result values, exact file hashes, model revisions, safety gates, service adaptation, and recovery commands are documented there.
+
+## 2026-11-19 addendum: multi-turn Expert SFT and data cleanup
+
+The current SFT approach is revised: first use the 100-case existing ATPO public-dialogue Pilot to make case-isolated multi-turn Expert targets (70/15/15 cases, 205/42/44 state samples). The earlier 1,000/300 one-turn SFT artifacts remain unchanged and are not the primary data in this revised track. Gold is only an assistant target; current public patient replies are visible, future replies and hidden atomic facts are not.
+
+The locked Qwen3-32B-AWQ becomes the first LoRA candidate using GPTQModel's `torch_awq` trainable backend. A separate Python environment and 10-step smoke script are prepared; the smoke must prove load, adapter injection, finite loss, backward, nonzero gradients, optimizer update, save and reload before formal training. If AWQ compatibility itself fails, use the pinned BF16 model fallback. No GPU/model smoke, SFT, paired model evaluation, Router, or RL has run. At the last check, all eligible GPUs were occupied; GPUs1 and7 remain forbidden.
+
+CPU tokenization/chat-template validation passed for all 291 public-state examples (maximum sequence length 346 tokens; configured cap 4096). Four groups of byte-identical reconstruction Parquets and three identical metadata/metric files were deduplicated using relative links without breaking old paths. Unique checkpoints, historical reports and active service caches were preserved. The idempotent exact-SHA cleanup script has shared 54,332,055 bytes of duplicate payload through relative links and removed two stale bytecode files (104,507 bytes); a task-created 15 MB dependency/tokenizer cache was also removed. Generated medical JSONL/Parquet remains ignored by Git; tracked source Pilot states, case split, scripts, aggregate hashes and model SHA lock suffice to reconstruct it.
+
+See `experiments/expert_sft/multiturn_dialogue/README.md` and `reports/MULTITURN_SFT_AND_DATA_RECOVERY_20261119.md` for commands and gates. GitHub handoff should include those scripts/configs/manifests/reports but omit model weights, medical case text, Gold-bearing generated JSONL, caches, and optimizer checkpoints.

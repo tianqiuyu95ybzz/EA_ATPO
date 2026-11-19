@@ -4,6 +4,7 @@
 .cache/
 .runtime/
 .tmp/
+.task_cache/
 venv/
 env/
 **/.venv/
@@ -45,10 +46,14 @@ staging/
 sources/
 **/*.jsonl
 **/*.jsonl.gz
+**/*.parquet
 *.tgz
 *.zip
 experiments/ea_atpo_v1_smoke/original_atpo/data/
 experiments/ea_atpo_v1_smoke/sgl_kernel_cu128_index*.html
+**/services/runtime/
+**/services/pids/
+**/*.pid
 
 # Keep the official ATPO checkout as an upstream dependency rather than
 # duplicating its nested Git repository in this research repository.

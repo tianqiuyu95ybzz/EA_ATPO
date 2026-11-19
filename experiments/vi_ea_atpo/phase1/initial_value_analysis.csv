@@ -1,0 +1,106 @@
+split,model,metric,value,n
+train,Base uncertainty,base_error_auroc,0.6556513409961686,1000
+train,Base uncertainty,helpful_auroc,0.6720061080358847,1000
+train,Base uncertainty,harmful_auroc,0.6349986698590051,1000
+train,Logistic Base Error,base_error_auroc,0.5960058673592075,1000
+train,Logistic Expected Relative Gain,helpful_auroc,0.6110020996373353,1000
+train,Logistic Expected Relative Gain,harmful_auroc,0.5348443735035914,1000
+train,Ridge Relative Gain,helpful_auroc,0.6124069478908188,1000
+train,Ridge Relative Gain,harmful_auroc,0.5193721734503858,1000
+train,InitialDeferralValueEstimator,relative_gain_spearman,0.08003435858436915,1000
+train,InitialDeferralValueEstimator,relative_gain_mae,0.29105597067252814,1000
+train,InitialDeferralValueEstimator,relative_gain_rmse,0.5049494842087048,1000
+train,InitialDeferralValueEstimator,helpful_brier,0.12820287821903412,1000
+train,InitialDeferralValueEstimator,helpful_ece_10bin,0.002778855841370122,1000
+train,InitialDeferralValueEstimator,harmful_brier,0.09344498156517751,1000
+train,InitialDeferralValueEstimator,harmful_ece_10bin,0.011115149862855337,1000
+validation,Base uncertainty,base_error_auroc,0.6992931430372338,300
+validation,Base uncertainty,helpful_auroc,0.6341501240694789,300
+validation,Base uncertainty,harmful_auroc,0.6728727272727273,300
+validation,Logistic Base Error,base_error_auroc,0.6105533294313629,300
+validation,Logistic Expected Relative Gain,helpful_auroc,0.5659894540942928,300
+validation,Logistic Expected Relative Gain,harmful_auroc,0.6018909090909091,300
+validation,Ridge Relative Gain,helpful_auroc,0.55924317617866,300
+validation,Ridge Relative Gain,harmful_auroc,0.6048,300
+validation,InitialDeferralValueEstimator,relative_gain_spearman,0.01754276792543865,300
+validation,InitialDeferralValueEstimator,relative_gain_mae,0.2891762387238971,300
+validation,InitialDeferralValueEstimator,relative_gain_rmse,0.5009268971308976,300
+validation,InitialDeferralValueEstimator,helpful_brier,0.14262581388973258,300
+validation,InitialDeferralValueEstimator,helpful_ece_10bin,0.02181248892266106,300
+validation,InitialDeferralValueEstimator,harmful_brier,0.07610816212947596,300
+validation,InitialDeferralValueEstimator,harmful_ece_10bin,0.025995587279898365,300
+test,Base uncertainty,base_error_auroc,0.6864177759983986,400
+test,Base uncertainty,helpful_auroc,0.7097306910569106,400
+test,Base uncertainty,harmful_auroc,0.6139334637964775,400
+test,Logistic Base Error,base_error_auroc,0.6033179861875688,400
+test,Logistic Expected Relative Gain,helpful_auroc,0.5565718157181572,400
+test,Logistic Expected Relative Gain,harmful_auroc,0.5823874755381605,400
+test,Ridge Relative Gain,helpful_auroc,0.5832909891598916,400
+test,Ridge Relative Gain,harmful_auroc,0.5904500978473581,400
+test,InitialDeferralValueEstimator,relative_gain_spearman,0.01723049411189708,400
+test,InitialDeferralValueEstimator,relative_gain_mae,0.29535008393862094,400
+test,InitialDeferralValueEstimator,relative_gain_rmse,0.5097921611080156,400
+test,InitialDeferralValueEstimator,helpful_brier,0.14512929426149238,400
+test,InitialDeferralValueEstimator,helpful_ece_10bin,0.02929348147685137,400
+test,InitialDeferralValueEstimator,harmful_brier,0.08066138472543152,400
+test,InitialDeferralValueEstimator,harmful_ece_10bin,0.02283060877533095,400
+train,InitialDeferralValueEstimator,utility_cost_0.00,0.53,1000
+train,Base Uncertainty,utility_cost_0.00,0.528,1000
+train,Ridge Relative Gain,utility_cost_0.00,0.532,1000
+validation,InitialDeferralValueEstimator,utility_cost_0.00,0.54,300
+validation,Base Uncertainty,utility_cost_0.00,0.5333333333333333,300
+validation,Ridge Relative Gain,utility_cost_0.00,0.54,300
+test,InitialDeferralValueEstimator,utility_cost_0.00,0.57,400
+test,Base Uncertainty,utility_cost_0.00,0.575,400
+test,Ridge Relative Gain,utility_cost_0.00,0.57,400
+test,Hindsight Oracle (upper bound),utility_cost_0.00,0.665,400
+train,InitialDeferralValueEstimator,utility_cost_0.05,0.4853,1000
+train,Base Uncertainty,utility_cost_0.05,0.48725,1000
+train,Ridge Relative Gain,utility_cost_0.05,0.48685,1000
+validation,InitialDeferralValueEstimator,utility_cost_0.05,0.49150000000000016,300
+validation,Base Uncertainty,utility_cost_0.05,0.4901666666666667,300
+validation,Ridge Relative Gain,utility_cost_0.05,0.49416666666666675,300
+test,InitialDeferralValueEstimator,utility_cost_0.05,0.509375,400
+test,Base Uncertainty,utility_cost_0.05,0.528875,400
+test,Ridge Relative Gain,utility_cost_0.05,0.525,400
+test,Hindsight Oracle (upper bound),utility_cost_0.05,0.6559999999999999,400
+train,InitialDeferralValueEstimator,utility_cost_0.10,0.48020000000000007,1000
+train,Base Uncertainty,utility_cost_0.10,0.4795,1000
+train,Ridge Relative Gain,utility_cost_0.10,0.48610000000000003,1000
+validation,InitialDeferralValueEstimator,utility_cost_0.10,0.456,300
+validation,Base Uncertainty,utility_cost_0.10,0.45166666666666666,300
+validation,Ridge Relative Gain,utility_cost_0.10,0.44899999999999995,300
+test,InitialDeferralValueEstimator,utility_cost_0.10,0.4985000000000001,400
+test,Base Uncertainty,utility_cost_0.10,0.50475,400
+test,Ridge Relative Gain,utility_cost_0.10,0.4935,400
+test,Hindsight Oracle (upper bound),utility_cost_0.10,0.647,400
+train,InitialDeferralValueEstimator,utility_cost_0.20,0.4756,1000
+train,Base Uncertainty,utility_cost_0.20,0.4726,1000
+train,Ridge Relative Gain,utility_cost_0.20,0.478,1000
+validation,InitialDeferralValueEstimator,utility_cost_0.20,0.4453333333333333,300
+validation,Base Uncertainty,utility_cost_0.20,0.44399999999999995,300
+validation,Ridge Relative Gain,utility_cost_0.20,0.44333333333333336,300
+test,InitialDeferralValueEstimator,utility_cost_0.20,0.49150000000000005,400
+test,Base Uncertainty,utility_cost_0.20,0.498,400
+test,Ridge Relative Gain,utility_cost_0.20,0.485,400
+test,Hindsight Oracle (upper bound),utility_cost_0.20,0.6289999999999999,400
+train,InitialDeferralValueEstimator,utility_cost_0.40,0.478,1000
+train,Base Uncertainty,utility_cost_0.40,0.478,1000
+train,Ridge Relative Gain,utility_cost_0.40,0.478,1000
+validation,InitialDeferralValueEstimator,utility_cost_0.40,0.44333333333333336,300
+validation,Base Uncertainty,utility_cost_0.40,0.44333333333333336,300
+validation,Ridge Relative Gain,utility_cost_0.40,0.44333333333333336,300
+test,InitialDeferralValueEstimator,utility_cost_0.40,0.485,400
+test,Base Uncertainty,utility_cost_0.40,0.485,400
+test,Ridge Relative Gain,utility_cost_0.40,0.485,400
+test,Hindsight Oracle (upper bound),utility_cost_0.40,0.593,400
+train,InitialDeferralValueEstimator,utility_cost_0.60,0.478,1000
+train,Base Uncertainty,utility_cost_0.60,0.478,1000
+train,Ridge Relative Gain,utility_cost_0.60,0.478,1000
+validation,InitialDeferralValueEstimator,utility_cost_0.60,0.44333333333333336,300
+validation,Base Uncertainty,utility_cost_0.60,0.44333333333333336,300
+validation,Ridge Relative Gain,utility_cost_0.60,0.44333333333333336,300
+test,InitialDeferralValueEstimator,utility_cost_0.60,0.485,400
+test,Base Uncertainty,utility_cost_0.60,0.485,400
+test,Ridge Relative Gain,utility_cost_0.60,0.485,400
+test,Hindsight Oracle (upper bound),utility_cost_0.60,0.557,400

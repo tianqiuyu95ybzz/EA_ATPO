@@ -1,0 +1,58 @@
+{
+  "status": "metadata_bundle_ready_for_version_control",
+  "source_repository": "https://github.com/Quark-Medical/ATPO",
+  "source_commit": "25af83688c06917f94245a4db06be7d0924c090c",
+  "data_generation": {
+    "script": "experiments/expert_sft/multiturn_dialogue/scripts/build_multiturn_sft_dataset.py",
+    "command": "python3 experiments/expert_sft/multiturn_dialogue/scripts/build_multiturn_sft_dataset.py --output-dir experiments/expert_sft/multiturn_dialogue/data/rebuilt_YYYYMMDD",
+    "source_public_states": "experiments/real_case_pilot_20261103/outputs/full/pilot_public_states.jsonl",
+    "source_rollouts": "experiments/real_case_pilot_20261103/outputs/full/pilot_trajectories.jsonl",
+    "source_case_split": "experiments/ea_atpo_value_router_20261105/artifacts/case_split.json",
+    "generated_examples": 291,
+    "train_cases": 70,
+    "validation_cases": 15,
+    "internal_test_cases": 15,
+    "generated_jsonl_sha256": {
+      "train": "d59681b2d00f4357794e0c2f69c719e1aa787a772ff96bf545ef46792192f3f3",
+      "validation": "e9c66de6d9249d8ffd717b9ea411702de58ecf6220fd3739dc90663183439372",
+      "internal_test": "4491d9acf031dd4c5c2cd8286fc573ff055551684d412e18c674ee900a2abae7"
+    },
+    "text_data_intentionally_not_versioned": "Source repository lists adapted third-party medical benchmarks but no explicit dataset redistribution license was found. Source data and generated prompts remain local; the tracked source JSONL plus builder reconstruct them."
+  },
+  "model": {
+    "candidate_awq": "Qwen/Qwen3-32B-AWQ",
+    "huggingface_revision": "0499c3ac83fdef8810b907a23894ba91e95eddd8",
+    "modelscope_revision": "c14568581d436715d61d40f471dee3cac433d1d9",
+    "weight_manifest": "experiments/expert_sft/multiturn_dialogue/data/qwen3_32b_awq_source_lock.json",
+    "weight_manifest_sha256": "c3016466299afca01670361bc40dc6868ff1ffe4e3d118197b164167354a3bbe",
+    "bf16_fallback": "Qwen/Qwen3-32B@9216db5781bf21249d130ec9da846c4624c16137"
+  },
+  "compatibility_test": {
+    "required_steps": [
+      "AWQ load using torch_awq",
+      "LoRA inject",
+      "forward finite loss",
+      "backward",
+      "finite nonzero LoRA gradient",
+      "optimizer update changes adapter",
+      "save adapter",
+      "reload adapter and compare exact tensors"
+    ],
+    "status": "not_run_gpu_gate_closed",
+    "reason": "At 2026-11-19 15:19 Asia/Shanghai resource snapshot, all eligible GPUs had existing compute processes and failed the memory/utilization gate; GPUs 1 and 7 are excluded."
+  },
+  "artifact_policy": {
+    "version_control": [
+      "source/config/scripts/report/data hashes/model weight hash lock/case split aggregates"
+    ],
+    "do_not_version": [
+      "medical case JSONL/Parquet prompt or gold contents",
+      "model weights",
+      "LoRA checkpoints",
+      "optimizer states",
+      "runtime caches",
+      "tokens/secrets"
+    ],
+    "all_local_artifacts_root": "experiments/expert_sft/multiturn_dialogue"
+  }
+}

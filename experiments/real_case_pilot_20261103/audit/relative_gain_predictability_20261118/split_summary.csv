@@ -1,0 +1,4 @@
+split,n,base_accuracy,base_accuracy_ci_low,base_accuracy_ci_high,expert_accuracy,expert_accuracy_ci_low,expert_accuracy_ci_high,paired_accuracy_gain,paired_gain_ci_low,paired_gain_ci_high,base_correct_expert_correct,base_correct_expert_wrong,base_wrong_expert_correct,base_wrong_expert_wrong,relative_gain_minus1,relative_gain_0,relative_gain_plus1,base_invalid,expert_invalid,expert_invalid_counted_wrong
+train,1000,0.478,0.447,0.509,0.528,0.497,0.5580249999999997,0.05,0.019,0.081,373,105,155,367,105,740,155,3,38,38
+validation,300,0.44333333333333336,0.38666666666666666,0.5,0.5333333333333333,0.4766666666666667,0.59,0.09,0.03333333333333333,0.14666666666666667,108,25,52,115,25,223,52,0,13,13
+test,400,0.485,0.435,0.5325,0.5775,0.53,0.625,0.0925,0.0425,0.145,159,35,72,134,35,293,72,0,15,15
