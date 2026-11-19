@@ -10,6 +10,8 @@ from q_dataset import build_q_dataset, q_dataset_for_state  # noqa: E402
 from run_counterfactual_pilot import direct_loopback_opener  # noqa: E402
 from v2_protocol import (  # noqa: E402
     Action,
+    ASK_QUESTION_REGEX,
+    FINAL_ANSWER_REGEX,
     PublicState,
     action_net_return,
     assert_no_privileged_payload,
@@ -19,6 +21,7 @@ from v2_protocol import (  # noqa: E402
     extend_after_ask,
     parse_answer,
     parse_question,
+    valid_ask_transition,
 )
 
 
@@ -52,15 +55,31 @@ class ProtocolTests(unittest.TestCase):
         self.assertEqual(updated.asked_count, 1)
         self.assertEqual(updated.dialogue[-1]["content"], "It began yesterday.")
         self.assertIn("Do not ask", build_base_messages(updated, Action.ANSWER, stage="after_ask")[0]["content"])
+        self.assertTrue(valid_ask_transition(self.state, updated, "When did the symptom start?", "It began yesterday."))
+        self.assertFalse(valid_ask_transition(self.state, self.state, "When did the symptom start?", "It began yesterday."))
 
     def test_action_output_parsers(self):
         self.assertEqual(parse_question("Question: When did this begin?"), "When did this begin?")
         self.assertEqual(parse_answer("Final Answer: c"), "C")
-        self.assertEqual(parse_answer("Expert Final Answer: D", expert=True), "D")
+        self.assertEqual(parse_answer("Final Answer: D"), "D")
         with self.assertRaises(ValueError):
             parse_answer("Final Answer: A plus explanation")
         with self.assertRaises(ValueError):
-            parse_answer("Final Answer: A", expert=True)
+            parse_answer("Expert Final Answer: D")
+        with self.assertRaises(ValueError):
+            parse_answer("Final Answer: None")
+
+    def test_forced_single_choice_prompts_and_generation_contracts(self):
+        base_prompt = build_base_messages(self.state, Action.ANSWER)[0]["content"]
+        self.assertIn("choose exactly one", base_prompt)
+        self.assertIn("Final Answer: <A-D>", base_prompt)
+        self.assertIn("A-D", FINAL_ANSWER_REGEX)
+        expert_prompt = build_defer_messages(self.state)[0]["content"]
+        self.assertIn("Final Answer: <A-D>", expert_prompt)
+        self.assertNotIn("Expert Final Answer", expert_prompt)
+        ask_prompt = build_base_messages(self.state, Action.ASK)[0]["content"]
+        self.assertIn("Ground the question in the visible symptoms or history", ask_prompt)
+        self.assertIn("Question:", ASK_QUESTION_REGEX)
 
     def test_base_and_expert_prompts_use_public_state_only(self):
         hidden = "A deliberately hidden fixture fact longer than twelve chars"

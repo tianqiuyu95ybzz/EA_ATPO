@@ -25,7 +25,9 @@ PROJECT_DIR = V2_DIR.parents[1]
 sys.path.insert(0, str(V2_DIR / "src"))
 from v2_protocol import (  # noqa: E402
     ACTION_ORDER,
+    ASK_QUESTION_REGEX,
     Action,
+    FINAL_ANSWER_REGEX,
     PublicState,
     action_net_return,
     assert_no_privileged_payload,
@@ -36,6 +38,7 @@ from v2_protocol import (  # noqa: E402
     parse_answer,
     parse_question,
     public_state_from_row,
+    valid_ask_transition,
 )
 
 
@@ -269,7 +272,8 @@ class APIError(RuntimeError):
 
 def chat_completion(role: str, settings: Mapping[str, Any], messages: Sequence[Mapping[str, str]], *,
                     temperature: float, top_p: float, max_tokens: int, seed: int,
-                    timeout_seconds: int, retries: int) -> dict[str, Any]:
+                    timeout_seconds: int, retries: int,
+                    structured_outputs: Mapping[str, Any] | None = None) -> dict[str, Any]:
     url = str(settings["base_url"]).rstrip("/") + "/chat/completions"
     key_env = str(settings.get("api_key_env", ""))
     key = os.environ.get(key_env, "") if key_env else ""
@@ -283,6 +287,8 @@ def chat_completion(role: str, settings: Mapping[str, Any], messages: Sequence[M
     }
     if "enable_thinking" in settings:
         payload["chat_template_kwargs"] = {"enable_thinking": bool(settings["enable_thinking"])}
+    if structured_outputs is not None:
+        payload["structured_outputs"] = dict(structured_outputs)
     encoded = json.dumps(payload, ensure_ascii=False).encode("utf-8")
     headers = {"Content-Type": "application/json"}
     if key:
@@ -299,7 +305,7 @@ def chat_completion(role: str, settings: Mapping[str, Any], messages: Sequence[M
             choice = body["choices"][0]
             content = choice.get("message", {}).get("content")
             if not isinstance(content, str):
-                raise APIError("completion content was not text")
+                raise ValueError("completion content was not text")
             usage = body.get("usage") or {}
             return {
                 "content": content,
@@ -362,6 +368,7 @@ def run_action(action: Action, state: PublicState, facts: Sequence[str], *,
     roles = config["roles"]
     trace: list[dict[str, Any]] = []
     answer: str | None = None
+    format_valid = False
     question: str | None = None
     patient_reply: str | None = None
     ask_novel_text: bool | None = None
@@ -373,15 +380,19 @@ def run_action(action: Action, state: PublicState, facts: Sequence[str], *,
     token_usage_complete = True
     latencies: list[float] = []
     finish_reasons: list[str | None] = []
+    ask_state_transition: dict[str, Any] | None = None
+    privacy_checks = 0
     try:
         if action is Action.ANSWER:
             messages = build_base_messages(state, Action.ANSWER)
             assert_no_privileged_payload(messages, public_state=state,
                                          unrevealed_facts=safe_public_fact_values(state, facts))
+            privacy_checks += 1
             call = chat_completion(
                 "base", roles["base"], messages, temperature=inference["temperature"], top_p=inference["top_p"],
                 max_tokens=inference["answer_max_tokens"], seed=rollout_seed,
                 timeout_seconds=inference["timeout_seconds"], retries=inference["api_retries"],
+                structured_outputs={"regex": FINAL_ANSWER_REGEX},
             )
             calls["base"] += 1
             attempts["base"] += 1
@@ -392,15 +403,18 @@ def run_action(action: Action, state: PublicState, facts: Sequence[str], *,
             latencies.append(call["latency_seconds"])
             finish_reasons.append(call["finish_reason"])
             answer = parse_answer(call["content"])
+            format_valid = True
 
         elif action is Action.ASK:
             messages = build_base_messages(state, Action.ASK)
             assert_no_privileged_payload(messages, public_state=state,
                                          unrevealed_facts=safe_public_fact_values(state, facts))
+            privacy_checks += 1
             ask_call = chat_completion(
                 "base", roles["base"], messages, temperature=inference["temperature"], top_p=inference["top_p"],
                 max_tokens=inference["ask_max_tokens"], seed=rollout_seed,
                 timeout_seconds=inference["timeout_seconds"], retries=inference["api_retries"],
+                structured_outputs={"regex": ASK_QUESTION_REGEX},
             )
             calls["base"] += 1
             attempts["base"] += 1
@@ -438,13 +452,31 @@ def run_action(action: Action, state: PublicState, facts: Sequence[str], *,
             finish_reasons.append(patient_call["finish_reason"])
 
             continued_state = extend_after_ask(state, question, patient_reply)
+            transition_valid = valid_ask_transition(state, continued_state, question, patient_reply)
+            ask_state_transition = {
+                "before_digest": state.digest,
+                "after_digest": continued_state.digest,
+                "digest_changed": state.digest != continued_state.digest,
+                "structurally_valid": transition_valid,
+                "asked_count_before": state.asked_count,
+                "asked_count_after": continued_state.asked_count,
+                "new_public_turns": [
+                    {"role": "assistant", "content": f"Question: {question}"},
+                    {"role": "user", "content": patient_reply.strip()},
+                ],
+                "public_messages_after": continued_state.visible_messages,
+            }
             continue_messages = build_base_messages(continued_state, Action.ANSWER, stage="after_ask")
             assert_no_privileged_payload(continue_messages, public_state=continued_state,
                                          unrevealed_facts=safe_public_fact_values(continued_state, facts))
+            privacy_checks += 1
+            if not transition_valid:
+                raise ValueError("invalid_ask_state_transition")
             final_call = chat_completion(
                 "base", roles["base"], continue_messages, temperature=inference["temperature"], top_p=inference["top_p"],
                 max_tokens=inference["answer_max_tokens"], seed=rollout_seed,
                 timeout_seconds=inference["timeout_seconds"], retries=inference["api_retries"],
+                structured_outputs={"regex": FINAL_ANSWER_REGEX},
             )
             calls["base"] += 1
             attempts["base"] += 1
@@ -455,15 +487,18 @@ def run_action(action: Action, state: PublicState, facts: Sequence[str], *,
             latencies.append(final_call["latency_seconds"])
             finish_reasons.append(final_call["finish_reason"])
             answer = parse_answer(final_call["content"])
+            format_valid = True
 
         elif action is Action.DEFER:
             messages = build_defer_messages(state)
             assert_no_privileged_payload(messages, public_state=state,
                                          unrevealed_facts=safe_public_fact_values(state, facts))
+            privacy_checks += 1
             call = chat_completion(
                 "expert", roles["expert"], messages, temperature=inference["temperature"], top_p=inference["top_p"],
                 max_tokens=inference["defer_max_tokens"], seed=rollout_seed,
                 timeout_seconds=inference["timeout_seconds"], retries=inference["api_retries"],
+                structured_outputs={"regex": FINAL_ANSWER_REGEX},
             )
             calls["expert"] += 1
             attempts["expert"] += 1
@@ -473,7 +508,8 @@ def run_action(action: Action, state: PublicState, facts: Sequence[str], *,
             usage.update(prompt=call["prompt_tokens"], completion=call["completion_tokens"])
             latencies.append(call["latency_seconds"])
             finish_reasons.append(call["finish_reason"])
-            answer = parse_answer(call["content"], expert=True)
+            answer = parse_answer(call["content"])
+            format_valid = True
         else:  # pragma: no cover - enum exhaustiveness guard
             raise ValueError(f"unsupported action {action}")
     except APIError as exc:
@@ -494,6 +530,7 @@ def run_action(action: Action, state: PublicState, facts: Sequence[str], *,
         "continuation_policy_id": config["policy"]["continuation_policy_id"],
         "final_answer": answer,
         "valid": valid,
+        "format_valid": format_valid,
         "failure_reason": failure_reason,
         "ask_count": int(action is Action.ASK),
         "defer_count": int(action is Action.DEFER),
@@ -510,6 +547,8 @@ def run_action(action: Action, state: PublicState, facts: Sequence[str], *,
         "total_tokens": int(usage["prompt"] + usage["completion"]),
         "latency_seconds": float(sum(latencies)),
         "finish_reasons": finish_reasons,
+        "ask_state_transition": ask_state_transition,
+        "prompt_privacy_checks_passed": privacy_checks,
         "trace": trace,
     }
 
@@ -542,6 +581,8 @@ def run_selected_states(config: Mapping[str, Any], states: Sequence[Mapping[str,
                         "api_attempt_counts": {}, "token_usage_complete": True,
                         "ask_response_nonempty": False, "ask_response_novel_text": None,
                         "ask_response_unknown": None, "finish_reasons": [],
+                        "format_valid": False, "ask_state_transition": None,
+                        "prompt_privacy_checks_passed": 0,
                     }
                 else:
                     seed_material = f"{config['seed']}:{state.state_id}:{action.value}:0".encode("utf-8")
@@ -604,6 +645,7 @@ def run_selected_states(config: Mapping[str, Any], states: Sequence[Mapping[str,
                     "sample_count": 1,
                     "valid_sample_count": int(bool(result["valid"])),
                     "valid": bool(result["valid"]),
+                    "format_valid": bool(result["format_valid"]),
                     "failure_reason": result["failure_reason"],
                     "prompt_tokens": result["prompt_tokens"],
                     "completion_tokens": result["completion_tokens"],
@@ -613,6 +655,8 @@ def run_selected_states(config: Mapping[str, Any], states: Sequence[Mapping[str,
                     "api_attempt_counts": result["api_attempt_counts"],
                     "token_usage_complete": result["token_usage_complete"],
                     "finish_reasons": result["finish_reasons"],
+                    "ask_state_transition": result["ask_state_transition"],
+                    "prompt_privacy_checks_passed": result["prompt_privacy_checks_passed"],
                     "trace": result["trace"],
                 }
                 key = (state.case_id, state.state_id, result["action"])
@@ -633,48 +677,131 @@ def run_selected_states(config: Mapping[str, Any], states: Sequence[Mapping[str,
     }
 
 
-def run_role_smoke(config: Mapping[str, Any], state_row: Mapping[str, Any],
-                   source_row: Mapping[str, Any], output_path: Path) -> dict[str, Any]:
-    """Exercise Base ANSWER, Base ASK -> Patient -> Base, and Expert DEFER once.
+def run_role_smoke(config: Mapping[str, Any], state_rows: Sequence[Mapping[str, Any]],
+                   source_rows: Mapping[int, Mapping[str, Any]], output_path: Path) -> dict[str, Any]:
+    """Exercise all roles on one initial state from each of 3+ frozen train cases.
 
-    This service smoke never reads or scores Gold and does not enter the pilot data file.
+    Gold is read only after all three model branches for that case finish, for scoring only.
+    Raw prompts and hidden patient-fact lists are never serialized.
     """
-    state = public_state_from_row(
-        state_row, max_asks=int(config["policy"]["max_asks_per_episode"])
-    )
-    facts = hidden_facts_for_row(source_row)
-    results = {}
-    for action in (Action.ANSWER, Action.ASK, Action.DEFER):
-        seed_material = f"{config['seed']}:service-smoke:{state.state_id}:{action.value}".encode("utf-8")
-        rollout_seed = int.from_bytes(hashlib.sha256(seed_material).digest()[:4], "big") % 2**31
-        results[action.value] = run_action(action, state, facts, config=config, rollout_seed=rollout_seed)
+    if len(state_rows) < 3:
+        raise ValueError("real-service smoke requires initial states from at least three cases")
+    cases: list[dict[str, Any]] = []
+    for state_row in state_rows:
+        source_index = int(state_row["source_row_index"])
+        source_row = source_rows[source_index]
+        state = public_state_from_row(
+            state_row, max_asks=int(config["policy"]["max_asks_per_episode"])
+        )
+        facts = hidden_facts_for_row(source_row)
+        results: dict[str, dict[str, Any]] = {}
+        for action in (Action.ANSWER, Action.ASK, Action.DEFER):
+            seed_material = (
+                f"{config['seed']}:service-smoke:{state.state_id}:{action.value}"
+            ).encode("utf-8")
+            rollout_seed = int.from_bytes(hashlib.sha256(seed_material).digest()[:4], "big") % 2**31
+            results[action.value] = run_action(
+                action, state, facts, config=config, rollout_seed=rollout_seed
+            )
 
-    ask = results["ASK"]
-    checks = {
-        "base_answer_parsed": bool(results["ANSWER"]["valid"]),
-        "expert_defer_parsed": bool(results["DEFER"]["valid"]),
-        "ask_question_parsed": bool(ask["ask_question"]),
-        "patient_reply_nonempty": bool(ask["ask_response_nonempty"]),
-        "patient_reply_received_once": int(ask["api_call_counts"].get("patient", 0)) == 1,
-        "base_answer_after_ask_parsed": bool(ask["valid"] and ask["final_answer"]),
+        # Only offline scoring sees the answer key, and only after all branch prompts completed.
+        ground_truth = answer_gold(source_row.get("ground_truth"))
+        for action_name, result in results.items():
+            correctness = (
+                float(result["final_answer"] == ground_truth) if result["valid"] else None
+            )
+            if correctness is None:
+                net = None
+            else:
+                net = action_net_return(
+                    correctness,
+                    ask_count=result["ask_count"],
+                    defer_count=result["defer_count"],
+                    ask_cost=float(config["costs"]["ask"]),
+                    defer_cost=float(config["costs"]["defer"]),
+                )
+            result["final_accuracy"] = correctness
+            result["accuracy_reward"] = net["accuracy_reward"] if net else None
+            result["return"] = net["return"] if net else None
+            result["action_cost"] = (
+                float(config["costs"]["ask"]) * result["ask_count"]
+                + float(config["costs"]["defer"]) * result["defer_count"]
+            )
+
+        ask = results["ASK"]
+        transition = ask.get("ask_state_transition") or {}
+        informative_proxy = bool(
+            ask.get("ask_response_nonempty")
+            and not ask.get("ask_response_unknown")
+            and ask.get("ask_response_novel_text")
+        )
+        checks = {
+            "base_answer_parsed": bool(results["ANSWER"]["valid"]),
+            "expert_defer_parsed": bool(results["DEFER"]["valid"]),
+            "ask_question_parsed": bool(ask["ask_question"]),
+            "patient_reply_nonempty": bool(ask["ask_response_nonempty"]),
+            "patient_reply_received_once": int(ask["api_call_counts"].get("patient", 0)) == 1,
+            "ask_state_transition_structurally_valid": bool(transition.get("structurally_valid")),
+            "base_answer_after_ask_parsed": bool(ask["valid"] and ask["final_answer"]),
+            "all_role_prompts_passed_privacy_checks": (
+                results["ANSWER"]["prompt_privacy_checks_passed"] == 1
+                and results["DEFER"]["prompt_privacy_checks_passed"] == 1
+                and ask["prompt_privacy_checks_passed"] == 2
+            ),
+        }
+        cases.append({
+            "case_id": state.case_id,
+            "state_id": state.state_id,
+            "state_index": state.state_index,
+            "public_state_digest": state.digest,
+            "checks": checks,
+            "ask_information_obtained_proxy": informative_proxy,
+            "actions": results,
+        })
+
+    aggregate_checks = {
+        "three_distinct_frozen_train_cases_tested": (
+            len({case["case_id"] for case in cases}) == len(cases) and len(cases) >= 3
+        ),
+        "base_answer_parsed_for_all_cases": all(case["checks"]["base_answer_parsed"] for case in cases),
+        "expert_defer_parsed_for_all_cases": all(case["checks"]["expert_defer_parsed"] for case in cases),
+        "ask_path_protocol_valid_for_all_cases": all(
+            all(case["checks"][key] for key in (
+                "ask_question_parsed", "patient_reply_nonempty", "patient_reply_received_once",
+                "ask_state_transition_structurally_valid", "base_answer_after_ask_parsed",
+                "all_role_prompts_passed_privacy_checks",
+            )) for case in cases
+        ),
+        "at_least_one_nonunknown_novel_patient_reply": any(
+            case["ask_information_obtained_proxy"] for case in cases
+        ),
     }
     smoke = {
         "record_type": "v2_service_role_smoke",
-        "case_id": state.case_id,
-        "state_id": state.state_id,
-        "public_state_digest": state.digest,
+        "cases_tested": len(cases),
         "continuation_policy_id": config["policy"]["continuation_policy_id"],
         "services": {
             role: {key: settings.get(key) for key in ("base_url", "model", "model_revision", "shared_service")}
             for role, settings in config["roles"].items()
         },
-        "checks": checks,
-        "passed": all(checks.values()),
-        "gold_read": False,
-        "actions": results,
+        "aggregate_checks": aggregate_checks,
+        "passed": all(aggregate_checks.values()),
+        "gold_scored_only_after_model_calls": True,
+        "gold_value_serialized": False,
+        "hidden_patient_fact_lists_serialized": False,
+        "ask_information_metric_note": (
+            "nonempty, non-unknown reply with text not already visible; a proxy for information acquisition, not a clinical semantic validation"
+        ),
+        "cases": cases,
     }
     output_path.write_text(json.dumps(smoke, ensure_ascii=False, indent=2), encoding="utf-8")
-    return {"passed": smoke["passed"], "checks": checks, "smoke_file": str(output_path)}
+    return {
+        "passed": smoke["passed"],
+        "aggregate_checks": aggregate_checks,
+        "cases_tested": len(cases),
+        "informative_ask_reply_proxy_count": sum(case["ask_information_obtained_proxy"] for case in cases),
+        "smoke_file": str(output_path),
+    }
 
 
 def make_manifest(config_path: Path, config: Mapping[str, Any], cases: int, *, execute: bool) -> dict[str, Any]:
@@ -726,15 +853,21 @@ def main() -> None:
     parser.add_argument("--cases", type=int, default=10)
     parser.add_argument("--preflight", action="store_true", help="audit inputs and configured services; do not generate")
     parser.add_argument("--execute", action="store_true", help="run real model calls after all gates pass")
-    parser.add_argument("--smoke", action="store_true", help="run one paired state across the three real service roles; no Gold scoring")
+    parser.add_argument("--smoke", action="store_true", help="compatibility alias for a 3-case real-service smoke")
+    parser.add_argument("--smoke-cases", type=int, help="run a real-service smoke on 3-5 distinct frozen training cases")
     parser.add_argument("--output-dir", type=Path)
     args = parser.parse_args()
     if args.preflight == args.execute:
         parser.error("choose exactly one of --preflight or --execute")
-    if args.smoke and not args.execute:
-        parser.error("--smoke requires --execute")
-    if args.smoke:
-        cases_requested = 1
+    if args.smoke and args.smoke_cases is not None:
+        parser.error("choose --smoke or --smoke-cases, not both")
+    smoke_case_count = 3 if args.smoke else args.smoke_cases
+    if smoke_case_count is not None:
+        if not args.execute:
+            parser.error("real-service smoke requires --execute")
+        if not 3 <= smoke_case_count <= 5:
+            parser.error("--smoke-cases must be between 3 and 5")
+        cases_requested = smoke_case_count
     else:
         if not 10 <= args.cases <= 20:
             parser.error("--cases must be between 10 and 20 for the full pilot")
@@ -768,10 +901,12 @@ def main() -> None:
     manifest["model_execution_started"] = True
     manifest_path.write_text(json.dumps(manifest, ensure_ascii=False, indent=2), encoding="utf-8")
     try:
-        if args.smoke:
-            first_state = min(selected_states, key=lambda row: int(row["state_index"]))
+        if smoke_case_count is not None:
+            first_state_by_case: dict[str, Mapping[str, Any]] = {}
+            for row in sorted(selected_states, key=lambda item: (str(item["case_id"]), int(item["state_index"]))):
+                first_state_by_case.setdefault(str(row["case_id"]), row)
             summary = run_role_smoke(
-                config, first_state, source_rows[int(first_state["source_row_index"])],
+                config, list(first_state_by_case.values()), source_rows,
                 output_dir / "service_role_smoke.json",
             )
             manifest["status"] = "completed" if summary["passed"] else "role_smoke_failed"
@@ -789,7 +924,7 @@ def main() -> None:
         manifest["finished_at_utc"] = utc_now()
         manifest_path.write_text(json.dumps(manifest, ensure_ascii=False, indent=2), encoding="utf-8")
     print(json.dumps(manifest.get("role_smoke_summary", manifest.get("rollout_summary", {})), indent=2))
-    if args.smoke and manifest.get("status") != "completed":
+    if smoke_case_count is not None and manifest.get("status") != "completed":
         raise SystemExit("real-service role smoke failed; full pilot not started")
 
 

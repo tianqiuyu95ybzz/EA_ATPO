@@ -17,6 +17,8 @@ class Action(str, Enum):
 
 
 ACTION_ORDER = (Action.ASK, Action.ANSWER, Action.DEFER)
+FINAL_ANSWER_REGEX = r"^Final Answer: [A-D]$"
+ASK_QUESTION_REGEX = r"^Question: [^\r\n]{8,320}$"
 
 
 @dataclass(frozen=True)
@@ -72,8 +74,10 @@ def build_base_messages(state: PublicState, action: Action, *, stage: str = "ini
     if action is Action.ASK:
         contract = (
             "You are a medical diagnostic assistant. EA-ATPO V2 forced counterfactual action: ASK. "
-            "Based only on the visible case and "
-            "dialogue, ask exactly one specific, clinically relevant question to the patient. "
+            "Based only on the visible case, the question being investigated, and the dialogue, "
+            "ask exactly one specific question about missing clinical information that could "
+            "help answer this case. Ground the question in the visible symptoms or history; "
+            "do not introduce an unrelated measurement or repeat information already visible. "
             "Do not answer, defer, request an expert, or repeat information already visible. "
             "Output exactly: Question: <one question>"
         )
@@ -82,8 +86,10 @@ def build_base_messages(state: PublicState, action: Action, *, stage: str = "ini
         contract = (
             f"You are a medical diagnostic assistant. EA-ATPO V2 forced counterfactual action: "
             f"ANSWER {stage_text}. Use only the visible "
-            "case and dialogue. Choose one listed option and terminate. Do not ask, defer, or "
-            "request an expert. Output exactly: Final Answer: <A, B, C, or D>"
+            "case and dialogue. This is a forced single-choice item: choose exactly one of the "
+            "listed options A, B, C, or D, even if uncertain. Do not abstain, answer 'none', "
+            "or repeat the option text. Do not ask, defer, or request an expert. "
+            "Output only: Final Answer: <A-D>"
         )
     return _with_contract(state, contract)
 
@@ -95,9 +101,13 @@ def build_patient_messages(atomic_facts: Sequence[str], question: str) -> list[d
         {
             "role": "system",
             "content": (
-                "You simulate the patient. Answer the doctor's question using only the supplied "
-                "patient facts. Do not infer a diagnosis or add outside facts. If the facts do not "
-                "answer the question, say: The patient cannot answer this question. Be concise."
+                "You are a patient simulator. Answer the doctor's question using only the supplied "
+                "patient atomic facts. Match facts by meaning, including ordinary paraphrases; do "
+                "not require the question to repeat the fact's exact wording. For a broad question, "
+                "report relevant facts that are known and clearly say when a requested detail is "
+                "not stated. Do not add medical inference or outside knowledge. If none of the "
+                "supplied facts answers any part of the question, reply exactly: The patient cannot "
+                "answer this question. Give only the concise patient response."
             ),
         },
         {"role": "user", "content": f"Patient facts:\n{hidden}\n\nDoctor question:\n{question}"},
@@ -111,8 +121,10 @@ def build_defer_messages(state: PublicState) -> list[dict[str, str]]:
             "role": "system",
             "content": (
                 "You are the independent Expert taking over this case. Use only the visible case "
-                "and dialogue below. Decide now; do not ask a question or mention hidden facts. "
-                "Return exactly: Expert Final Answer: <A, B, C, or D>"
+                "and dialogue below. This is a forced single-choice item: choose exactly one of "
+                "the listed options A, B, C, or D, even if uncertain. Do not abstain, answer 'none', "
+                "repeat the option text, ask a question, or mention hidden facts. "
+                "Return only: Final Answer: <A-D>"
             ),
         },
         {"role": "user", "content": f"Visible case and dialogue:\n{visible}"},
@@ -129,12 +141,27 @@ def parse_question(text: str) -> str:
     return question
 
 
-def parse_answer(text: str, *, expert: bool = False) -> str:
-    prefix = "Expert Final Answer" if expert else "Final Answer"
-    match = re.fullmatch(rf"\s*{re.escape(prefix)}:\s*([A-D])\s*", str(text), re.IGNORECASE)
+def parse_answer(text: str) -> str:
+    match = re.fullmatch(r"\s*Final Answer:\s*([A-D])\s*", str(text), re.IGNORECASE)
     if not match:
-        raise ValueError(f"answer must match '{prefix}: <A-D>' exactly")
+        raise ValueError("answer must match 'Final Answer: <A-D>' exactly")
     return match.group(1).upper()
+
+
+def valid_ask_transition(before: PublicState, after: PublicState, question: str,
+                         patient_reply: str) -> bool:
+    """Check structural state update; this does not claim clinical information gain."""
+    expected_tail = (
+        {"role": "assistant", "content": f"Question: {question}"},
+        {"role": "user", "content": patient_reply.strip()},
+    )
+    return (
+        bool(patient_reply.strip())
+        and before.digest != after.digest
+        and after.asked_count == before.asked_count + 1
+        and len(after.dialogue) == len(before.dialogue) + 2
+        and tuple(after.dialogue[-2:]) == expected_tail
+    )
 
 
 def assert_no_privileged_payload(messages: Sequence[Mapping[str, Any]], *, public_state: PublicState,
