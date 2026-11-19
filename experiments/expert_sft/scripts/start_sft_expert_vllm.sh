@@ -10,6 +10,7 @@ GPU="${EA_ATPO_SFT_EXPERT_GPU:-5}"
 PORT="30483"
 MIN_FREE_MIB="150000"
 MAX_UTIL="20"
+[[ "$GPU" != "1" && "$GPU" != "7" ]] || { echo "GPU $GPU is excluded by the project resource instruction." >&2; exit 2; }
 MODEL="$EXP/assets/models/Qwen3-32B"
 ADAPTER="$EXP/checkpoints/qwen3_32b_domain_sft/selected"
 PID_FILE="$EXP/logs/sft_expert_vllm.pid"

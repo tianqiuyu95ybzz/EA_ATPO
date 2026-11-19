@@ -4,9 +4,10 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../.." && pwd)"
 EXP="$ROOT/experiments/expert_sft"
 PYTHON="${EA_ATPO_SFT_PYTHON:-$ROOT/.venv/bin/python}"
-GPU="5"
+GPU="${EA_ATPO_SFT_PHYSICAL_GPU:-5}"
 MIN_FREE_MIB="150000"
 MAX_UTIL="20"
+[[ "$GPU" != "1" && "$GPU" != "7" ]] || { echo "GPU $GPU is excluded by the project resource instruction." >&2; exit 2; }
 
 export HF_HOME="$EXP/cache/hf_home"
 export HF_HUB_CACHE="$HF_HOME/hub"

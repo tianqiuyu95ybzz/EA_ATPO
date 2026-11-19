@@ -37,6 +37,7 @@ Official ATPO data at commit `25af83688c06917f94245a4db06be7d0924c090c` was rest
 - HF model page describes Qwen3-32B as a native chat model and Qwen3 architecture; the actual local tokenizer/template and full weight layout remain unverified until the pinned download completes. See [official Qwen3-32B model card](https://huggingface.co/Qwen/Qwen3-32B).
 - Current project `.venv`: Python 3.12, torch 2.7.1+cu128, transformers 4.54.1, PEFT 0.21.2, accelerate 1.15.0, datasets 4.0.0, pandas 2.3.3, pyarrow 19.0.1, huggingface_hub 0.36.2. TRL and bitsandbytes are absent; the planned BF16 LoRA path uses HF Trainer/PEFT and does not require either.
 - All new model downloads, HF/datasets/XDG/Triton/Torch caches, temporary files, logs, checkpoints, and evaluation outputs are under this project’s `experiments/expert_sft/` tree. No new file is directed to the system disk.
+- A final code review fixed a Trainer placement issue: the SFT script now explicitly moves the LoRA model to the sole CUDA device exposed by the launcher before the gradient preflight. Safe launchers permit an explicit physical GPU override but exclude GPUs 1 and 7; no GPU work was started during this code correction.
 - At the latest audit, the Qwen3-32B download was still resumable and incomplete: 8 partial files, about 8.8 GB downloaded, no complete weight shards/index. The downloader command is `bash experiments/expert_sft/scripts/download_qwen3_32b.sh` after the current downloader exits; do not launch a concurrent copy.
 - Latest GPU snapshot: all eight GPUs had at least one existing compute process; free memory ranged about 43–116 GiB. None met the reserved 150,000 MiB, <=20% utilization, no-compute-process SFT gate. GPU processes were not stopped or altered. BF16 capability has not yet been verified on a free card.
 
@@ -79,9 +80,9 @@ Official ATPO data at commit `25af83688c06917f94245a4db06be7d0924c090c` was rest
 2. Verify the completed checkpoint and local tokenizer:
    `./.venv/bin/python experiments/expert_sft/scripts/verify_model_assets.py --model experiments/expert_sft/assets/models/Qwen3-32B --write-manifest experiments/expert_sft/data/model_asset_manifest.json`
 3. When a GPU passes the gate, run:
-   `bash experiments/expert_sft/scripts/run_sft_smoke.sh`
+   `EA_ATPO_SFT_PHYSICAL_GPU=<safe-physical-GPU> bash experiments/expert_sft/scripts/run_sft_smoke.sh`
    It checks BF16/tokenization, a finite one-batch LoRA gradient, 10 optimizer steps, and five engineering-format generations. If this passes, formal training is authorized by the task:
-   `bash experiments/expert_sft/scripts/run_formal_sft.sh`
+   `EA_ATPO_SFT_PHYSICAL_GPU=<safe-physical-GPU> bash experiments/expert_sft/scripts/run_formal_sft.sh`
 4. Download the pinned Base model inside the workspace:
    `bash experiments/expert_sft/scripts/download_qwen3_8b.sh`
 5. Run only new paired Train/Validation and freeze the Router:

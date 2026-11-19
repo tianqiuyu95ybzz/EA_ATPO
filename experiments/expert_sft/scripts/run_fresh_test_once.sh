@@ -9,6 +9,7 @@ MIN_FREE_MIB="150000"
 MAX_UTIL="20"
 OUT="$EXP/evaluations/fresh_test_once"
 POLICY="$EXP/evaluations/router/router_policy_lock.json"
+[[ "$GPU" != "1" && "$GPU" != "7" ]] || { echo "GPU $GPU is excluded by the project resource instruction." >&2; exit 2; }
 
 export HF_HOME="$EXP/cache/hf_home"
 export HF_HUB_CACHE="$HF_HOME/hub"

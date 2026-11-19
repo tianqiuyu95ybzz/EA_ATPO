@@ -185,6 +185,9 @@ def main() -> None:
     args = parser.parse_args()
     if not torch.cuda.is_available():
         raise RuntimeError("CUDA is required for the Qwen3-32B SFT run")
+    physical_gpu = int(os.environ.get("EA_ATPO_SFT_PHYSICAL_GPU", "5"))
+    if physical_gpu in {1, 7}:
+        raise RuntimeError(f"GPU {physical_gpu} is excluded by the project resource instruction")
     if not torch.cuda.is_bf16_supported():
         raise RuntimeError("Selected GPU/runtime does not report BF16 support")
     config = json.loads(args.config.read_text(encoding="utf-8"))
@@ -219,6 +222,10 @@ def main() -> None:
         r=int(lora["r"]), lora_alpha=int(lora["alpha"]), lora_dropout=float(lora["dropout"]),
         target_modules=list(lora["target_modules"]), bias="none", task_type="CAUSAL_LM",
     ))
+    # from_pretrained without device_map leaves the model on CPU. Pin it to the
+    # single CUDA device exposed by CUDA_VISIBLE_DEVICES before the gradient
+    # preflight; Trainer then sees the same correctly placed model.
+    model.to(torch.device("cuda", 0))
     model.print_trainable_parameters()
     if not args.skip_gradient_preflight:
         batch = AssistantOnlyCollator(tokenizer.pad_token_id)([train_data[0]])

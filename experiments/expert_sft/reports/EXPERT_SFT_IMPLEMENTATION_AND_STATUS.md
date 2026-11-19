@@ -88,3 +88,9 @@ It is already running resumably under the project tree. Do not start another con
 5. Fit VOI on train and validate on validation. Do not change original tree search or start RL until predictive and utility gates are supported.
 
 For a complete restart handoff, read `EA_ATPO_VI_PROGRESS_AND_STRATEGY_LATEST.md`.
+
+## 2026-11-19 final code review addendum
+
+- The first implementation review found that `from_pretrained()` left the SFT model on CPU while the gradient smoke batch was placed on CUDA. The trainer now explicitly moves the LoRA-wrapped model to the one CUDA device exposed by `CUDA_VISIBLE_DEVICES` before the one-batch forward/backward check. No GPU training was run to validate this correction because the model download and resource gate are still incomplete.
+- SFT, paired-evaluation, and Expert-service launchers now allow a safe physical GPU override while explicitly rejecting GPUs 1 and 7 per the standing resource instruction. They continue to require 150,000 MiB free, utilization at most 20%, and no compute process before launch; the training script rechecks the physical GPU reserve after model load and gradient preflight.
+- Static syntax checks were rerun after this correction. Full CUDA smoke remains **Not Run**.
