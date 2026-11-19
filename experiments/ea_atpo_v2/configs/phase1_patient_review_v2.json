@@ -1,0 +1,69 @@
+{
+  "schema_version": 1,
+  "method": "EA-ATPO V2: Counterfactual Value-Guided Sequential Learning to Defer with Active Information Acquisition",
+  "seed": 20261119,
+  "data": {
+    "public_states": "experiments/real_case_pilot_20261103/outputs/full/pilot_public_states.jsonl",
+    "case_split": "experiments/ea_atpo_value_router_20261105/artifacts/case_split.json",
+    "source_jsonl": "experiments/expert_sft/data/source/dataset/merged_train_dataset.jsonl",
+    "split_policy": "case_id; only frozen train cases are eligible for Phase 1"
+  },
+  "roles": {
+    "base": {
+      "base_url": "http://127.0.0.1:30481/v1",
+      "model": "vi-qwen3-8b-base",
+      "model_revision": "b968826d9c46dd6066d109eabc6255188de91218",
+      "enable_thinking": false,
+      "api_key_env": ""
+    },
+    "patient": {
+      "base_url": "http://127.0.0.1:30481/v1",
+      "model": "vi-qwen3-8b-base",
+      "shared_service": "base",
+      "role_prompt_version": "v2_patient_atomic_facts_unknown_review_v2",
+      "enable_thinking": false,
+      "api_key_env": ""
+    },
+    "expert": {
+      "base_url": "http://127.0.0.1:30482/v1",
+      "model": "vi-qwen3-32b-awq-expert",
+      "model_revision": "0499c3ac83fdef8810b907a23894ba91e95eddd8",
+      "enable_thinking": false,
+      "api_key_env": ""
+    }
+  },
+  "policy": {
+    "actions": ["ASK", "ANSWER", "DEFER"],
+    "max_asks_per_episode": 3,
+    "continuation_policy_id": "ASK_ONCE_THEN_FORCE_BASE_ANSWER_PATIENT_REVIEW_V2",
+    "continuation_description": "ASK generates one patient question and reply; if Patient returns an explicit Unknown, one bounded fact-by-fact review call may replace it with a fact-grounded partial reply. The same Qwen3-8B Base service then gives a forced terminal answer. No second ASK or DEFER occurs within that branch.",
+    "patient_unknown_retry_limit": 1,
+    "action_sampling": "paired forced actions for counterfactual data collection; not a learned-policy evaluation",
+    "rollouts_per_state_action": 1
+  },
+  "costs": {
+    "ask": 0.05,
+    "defer": 0.60,
+    "cost_units": "accuracy utility units",
+    "return_definition": "final_accuracy - ask_cost * ask_count - defer_cost * defer_count",
+    "token_latency_reported_separately": true
+  },
+  "inference": {
+    "temperature": 0.0,
+    "patient_temperature": 0.0,
+    "top_p": 1.0,
+    "answer_max_tokens": 24,
+    "ask_max_tokens": 160,
+    "patient_max_tokens": 256,
+    "defer_max_tokens": 32,
+    "timeout_seconds": 180,
+    "api_retries": 1
+  },
+  "resource_policy": {
+    "start_model_services": false,
+    "gpu_1_and_7_prohibited": true,
+    "do_not_interrupt_foreign_processes": true,
+    "all_outputs_under_project": true,
+    "holdout_opened": false
+  }
+}

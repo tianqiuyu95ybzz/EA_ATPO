@@ -34,9 +34,11 @@ from v2_protocol import (  # noqa: E402
     build_base_messages,
     build_defer_messages,
     build_patient_messages,
+    build_patient_review_messages,
     extend_after_ask,
     parse_answer,
     parse_question,
+    patient_reply_is_unknown,
     public_state_from_row,
     valid_ask_transition,
 )
@@ -178,7 +180,8 @@ def case_id_for_source(index: int, row: Mapping[str, Any]) -> str:
     return f"row-{index}:item-{item}"
 
 
-def audit_and_select(config: Mapping[str, Any], cases_requested: int) -> tuple[dict[str, Any], list[dict[str, Any]], dict[int, dict[str, Any]]]:
+def audit_and_select(config: Mapping[str, Any], cases_requested: int,
+                     explicit_case_ids: Sequence[str] | None = None) -> tuple[dict[str, Any], list[dict[str, Any]], dict[int, dict[str, Any]]]:
     data = config["data"]
     states_path = PROJECT_DIR / data["public_states"]
     split_path = PROJECT_DIR / data["case_split"]
@@ -195,7 +198,14 @@ def audit_and_select(config: Mapping[str, Any], cases_requested: int) -> tuple[d
     if len({str(row["case_id"]) for row in train_states}) != len(train_ids):
         raise ValueError("frozen train split contains a case with no public state")
     per_case = Counter(str(row["case_id"]) for row in train_states)
-    selected_ids = sorted(train_ids, key=lambda case_id: stable_case_rank(case_id, int(config["seed"])))[:cases_requested]
+    if explicit_case_ids is None:
+        selected_ids = sorted(train_ids, key=lambda case_id: stable_case_rank(case_id, int(config["seed"])))[:cases_requested]
+    else:
+        selected_ids = list(map(str, explicit_case_ids))
+        if len(selected_ids) != cases_requested or len(set(selected_ids)) != len(selected_ids):
+            raise ValueError("explicit case list length must match requested count and contain no duplicates")
+        if not set(selected_ids).issubset(train_ids):
+            raise ValueError("explicit case list contains an id outside the frozen training split")
     selected_set = set(selected_ids)
     selected_states = sorted(
         (row for row in train_states if str(row["case_id"]) in selected_set),
@@ -382,6 +392,9 @@ def run_action(action: Action, state: PublicState, facts: Sequence[str], *,
     finish_reasons: list[str | None] = []
     ask_state_transition: dict[str, Any] | None = None
     privacy_checks = 0
+    ask_review_attempts = 0
+    ask_review_accepted = False
+    ask_review_error: str | None = None
     try:
         if action is Action.ANSWER:
             messages = build_base_messages(state, Action.ANSWER)
@@ -440,13 +453,66 @@ def run_action(action: Action, state: PublicState, facts: Sequence[str], *,
             patient_reply = patient_call["content"].strip()
             if not patient_reply:
                 raise ValueError("empty_patient_response")
+            first_patient_reply = patient_reply
+            first_unknown = patient_reply_is_unknown(patient_reply)
+            first_patient_trace = {
+                "role": "patient", "stage": "patient_reply", "output": first_patient_reply,
+                "prompt_tokens": patient_call["prompt_tokens"],
+                "completion_tokens": patient_call["completion_tokens"],
+                "latency_seconds": patient_call["latency_seconds"],
+                "finish_reason": patient_call["finish_reason"],
+                "is_unknown": first_unknown, "selected_as_final_reply": True,
+            }
+            trace.append(first_patient_trace)
+            review_limit = int(config["policy"].get("patient_unknown_retry_limit", 0))
+            if first_unknown and review_limit > 0:
+                ask_review_attempts = 1
+                review_messages = build_patient_review_messages(facts, question, first_patient_reply)
+                try:
+                    review_call = chat_completion(
+                        "patient", roles["patient"], review_messages,
+                        temperature=inference["patient_temperature"], top_p=inference["top_p"],
+                        max_tokens=inference["patient_max_tokens"], seed=rollout_seed,
+                        timeout_seconds=inference["timeout_seconds"], retries=inference["api_retries"],
+                    )
+                    calls["patient"] += 1
+                    attempts["patient"] += 1
+                    review_reply = review_call["content"].strip()
+                    review_unknown = not review_reply or patient_reply_is_unknown(review_reply)
+                    trace.append({
+                        "role": "patient", "stage": "patient_unknown_review",
+                        "output": review_reply, "prompt_tokens": review_call["prompt_tokens"],
+                        "completion_tokens": review_call["completion_tokens"],
+                        "latency_seconds": review_call["latency_seconds"],
+                        "finish_reason": review_call["finish_reason"],
+                        "is_unknown": review_unknown,
+                        "accepted": bool(review_reply and not review_unknown),
+                    })
+                    usage.update(prompt=review_call["prompt_tokens"], completion=review_call["completion_tokens"])
+                    latencies.append(review_call["latency_seconds"])
+                    finish_reasons.append(review_call["finish_reason"])
+                    if review_reply and not review_unknown:
+                        patient_reply = review_reply
+                        ask_review_accepted = True
+                        first_patient_trace["selected_as_final_reply"] = False
+                except APIError as exc:
+                    token_usage_complete = False
+                    attempts[exc.role] += exc.attempts
+                    latencies.append(exc.elapsed_seconds)
+                    ask_review_error = f"{exc.role}_api_failure"
+                    trace.append({
+                        "role": "patient", "stage": "patient_unknown_review_failure",
+                        "error": exc.reason, "attempts": exc.attempts,
+                        "latency_seconds": exc.elapsed_seconds, "token_usage_available": False,
+                    })
             prior_public = normalized_text(state.public_text)
             ask_novel_text = normalized_text(patient_reply) not in prior_public
-            ask_unknown = "cannot answer this question" in patient_reply.casefold() or patient_reply.strip().casefold() == "unknown"
-            trace.append({"role": "patient", "stage": "patient_reply", "output": patient_reply,
-                          "prompt_tokens": patient_call["prompt_tokens"], "completion_tokens": patient_call["completion_tokens"],
-                          "latency_seconds": patient_call["latency_seconds"], "finish_reason": patient_call["finish_reason"],
-                          "is_unknown": ask_unknown, "novel_text_vs_public_state": ask_novel_text})
+            ask_unknown = patient_reply_is_unknown(patient_reply)
+            first_patient_trace["novel_text_vs_public_state"] = (
+                normalized_text(first_patient_reply) not in prior_public
+            )
+            if ask_review_accepted:
+                trace[-1]["novel_text_vs_public_state"] = ask_novel_text
             usage.update(prompt=patient_call["prompt_tokens"], completion=patient_call["completion_tokens"])
             latencies.append(patient_call["latency_seconds"])
             finish_reasons.append(patient_call["finish_reason"])
@@ -539,6 +605,9 @@ def run_action(action: Action, state: PublicState, facts: Sequence[str], *,
         "ask_response_nonempty": bool(patient_reply),
         "ask_response_novel_text": ask_novel_text,
         "ask_response_unknown": ask_unknown,
+        "ask_response_review_attempts": ask_review_attempts,
+        "ask_response_review_accepted": ask_review_accepted,
+        "ask_response_review_error": ask_review_error,
         "api_call_counts": dict(calls),
         "api_attempt_counts": dict(attempts),
         "token_usage_complete": token_usage_complete,
@@ -629,6 +698,9 @@ def run_selected_states(config: Mapping[str, Any], states: Sequence[Mapping[str,
                     "ask_response_nonempty": result["ask_response_nonempty"],
                     "ask_response_novel_text": result["ask_response_novel_text"],
                     "ask_response_unknown": result["ask_response_unknown"],
+                    "ask_response_review_attempts": result.get("ask_response_review_attempts", 0),
+                    "ask_response_review_accepted": result.get("ask_response_review_accepted", False),
+                    "ask_response_review_error": result.get("ask_response_review_error"),
                     "cost_components": {
                         "ask_cost": ask_cost,
                         "defer_cost": defer_cost,
@@ -740,7 +812,10 @@ def run_role_smoke(config: Mapping[str, Any], state_rows: Sequence[Mapping[str, 
             "expert_defer_parsed": bool(results["DEFER"]["valid"]),
             "ask_question_parsed": bool(ask["ask_question"]),
             "patient_reply_nonempty": bool(ask["ask_response_nonempty"]),
-            "patient_reply_received_once": int(ask["api_call_counts"].get("patient", 0)) == 1,
+            "patient_reply_received_within_retry_limit": (
+                1 <= int(ask["api_call_counts"].get("patient", 0))
+                <= 1 + int(config["policy"].get("patient_unknown_retry_limit", 0))
+            ),
             "ask_state_transition_structurally_valid": bool(transition.get("structurally_valid")),
             "base_answer_after_ask_parsed": bool(ask["valid"] and ask["final_answer"]),
             "all_role_prompts_passed_privacy_checks": (
@@ -767,7 +842,7 @@ def run_role_smoke(config: Mapping[str, Any], state_rows: Sequence[Mapping[str, 
         "expert_defer_parsed_for_all_cases": all(case["checks"]["expert_defer_parsed"] for case in cases),
         "ask_path_protocol_valid_for_all_cases": all(
             all(case["checks"][key] for key in (
-                "ask_question_parsed", "patient_reply_nonempty", "patient_reply_received_once",
+                "ask_question_parsed", "patient_reply_nonempty", "patient_reply_received_within_retry_limit",
                 "ask_state_transition_structurally_valid", "base_answer_after_ask_parsed",
                 "all_role_prompts_passed_privacy_checks",
             )) for case in cases
@@ -804,8 +879,9 @@ def run_role_smoke(config: Mapping[str, Any], state_rows: Sequence[Mapping[str, 
     }
 
 
-def make_manifest(config_path: Path, config: Mapping[str, Any], cases: int, *, execute: bool) -> dict[str, Any]:
-    audit, selected_states, source_rows = audit_and_select(config, cases)
+def make_manifest(config_path: Path, config: Mapping[str, Any], cases: int, *, execute: bool,
+                  explicit_case_ids: Sequence[str] | None = None) -> dict[str, Any]:
+    audit, selected_states, source_rows = audit_and_select(config, cases, explicit_case_ids)
     endpoint_roles = {role: endpoint_status(role, settings) for role, settings in config["roles"].items()
                       if role in ("base", "expert")}
     # Patient shares the Base service but remains a separate prompt and role.
@@ -855,6 +931,7 @@ def main() -> None:
     parser.add_argument("--execute", action="store_true", help="run real model calls after all gates pass")
     parser.add_argument("--smoke", action="store_true", help="compatibility alias for a 3-case real-service smoke")
     parser.add_argument("--smoke-cases", type=int, help="run a real-service smoke on 3-5 distinct frozen training cases")
+    parser.add_argument("--case-ids-file", type=Path, help="JSON array of explicit case_id values; all must be in frozen train split")
     parser.add_argument("--output-dir", type=Path)
     args = parser.parse_args()
     if args.preflight == args.execute:
@@ -869,9 +946,20 @@ def main() -> None:
             parser.error("--smoke-cases must be between 3 and 5")
         cases_requested = smoke_case_count
     else:
-        if not 10 <= args.cases <= 20:
-            parser.error("--cases must be between 10 and 20 for the full pilot")
+        if not 10 <= args.cases <= 50:
+            parser.error("--cases must be between 10 and 50 for the training-only pilot")
         cases_requested = args.cases
+
+    explicit_case_ids = None
+    if args.case_ids_file:
+        explicit_case_ids = json.loads(args.case_ids_file.read_text(encoding="utf-8"))
+        if not isinstance(explicit_case_ids, list) or not all(isinstance(item, str) for item in explicit_case_ids):
+            parser.error("--case-ids-file must contain a JSON array of strings")
+        if smoke_case_count is not None:
+            if len(explicit_case_ids) != cases_requested:
+                parser.error("smoke case-id count must match --smoke-cases")
+        elif len(explicit_case_ids) != cases_requested:
+            parser.error("explicit case-id count must match --cases")
 
     config_path = args.config.resolve()
     config = json.loads(config_path.read_text(encoding="utf-8"))
@@ -879,7 +967,8 @@ def main() -> None:
     output_dir = args.output_dir or (V2_DIR / "outputs" / f"phase1_{stamp}")
     output_dir = output_dir.resolve()
     output_dir.mkdir(parents=True, exist_ok=False)
-    manifest = make_manifest(config_path, config, cases_requested, execute=args.execute)
+    manifest = make_manifest(config_path, config, cases_requested, execute=args.execute,
+                             explicit_case_ids=explicit_case_ids)
     manifest_path = output_dir / "run_manifest.json"
     if args.preflight:
         manifest["status"] = "preflight_ready" if manifest["status"] == "preflight_ready" else "blocked_endpoint_preflight"
@@ -896,7 +985,7 @@ def main() -> None:
         manifest_path.write_text(json.dumps(manifest, ensure_ascii=False, indent=2), encoding="utf-8")
         raise SystemExit("configured Base/Expert endpoints are unavailable or model aliases mismatch; no rollouts started")
 
-    audit, selected_states, source_rows = audit_and_select(config, cases_requested)
+    audit, selected_states, source_rows = audit_and_select(config, cases_requested, explicit_case_ids)
     manifest["status"] = "running"
     manifest["model_execution_started"] = True
     manifest_path.write_text(json.dumps(manifest, ensure_ascii=False, indent=2), encoding="utf-8")
@@ -922,6 +1011,8 @@ def main() -> None:
         raise
     finally:
         manifest["finished_at_utc"] = utc_now()
+        if args.execute:
+            manifest["gpu_inventory_after_run_read_only"] = gpu_inventory()
         manifest_path.write_text(json.dumps(manifest, ensure_ascii=False, indent=2), encoding="utf-8")
     print(json.dumps(manifest.get("role_smoke_summary", manifest.get("rollout_summary", {})), indent=2))
     if smoke_case_count is not None and manifest.get("status") != "completed":

@@ -1,10 +1,46 @@
 # EA-ATPO / VI-EA-ATPO Progress and Strategy — Latest
 
-**Updated:** 2026-11-19 (Asia/Shanghai)
+**Updated:** 2026-11-20 (Asia/Shanghai)
 **Repository:** `/pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO_V1`
-**Branch / starting commit for this update:** `ea-atpo-v1` / `26a6748`
+**Branch / starting commit for the V2 execution:** `ea-atpo-v1` / `af560a5`
 
-> The dated history below retains earlier plans and results. The last dated execution section is the current source of truth for the multi-turn AWQ SFT run; it supersedes earlier BF16-first and 1,000/300 data plans.
+> The dated history below retains earlier plans and results. The 2026-11-20 V2 section below is now the active source of truth and supersedes the earlier Expert-SFT-first route for current work.
+
+## 2026-11-20 current state: V2 counterfactual expansion
+
+### Active route
+
+EA-ATPO V2 is the active method: `ASK / ANSWER / DEFER`, real paired counterfactual rollouts, case-isolated Q regression, Q-guided policy distillation, and optional VOI-guided search. Do not use CONSULT as a main action, and do not start PPO/GRPO/GAE, online Critic updates, Expert SFT, Q Regression, or Actor distillation unless separately authorized. The current task only completed ASK diagnosis and 50-case rollout collection.
+
+### Latest real results
+
+- Frozen existing split remains case-based: 70 Train, 15 Validation, 15 Internal Test. The 400-case historical holdout was not opened.
+- A fixed seed (`20261119`) selected 50 unique Train cases in five batches. Batch 1 re-ran the previous 10 cases; batches 2–5 added 40 new cases. Total: 146 public states, 438 real action rollouts, 438/438 valid Q labels, all state/action branches paired, and no invalid rollouts.
+- Models: Base/Patient Qwen3-8B revision `b968826d9c46dd6066d109eabc6255188de91218`; DEFER Expert Qwen3-32B-AWQ revision `0499c3ac83fdef8810b907a23894ba91e95eddd8`. Both vLLM services were deployed on GPU 2 for this run and are now stopped.
+- Original 10-case ASK audit: 23/29 Unknown responses. Manual categories: 5 relevant facts under-matched; 3 partly public/redundant; 2 irrelevant/invalid questions; 11 requested facts absent; 2 vague or compound questions.
+- One bounded Patient fact-review retry was added only after a standalone Unknown. Across the full 50-case expansion it retried 111 times and accepted 13 fact-grounded/partial replies; final ASK Unknown remained 98/146 (67.1%). The first 10 re-run had 21 Unknown vs 23 in the old run, but ASK accuracy changed from 37.9% to 34.5%; this is not an efficacy gain.
+- Aggregate accuracy: ANSWER 57/146 (39.0%); ASK 56/146 (38.4%); DEFER 64/146 (43.8%). ASK corrected 10 and regressed 11; DEFER corrected 25 and regressed 18. At fixed costs ASK=0.05 and DEFER=0.60, mean returns were ANSWER 0.390, ASK 0.334, DEFER -0.162. The Q labels already include action costs once.
+- Base/Expert prediction agreement on the 146 V2 states: exact option match 72/146 (49.3%). Expert helped on 25 and harmed on 18; 31 other disagreements were both wrong. This is a Train-only development sample, not evidence of independent generalization.
+- Historical 200-case DEFER results are not directly comparable: the pinned model revisions match, but prompt text, output prefix, token caps (64/128 historical vs 24/32 V2), seed handling, constrained decoding/parser, and case cohort differ. Historical 55.5% Expert / 46.0% Base remains historical only.
+- Three public states have a flagged malformed stem/options pattern. They remain in the primary 50-case summary and are identified for a future sensitivity analysis rather than silently removed.
+
+### Run artifacts and current resources
+
+- Main experiment output: `experiments/ea_atpo_v2/outputs/ask_unknown_repair_50case_20261120/`
+- Merged trajectories: `.../merged/pilot_trajectories.jsonl`
+- Q Dataset: `.../merged/q_dataset.jsonl`
+- Per-batch table: `.../reports/batch_summary/batch_summary.csv`
+- Reports: `experiments/ea_atpo_v2/reports/ASK_UNKNOWN_CLASSIFICATION_20261120.md`, `ASK_REPAIR_BEFORE_AFTER_20261120.md`, `EXPERT_PROTOCOL_COMPATIBILITY_20261120.md`, `COUNTERFACTUAL_50_CASE_PILOT_20261120.md`, and `V2_NEXT_STAGE_RECOMMENDATION_20261120.md`.
+- GPU 2 was checked process-free before deployment, retained >115 GiB free during the batches, and is now back to 182,621 MiB free with utilization 0%. Ports 30481/30482 are released. The independent service on 18951 was not modified. No service used GPU 1 or GPU 7.
+- Persistent output, logs, and caches are under this project’s `experiments/ea_atpo_v2/outputs/`; only short-lived service temp files used `/dev/shm`.
+
+### Next stage and recovery prompt
+
+The data interface is ready for a small offline Q Regression prototype, but each state/action currently has only one rollout and model repeatability was not perfect on the re-run. Before fitting, consider a small repeated-seed variance check on Train states, explicitly report the three malformed states, then keep all model selection within case-isolated Train/Validation. Internal Test should be used once after policy lock; the 400-case historical holdout remains unopened. Do not start training automatically.
+
+**Resume prompt:** “Read `EA_ATPO_VI_PROGRESS_AND_STRATEGY_LATEST.md` and `experiments/ea_atpo_v2/reports/V2_NEXT_STAGE_RECOMMENDATION_20261120.md`. Continue from the completed 50-case V2 Train-only counterfactual dataset at `experiments/ea_atpo_v2/outputs/ask_unknown_repair_50case_20261120/merged/`. Preserve old trajectories and report the historical/V2 protocol mismatch. Do not open Validation, Internal Test, or Frozen Holdout until the next approved stage; do not launch Q Regression, Actor distillation, SFT, or RL without explicit authorization. Keep persistent files under this project.”
+
+> The remaining dated sections below preserve the prior SFT-first research route and its audits as historical context; they are not the current V2 execution plan.
 
 ## Current research route
 

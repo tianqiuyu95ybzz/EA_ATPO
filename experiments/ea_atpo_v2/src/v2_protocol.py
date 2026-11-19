@@ -114,6 +114,34 @@ def build_patient_messages(atomic_facts: Sequence[str], question: str) -> list[d
     ]
 
 
+def build_patient_review_messages(atomic_facts: Sequence[str], question: str,
+                                 previous_reply: str) -> list[dict[str, str]]:
+    """One bounded review after an Unknown response; still grounded only in patient facts."""
+    hidden = json.dumps([str(fact) for fact in atomic_facts], ensure_ascii=False)
+    return [
+        {
+            "role": "system",
+            "content": (
+                "You are a patient simulator. Re-check the doctor's question against every supplied "
+                "patient fact, including ordinary paraphrases and partial answers. If any fact answers "
+                "part of the question, report that fact and clearly say which requested details are not "
+                "stated. If none of the facts answers any part, reply exactly: The patient cannot answer "
+                "this question. Do not infer, diagnose, or use outside knowledge. Give only the concise "
+                "patient response."
+            ),
+        },
+        {
+            "role": "user",
+            "content": (
+                f"Patient facts:\n{hidden}\n\nDoctor question:\n{question}\n\n"
+                f"Previous response: {previous_reply}\n"
+                "Please re-check the facts once. The previous response does not establish that the "
+                "requested information is absent."
+            ),
+        },
+    ]
+
+
 def build_defer_messages(state: PublicState) -> list[dict[str, str]]:
     visible = json.dumps(state.visible_messages, ensure_ascii=False)
     return [
@@ -146,6 +174,16 @@ def parse_answer(text: str) -> str:
     if not match:
         raise ValueError("answer must match 'Final Answer: <A-D>' exactly")
     return match.group(1).upper()
+
+
+def patient_reply_is_unknown(text: str) -> bool:
+    """True only for a standalone Unknown response, not a useful partial answer."""
+    normalized = re.sub(r"\s+", " ", str(text).casefold()).strip()
+    normalized = normalized.rstrip(" .!;:")
+    return normalized in {
+        "unknown", "the patient cannot answer this question", "patient cannot answer this question",
+        "i cannot answer this question", "i don't know", "i do not know", "not stated",
+    }
 
 
 def valid_ask_transition(before: PublicState, after: PublicState, question: str,
