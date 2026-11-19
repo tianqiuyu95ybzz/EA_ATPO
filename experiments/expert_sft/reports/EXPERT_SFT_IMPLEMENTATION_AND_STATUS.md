@@ -27,7 +27,7 @@ The official ATPO train source was restored and verified. The frozen 1,000/300 T
 - Historical AWQ Expert (`0499c3ac83fdef8810b907a23894ba91e95eddd8`) is kept only as historical context.
 - Training environment package metadata: Python 3.12; torch 2.7.1+cu128; transformers 4.54.1; PEFT 0.21.2; accelerate 1.15.0; datasets 4.0.0; pandas 2.3.3; pyarrow 19.0.1; huggingface_hub 0.36.2. `trl` and `bitsandbytes` are absent and not needed for the chosen full-BF16-base LoRA path.
 - HF/model, dataset, XDG, Triton, Torch, vLLM and temporary caches are configured under `experiments/expert_sft/`. The workspace reports over 42 TiB free.
-- Download is resumable but incomplete. Latest environment audit found 8 partial files totaling about 8.8 GB; the official model shard index/tokenizer completeness check has not passed.
+- Download is resumable but incomplete. At the final code review, about 14 GB was present as partial shards; the official model shard index/tokenizer completeness check has not passed.
 - GPU audit: all eight B20Z cards had one or more existing compute processes and fell below at least one configured gate (150,000 MiB free, <=20% utilization, zero existing compute processes). A torch import for read-only inventory was interrupted because import/path scanning was very slow; the audit now uses package metadata and `nvidia-smi`. Actual BF16 support will be checked by smoke on a genuinely free GPU.
 
 ## Implemented files
