@@ -3,7 +3,7 @@
 This is an isolated, gated experiment branch. The source material is the existing simulated 100-case Pilot, not human patient transcripts. The frozen 400-case holdout is not opened by this workflow. See `reports/EXPERT_DATA_AUDIT.md` and `reports/V3_FINAL_DECISION.md` for actual execution status and limitations.
 
 - `data/` contains privacy-safe audit, split, review and request manifests. `data/private/` is Git-ignored PFS storage for dialogue-bearing queues, Base requests and raw responses. Never commit that directory.
-- `configs/` records separate A/B/C configurations and the Router admission placeholder. A, B and C must not share adapters, optimizers or outputs. The B weight copy has not yet been created.
+- `configs/` records separate A/B/C configurations and the Router admission placeholder. A, B and C must not share adapters, optimizers or outputs. Expert B has its own hash-verified PFS copy of the AWQ initialization under ignored `models/`.
 - `scripts/` contains reproducible audits, the human-review gate, Base request preparation/generation, gated dataset construction, AWQ smoke, med_qwen metadata verification, paired metrics, Oracle extraction and Router admission checks.
 - `outputs/` contains local logs, attempts and later checkpoints. It is Git-ignored. New attempts must use new directories; do not overwrite or clean historical artifacts.
 - `reports/` distinguishes completed checks from blocked or unimplemented work. No V3 training/evaluation result may be inferred from the presence of a script or config.
