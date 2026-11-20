@@ -1,0 +1,23 @@
+{
+  "status": "passed",
+  "train_only_case_count": 50,
+  "state_count": 146,
+  "rollout_count": 438,
+  "q_dataset_state_count": 146,
+  "valid_action_targets": 438,
+  "all_three_actions_per_state": true,
+  "all_cases_in_train_split": true,
+  "validation_or_internal_test_used": false,
+  "frozen_holdout_opened": false,
+  "forbidden_gold_or_hidden_fact_fields_serialized": false,
+  "services_stopped": true,
+  "ports_30481_30482_released": true,
+  "gpu2_after_stop": {
+    "index": 2,
+    "used_mib": 4,
+    "free_mib": 182621,
+    "utilization_pct": 0
+  },
+  "training_started": false,
+  "merged_manifest_sha256": "557b97d71f414bdda7265302190cd31b7425c32d20ffdea4330f571fbf50b5ae"
+}

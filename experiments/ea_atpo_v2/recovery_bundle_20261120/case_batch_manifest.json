@@ -1,0 +1,78 @@
+{
+  "seed": 20261119,
+  "selection_method": "sha256(seed:case_id) rank over frozen train split; preserve original pilot order in batch 1",
+  "train_only": true,
+  "selected_case_count": 50,
+  "selected_unique_case_count": 50,
+  "selected_state_count": 146,
+  "batch_size_cases": 10,
+  "batch_count": 5,
+  "batches": [
+    [
+      "row-10617:item-10617",
+      "row-10708:item-10708",
+      "row-11537:item-11537",
+      "row-1465:item-1465",
+      "row-3359:item-3359",
+      "row-7908:item-7908",
+      "row-8099:item-8099",
+      "row-8565:item-8565",
+      "row-895:item-895",
+      "row-9706:item-9706"
+    ],
+    [
+      "row-3448:item-3448",
+      "row-12004:item-12004",
+      "row-13177:item-13177",
+      "row-13684:item-13684",
+      "row-10154:item-10154",
+      "row-4298:item-4298",
+      "row-3785:item-3785",
+      "row-3570:item-3570",
+      "row-7452:item-7452",
+      "row-7841:item-7841"
+    ],
+    [
+      "row-11516:item-11516",
+      "row-759:item-759",
+      "row-5257:item-5257",
+      "row-659:item-659",
+      "row-10545:item-10545",
+      "row-1392:item-1392",
+      "row-2671:item-2671",
+      "row-287:item-287",
+      "row-1210:item-1210",
+      "row-7430:item-7430"
+    ],
+    [
+      "row-8678:item-8678",
+      "row-8328:item-8328",
+      "row-8656:item-8656",
+      "row-13499:item-13499",
+      "row-2894:item-2894",
+      "row-14137:item-14137",
+      "row-1787:item-1787",
+      "row-12457:item-12457",
+      "row-2719:item-2719",
+      "row-12845:item-12845"
+    ],
+    [
+      "row-5973:item-5973",
+      "row-10605:item-10605",
+      "row-3101:item-3101",
+      "row-12384:item-12384",
+      "row-9459:item-9459",
+      "row-7128:item-7128",
+      "row-6524:item-6524",
+      "row-2188:item-2188",
+      "row-5567:item-5567",
+      "row-487:item-487"
+    ]
+  ],
+  "previous_10_cases_are_batch_01": true,
+  "validation_case_selected": false,
+  "internal_test_case_selected": false,
+  "frozen_holdout_opened": false,
+  "case_split_sha256": "b55d889a713b2b1d32afc25d89aaf9205891a1ee5fbaae470702ff31a9f81267",
+  "public_states_sha256": "c2d77685dc3d6a82926fb2a7545dc4bfabd16df98e9fea3ca74ab4a170f8c507"
+}

@@ -1,0 +1,11 @@
+case_id,ask_states,unknown_count,unknown_rate,fact_present_under_matched,already_public_or_partial,unrelated_or_invalid,relevant_fact_absent,vague_or_multicomponent
+row-10617:item-10617,3,3,1.0,1,1,0,1,0
+row-10708:item-10708,3,1,0.3333333333333333,0,0,1,0,0
+row-11537:item-11537,3,1,0.3333333333333333,0,0,0,0,1
+row-1465:item-1465,3,2,0.6666666666666666,1,0,0,1,0
+row-3359:item-3359,3,3,1.0,0,2,1,0,0
+row-7908:item-7908,2,2,1.0,0,0,0,2,0
+row-8099:item-8099,3,3,1.0,0,0,0,3,0
+row-8565:item-8565,3,2,0.6666666666666666,1,0,0,1,0
+row-895:item-895,3,3,1.0,2,0,0,1,0
+row-9706:item-9706,3,3,1.0,0,0,0,2,1

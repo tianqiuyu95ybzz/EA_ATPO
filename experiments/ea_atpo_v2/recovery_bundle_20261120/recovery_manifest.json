@@ -1,0 +1,141 @@
+{
+  "schema_version": 1,
+  "experiment": "EA-ATPO V2 50-case train-only counterfactual expansion",
+  "created_date": "2026-11-20",
+  "git_branch": "ea-atpo-v1",
+  "dataset_split": "frozen Train only; Validation, Internal Test, and 400-case Frozen Holdout were not used/opened",
+  "counts": {
+    "unique_cases": 50,
+    "public_states": 146,
+    "action_rollouts": 438,
+    "valid_q_targets": 438
+  },
+  "actions": [
+    "ASK",
+    "ANSWER",
+    "DEFER"
+  ],
+  "continuation_policy_id": "ASK_ONCE_THEN_FORCE_BASE_ANSWER_PATIENT_REVIEW_V2",
+  "costs": {
+    "ask": 0.05,
+    "defer": 0.6,
+    "cost_units": "accuracy utility units",
+    "return_definition": "final_accuracy - ask_cost * ask_count - defer_cost * defer_count",
+    "token_latency_reported_separately": true
+  },
+  "inference": {
+    "temperature": 0.0,
+    "patient_temperature": 0.0,
+    "top_p": 1.0,
+    "answer_max_tokens": 24,
+    "ask_max_tokens": 160,
+    "patient_max_tokens": 256,
+    "defer_max_tokens": 32
+  },
+  "models": {
+    "base": {
+      "model": "vi-qwen3-8b-base",
+      "revision": "b968826d9c46dd6066d109eabc6255188de91218",
+      "thinking": false
+    },
+    "patient": {
+      "model": "vi-qwen3-8b-base",
+      "revision": null,
+      "thinking": false
+    },
+    "expert": {
+      "model": "vi-qwen3-32b-awq-expert",
+      "revision": "0499c3ac83fdef8810b907a23894ba91e95eddd8",
+      "thinking": false
+    }
+  },
+  "patient_unknown_retry_limit": 1,
+  "source_config": "experiments/ea_atpo_v2/configs/phase1_patient_review_v2.json",
+  "source_scripts": [
+    "experiments/ea_atpo_v2/scripts/run_counterfactual_pilot.py",
+    "experiments/ea_atpo_v2/scripts/build_q_dataset.py",
+    "experiments/ea_atpo_v2/scripts/analyze_counterfactual_pilot.py"
+  ],
+  "batch_runs": [
+    {
+      "batch_index": 1,
+      "status": "completed",
+      "project_commit": "af560a50544a6ae46b2c7b32aa664637c3b68963",
+      "created_at_utc": "2026-11-19T21:39:14+00:00",
+      "finished_at_utc": "2026-11-19T21:39:31+00:00",
+      "selected_case_count": 10,
+      "selected_state_count": 29,
+      "model_revisions": {
+        "base": "b968826d9c46dd6066d109eabc6255188de91218",
+        "expert": "0499c3ac83fdef8810b907a23894ba91e95eddd8"
+      }
+    },
+    {
+      "batch_index": 2,
+      "status": "completed",
+      "project_commit": "af560a50544a6ae46b2c7b32aa664637c3b68963",
+      "created_at_utc": "2026-11-19T21:41:08+00:00",
+      "finished_at_utc": "2026-11-19T21:41:23+00:00",
+      "selected_case_count": 10,
+      "selected_state_count": 29,
+      "model_revisions": {
+        "base": "b968826d9c46dd6066d109eabc6255188de91218",
+        "expert": "0499c3ac83fdef8810b907a23894ba91e95eddd8"
+      }
+    },
+    {
+      "batch_index": 3,
+      "status": "completed",
+      "project_commit": "af560a50544a6ae46b2c7b32aa664637c3b68963",
+      "created_at_utc": "2026-11-19T21:41:57+00:00",
+      "finished_at_utc": "2026-11-19T21:42:14+00:00",
+      "selected_case_count": 10,
+      "selected_state_count": 30,
+      "model_revisions": {
+        "base": "b968826d9c46dd6066d109eabc6255188de91218",
+        "expert": "0499c3ac83fdef8810b907a23894ba91e95eddd8"
+      }
+    },
+    {
+      "batch_index": 4,
+      "status": "completed",
+      "project_commit": "af560a50544a6ae46b2c7b32aa664637c3b68963",
+      "created_at_utc": "2026-11-19T21:42:44+00:00",
+      "finished_at_utc": "2026-11-19T21:43:00+00:00",
+      "selected_case_count": 10,
+      "selected_state_count": 29,
+      "model_revisions": {
+        "base": "b968826d9c46dd6066d109eabc6255188de91218",
+        "expert": "0499c3ac83fdef8810b907a23894ba91e95eddd8"
+      }
+    },
+    {
+      "batch_index": 5,
+      "status": "completed",
+      "project_commit": "af560a50544a6ae46b2c7b32aa664637c3b68963",
+      "created_at_utc": "2026-11-19T21:43:25+00:00",
+      "finished_at_utc": "2026-11-19T21:43:40+00:00",
+      "selected_case_count": 10,
+      "selected_state_count": 29,
+      "model_revisions": {
+        "base": "b968826d9c46dd6066d109eabc6255188de91218",
+        "expert": "0499c3ac83fdef8810b907a23894ba91e95eddd8"
+      }
+    }
+  ],
+  "privacy_and_labels": {
+    "gold_answer_serialized": false,
+    "hidden_atomic_facts_serialized": false,
+    "q_targets_are_post_episode_returns": true,
+    "case_correctness_is_encoded_in_realized_returns": true,
+    "source_cases_are_public_train_split_records": true
+  },
+  "gpu_devices_used": [
+    2
+  ],
+  "services_stopped_after_run": true,
+  "ports_released": [
+    30481,
+    30482
+  ]
+}
