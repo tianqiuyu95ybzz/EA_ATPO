@@ -1,0 +1,1494 @@
+{
+  "schema_version": 1,
+  "status": "completed_development_only_answer_key_oracle_reanalysis",
+  "interpretation": "Development-only answer-key Oracle reanalysis; not an independent test and not clinician-adjudicated truth.",
+  "estimand": "case-macro mean over 43 previously-used public states clustered in 15 case_id groups; state-weighted denominators are additionally reported for paired expert cells",
+  "split": {
+    "unit": "case_id",
+    "router_train_cases": 35,
+    "dev_cases": 15,
+    "dev_states": 43,
+    "action_rollouts": 129,
+    "dev_used_for_checkpoint_selection": true,
+    "internal_test_opened": false,
+    "frozen_400_case_holdout_opened": false
+  },
+  "source_audit": {
+    "source_dataset_sha256": "434a6734dce931262f2ed9e3201a3751e57db3609b1612ab9666835ac8832fdc",
+    "source_rows": 14256,
+    "dev_source_category_action_rollouts": {
+      "mcqa": 45,
+      "medqa": 84
+    },
+    "answer_keys_parsed": 129,
+    "recorded_correctness_reconciled": 129,
+    "initial_public_prompts_matched": 129,
+    "format_valid_rollouts": 129,
+    "serialized_gold_or_hidden_fields": 0,
+    "gold_interpretation": "source benchmark answer key; provenance-verified, not clinician-adjudicated clinical truth"
+  },
+  "feature_boundary": "the learned Router consumes only frozen public-state embeddings/checkpoint scores; answer keys and rollout outcomes are joined after predicted actions are fixed",
+  "models": {
+    "base": {
+      "model": "vi-qwen3-8b-base",
+      "revision": "b968826d9c46dd6066d109eabc6255188de91218",
+      "thinking": false
+    },
+    "patient": {
+      "model": "vi-qwen3-8b-base",
+      "revision": null,
+      "thinking": false
+    },
+    "expert": {
+      "model": "vi-qwen3-32b-awq-expert",
+      "revision": "0499c3ac83fdef8810b907a23894ba91e95eddd8",
+      "thinking": false
+    }
+  },
+  "cost_definition": {
+    "ANSWER": 0.0,
+    "ASK_per_count": 0.01,
+    "DEFER_grid": [
+      0.05,
+      0.1,
+      0.2,
+      0.6
+    ],
+    "utility": "terminal_correctness - 0.01*cumulative_ASK - defer_cost*cumulative_DEFER",
+    "defer_decisions_frozen_across_cost_grid": true,
+    "resource_token_latency_costs_in_utility": false
+  },
+  "bootstrap": {
+    "unit": "case_id cluster; resample all states in a selected case together",
+    "replicates": 10000,
+    "base_seed": 20261121,
+    "seed_policy": "deterministic distinct seed per reported metric, starting at the base seed",
+    "interval": "percentile 95%",
+    "interpretation": "exploratory and unstable with only 15 clusters"
+  },
+  "four_cell_table": {
+    "counts_states": {
+      "base_correct_expert_correct": 11,
+      "base_correct_expert_wrong": 6,
+      "base_wrong_expert_correct": 9,
+      "base_wrong_expert_wrong": 17
+    },
+    "case_macro_proportions": {
+      "base_correct_expert_correct": 0.26666666666666666,
+      "base_correct_expert_wrong": 0.13333333333333333,
+      "base_wrong_expert_correct": 0.2111111111111111,
+      "base_wrong_expert_wrong": 0.3888888888888888
+    },
+    "expert_correction_rate_given_base_wrong_state_weighted": 0.34615384615384615,
+    "base_correct_spoilage_rate_state_weighted": 0.35294117647058826,
+    "expert_net_accuracy_difference_state_weighted": 0.06976744186046512,
+    "bootstrap_ci95_case_cluster": {
+      "base_correct_expert_correct_proportion": [
+        0.08888888888888889,
+        0.46511627906976744
+      ],
+      "base_correct_expert_wrong_proportion": [
+        0.0,
+        0.30952380952380953
+      ],
+      "base_wrong_expert_correct_proportion": [
+        0.044444444444444446,
+        0.4090909090909091
+      ],
+      "base_wrong_expert_wrong_proportion": [
+        0.17777777777777778,
+        0.6341463414634146
+      ],
+      "expert_correction_rate_given_base_wrong": [
+        0.06896551724137931,
+        0.65
+      ],
+      "base_correct_spoilage_rate": [
+        0.0,
+        0.6923076923076923
+      ],
+      "paired_expert_minus_base_accuracy": [
+        -0.2,
+        0.3488372093023256
+      ]
+    }
+  },
+  "frozen_router_action_counts": {
+    "17": {
+      "router_proposed_actions_state_counts": {
+        "ASK": 22,
+        "ANSWER": 10,
+        "DEFER": 11
+      },
+      "router_proposed_defer_count": 11,
+      "oracle_calls_after_preserve_correct_base_gate": 9
+    },
+    "42": {
+      "router_proposed_actions_state_counts": {
+        "ASK": 16,
+        "ANSWER": 18,
+        "DEFER": 9
+      },
+      "router_proposed_defer_count": 9,
+      "oracle_calls_after_preserve_correct_base_gate": 8
+    },
+    "2026": {
+      "router_proposed_actions_state_counts": {
+        "ASK": 23,
+        "ANSWER": 10,
+        "DEFER": 10
+      },
+      "router_proposed_defer_count": 10,
+      "oracle_calls_after_preserve_correct_base_gate": 5
+    }
+  },
+  "checkpoint_replay": [
+    {
+      "seed": 17,
+      "checkpoint_sha256": "9821e7ca701189d37df9567fbf8ffaff9eaddb537e97448d8019803e3b8e2d32",
+      "states_replayed": 43,
+      "max_abs_score_difference": 7.450580596923828e-08,
+      "matched_saved_action_and_scores": true
+    },
+    {
+      "seed": 42,
+      "checkpoint_sha256": "b461fab29c675070b3d1f02abb52b7ca84d8218c6a9c0dae4ac523c0bf0157b4",
+      "states_replayed": 43,
+      "max_abs_score_difference": 5.960464477539063e-08,
+      "matched_saved_action_and_scores": true
+    },
+    {
+      "seed": 2026,
+      "checkpoint_sha256": "3405648a8284a526db22b0e211e190302705443753d788e858b0d93b7ac83aeb",
+      "states_replayed": 43,
+      "max_abs_score_difference": 7.450580596923828e-08,
+      "matched_saved_action_and_scores": true
+    }
+  ],
+  "cost_sensitivity": {
+    "0.05": {
+      "always_answer": {
+        "label": "Always ANSWER",
+        "accuracy": 0.4,
+        "utility": 0.4,
+        "ask_rate": 0.0,
+        "answer_rate": 1.0,
+        "defer_rate": 0.0,
+        "oracle_call_rate": 0.0,
+        "average_cost": 0.0,
+        "base_correct_retention": 1.0,
+        "base_error_correction": 0.0,
+        "defer_answer_accuracy": null,
+        "defer_precision_useful_corrections_per_call": null,
+        "defer_error_correction_failure_rate": null,
+        "net_gain_vs_always_answer_utility": 0.0,
+        "net_gain_vs_always_ask_utility": -0.03444444444444433,
+        "paired_ci95_accuracy_vs_always_answer": [
+          0.0,
+          0.0
+        ],
+        "paired_ci95_utility_vs_always_answer": [
+          0.0,
+          0.0
+        ],
+        "paired_ci95_utility_vs_always_ask": [
+          -0.16777777777777772,
+          0.0766666666666667
+        ],
+        "state_weighted": {
+          "accuracy": 0.3953488372093023,
+          "utility": 0.3953488372093023,
+          "ask_rate": 0.0,
+          "answer_rate": 1.0,
+          "defer_proposal_rate": 0.0,
+          "oracle_call_rate": 0.0,
+          "average_cost": 0.0
+        },
+        "per_seed_case_macro": {}
+      },
+      "always_ask": {
+        "label": "Always ASK (actual ASK trajectory)",
+        "accuracy": 0.4444444444444445,
+        "utility": 0.43444444444444436,
+        "ask_rate": 1.0,
+        "answer_rate": 0.0,
+        "defer_rate": 0.0,
+        "oracle_call_rate": 0.0,
+        "average_cost": 0.01,
+        "base_correct_retention": 0.8823529411764706,
+        "base_error_correction": 0.15384615384615385,
+        "defer_answer_accuracy": null,
+        "defer_precision_useful_corrections_per_call": null,
+        "defer_error_correction_failure_rate": null,
+        "net_gain_vs_always_answer_utility": 0.03444444444444433,
+        "net_gain_vs_always_ask_utility": 0.0,
+        "paired_ci95_accuracy_vs_always_answer": [
+          -0.06666666666666667,
+          0.17777777777777776
+        ],
+        "paired_ci95_utility_vs_always_answer": [
+          -0.07666666666666672,
+          0.16777777777777772
+        ],
+        "paired_ci95_utility_vs_always_ask": [
+          0.0,
+          0.0
+        ],
+        "state_weighted": {
+          "accuracy": 0.4418604651162791,
+          "utility": 0.431860465116279,
+          "ask_rate": 1.0,
+          "answer_rate": 0.0,
+          "defer_proposal_rate": 0.0,
+          "oracle_call_rate": 0.0,
+          "average_cost": 0.010000000000000002
+        },
+        "per_seed_case_macro": {}
+      },
+      "always_defer_actual": {
+        "label": "Always DEFER (Qwen3-32B-AWQ)",
+        "accuracy": 0.47777777777777775,
+        "utility": 0.42777777777777776,
+        "ask_rate": 0.0,
+        "answer_rate": 0.0,
+        "defer_rate": 1.0,
+        "oracle_call_rate": 1.0,
+        "average_cost": 0.050000000000000024,
+        "base_correct_retention": 0.6470588235294118,
+        "base_error_correction": 0.34615384615384615,
+        "defer_answer_accuracy": 0.46511627906976744,
+        "defer_precision_useful_corrections_per_call": 0.20930232558139536,
+        "defer_error_correction_failure_rate": 0.6538461538461539,
+        "net_gain_vs_always_answer_utility": 0.027777777777777735,
+        "net_gain_vs_always_ask_utility": -0.006666666666666599,
+        "paired_ci95_accuracy_vs_always_answer": [
+          -0.18888888888888886,
+          0.34444444444444444
+        ],
+        "paired_ci95_utility_vs_always_answer": [
+          -0.23888888888888893,
+          0.2944444444444444
+        ],
+        "paired_ci95_utility_vs_always_ask": [
+          -0.2177777777777778,
+          0.22666666666666657
+        ],
+        "state_weighted": {
+          "accuracy": 0.46511627906976744,
+          "utility": 0.4151162790697674,
+          "ask_rate": 0.0,
+          "answer_rate": 0.0,
+          "defer_proposal_rate": 1.0,
+          "oracle_call_rate": 1.0,
+          "average_cost": 0.04999999999999999
+        },
+        "per_seed_case_macro": {}
+      },
+      "always_defer_oracle": {
+        "label": "Always DEFER (direct answer-key Oracle)",
+        "accuracy": 1.0,
+        "utility": 0.9499999999999996,
+        "ask_rate": 0.0,
+        "answer_rate": 0.0,
+        "defer_rate": 1.0,
+        "oracle_call_rate": 1.0,
+        "average_cost": 0.050000000000000024,
+        "base_correct_retention": 1.0,
+        "base_error_correction": 1.0,
+        "defer_answer_accuracy": 1.0,
+        "defer_precision_useful_corrections_per_call": 0.6046511627906976,
+        "defer_error_correction_failure_rate": 0.0,
+        "net_gain_vs_always_answer_utility": 0.5499999999999996,
+        "net_gain_vs_always_ask_utility": 0.5155555555555553,
+        "paired_ci95_accuracy_vs_always_answer": [
+          0.3777777777777778,
+          0.8222222222222223
+        ],
+        "paired_ci95_utility_vs_always_answer": [
+          0.3277777777777776,
+          0.7499999999999999
+        ],
+        "paired_ci95_utility_vs_always_ask": [
+          0.3155555555555554,
+          0.7155555555555554
+        ],
+        "state_weighted": {
+          "accuracy": 1.0,
+          "utility": 0.9500000000000002,
+          "ask_rate": 0.0,
+          "answer_rate": 0.0,
+          "defer_proposal_rate": 1.0,
+          "oracle_call_rate": 1.0,
+          "average_cost": 0.04999999999999999
+        },
+        "per_seed_case_macro": {}
+      },
+      "oracle_conditional": {
+        "label": "Oracle Conditional",
+        "accuracy": 1.0,
+        "utility": 0.9699999999999999,
+        "ask_rate": 0.0,
+        "answer_rate": 0.4,
+        "defer_rate": 0.5999999999999999,
+        "oracle_call_rate": 0.5999999999999999,
+        "average_cost": 0.030000000000000002,
+        "base_correct_retention": 1.0,
+        "base_error_correction": 1.0,
+        "defer_answer_accuracy": 1.0,
+        "defer_precision_useful_corrections_per_call": 1.0,
+        "defer_error_correction_failure_rate": 0.0,
+        "net_gain_vs_always_answer_utility": 0.5699999999999998,
+        "net_gain_vs_always_ask_utility": 0.5355555555555556,
+        "paired_ci95_accuracy_vs_always_answer": [
+          0.3777777777777778,
+          0.8222222222222223
+        ],
+        "paired_ci95_utility_vs_always_answer": [
+          0.35888888888888887,
+          0.7599999999999998
+        ],
+        "paired_ci95_utility_vs_always_ask": [
+          0.3444444444444444,
+          0.7255555555555554
+        ],
+        "state_weighted": {
+          "accuracy": 1.0,
+          "utility": 0.9697674418604652,
+          "ask_rate": 0.0,
+          "answer_rate": 0.3953488372093023,
+          "defer_proposal_rate": 0.6046511627906976,
+          "oracle_call_rate": 0.6046511627906976,
+          "average_cost": 0.030232558139534883
+        },
+        "per_seed_case_macro": {}
+      },
+      "learned_actual": {
+        "label": "Frozen Q-guided Router + actual Expert",
+        "accuracy": 0.5074074074074074,
+        "utility": 0.49062962962962964,
+        "ask_rate": 0.47407407407407404,
+        "answer_rate": 0.2851851851851851,
+        "defer_rate": 0.24074074074074073,
+        "oracle_call_rate": 0.24074074074074073,
+        "average_cost": 0.016777777777777777,
+        "base_correct_retention": 0.9215686274509803,
+        "base_error_correction": 0.23076923076923078,
+        "defer_answer_accuracy": 0.6333333333333333,
+        "defer_precision_useful_corrections_per_call": 0.4,
+        "defer_error_correction_failure_rate": 0.45454545454545453,
+        "net_gain_vs_always_answer_utility": 0.09062962962962962,
+        "net_gain_vs_always_ask_utility": 0.05618518518518528,
+        "paired_ci95_accuracy_vs_always_answer": [
+          -0.014814814814814826,
+          0.25555555555555554
+        ],
+        "paired_ci95_utility_vs_always_answer": [
+          -0.033791666666666685,
+          0.2360759259259258
+        ],
+        "paired_ci95_utility_vs_always_ask": [
+          -0.013112037037037018,
+          0.1567805555555555
+        ],
+        "state_weighted": {
+          "accuracy": 0.5038759689922481,
+          "utility": 0.48751937984496124,
+          "ask_rate": 0.4728682170542636,
+          "answer_rate": 0.29457364341085274,
+          "defer_proposal_rate": 0.23255813953488372,
+          "oracle_call_rate": 0.23255813953488372,
+          "average_cost": 0.016356589147286823
+        },
+        "per_seed_case_macro": {
+          "17": {
+            "accuracy": 0.5444444444444445,
+            "utility": 0.5259999999999999,
+            "ask_rate": 0.5111111111111111,
+            "answer_rate": 0.2222222222222222,
+            "defer_rate": 0.26666666666666666,
+            "oracle_call_rate": 0.26666666666666666,
+            "average_cost": 0.018444444444444447
+          },
+          "42": {
+            "accuracy": 0.5111111111111112,
+            "utility": 0.49677777777777776,
+            "ask_rate": 0.3777777777777778,
+            "answer_rate": 0.41111111111111104,
+            "defer_rate": 0.2111111111111111,
+            "oracle_call_rate": 0.2111111111111111,
+            "average_cost": 0.014333333333333335
+          },
+          "2026": {
+            "accuracy": 0.4666666666666667,
+            "utility": 0.4491111111111111,
+            "ask_rate": 0.5333333333333333,
+            "answer_rate": 0.22222222222222224,
+            "defer_rate": 0.24444444444444446,
+            "oracle_call_rate": 0.24444444444444446,
+            "average_cost": 0.017555555555555553
+          }
+        }
+      },
+      "learned_oracle": {
+        "label": "Frozen Q-guided Router + Oracle safety gate",
+        "accuracy": 0.5888888888888889,
+        "utility": 0.5758148148148148,
+        "ask_rate": 0.47407407407407404,
+        "answer_rate": 0.2851851851851851,
+        "defer_rate": 0.24074074074074073,
+        "oracle_call_rate": 0.16666666666666666,
+        "average_cost": 0.013074074074074075,
+        "base_correct_retention": 0.9411764705882353,
+        "base_error_correction": 0.358974358974359,
+        "defer_answer_accuracy": 1.0,
+        "defer_precision_useful_corrections_per_call": 1.0,
+        "defer_error_correction_failure_rate": 0.0,
+        "net_gain_vs_always_answer_utility": 0.17581481481481476,
+        "net_gain_vs_always_ask_utility": 0.14137037037037042,
+        "paired_ci95_accuracy_vs_always_answer": [
+          0.04814814814814815,
+          0.34074074074074073
+        ],
+        "paired_ci95_utility_vs_always_answer": [
+          0.03825370370370368,
+          0.32266851851851847
+        ],
+        "paired_ci95_utility_vs_always_ask": [
+          0.054184259259259265,
+          0.24726111111111115
+        ],
+        "state_weighted": {
+          "accuracy": 0.5891472868217055,
+          "utility": 0.575891472868217,
+          "ask_rate": 0.4728682170542636,
+          "answer_rate": 0.29457364341085274,
+          "defer_proposal_rate": 0.23255813953488372,
+          "oracle_call_rate": 0.17054263565891473,
+          "average_cost": 0.013255813953488372
+        },
+        "per_seed_case_macro": {
+          "17": {
+            "accuracy": 0.6111111111111112,
+            "utility": 0.5954444444444444,
+            "ask_rate": 0.5111111111111111,
+            "answer_rate": 0.2222222222222222,
+            "defer_rate": 0.26666666666666666,
+            "oracle_call_rate": 0.2111111111111111,
+            "average_cost": 0.01566666666666667
+          },
+          "42": {
+            "accuracy": 0.6000000000000001,
+            "utility": 0.5873333333333333,
+            "ask_rate": 0.3777777777777778,
+            "answer_rate": 0.41111111111111104,
+            "defer_rate": 0.2111111111111111,
+            "oracle_call_rate": 0.17777777777777776,
+            "average_cost": 0.012666666666666668
+          },
+          "2026": {
+            "accuracy": 0.5555555555555556,
+            "utility": 0.5446666666666667,
+            "ask_rate": 0.5333333333333333,
+            "answer_rate": 0.22222222222222224,
+            "defer_rate": 0.24444444444444446,
+            "oracle_call_rate": 0.1111111111111111,
+            "average_cost": 0.01088888888888889
+          }
+        }
+      }
+    },
+    "0.10": {
+      "always_answer": {
+        "label": "Always ANSWER",
+        "accuracy": 0.4,
+        "utility": 0.4,
+        "ask_rate": 0.0,
+        "answer_rate": 1.0,
+        "defer_rate": 0.0,
+        "oracle_call_rate": 0.0,
+        "average_cost": 0.0,
+        "base_correct_retention": 1.0,
+        "base_error_correction": 0.0,
+        "defer_answer_accuracy": null,
+        "defer_precision_useful_corrections_per_call": null,
+        "defer_error_correction_failure_rate": null,
+        "net_gain_vs_always_answer_utility": 0.0,
+        "net_gain_vs_always_ask_utility": -0.03444444444444433,
+        "paired_ci95_accuracy_vs_always_answer": [
+          0.0,
+          0.0
+        ],
+        "paired_ci95_utility_vs_always_answer": [
+          0.0,
+          0.0
+        ],
+        "paired_ci95_utility_vs_always_ask": [
+          -0.16777777777777772,
+          0.0766666666666667
+        ],
+        "state_weighted": {
+          "accuracy": 0.3953488372093023,
+          "utility": 0.3953488372093023,
+          "ask_rate": 0.0,
+          "answer_rate": 1.0,
+          "defer_proposal_rate": 0.0,
+          "oracle_call_rate": 0.0,
+          "average_cost": 0.0
+        },
+        "per_seed_case_macro": {}
+      },
+      "always_ask": {
+        "label": "Always ASK (actual ASK trajectory)",
+        "accuracy": 0.4444444444444445,
+        "utility": 0.43444444444444436,
+        "ask_rate": 1.0,
+        "answer_rate": 0.0,
+        "defer_rate": 0.0,
+        "oracle_call_rate": 0.0,
+        "average_cost": 0.01,
+        "base_correct_retention": 0.8823529411764706,
+        "base_error_correction": 0.15384615384615385,
+        "defer_answer_accuracy": null,
+        "defer_precision_useful_corrections_per_call": null,
+        "defer_error_correction_failure_rate": null,
+        "net_gain_vs_always_answer_utility": 0.03444444444444433,
+        "net_gain_vs_always_ask_utility": 0.0,
+        "paired_ci95_accuracy_vs_always_answer": [
+          -0.06666666666666667,
+          0.17777777777777776
+        ],
+        "paired_ci95_utility_vs_always_answer": [
+          -0.07666666666666672,
+          0.16777777777777772
+        ],
+        "paired_ci95_utility_vs_always_ask": [
+          0.0,
+          0.0
+        ],
+        "state_weighted": {
+          "accuracy": 0.4418604651162791,
+          "utility": 0.431860465116279,
+          "ask_rate": 1.0,
+          "answer_rate": 0.0,
+          "defer_proposal_rate": 0.0,
+          "oracle_call_rate": 0.0,
+          "average_cost": 0.010000000000000002
+        },
+        "per_seed_case_macro": {}
+      },
+      "always_defer_actual": {
+        "label": "Always DEFER (Qwen3-32B-AWQ)",
+        "accuracy": 0.47777777777777775,
+        "utility": 0.3777777777777779,
+        "ask_rate": 0.0,
+        "answer_rate": 0.0,
+        "defer_rate": 1.0,
+        "oracle_call_rate": 1.0,
+        "average_cost": 0.10000000000000005,
+        "base_correct_retention": 0.6470588235294118,
+        "base_error_correction": 0.34615384615384615,
+        "defer_answer_accuracy": 0.46511627906976744,
+        "defer_precision_useful_corrections_per_call": 0.20930232558139536,
+        "defer_error_correction_failure_rate": 0.6538461538461539,
+        "net_gain_vs_always_answer_utility": -0.022222222222222143,
+        "net_gain_vs_always_ask_utility": -0.056666666666666476,
+        "paired_ci95_accuracy_vs_always_answer": [
+          -0.18888888888888886,
+          0.34444444444444444
+        ],
+        "paired_ci95_utility_vs_always_answer": [
+          -0.2888888888888889,
+          0.2444444444444444
+        ],
+        "paired_ci95_utility_vs_always_ask": [
+          -0.2677777777777778,
+          0.1766666666666667
+        ],
+        "state_weighted": {
+          "accuracy": 0.46511627906976744,
+          "utility": 0.36511627906976746,
+          "ask_rate": 0.0,
+          "answer_rate": 0.0,
+          "defer_proposal_rate": 1.0,
+          "oracle_call_rate": 1.0,
+          "average_cost": 0.09999999999999998
+        },
+        "per_seed_case_macro": {}
+      },
+      "always_defer_oracle": {
+        "label": "Always DEFER (direct answer-key Oracle)",
+        "accuracy": 1.0,
+        "utility": 0.9000000000000001,
+        "ask_rate": 0.0,
+        "answer_rate": 0.0,
+        "defer_rate": 1.0,
+        "oracle_call_rate": 1.0,
+        "average_cost": 0.10000000000000005,
+        "base_correct_retention": 1.0,
+        "base_error_correction": 1.0,
+        "defer_answer_accuracy": 1.0,
+        "defer_precision_useful_corrections_per_call": 0.6046511627906976,
+        "defer_error_correction_failure_rate": 0.0,
+        "net_gain_vs_always_answer_utility": 0.5000000000000001,
+        "net_gain_vs_always_ask_utility": 0.4655555555555558,
+        "paired_ci95_accuracy_vs_always_answer": [
+          0.3777777777777778,
+          0.8222222222222223
+        ],
+        "paired_ci95_utility_vs_always_answer": [
+          0.27777777777777773,
+          0.7000000000000001
+        ],
+        "paired_ci95_utility_vs_always_ask": [
+          0.2655555555555556,
+          0.6655555555555555
+        ],
+        "state_weighted": {
+          "accuracy": 1.0,
+          "utility": 0.8999999999999999,
+          "ask_rate": 0.0,
+          "answer_rate": 0.0,
+          "defer_proposal_rate": 1.0,
+          "oracle_call_rate": 1.0,
+          "average_cost": 0.09999999999999998
+        },
+        "per_seed_case_macro": {}
+      },
+      "oracle_conditional": {
+        "label": "Oracle Conditional",
+        "accuracy": 1.0,
+        "utility": 0.9400000000000001,
+        "ask_rate": 0.0,
+        "answer_rate": 0.4,
+        "defer_rate": 0.5999999999999999,
+        "oracle_call_rate": 0.5999999999999999,
+        "average_cost": 0.060000000000000005,
+        "base_correct_retention": 1.0,
+        "base_error_correction": 1.0,
+        "defer_answer_accuracy": 1.0,
+        "defer_precision_useful_corrections_per_call": 1.0,
+        "defer_error_correction_failure_rate": 0.0,
+        "net_gain_vs_always_answer_utility": 0.54,
+        "net_gain_vs_always_ask_utility": 0.5055555555555558,
+        "paired_ci95_accuracy_vs_always_answer": [
+          0.3777777777777778,
+          0.8222222222222223
+        ],
+        "paired_ci95_utility_vs_always_answer": [
+          0.33999999999999997,
+          0.7200000000000002
+        ],
+        "paired_ci95_utility_vs_always_ask": [
+          0.3233333333333333,
+          0.6855555555555556
+        ],
+        "state_weighted": {
+          "accuracy": 1.0,
+          "utility": 0.9395348837209302,
+          "ask_rate": 0.0,
+          "answer_rate": 0.3953488372093023,
+          "defer_proposal_rate": 0.6046511627906976,
+          "oracle_call_rate": 0.6046511627906976,
+          "average_cost": 0.06046511627906977
+        },
+        "per_seed_case_macro": {}
+      },
+      "learned_actual": {
+        "label": "Frozen Q-guided Router + actual Expert",
+        "accuracy": 0.5074074074074074,
+        "utility": 0.4785925925925926,
+        "ask_rate": 0.47407407407407404,
+        "answer_rate": 0.2851851851851851,
+        "defer_rate": 0.24074074074074073,
+        "oracle_call_rate": 0.24074074074074073,
+        "average_cost": 0.028814814814814817,
+        "base_correct_retention": 0.9215686274509803,
+        "base_error_correction": 0.23076923076923078,
+        "defer_answer_accuracy": 0.6333333333333333,
+        "defer_precision_useful_corrections_per_call": 0.4,
+        "defer_error_correction_failure_rate": 0.45454545454545453,
+        "net_gain_vs_always_answer_utility": 0.0785925925925926,
+        "net_gain_vs_always_ask_utility": 0.04414814814814827,
+        "paired_ci95_accuracy_vs_always_answer": [
+          -0.014814814814814826,
+          0.25555555555555554
+        ],
+        "paired_ci95_utility_vs_always_answer": [
+          -0.04326296296296298,
+          0.2210018518518518
+        ],
+        "paired_ci95_utility_vs_always_ask": [
+          -0.02388981481481478,
+          0.14251851851851854
+        ],
+        "state_weighted": {
+          "accuracy": 0.5038759689922481,
+          "utility": 0.47589147286821704,
+          "ask_rate": 0.4728682170542636,
+          "answer_rate": 0.29457364341085274,
+          "defer_proposal_rate": 0.23255813953488372,
+          "oracle_call_rate": 0.23255813953488372,
+          "average_cost": 0.02798449612403101
+        },
+        "per_seed_case_macro": {
+          "17": {
+            "accuracy": 0.5444444444444445,
+            "utility": 0.5126666666666667,
+            "ask_rate": 0.5111111111111111,
+            "answer_rate": 0.2222222222222222,
+            "defer_rate": 0.26666666666666666,
+            "oracle_call_rate": 0.26666666666666666,
+            "average_cost": 0.03177777777777778
+          },
+          "42": {
+            "accuracy": 0.5111111111111112,
+            "utility": 0.4862222222222222,
+            "ask_rate": 0.3777777777777778,
+            "answer_rate": 0.41111111111111104,
+            "defer_rate": 0.2111111111111111,
+            "oracle_call_rate": 0.2111111111111111,
+            "average_cost": 0.024888888888888887
+          },
+          "2026": {
+            "accuracy": 0.4666666666666667,
+            "utility": 0.43688888888888894,
+            "ask_rate": 0.5333333333333333,
+            "answer_rate": 0.22222222222222224,
+            "defer_rate": 0.24444444444444446,
+            "oracle_call_rate": 0.24444444444444446,
+            "average_cost": 0.029777777777777778
+          }
+        }
+      },
+      "learned_oracle": {
+        "label": "Frozen Q-guided Router + Oracle safety gate",
+        "accuracy": 0.5888888888888889,
+        "utility": 0.5674814814814815,
+        "ask_rate": 0.47407407407407404,
+        "answer_rate": 0.2851851851851851,
+        "defer_rate": 0.24074074074074073,
+        "oracle_call_rate": 0.16666666666666666,
+        "average_cost": 0.02140740740740741,
+        "base_correct_retention": 0.9411764705882353,
+        "base_error_correction": 0.358974358974359,
+        "defer_answer_accuracy": 1.0,
+        "defer_precision_useful_corrections_per_call": 1.0,
+        "defer_error_correction_failure_rate": 0.0,
+        "net_gain_vs_always_answer_utility": 0.16748148148148145,
+        "net_gain_vs_always_ask_utility": 0.13303703703703712,
+        "paired_ci95_accuracy_vs_always_answer": [
+          0.04814814814814815,
+          0.34074074074074073
+        ],
+        "paired_ci95_utility_vs_always_answer": [
+          0.034740740740740725,
+          0.30911388888888885
+        ],
+        "paired_ci95_utility_vs_always_ask": [
+          0.04966574074074076,
+          0.23537129629629633
+        ],
+        "state_weighted": {
+          "accuracy": 0.5891472868217055,
+          "utility": 0.5673643410852713,
+          "ask_rate": 0.4728682170542636,
+          "answer_rate": 0.29457364341085274,
+          "defer_proposal_rate": 0.23255813953488372,
+          "oracle_call_rate": 0.17054263565891473,
+          "average_cost": 0.021782945736434113
+        },
+        "per_seed_case_macro": {
+          "17": {
+            "accuracy": 0.6111111111111112,
+            "utility": 0.5848888888888889,
+            "ask_rate": 0.5111111111111111,
+            "answer_rate": 0.2222222222222222,
+            "defer_rate": 0.26666666666666666,
+            "oracle_call_rate": 0.2111111111111111,
+            "average_cost": 0.026222222222222223
+          },
+          "42": {
+            "accuracy": 0.6000000000000001,
+            "utility": 0.5784444444444444,
+            "ask_rate": 0.3777777777777778,
+            "answer_rate": 0.41111111111111104,
+            "defer_rate": 0.2111111111111111,
+            "oracle_call_rate": 0.17777777777777776,
+            "average_cost": 0.021555555555555553
+          },
+          "2026": {
+            "accuracy": 0.5555555555555556,
+            "utility": 0.5391111111111112,
+            "ask_rate": 0.5333333333333333,
+            "answer_rate": 0.22222222222222224,
+            "defer_rate": 0.24444444444444446,
+            "oracle_call_rate": 0.1111111111111111,
+            "average_cost": 0.016444444444444446
+          }
+        }
+      }
+    },
+    "0.20": {
+      "always_answer": {
+        "label": "Always ANSWER",
+        "accuracy": 0.4,
+        "utility": 0.4,
+        "ask_rate": 0.0,
+        "answer_rate": 1.0,
+        "defer_rate": 0.0,
+        "oracle_call_rate": 0.0,
+        "average_cost": 0.0,
+        "base_correct_retention": 1.0,
+        "base_error_correction": 0.0,
+        "defer_answer_accuracy": null,
+        "defer_precision_useful_corrections_per_call": null,
+        "defer_error_correction_failure_rate": null,
+        "net_gain_vs_always_answer_utility": 0.0,
+        "net_gain_vs_always_ask_utility": -0.03444444444444433,
+        "paired_ci95_accuracy_vs_always_answer": [
+          0.0,
+          0.0
+        ],
+        "paired_ci95_utility_vs_always_answer": [
+          0.0,
+          0.0
+        ],
+        "paired_ci95_utility_vs_always_ask": [
+          -0.16777777777777772,
+          0.0766666666666667
+        ],
+        "state_weighted": {
+          "accuracy": 0.3953488372093023,
+          "utility": 0.3953488372093023,
+          "ask_rate": 0.0,
+          "answer_rate": 1.0,
+          "defer_proposal_rate": 0.0,
+          "oracle_call_rate": 0.0,
+          "average_cost": 0.0
+        },
+        "per_seed_case_macro": {}
+      },
+      "always_ask": {
+        "label": "Always ASK (actual ASK trajectory)",
+        "accuracy": 0.4444444444444445,
+        "utility": 0.43444444444444436,
+        "ask_rate": 1.0,
+        "answer_rate": 0.0,
+        "defer_rate": 0.0,
+        "oracle_call_rate": 0.0,
+        "average_cost": 0.01,
+        "base_correct_retention": 0.8823529411764706,
+        "base_error_correction": 0.15384615384615385,
+        "defer_answer_accuracy": null,
+        "defer_precision_useful_corrections_per_call": null,
+        "defer_error_correction_failure_rate": null,
+        "net_gain_vs_always_answer_utility": 0.03444444444444433,
+        "net_gain_vs_always_ask_utility": 0.0,
+        "paired_ci95_accuracy_vs_always_answer": [
+          -0.06666666666666667,
+          0.17777777777777776
+        ],
+        "paired_ci95_utility_vs_always_answer": [
+          -0.07666666666666672,
+          0.16777777777777772
+        ],
+        "paired_ci95_utility_vs_always_ask": [
+          0.0,
+          0.0
+        ],
+        "state_weighted": {
+          "accuracy": 0.4418604651162791,
+          "utility": 0.431860465116279,
+          "ask_rate": 1.0,
+          "answer_rate": 0.0,
+          "defer_proposal_rate": 0.0,
+          "oracle_call_rate": 0.0,
+          "average_cost": 0.010000000000000002
+        },
+        "per_seed_case_macro": {}
+      },
+      "always_defer_actual": {
+        "label": "Always DEFER (Qwen3-32B-AWQ)",
+        "accuracy": 0.47777777777777775,
+        "utility": 0.27777777777777785,
+        "ask_rate": 0.0,
+        "answer_rate": 0.0,
+        "defer_rate": 1.0,
+        "oracle_call_rate": 1.0,
+        "average_cost": 0.2000000000000001,
+        "base_correct_retention": 0.6470588235294118,
+        "base_error_correction": 0.34615384615384615,
+        "defer_answer_accuracy": 0.46511627906976744,
+        "defer_precision_useful_corrections_per_call": 0.20930232558139536,
+        "defer_error_correction_failure_rate": 0.6538461538461539,
+        "net_gain_vs_always_answer_utility": -0.12222222222222218,
+        "net_gain_vs_always_ask_utility": -0.1566666666666665,
+        "paired_ci95_accuracy_vs_always_answer": [
+          -0.18888888888888886,
+          0.34444444444444444
+        ],
+        "paired_ci95_utility_vs_always_answer": [
+          -0.38888888888888895,
+          0.14444444444444451
+        ],
+        "paired_ci95_utility_vs_always_ask": [
+          -0.36777777777777776,
+          0.07666666666666676
+        ],
+        "state_weighted": {
+          "accuracy": 0.46511627906976744,
+          "utility": 0.2651162790697675,
+          "ask_rate": 0.0,
+          "answer_rate": 0.0,
+          "defer_proposal_rate": 1.0,
+          "oracle_call_rate": 1.0,
+          "average_cost": 0.19999999999999996
+        },
+        "per_seed_case_macro": {}
+      },
+      "always_defer_oracle": {
+        "label": "Always DEFER (direct answer-key Oracle)",
+        "accuracy": 1.0,
+        "utility": 0.8000000000000004,
+        "ask_rate": 0.0,
+        "answer_rate": 0.0,
+        "defer_rate": 1.0,
+        "oracle_call_rate": 1.0,
+        "average_cost": 0.2000000000000001,
+        "base_correct_retention": 1.0,
+        "base_error_correction": 1.0,
+        "defer_answer_accuracy": 1.0,
+        "defer_precision_useful_corrections_per_call": 0.6046511627906976,
+        "defer_error_correction_failure_rate": 0.0,
+        "net_gain_vs_always_answer_utility": 0.40000000000000036,
+        "net_gain_vs_always_ask_utility": 0.365555555555556,
+        "paired_ci95_accuracy_vs_always_answer": [
+          0.3777777777777778,
+          0.8222222222222223
+        ],
+        "paired_ci95_utility_vs_always_answer": [
+          0.17777777777777792,
+          0.6000000000000001
+        ],
+        "paired_ci95_utility_vs_always_ask": [
+          0.16555555555555573,
+          0.5655555555555557
+        ],
+        "state_weighted": {
+          "accuracy": 1.0,
+          "utility": 0.7999999999999998,
+          "ask_rate": 0.0,
+          "answer_rate": 0.0,
+          "defer_proposal_rate": 1.0,
+          "oracle_call_rate": 1.0,
+          "average_cost": 0.19999999999999996
+        },
+        "per_seed_case_macro": {}
+      },
+      "oracle_conditional": {
+        "label": "Oracle Conditional",
+        "accuracy": 1.0,
+        "utility": 0.8800000000000002,
+        "ask_rate": 0.0,
+        "answer_rate": 0.4,
+        "defer_rate": 0.5999999999999999,
+        "oracle_call_rate": 0.5999999999999999,
+        "average_cost": 0.12000000000000001,
+        "base_correct_retention": 1.0,
+        "base_error_correction": 1.0,
+        "defer_answer_accuracy": 1.0,
+        "defer_precision_useful_corrections_per_call": 1.0,
+        "defer_error_correction_failure_rate": 0.0,
+        "net_gain_vs_always_answer_utility": 0.4800000000000002,
+        "net_gain_vs_always_ask_utility": 0.44555555555555587,
+        "paired_ci95_accuracy_vs_always_answer": [
+          0.3777777777777778,
+          0.8222222222222223
+        ],
+        "paired_ci95_utility_vs_always_answer": [
+          0.3022222222222222,
+          0.6400000000000001
+        ],
+        "paired_ci95_utility_vs_always_ask": [
+          0.28111111111111126,
+          0.6055555555555558
+        ],
+        "state_weighted": {
+          "accuracy": 1.0,
+          "utility": 0.8790697674418604,
+          "ask_rate": 0.0,
+          "answer_rate": 0.3953488372093023,
+          "defer_proposal_rate": 0.6046511627906976,
+          "oracle_call_rate": 0.6046511627906976,
+          "average_cost": 0.12093023255813953
+        },
+        "per_seed_case_macro": {}
+      },
+      "learned_actual": {
+        "label": "Frozen Q-guided Router + actual Expert",
+        "accuracy": 0.5074074074074074,
+        "utility": 0.4545185185185186,
+        "ask_rate": 0.47407407407407404,
+        "answer_rate": 0.2851851851851851,
+        "defer_rate": 0.24074074074074073,
+        "oracle_call_rate": 0.24074074074074073,
+        "average_cost": 0.05288888888888889,
+        "base_correct_retention": 0.9215686274509803,
+        "base_error_correction": 0.23076923076923078,
+        "defer_answer_accuracy": 0.6333333333333333,
+        "defer_precision_useful_corrections_per_call": 0.4,
+        "defer_error_correction_failure_rate": 0.45454545454545453,
+        "net_gain_vs_always_answer_utility": 0.05451851851851858,
+        "net_gain_vs_always_ask_utility": 0.020074074074074244,
+        "paired_ci95_accuracy_vs_always_answer": [
+          -0.014814814814814826,
+          0.25555555555555554
+        ],
+        "paired_ci95_utility_vs_always_answer": [
+          -0.06289074074074077,
+          0.19022407407407407
+        ],
+        "paired_ci95_utility_vs_always_ask": [
+          -0.04670462962962963,
+          0.11470555555555555
+        ],
+        "state_weighted": {
+          "accuracy": 0.5038759689922481,
+          "utility": 0.4526356589147287,
+          "ask_rate": 0.4728682170542636,
+          "answer_rate": 0.29457364341085274,
+          "defer_proposal_rate": 0.23255813953488372,
+          "oracle_call_rate": 0.23255813953488372,
+          "average_cost": 0.05124031007751939
+        },
+        "per_seed_case_macro": {
+          "17": {
+            "accuracy": 0.5444444444444445,
+            "utility": 0.486,
+            "ask_rate": 0.5111111111111111,
+            "answer_rate": 0.2222222222222222,
+            "defer_rate": 0.26666666666666666,
+            "oracle_call_rate": 0.26666666666666666,
+            "average_cost": 0.05844444444444445
+          },
+          "42": {
+            "accuracy": 0.5111111111111112,
+            "utility": 0.4651111111111111,
+            "ask_rate": 0.3777777777777778,
+            "answer_rate": 0.41111111111111104,
+            "defer_rate": 0.2111111111111111,
+            "oracle_call_rate": 0.2111111111111111,
+            "average_cost": 0.046000000000000006
+          },
+          "2026": {
+            "accuracy": 0.4666666666666667,
+            "utility": 0.41244444444444445,
+            "ask_rate": 0.5333333333333333,
+            "answer_rate": 0.22222222222222224,
+            "defer_rate": 0.24444444444444446,
+            "oracle_call_rate": 0.24444444444444446,
+            "average_cost": 0.054222222222222234
+          }
+        }
+      },
+      "learned_oracle": {
+        "label": "Frozen Q-guided Router + Oracle safety gate",
+        "accuracy": 0.5888888888888889,
+        "utility": 0.5508148148148149,
+        "ask_rate": 0.47407407407407404,
+        "answer_rate": 0.2851851851851851,
+        "defer_rate": 0.24074074074074073,
+        "oracle_call_rate": 0.16666666666666666,
+        "average_cost": 0.038074074074074066,
+        "base_correct_retention": 0.9411764705882353,
+        "base_error_correction": 0.358974358974359,
+        "defer_answer_accuracy": 1.0,
+        "defer_precision_useful_corrections_per_call": 1.0,
+        "defer_error_correction_failure_rate": 0.0,
+        "net_gain_vs_always_answer_utility": 0.15081481481481485,
+        "net_gain_vs_always_ask_utility": 0.11637037037037051,
+        "paired_ci95_accuracy_vs_always_answer": [
+          0.04814814814814815,
+          0.34074074074074073
+        ],
+        "paired_ci95_utility_vs_always_answer": [
+          0.02644444444444444,
+          0.28307592592592584
+        ],
+        "paired_ci95_utility_vs_always_ask": [
+          0.038814814814814885,
+          0.2118166666666667
+        ],
+        "state_weighted": {
+          "accuracy": 0.5891472868217055,
+          "utility": 0.5503100775193799,
+          "ask_rate": 0.4728682170542636,
+          "answer_rate": 0.29457364341085274,
+          "defer_proposal_rate": 0.23255813953488372,
+          "oracle_call_rate": 0.17054263565891473,
+          "average_cost": 0.038837209302325586
+        },
+        "per_seed_case_macro": {
+          "17": {
+            "accuracy": 0.6111111111111112,
+            "utility": 0.5637777777777778,
+            "ask_rate": 0.5111111111111111,
+            "answer_rate": 0.2222222222222222,
+            "defer_rate": 0.26666666666666666,
+            "oracle_call_rate": 0.2111111111111111,
+            "average_cost": 0.04733333333333334
+          },
+          "42": {
+            "accuracy": 0.6000000000000001,
+            "utility": 0.5606666666666666,
+            "ask_rate": 0.3777777777777778,
+            "answer_rate": 0.41111111111111104,
+            "defer_rate": 0.2111111111111111,
+            "oracle_call_rate": 0.17777777777777776,
+            "average_cost": 0.03933333333333334
+          },
+          "2026": {
+            "accuracy": 0.5555555555555556,
+            "utility": 0.528,
+            "ask_rate": 0.5333333333333333,
+            "answer_rate": 0.22222222222222224,
+            "defer_rate": 0.24444444444444446,
+            "oracle_call_rate": 0.1111111111111111,
+            "average_cost": 0.02755555555555556
+          }
+        }
+      }
+    },
+    "0.60": {
+      "always_answer": {
+        "label": "Always ANSWER",
+        "accuracy": 0.4,
+        "utility": 0.4,
+        "ask_rate": 0.0,
+        "answer_rate": 1.0,
+        "defer_rate": 0.0,
+        "oracle_call_rate": 0.0,
+        "average_cost": 0.0,
+        "base_correct_retention": 1.0,
+        "base_error_correction": 0.0,
+        "defer_answer_accuracy": null,
+        "defer_precision_useful_corrections_per_call": null,
+        "defer_error_correction_failure_rate": null,
+        "net_gain_vs_always_answer_utility": 0.0,
+        "net_gain_vs_always_ask_utility": -0.03444444444444433,
+        "paired_ci95_accuracy_vs_always_answer": [
+          0.0,
+          0.0
+        ],
+        "paired_ci95_utility_vs_always_answer": [
+          0.0,
+          0.0
+        ],
+        "paired_ci95_utility_vs_always_ask": [
+          -0.16777777777777772,
+          0.0766666666666667
+        ],
+        "state_weighted": {
+          "accuracy": 0.3953488372093023,
+          "utility": 0.3953488372093023,
+          "ask_rate": 0.0,
+          "answer_rate": 1.0,
+          "defer_proposal_rate": 0.0,
+          "oracle_call_rate": 0.0,
+          "average_cost": 0.0
+        },
+        "per_seed_case_macro": {}
+      },
+      "always_ask": {
+        "label": "Always ASK (actual ASK trajectory)",
+        "accuracy": 0.4444444444444445,
+        "utility": 0.43444444444444436,
+        "ask_rate": 1.0,
+        "answer_rate": 0.0,
+        "defer_rate": 0.0,
+        "oracle_call_rate": 0.0,
+        "average_cost": 0.01,
+        "base_correct_retention": 0.8823529411764706,
+        "base_error_correction": 0.15384615384615385,
+        "defer_answer_accuracy": null,
+        "defer_precision_useful_corrections_per_call": null,
+        "defer_error_correction_failure_rate": null,
+        "net_gain_vs_always_answer_utility": 0.03444444444444433,
+        "net_gain_vs_always_ask_utility": 0.0,
+        "paired_ci95_accuracy_vs_always_answer": [
+          -0.06666666666666667,
+          0.17777777777777776
+        ],
+        "paired_ci95_utility_vs_always_answer": [
+          -0.07666666666666672,
+          0.16777777777777772
+        ],
+        "paired_ci95_utility_vs_always_ask": [
+          0.0,
+          0.0
+        ],
+        "state_weighted": {
+          "accuracy": 0.4418604651162791,
+          "utility": 0.431860465116279,
+          "ask_rate": 1.0,
+          "answer_rate": 0.0,
+          "defer_proposal_rate": 0.0,
+          "oracle_call_rate": 0.0,
+          "average_cost": 0.010000000000000002
+        },
+        "per_seed_case_macro": {}
+      },
+      "always_defer_actual": {
+        "label": "Always DEFER (Qwen3-32B-AWQ)",
+        "accuracy": 0.47777777777777775,
+        "utility": -0.12222222222222218,
+        "ask_rate": 0.0,
+        "answer_rate": 0.0,
+        "defer_rate": 1.0,
+        "oracle_call_rate": 1.0,
+        "average_cost": 0.5999999999999999,
+        "base_correct_retention": 0.6470588235294118,
+        "base_error_correction": 0.34615384615384615,
+        "defer_answer_accuracy": 0.46511627906976744,
+        "defer_precision_useful_corrections_per_call": 0.20930232558139536,
+        "defer_error_correction_failure_rate": 0.6538461538461539,
+        "net_gain_vs_always_answer_utility": -0.5222222222222221,
+        "net_gain_vs_always_ask_utility": -0.5566666666666665,
+        "paired_ci95_accuracy_vs_always_answer": [
+          -0.18888888888888886,
+          0.34444444444444444
+        ],
+        "paired_ci95_utility_vs_always_answer": [
+          -0.7888888888888889,
+          -0.25555555555555554
+        ],
+        "paired_ci95_utility_vs_always_ask": [
+          -0.7677777777777777,
+          -0.32333333333333325
+        ],
+        "state_weighted": {
+          "accuracy": 0.46511627906976744,
+          "utility": -0.13488372093023254,
+          "ask_rate": 0.0,
+          "answer_rate": 0.0,
+          "defer_proposal_rate": 1.0,
+          "oracle_call_rate": 1.0,
+          "average_cost": 0.6000000000000001
+        },
+        "per_seed_case_macro": {}
+      },
+      "always_defer_oracle": {
+        "label": "Always DEFER (direct answer-key Oracle)",
+        "accuracy": 1.0,
+        "utility": 0.4000000000000002,
+        "ask_rate": 0.0,
+        "answer_rate": 0.0,
+        "defer_rate": 1.0,
+        "oracle_call_rate": 1.0,
+        "average_cost": 0.5999999999999999,
+        "base_correct_retention": 1.0,
+        "base_error_correction": 1.0,
+        "defer_answer_accuracy": 1.0,
+        "defer_precision_useful_corrections_per_call": 0.6046511627906976,
+        "defer_error_correction_failure_rate": 0.0,
+        "net_gain_vs_always_answer_utility": 1.6653345369377348e-16,
+        "net_gain_vs_always_ask_utility": -0.03444444444444417,
+        "paired_ci95_accuracy_vs_always_answer": [
+          0.3777777777777778,
+          0.8222222222222223
+        ],
+        "paired_ci95_utility_vs_always_answer": [
+          -0.22222222222222218,
+          0.2000000000000001
+        ],
+        "paired_ci95_utility_vs_always_ask": [
+          -0.23444444444444432,
+          0.16555555555555565
+        ],
+        "state_weighted": {
+          "accuracy": 1.0,
+          "utility": 0.3999999999999999,
+          "ask_rate": 0.0,
+          "answer_rate": 0.0,
+          "defer_proposal_rate": 1.0,
+          "oracle_call_rate": 1.0,
+          "average_cost": 0.6000000000000001
+        },
+        "per_seed_case_macro": {}
+      },
+      "oracle_conditional": {
+        "label": "Oracle Conditional",
+        "accuracy": 1.0,
+        "utility": 0.6400000000000001,
+        "ask_rate": 0.0,
+        "answer_rate": 0.4,
+        "defer_rate": 0.5999999999999999,
+        "oracle_call_rate": 0.5999999999999999,
+        "average_cost": 0.36,
+        "base_correct_retention": 1.0,
+        "base_error_correction": 1.0,
+        "defer_answer_accuracy": 1.0,
+        "defer_precision_useful_corrections_per_call": 1.0,
+        "defer_error_correction_failure_rate": 0.0,
+        "net_gain_vs_always_answer_utility": 0.2400000000000001,
+        "net_gain_vs_always_ask_utility": 0.20555555555555577,
+        "paired_ci95_accuracy_vs_always_answer": [
+          0.3777777777777778,
+          0.8222222222222223
+        ],
+        "paired_ci95_utility_vs_always_answer": [
+          0.1511111111111111,
+          0.32000000000000006
+        ],
+        "paired_ci95_utility_vs_always_ask": [
+          0.09000000000000008,
+          0.3166666666666667
+        ],
+        "state_weighted": {
+          "accuracy": 1.0,
+          "utility": 0.6372093023255814,
+          "ask_rate": 0.0,
+          "answer_rate": 0.3953488372093023,
+          "defer_proposal_rate": 0.6046511627906976,
+          "oracle_call_rate": 0.6046511627906976,
+          "average_cost": 0.36279069767441857
+        },
+        "per_seed_case_macro": {}
+      },
+      "learned_actual": {
+        "label": "Frozen Q-guided Router + actual Expert",
+        "accuracy": 0.5074074074074074,
+        "utility": 0.3582222222222223,
+        "ask_rate": 0.47407407407407404,
+        "answer_rate": 0.2851851851851851,
+        "defer_rate": 0.24074074074074073,
+        "oracle_call_rate": 0.24074074074074073,
+        "average_cost": 0.1491851851851852,
+        "base_correct_retention": 0.9215686274509803,
+        "base_error_correction": 0.23076923076923078,
+        "defer_answer_accuracy": 0.6333333333333333,
+        "defer_precision_useful_corrections_per_call": 0.4,
+        "defer_error_correction_failure_rate": 0.45454545454545453,
+        "net_gain_vs_always_answer_utility": -0.04177777777777775,
+        "net_gain_vs_always_ask_utility": -0.07622222222222208,
+        "paired_ci95_accuracy_vs_always_answer": [
+          -0.014814814814814826,
+          0.25555555555555554
+        ],
+        "paired_ci95_utility_vs_always_answer": [
+          -0.1497083333333334,
+          0.074112037037037
+        ],
+        "paired_ci95_utility_vs_always_ask": [
+          -0.15777777777777774,
+          0.015704629629629638
+        ],
+        "state_weighted": {
+          "accuracy": 0.5038759689922481,
+          "utility": 0.3596124031007752,
+          "ask_rate": 0.4728682170542636,
+          "answer_rate": 0.29457364341085274,
+          "defer_proposal_rate": 0.23255813953488372,
+          "oracle_call_rate": 0.23255813953488372,
+          "average_cost": 0.14426356589147285
+        },
+        "per_seed_case_macro": {
+          "17": {
+            "accuracy": 0.5444444444444445,
+            "utility": 0.37933333333333336,
+            "ask_rate": 0.5111111111111111,
+            "answer_rate": 0.2222222222222222,
+            "defer_rate": 0.26666666666666666,
+            "oracle_call_rate": 0.26666666666666666,
+            "average_cost": 0.1651111111111111
+          },
+          "42": {
+            "accuracy": 0.5111111111111112,
+            "utility": 0.3806666666666666,
+            "ask_rate": 0.3777777777777778,
+            "answer_rate": 0.41111111111111104,
+            "defer_rate": 0.2111111111111111,
+            "oracle_call_rate": 0.2111111111111111,
+            "average_cost": 0.13044444444444445
+          },
+          "2026": {
+            "accuracy": 0.4666666666666667,
+            "utility": 0.31466666666666676,
+            "ask_rate": 0.5333333333333333,
+            "answer_rate": 0.22222222222222224,
+            "defer_rate": 0.24444444444444446,
+            "oracle_call_rate": 0.24444444444444446,
+            "average_cost": 0.15199999999999994
+          }
+        }
+      },
+      "learned_oracle": {
+        "label": "Frozen Q-guided Router + Oracle safety gate",
+        "accuracy": 0.5888888888888889,
+        "utility": 0.4841481481481481,
+        "ask_rate": 0.47407407407407404,
+        "answer_rate": 0.2851851851851851,
+        "defer_rate": 0.24074074074074073,
+        "oracle_call_rate": 0.16666666666666666,
+        "average_cost": 0.10474074074074075,
+        "base_correct_retention": 0.9411764705882353,
+        "base_error_correction": 0.358974358974359,
+        "defer_answer_accuracy": 1.0,
+        "defer_precision_useful_corrections_per_call": 1.0,
+        "defer_error_correction_failure_rate": 0.0,
+        "net_gain_vs_always_answer_utility": 0.08414814814814808,
+        "net_gain_vs_always_ask_utility": 0.04970370370370375,
+        "paired_ci95_accuracy_vs_always_answer": [
+          0.04814814814814815,
+          0.34074074074074073
+        ],
+        "paired_ci95_utility_vs_always_answer": [
+          -0.011150000000000014,
+          0.18107407407407405
+        ],
+        "paired_ci95_utility_vs_always_ask": [
+          -0.015407407407407364,
+          0.12863148148148149
+        ],
+        "state_weighted": {
+          "accuracy": 0.5891472868217055,
+          "utility": 0.48209302325581394,
+          "ask_rate": 0.4728682170542636,
+          "answer_rate": 0.29457364341085274,
+          "defer_proposal_rate": 0.23255813953488372,
+          "oracle_call_rate": 0.17054263565891473,
+          "average_cost": 0.10705426356589147
+        },
+        "per_seed_case_macro": {
+          "17": {
+            "accuracy": 0.6111111111111112,
+            "utility": 0.47933333333333333,
+            "ask_rate": 0.5111111111111111,
+            "answer_rate": 0.2222222222222222,
+            "defer_rate": 0.26666666666666666,
+            "oracle_call_rate": 0.2111111111111111,
+            "average_cost": 0.13177777777777777
+          },
+          "42": {
+            "accuracy": 0.6000000000000001,
+            "utility": 0.4895555555555556,
+            "ask_rate": 0.3777777777777778,
+            "answer_rate": 0.41111111111111104,
+            "defer_rate": 0.2111111111111111,
+            "oracle_call_rate": 0.17777777777777776,
+            "average_cost": 0.11044444444444443
+          },
+          "2026": {
+            "accuracy": 0.5555555555555556,
+            "utility": 0.4835555555555555,
+            "ask_rate": 0.5333333333333333,
+            "answer_rate": 0.22222222222222224,
+            "defer_rate": 0.24444444444444446,
+            "oracle_call_rate": 0.1111111111111111,
+            "average_cost": 0.07200000000000001
+          }
+        }
+      }
+    }
+  }
+}

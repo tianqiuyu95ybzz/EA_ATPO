@@ -39,6 +39,8 @@ to distinguish Oracle potential from model performance.
 
 ## Reproduction
 
+The audited results are summarized in [`reports/ORACLE_EXPERT_EXPERIMENT_REPORT.md`](reports/ORACLE_EXPERT_EXPERIMENT_REPORT.md), with a non-case-level public aggregate at [`reports/aggregate_summary_20261121.json`](reports/aggregate_summary_20261121.json). Raw per-state results stay in the private PFS run directory.
+
 Run on CPU with the project venv; no model service or GPU is used:
 
 ```bash
