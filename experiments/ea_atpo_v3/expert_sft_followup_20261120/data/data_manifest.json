@@ -1,0 +1,77 @@
+{
+  "case_overlap_between_splits": 0,
+  "frozen_holdout_opened": false,
+  "historical_trajectories": {
+    "path": "experiments/real_case_pilot_20261103/outputs/full/pilot_trajectories.jsonl",
+    "sha256": "9ab625088db8beeae74fa6f314013dbf6b78499e133d114cfee0407e2ac036df"
+  },
+  "official_source": {
+    "path": "experiments/expert_sft/data/source/dataset/merged_train_dataset.jsonl",
+    "prompt_role_shapes": {
+      "system,user": 14256
+    },
+    "rows": 14256,
+    "sha256": "434a6734dce931262f2ed9e3201a3751e57db3609b1612ab9666835ac8832fdc"
+  },
+  "prior_manifest_sha256": "aae3559dbc5b5b11a6d5d74367a4f04cf13d8daa3df94a26d33243dfb74f4c6a",
+  "public_states": {
+    "path": "experiments/real_case_pilot_20261103/outputs/full/pilot_public_states.jsonl",
+    "sha256": "c2d77685dc3d6a82926fb2a7545dc4bfabd16df98e9fea3ca74ab4a170f8c507",
+    "states": 291
+  },
+  "review_status": "PENDING_ALL",
+  "schema_version": 1,
+  "source_kind": "model_simulated_pilot_states_not_human_patient_transcripts",
+  "source_root_read_only": "/pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO_V1",
+  "split_manifest_sha256": "b55d889a713b2b1d32afc25d89aaf9205891a1ee5fbaae470702ff31a9f81267",
+  "splits": {
+    "internal_test": {
+      "cases": 15,
+      "dialogue_turns": {
+        "0": 15,
+        "1": 15,
+        "2": 14
+      },
+      "samples": 44,
+      "source_file_sha256": "4491d9acf031dd4c5c2cd8286fc573ff055551684d412e18c674ee900a2abae7"
+    },
+    "train": {
+      "cases": 70,
+      "dialogue_turns": {
+        "0": 70,
+        "1": 70,
+        "2": 65
+      },
+      "samples": 205,
+      "source_file_sha256": "d59681b2d00f4357794e0c2f69c719e1aa787a772ff96bf545ef46792192f3f3"
+    },
+    "validation": {
+      "cases": 15,
+      "dialogue_turns": {
+        "0": 15,
+        "1": 14,
+        "2": 13
+      },
+      "samples": 42,
+      "source_file_sha256": "e9c66de6d9249d8ffd717b9ea411702de58ecf6220fd3739dc90663183439372"
+    }
+  },
+  "v2_pilot": {
+    "actions": {
+      "ANSWER": 146,
+      "ASK": 146,
+      "DEFER": 146
+    },
+    "case_overlap_by_split": {
+      "internal_test": 0,
+      "train": 50,
+      "validation": 0
+    },
+    "cases": 50,
+    "included_as_extra_sft_rows": false,
+    "state_overlap_with_sft": 146,
+    "states": 146,
+    "trajectories": 438,
+    "trajectory_sha256": "daedec4a13b716c6c5ee4ea0eb0c758342dbcb8b49b4d74e11645a688f279583"
+  }
+}

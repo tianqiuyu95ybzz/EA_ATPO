@@ -1,0 +1,25 @@
+{
+  "holdout_opened": false,
+  "pairwise_case_overlap": 0,
+  "seed": 20261105,
+  "source_file": "experiments/ea_atpo_value_router_20261105/artifacts/case_split.json",
+  "source_sha256": "b55d889a713b2b1d32afc25d89aaf9205891a1ee5fbaae470702ff31a9f81267",
+  "splits": {
+    "internal_test": {
+      "case_ids_sha256": "191f0a92af6569eb26cbcafa661bf4d353ef2a6a28edc2a153ef2e05f94c54b3",
+      "cases": 15,
+      "samples": 44
+    },
+    "train": {
+      "case_ids_sha256": "777316c15b6ad4af972afee8ad7d2c48aa673d117630aa262e10a643db896a5e",
+      "cases": 70,
+      "samples": 205
+    },
+    "validation": {
+      "case_ids_sha256": "197fd40ee459d81101b247524993a2eede5595bd8fb43a7b363daf37314e4cc3",
+      "cases": 15,
+      "samples": 42
+    }
+  },
+  "unit": "case_id"
+}
