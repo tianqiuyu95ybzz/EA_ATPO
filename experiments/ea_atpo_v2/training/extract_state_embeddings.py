@@ -220,9 +220,10 @@ def main() -> None:
         raise FileExistsError("refusing to overwrite an embedding cache or its manifest")
 
     examples, split_audit = unique_public_states(args.states, args.case_split, args.split)
-    for row in examples:
-        if row.raw_metadata.get("gold_or_future_fields_in_features") is True:
-            raise ValueError("Q dataset marks privileged fields in features")
+    # unique_public_states constructs PublicState objects from only
+    # case_id/state_id/public_state, so outcome and hidden-fact fields cannot
+    # enter this encoder. Keep the boundary enforced in that adapter rather
+    # than probing metadata that PublicState intentionally does not carry.
 
     # Set deterministic CUDA environment before torch is imported by Transformers.
     os.environ.setdefault("CUBLAS_WORKSPACE_CONFIG", ":4096:8")

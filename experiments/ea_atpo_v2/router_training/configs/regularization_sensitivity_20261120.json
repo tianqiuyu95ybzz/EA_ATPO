@@ -1,0 +1,14 @@
+{
+  "experiment_id": "real_pilot50_reg_sensitivity_20261120",
+  "status": "secondary_development_sensitivity_after_primary_overfit_diagnostic",
+  "purpose": "Check whether one conservative reduction in model capacity/strengthening of regularization reduces the observed train-dev gap.",
+  "case_split": "same frozen 35 Train / 15 Dev case_id split; no new split or data source",
+  "seeds": [17, 42, 2026],
+  "costs": {"ANSWER": 0.0, "ASK": 0.01, "DEFER": 0.05},
+  "ridge_alpha": 100.0,
+  "mlp_hidden_dim": 8,
+  "mlp_weight_decay": 0.1,
+  "other_settings": "same as configs/primary_20261120.json",
+  "selection_boundary": "Dev only; no Frozen Holdout, official Validation, or Internal Test used.",
+  "interpretation": "Exploratory sensitivity only. It does not provide independent generalization evidence."
+}

@@ -1,0 +1,64 @@
+{
+  "schema_version": 1,
+  "experiment_id": "real_pilot50_cost_ask001_defer005_20261120",
+  "method": "EA-ATPO V2 cost-adjusted three-action Q Regression and Router",
+  "action_order": ["ASK", "ANSWER", "DEFER"],
+  "source_bundle": "experiments/ea_atpo_v2/recovery_bundle_20261120",
+  "source_q_dataset": "experiments/ea_atpo_v2/recovery_bundle_20261120/q_dataset.jsonl",
+  "source_trajectories": "experiments/ea_atpo_v2/recovery_bundle_20261120/pilot_trajectories.jsonl",
+  "official_case_split": "experiments/ea_atpo_value_router_20261105/artifacts/case_split.json",
+  "split": {
+    "unit": "case_id",
+    "seed": 20261120,
+    "algorithm": "sort case_id by SHA256('20261120|' + case_id); first 35 train, remaining 15 dev",
+    "train_cases": 35,
+    "dev_cases": 15,
+    "official_validation_used": false,
+    "internal_test_used": false,
+    "frozen_holdout_opened": false
+  },
+  "costs": {
+    "ANSWER": 0.0,
+    "ASK": 0.01,
+    "DEFER": 0.05,
+    "utility": "terminal_correctness - ask_cost * cumulative_ask_count - defer_cost * cumulative_defer_count"
+  },
+  "old_costs": {
+    "ANSWER": 0.0,
+    "ASK": 0.05,
+    "DEFER": 0.6
+  },
+  "models": {
+    "features": ["public_tfidf", "frozen_qwen3_8b_embedding"],
+    "embedding_model": "Qwen/Qwen3-8B",
+    "embedding_revision": "b968826d9c46dd6066d109eabc6255188de91218",
+    "pooling": "mean_last_hidden_state",
+    "max_length": 2048,
+    "dtype": "bfloat16",
+    "batch_size": 1,
+    "thinking": false,
+    "tfidf_max_features": 3000,
+    "mlp_hidden_dim": 16,
+    "ridge_alpha": 1.0,
+    "regression_loss": "Huber",
+    "policy_distillation_temperature": 0.1,
+    "epochs": 300,
+    "patience": 30,
+    "batch_size_train": 16,
+    "learning_rate": 0.003,
+    "weight_decay": 0.01,
+    "optimization_seeds": [17, 42, 2026]
+  },
+  "bootstrap": {
+    "unit": "case_id",
+    "replicates": 5000,
+    "seed": 20261120,
+    "confidence": 0.95
+  },
+  "known_limitations": [
+    "50 cases only; this is a Train-only development experiment",
+    "K=1 per state/action, so labels are single realized returns",
+    "15 Dev cases are used for checkpoint selection and are not an independent final test",
+    "no genuine Base confidence/log-probabilities were stored in the rollout data"
+  ]
+}
