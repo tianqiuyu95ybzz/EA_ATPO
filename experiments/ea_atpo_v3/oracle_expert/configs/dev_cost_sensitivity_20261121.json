@@ -1,0 +1,64 @@
+{
+  "experiment_id": "ea_atpo_v3_answer_key_oracle_existing_dev_20261121",
+  "stage": "development_only_reanalysis",
+  "router_root": "/pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO_V1_router_training",
+  "source_dataset": "/pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO_V1/experiments/expert_sft/data/source/dataset/merged_train_dataset.jsonl",
+  "source_dataset_sha256": "434a6734dce931262f2ed9e3201a3751e57db3609b1612ab9666835ac8832fdc",
+  "v3_case_split": {
+    "path": "/pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO_V1/experiments/ea_atpo_value_router_20261105/artifacts/case_split.json",
+    "sha256": "b55d889a713b2b1d32afc25d89aaf9205891a1ee5fbaae470702ff31a9f81267",
+    "unit": "case_id",
+    "v2_cases_must_be_subset_of_v3_train": true
+  },
+  "dev_split": {
+    "unit": "case_id",
+    "train_cases": 35,
+    "dev_cases": 15,
+    "dev_states": 43,
+    "historical_model_selection_used_dev": true,
+    "frozen_400_case_holdout_opened": false
+  },
+  "router": {
+    "model": "Q-guided Distillation embedding MLP",
+    "base_model": "Qwen/Qwen3-8B",
+    "base_revision": "b968826d9c46dd6066d109eabc6255188de91218",
+    "feature_boundary": "public_state_before_action_only",
+    "seeds": [17, 42, 2026],
+    "checkpoint_manifest": "EA_ATPO_V1_router_training/experiments/ea_atpo_v2/router_training/confirmation_20261120/configs/frozen_candidate_20261120.json",
+    "checkpoint_and_prediction_replay_tolerance": 1e-5,
+    "router_predictions_frozen_across_cost_grid": true
+  },
+  "counterfactual_models": {
+    "base_revision": "b968826d9c46dd6066d109eabc6255188de91218",
+    "expert_revision": "0499c3ac83fdef8810b907a23894ba91e95eddd8",
+    "patient_model_revision": "same Qwen3-8B Base revision as the rollout manifest",
+    "generation_reused_from_existing_trajectories": true
+  },
+  "utility": {
+    "formula": "terminal_correctness - 0.01 * cumulative_ASK - defer_cost * cumulative_DEFER",
+    "answer_cost": 0.0,
+    "ask_cost": 0.01,
+    "defer_costs": [0.05, 0.1, 0.2, 0.6],
+    "ask_cost_source": "frozen Router Q target definition",
+    "costs_applied_once": true,
+    "token_latency_costs_in_utility": false
+  },
+  "oracle": {
+    "source": "original ATPO training benchmark answer key",
+    "definition": "preserve Base when it is correct; otherwise return its source answer key",
+    "not_clinician_adjudicated": true,
+    "gold_as_router_feature": false
+  },
+  "bootstrap": {
+    "unit": "case_id cluster",
+    "replicates": 10000,
+    "seed": 20261121,
+    "interval": "percentile 95%"
+  },
+  "runtime": {
+    "model_training": false,
+    "model_service_calls": false,
+    "gpu": false,
+    "private_case_results": "workspace-copy/EA-ATPO_Oracle_20261121/"
+  }
+}
