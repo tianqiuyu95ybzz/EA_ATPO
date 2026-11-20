@@ -1,0 +1,15 @@
+{
+  "n_states_with_all_three_actions_equal_on_gross_accuracy": 92,
+  "n_states_with_positive_ASK_advantage_at_main_cost_0.01": 10,
+  "n_states_with_positive_DEFER_advantage_at_main_cost_0.05": 25,
+  "n_states_with_any_oracle_best_set_change_over_cost_grid": 116,
+  "n_states_with_unique_oracle_action_change_over_cost_grid": 5,
+  "n_states_with_stable_oracle_best_set_over_cost_grid": 30,
+  "primary_costs": {
+    "ASK": 0.01,
+    "ANSWER": 0.0,
+    "DEFER": 0.05
+  },
+  "primary_ask_net_advantage_mean": -0.01684931506849315,
+  "primary_defer_net_advantage_mean": -0.0020547945205479563
+}

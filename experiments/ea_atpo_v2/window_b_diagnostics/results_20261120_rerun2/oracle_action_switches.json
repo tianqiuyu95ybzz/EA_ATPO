@@ -1,0 +1,7 @@
+{
+  "cost_combinations": 24,
+  "states_with_any_best_action_set_change": 116,
+  "states_with_unique_best_action_change": 5,
+  "states_with_same_best_action_set_all_costs": 30,
+  "tie_policy": "equal fractional mass over all exactly tied maximizing actions; tie states also counted separately"
+}

@@ -1,0 +1,32 @@
+{
+  "predeclared_primary_costs": {
+    "ASK": 0.01,
+    "ANSWER": 0.0,
+    "DEFER": 0.05
+  },
+  "always_answer": {
+    "accuracy": 0.3899999999999999,
+    "utility": 0.3899999999999999,
+    "ask_rate": 0.0,
+    "defer_rate": 0.0,
+    "accuracy_ci95_low": 0.27,
+    "accuracy_ci95_high": 0.51,
+    "utility_ci95_low": 0.2733333333333333,
+    "utility_ci95_high": 0.51
+  },
+  "retrospective_oracle": {
+    "accuracy": 0.5966666666666667,
+    "utility": 0.5891333333333333,
+    "ask_rate": 0.07,
+    "defer_rate": 0.1366666666666667,
+    "oracle_accuracy_gain_vs_answer": 0.20666666666666664,
+    "oracle_utility_gain_vs_answer": 0.19913333333333333,
+    "oracle_accuracy_gain_vs_answer_ci95_low": 0.12333333333333332,
+    "oracle_accuracy_gain_vs_answer_ci95_high": 0.3,
+    "oracle_utility_gain_vs_answer_ci95_low": 0.11560000000000001,
+    "oracle_utility_gain_vs_answer_ci95_high": 0.2895333333333333,
+    "oracle_unique_best_states": 146,
+    "oracle_tied_best_states": 0
+  },
+  "oracle_is_hindsight_only": true
+}

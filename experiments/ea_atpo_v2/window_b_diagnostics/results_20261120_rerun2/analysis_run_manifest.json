@@ -1,0 +1,20 @@
+{
+  "script": "/pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO_V1_windowB/experiments/ea_atpo_v2/window_b_diagnostics/analyze_window_b.py",
+  "command": [
+    "python",
+    "-m",
+    "experiments.ea_atpo_v2.window_b_diagnostics.analyze_window_b",
+    "--data-dir",
+    "/pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO_V1/experiments/ea_atpo_v2/outputs/ask_unknown_repair_50case_20261120/merged",
+    "--case-split",
+    "/pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO_V1_windowB/experiments/ea_atpo_value_router_20261105/artifacts/case_split.json",
+    "--output-dir",
+    "/pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO_V1_windowB/experiments/ea_atpo_v2/window_b_diagnostics/results_20261120_rerun2"
+  ],
+  "python": "3.12.3 (main, Aug 14 2025, 17:47:21) [GCC 13.3.0]",
+  "numpy": "2.3.5",
+  "matplotlib": "3.11.2",
+  "created_from_source_commit": "4c3a0516a16f326dd3ccdc386f611faa28e762e4",
+  "model_services_started": false,
+  "window_a_artifacts_modified": false
+}

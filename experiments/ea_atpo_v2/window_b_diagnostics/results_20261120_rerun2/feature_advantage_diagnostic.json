@@ -1,0 +1,72 @@
+{
+  "purpose": "small diagnostic ridge CV; not the Window A Q/Router model and not a performance estimate",
+  "feature_source": "public_state only: fold-fitted unigram/bigram TF-IDF plus turn/length/question/digit statistics",
+  "case_split": "deterministic five-fold GroupKFold-style split; no case_id appears in both sides of a fold",
+  "fold_case_counts": [
+    {
+      "train_cases": 40,
+      "test_cases": 10
+    },
+    {
+      "train_cases": 40,
+      "test_cases": 10
+    },
+    {
+      "train_cases": 40,
+      "test_cases": 10
+    },
+    {
+      "train_cases": 40,
+      "test_cases": 10
+    },
+    {
+      "train_cases": 40,
+      "test_cases": 10
+    }
+  ],
+  "target": "gross accuracy differences reconstructed from raw correctness by adding back the original ASK=0.05 and DEFER=0.60 costs",
+  "model": "dual-space Ridge, alpha=1.0, no hyperparameter search",
+  "data_limitations": [
+    "single rollout per state/action",
+    "50 cases",
+    "146 correlated states"
+  ],
+  "results": {
+    "gross_ASK_minus_ANSWER": {
+      "states": 146,
+      "cases": 50,
+      "folds": 5,
+      "ridge_alpha_fixed_no_search": 1.0,
+      "model_case_macro_mae": 0.22511667495953602,
+      "constant_mean_case_macro_mae": 0.15288974808554,
+      "model_minus_constant_case_mae": 0.07222692687399601,
+      "model_minus_constant_case_mae_ci95": [
+        0.05307812071970737,
+        0.09137102286302691
+      ],
+      "cases_model_lower_mae": 5,
+      "cases_constant_lower_mae": 45,
+      "oof_state_r2": -0.0634371714131785,
+      "oof_state_mae": 0.2261672006305563,
+      "target_mean": -0.00684931506849315
+    },
+    "gross_DEFER_minus_ANSWER": {
+      "states": 146,
+      "cases": 50,
+      "folds": 5,
+      "ridge_alpha_fixed_no_search": 1.0,
+      "model_case_macro_mae": 0.4018623601891834,
+      "constant_mean_case_macro_mae": 0.32885435451186473,
+      "model_minus_constant_case_mae": 0.07300800567731874,
+      "model_minus_constant_case_mae_ci95": [
+        0.04320522118922704,
+        0.10491208027608125
+      ],
+      "cases_model_lower_mae": 11,
+      "cases_constant_lower_mae": 39,
+      "oof_state_r2": -0.17457872315658363,
+      "oof_state_mae": 0.4003468494832393,
+      "target_mean": 0.04794520547945205
+    }
+  }
+}

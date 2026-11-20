@@ -1,0 +1,53 @@
+{
+  "source_data_dir": "/pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO_V1/experiments/ea_atpo_v2/outputs/ask_unknown_repair_50case_20261120/merged",
+  "source_q_dataset_sha256": "77ae8947b496a8c6ba2843410d0b958b0490a88b239030f0e5070b2ec78f0ec8",
+  "source_trajectory_sha256": "daedec4a13b716c6c5ee4ea0eb0c758342dbcb8b49b4d74e11645a688f279583",
+  "source_merged_manifest_sha256": "557b97d71f414bdda7265302190cd31b7425c32d20ffdea4330f571fbf50b5ae",
+  "source_config_sha256": "8d86fc9cfc4f9effb32e815ee1a7c0ad28031609d208d4d7ab721a44d51f27df",
+  "official_case_split_sha256": "b55d889a713b2b1d32afc25d89aaf9205891a1ee5fbaae470702ff31a9f81267",
+  "source_status": "complete",
+  "case_count": 50,
+  "state_count": 146,
+  "trajectory_count": 438,
+  "action_order": [
+    "ASK",
+    "ANSWER",
+    "DEFER"
+  ],
+  "valid_actions_by_action": {
+    "ASK": 146,
+    "ANSWER": 146,
+    "DEFER": 146
+  },
+  "continuation_policy_id": "ASK_ONCE_THEN_FORCE_BASE_ANSWER_PATIENT_REVIEW_V2",
+  "original_costs": {
+    "ASK": 0.05,
+    "ANSWER": 0.0,
+    "DEFER": 0.6
+  },
+  "Base": {
+    "model": "vi-qwen3-8b-base",
+    "revision": "b968826d9c46dd6066d109eabc6255188de91218"
+  },
+  "Expert": {
+    "model": "vi-qwen3-32b-awq-expert",
+    "revision": "0499c3ac83fdef8810b907a23894ba91e95eddd8"
+  },
+  "frozen_holdout_opened": false,
+  "validation_or_internal_test_used_for_fitting": false,
+  "manifest_source_batch_count": 5,
+  "manifest_frozen_train_public_state_count": 205,
+  "source_project_commits": [
+    "af560a50544a6ae46b2c7b32aa664637c3b68963"
+  ],
+  "source_project_branches": [
+    "ea-atpo-v1"
+  ],
+  "runner_source_hash_pinned": false,
+  "inference_config": {
+    "temperature": 0.0,
+    "patient_temperature": 0.0,
+    "top_p": 1.0,
+    "api_retries": 1
+  }
+}

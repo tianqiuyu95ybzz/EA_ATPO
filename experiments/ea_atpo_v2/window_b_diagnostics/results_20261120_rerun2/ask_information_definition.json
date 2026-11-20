@@ -1,0 +1,7 @@
+{
+  "effective_information_proxy": "ask_response_nonempty AND NOT ask_response_unknown AND ask_response_novel_text",
+  "novel_text_definition": "normalized final patient reply is not an exact normalized substring of the prior public state, per V2 runner; this is lexical novelty, not clinical validity",
+  "main_ask_cost": 0.01,
+  "unknown_is_final_reply_after_bounded_review": true,
+  "gold_used_to_generate_patient_reply": false
+}

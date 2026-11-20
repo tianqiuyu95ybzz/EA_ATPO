@@ -1,0 +1,52 @@
+{
+  "observed_api_calls_by_action_and_role": {
+    "ASK": {
+      "base": 292,
+      "patient": 257
+    },
+    "ANSWER": {
+      "base": 146
+    },
+    "DEFER": {
+      "expert": 146
+    }
+  },
+  "current_50_case_full_K3": {
+    "cases_to_resample": 50,
+    "states": 146,
+    "additional_state_action_rollouts": 876,
+    "estimated_additional_api_calls_by_role": {
+      "base": 876,
+      "expert": 292,
+      "patient": 514
+    },
+    "estimated_total_api_calls": 1682
+  },
+  "full_70_case_train_pool_K3": {
+    "additional_independent_cases": 20,
+    "missing_public_states_from_frozen_train_state_count": 59,
+    "extra_rollouts_existing_states": 876,
+    "extra_rollouts_new_states": 531,
+    "total_additional_valid_action_rollouts": 1407,
+    "estimated_additional_api_calls_by_role": {
+      "base": 1407.0,
+      "expert": 469.0,
+      "patient": 825.6
+    },
+    "estimated_total_additional_api_calls": 2702,
+    "call_estimates_assume_same_mean_calls_per_action_as_current_data": true
+  },
+  "targeted_diagnostic_subset": {
+    "selection_rule": "up to four case_id clusters per prespecified stratum (near-zero primary-cost advantage, final ASK Unknown, Base/Expert correctness disagreement); stable hash sampling within stratum; deduplicate cases",
+    "selected_case_count_union": 11,
+    "selected_state_count": 32,
+    "new_state_action_rollouts_if_K3": 192,
+    "estimated_additional_api_calls_by_role_if_same_call_pattern": {
+      "base": 192,
+      "patient": 118,
+      "expert": 64
+    },
+    "this_subset_does_not_make_the_full_50_or_70_case_dataset_K3": true
+  },
+  "no_models_called_in_this_analysis": true
+}

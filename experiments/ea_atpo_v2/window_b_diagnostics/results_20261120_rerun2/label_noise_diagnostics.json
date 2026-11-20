@@ -1,0 +1,44 @@
+{
+  "state_action_sample_count_distribution": {
+    "K=1": 438
+  },
+  "return_std_missing_state_action_labels": 438,
+  "cannot_estimate_within_state_action_return_std_from_K1": true,
+  "ask_states": 146,
+  "ask_final_unknown_states": 98,
+  "ask_final_unknown_rate_state_pooled": 0.6712328767123288,
+  "ask_nonempty_nonunknown_novel_text_proxy_states": 48,
+  "ask_information_proxy_rate_state_pooled": 0.3287671232876712,
+  "bounded_review_calls": 111,
+  "bounded_review_accepted": 13,
+  "ask_state_transition_structurally_valid": 146,
+  "format_valid_distribution": {
+    "True": 438
+  },
+  "prompt_privacy_check_distribution": {
+    "2": 146,
+    "1": 292
+  },
+  "token_usage_complete_distribution": {
+    "True": 438
+  },
+  "finish_reason_distribution": {
+    "stop": 841
+  },
+  "api_calls_by_role": {
+    "base": 438,
+    "patient": 257,
+    "expert": 146
+  },
+  "api_attempts_by_role": {
+    "base": 438,
+    "patient": 257,
+    "expert": 146
+  },
+  "api_retries_by_role_estimate": {
+    "patient": 0,
+    "base": 0,
+    "expert": 0
+  },
+  "continuation_policy_id": "ASK_ONCE_THEN_FORCE_BASE_ANSWER_PATIENT_REVIEW_V2"
+}
