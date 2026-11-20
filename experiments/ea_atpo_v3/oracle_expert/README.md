@@ -44,7 +44,7 @@ Run on CPU with the project venv; no model service or GPU is used:
 ```bash
 CUDA_VISIBLE_DEVICES= /pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO_V1/.venv/bin/python \
   experiments/ea_atpo_v3/oracle_expert/scripts/evaluate_oracle_router.py \
-  --output-dir /pfs/pfs-spMCeu/image_team/workspace-copy/EA-ATPO_Oracle_20261121/run_01
+  --output-dir /pfs/pfs-spMCeu/image_team/workspace-copy/EA-ATPO_Oracle_20261121/replay_NEW
 ```
 
 The runner refuses to overwrite an existing output directory. Aggregate
