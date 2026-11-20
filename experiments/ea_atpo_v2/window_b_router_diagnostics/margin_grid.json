@@ -1,0 +1,10 @@
+{
+  "schema_version": 1,
+  "registered_action_order": ["ASK", "ANSWER", "DEFER"],
+  "registered_costs": {"ASK": 0.01, "ANSWER": 0.0, "DEFER": 0.05},
+  "margin_units": "cost-adjusted utility units; relative Q targets already include registered action costs",
+  "margins": [0.0, 0.01, 0.025, 0.05],
+  "selection_rule": "ANSWER is the fallback; ASK or DEFER is eligible only when predicted Q_action-Q_ANSWER is strictly greater than the margin",
+  "ask_budget": "one ASK per policy decision path; an ASK consumes budget; no-information follow-up masks ASK",
+  "selection_boundary": "fixed small grid for existing Train/Dev only; no Window A confirmation cases"
+}

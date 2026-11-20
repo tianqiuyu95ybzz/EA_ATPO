@@ -1,0 +1,5 @@
+split,model,action,near_zero_threshold,near_zero_states,near_zero_state_share,near_zero_cases,sign_error_rate_case_macro,sign_error_ci95_low,sign_error_ci95_high,sign_errors_state_count,actual_positive_near_zero_states
+train,embedding_mlp_relative,ASK,0.01,9,0.08737864077669903,7,0.8095238095238095,0.5238095238095238,1.0,7,0
+train,embedding_mlp_relative,DEFER,0.01,6,0.05825242718446602,6,0.6666666666666666,0.3333333333333333,1.0,4,0
+dev,embedding_mlp_relative,ASK,0.01,2,0.046511627906976744,2,0.5,0.0,1.0,1,0
+dev,embedding_mlp_relative,DEFER,0.01,2,0.046511627906976744,1,1.0,1.0,1.0,2,0

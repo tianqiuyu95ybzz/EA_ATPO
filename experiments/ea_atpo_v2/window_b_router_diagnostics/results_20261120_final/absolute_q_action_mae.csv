@@ -1,0 +1,7 @@
+split,head,action,q_mae_mean_seeds,q_mae_sd_across_seeds,seed_count,states,cases
+train,embedding_mlp_absolute_q_diagnostic,ASK,0.12176137501030293,0.0419189164213563,3,103,35
+train,embedding_mlp_absolute_q_diagnostic,ANSWER,0.1049058736455672,0.022001660108216612,3,103,35
+train,embedding_mlp_absolute_q_diagnostic,DEFER,0.09211203464484718,0.02846165438332211,3,103,35
+dev,embedding_mlp_absolute_q_diagnostic,ASK,0.4092948173252187,0.057278924207656935,3,43,15
+dev,embedding_mlp_absolute_q_diagnostic,ANSWER,0.3690508844027685,0.01888292704713592,3,43,15
+dev,embedding_mlp_absolute_q_diagnostic,DEFER,0.4340990399118773,0.05076698044815111,3,43,15

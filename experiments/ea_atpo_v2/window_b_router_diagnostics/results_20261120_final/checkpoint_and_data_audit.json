@@ -1,0 +1,175 @@
+{
+  "source_run_name": "real_q_router_20261120",
+  "q_dataset_sha256": "93fb335e2e5db3ca43bbbad2b4cae5c4506218980e7552aecc46cceb829ba122",
+  "split_sha256": "ddc4afba5a52a0ffe93dc24764d3d31f8a2ff589488a74e58239c02088f45b98",
+  "embedding_cache_sha256": "e25b9461d07ff5788bb872b41e85b3490e7a9f946a7a32c198fbd982ceaf5458",
+  "embedding_manifest_sha256": "e01453bb78dd29342108005dec74348e2acc1c6d3ae3fca6e38ae41a6a86348a",
+  "training_results_sha256": "b0484eff25420590ea9471e653141dee4f118eb5f2a60ccdd581735f87592b62",
+  "saved_dev_predictions_sha256": "51422a7afce9fe3aa3c44dc7e1b580bcc32d48b4d971ddede1323bec9a2cf0c7",
+  "case_count": 50,
+  "state_count": 146,
+  "train_cases": 35,
+  "train_states": 103,
+  "dev_cases": 15,
+  "dev_states": 43,
+  "action_order": [
+    "ASK",
+    "ANSWER",
+    "DEFER"
+  ],
+  "valid_mask_all_actions_complete": true,
+  "sample_count_distribution": {
+    "K=1": 438
+  },
+  "return_std_missing_for_k1": true,
+  "all_costs_in_q_targets_once": true,
+  "frozen_holdout_or_official_validation_opened": false,
+  "window_a_confirmation_data_read": false,
+  "gold_or_hidden_facts_used_as_features": false,
+  "checkpoint_config": {
+    "source_model_family": "existing embedding heads; no retraining",
+    "embedding_model": "Qwen/Qwen3-8B",
+    "embedding_revision": "b968826d9c46dd6066d109eabc6255188de91218",
+    "embedding_dimension": 4096,
+    "feature_boundary": "public_state_before_action_only",
+    "relative_head": "4096 -> 16 -> 2; outputs [Q_ASK-Q_ANSWER, Q_DEFER-Q_ANSWER]",
+    "distillation_head": "4096 -> 16 -> 3; action logits multiplied by registered T=0.1 for saved policy scores",
+    "costs": {
+      "ASK": 0.01,
+      "ANSWER": 0.0,
+      "DEFER": 0.05
+    },
+    "costs_already_in_q_targets": true,
+    "checkpoints": [
+      {
+        "model": "mlp_relative",
+        "seed": 17,
+        "checkpoint_sha256": "4982446d860d0a70794fd8f606ca03d47c16985225213fd64f752333e7e6da8f",
+        "best_epoch": 18,
+        "best_validation_loss": 0.13638317584991455,
+        "best_train_loss": 0.030549120690141405,
+        "input_dimension": 4096,
+        "hidden_dimension": 16,
+        "output_dimension": 2,
+        "reference_costs": {
+          "ANSWER": 0.0,
+          "ASK": 0.01,
+          "DEFER": 0.05
+        },
+        "costs_already_in_q_targets": true
+      },
+      {
+        "model": "mlp_relative",
+        "seed": 42,
+        "checkpoint_sha256": "7ecdc640e0951772e7a027787e24de03a941843f058360157c9784f00599a2b0",
+        "best_epoch": 18,
+        "best_validation_loss": 0.13843554258346558,
+        "best_train_loss": 0.0216089789090412,
+        "input_dimension": 4096,
+        "hidden_dimension": 16,
+        "output_dimension": 2,
+        "reference_costs": {
+          "ANSWER": 0.0,
+          "ASK": 0.01,
+          "DEFER": 0.05
+        },
+        "costs_already_in_q_targets": true
+      },
+      {
+        "model": "mlp_relative",
+        "seed": 2026,
+        "checkpoint_sha256": "efc9a44ef83453aea8d31c6139f85e9903931159745786f3541d58d70dc7ec77",
+        "best_epoch": 20,
+        "best_validation_loss": 0.14751257002353668,
+        "best_train_loss": 0.03732734905289752,
+        "input_dimension": 4096,
+        "hidden_dimension": 16,
+        "output_dimension": 2,
+        "reference_costs": {
+          "ANSWER": 0.0,
+          "ASK": 0.01,
+          "DEFER": 0.05
+        },
+        "costs_already_in_q_targets": true
+      },
+      {
+        "model": "q_guided_distillation",
+        "seed": 17,
+        "checkpoint_sha256": "9821e7ca701189d37df9567fbf8ffaff9eaddb537e97448d8019803e3b8e2d32",
+        "best_epoch": 10,
+        "best_validation_loss": 1.1351888179779053,
+        "best_train_loss": 0.897189029625484,
+        "input_dimension": 4096,
+        "hidden_dimension": 16,
+        "output_dimension": 3,
+        "reference_costs": {
+          "ANSWER": 0.0,
+          "ASK": 0.01,
+          "DEFER": 0.05
+        },
+        "costs_already_in_q_targets": true
+      },
+      {
+        "model": "q_guided_distillation",
+        "seed": 42,
+        "checkpoint_sha256": "b461fab29c675070b3d1f02abb52b7ca84d8218c6a9c0dae4ac523c0bf0157b4",
+        "best_epoch": 8,
+        "best_validation_loss": 1.1532371044158936,
+        "best_train_loss": 0.9086795789854867,
+        "input_dimension": 4096,
+        "hidden_dimension": 16,
+        "output_dimension": 3,
+        "reference_costs": {
+          "ANSWER": 0.0,
+          "ASK": 0.01,
+          "DEFER": 0.05
+        },
+        "costs_already_in_q_targets": true
+      },
+      {
+        "model": "q_guided_distillation",
+        "seed": 2026,
+        "checkpoint_sha256": "3405648a8284a526db22b0e211e190302705443753d788e858b0d93b7ac83aeb",
+        "best_epoch": 12,
+        "best_validation_loss": 1.1716668605804443,
+        "best_train_loss": 0.8456526398658752,
+        "input_dimension": 4096,
+        "hidden_dimension": 16,
+        "output_dimension": 3,
+        "reference_costs": {
+          "ANSWER": 0.0,
+          "ASK": 0.01,
+          "DEFER": 0.05
+        },
+        "costs_already_in_q_targets": true
+      }
+    ],
+    "checkpoint_reload_audit": "passed",
+    "max_abs_difference_vs_saved_dev_scores": 2.384185791015625e-07,
+    "relative_margin_zero_saved_action_mismatches": 0,
+    "torch_device": "cpu",
+    "formal_training_or_large_model_inference_run": false
+  },
+  "bootstrap": {
+    "unit": "case_id cluster",
+    "replicates": 5000,
+    "seed": 20261120,
+    "metric_point": "mean across three seeds, then equal-case macro average"
+  },
+  "registered_margin_grid": [
+    0.0,
+    0.01,
+    0.025,
+    0.05
+  ],
+  "margin_selection_note": "all margins are reported; any selected candidate is development-only because Dev also selected checkpoints",
+  "command": [
+    "python",
+    "-m",
+    "experiments.ea_atpo_v2.window_b_router_diagnostics.run_diagnostic",
+    "--run-root",
+    "<EXISTING_50_CASE_TRAINING_RUN_ROOT>",
+    "--output-dir",
+    "<NEW_OUTPUT_DIRECTORY>"
+  ]
+}
