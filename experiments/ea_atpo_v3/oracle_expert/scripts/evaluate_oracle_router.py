@@ -599,14 +599,19 @@ def make_policy_records(rows: Sequence[Mapping[str, Any]], *, method: str, defer
     seed_spec = SEEDS if method in {"learned_actual", "learned_oracle"} else ()
     metrics = metrics_for_rows(rows, method, defer_cost, seeds=seed_spec)
     baseline_vectors = case_metric_vectors(rows, "always_answer", defer_cost)
+    fixed_action_vectors = case_metric_vectors(rows, "always_ask", defer_cost)
     vectors = case_metric_vectors(rows, method, defer_cost, seeds=seed_spec)
     metrics["net_accuracy_gain_vs_always_answer"] = float(vectors["accuracy"].mean() - baseline_vectors["accuracy"].mean())
     metrics["net_gain_vs_always_answer_utility"] = float(vectors["utility"].mean() - baseline_vectors["utility"].mean())
+    metrics["net_gain_vs_always_ask_utility"] = float(vectors["utility"].mean() - fixed_action_vectors["utility"].mean())
     metrics["paired_ci95_accuracy_vs_always_answer"] = bootstrap_interval(
         vectors["accuracy"] - baseline_vectors["accuracy"], replicates=10000, seed=20261121,
     )
     metrics["paired_ci95_utility_vs_always_answer"] = bootstrap_interval(
         vectors["utility"] - baseline_vectors["utility"], replicates=10000, seed=20261122,
+    )
+    metrics["paired_ci95_utility_vs_always_ask"] = bootstrap_interval(
+        vectors["utility"] - fixed_action_vectors["utility"], replicates=10000, seed=20261132,
     )
     for i, metric in enumerate(PRIMARY_METRICS):
         metrics[f"bootstrap_ci95_{metric}"] = bootstrap_interval(vectors[metric], replicates=10000, seed=20261123 + i)
