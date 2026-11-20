@@ -242,6 +242,21 @@ def policy_metrics(action_indices, rows, correctness_lookup):
     # Equal case weighting is used throughout, matching case-cluster bootstrap.
     keys = ["accuracy", "utility", "ask", "answer", "defer"]
     result = {name: float(np.mean([case_rows[c][name] for c in case_rows])) for name in keys}
+    # Also save pooled-state metrics/rates explicitly. The equal-case action
+    # rates above are useful companion metrics but are not state fractions.
+    chosen_actions = [ACTION_ORDER[int(idx)] for idx in action_indices]
+    result.update({
+        "accuracy_state_weighted": float(np.mean([
+            correctness_lookup[(row.case_id, row.state_id)][action]
+            for row, action in zip(rows, chosen_actions)
+        ])),
+        "utility_state_weighted": float(np.mean([
+            row.q_target[int(idx)] for idx, row in zip(action_indices, rows)
+        ])),
+        "ask_rate_state_weighted": float(np.mean(action_indices == 0)),
+        "answer_rate_state_weighted": float(np.mean(action_indices == 1)),
+        "defer_rate_state_weighted": float(np.mean(action_indices == 2)),
+    })
     selected_defer = int(np.sum(action_indices == 2))
     corr = sum(case_rows[c]["corr"] for c in case_rows); spoil = sum(case_rows[c]["spoil"] for c in case_rows)
     base_wrong = sum(case_rows[c]["basewrong_defer"] for c in case_rows)
@@ -254,6 +269,13 @@ def policy_metrics(action_indices, rows, correctness_lookup):
 
 
 def cluster_bootstrap_delta(policy_cases_by_seed, baseline_cases_by_seed, *, seed=20261120, replicates=5000):
+    # A shared fixed baseline (e.g., Always ANSWER) is one row, while a learned
+    # policy has one row per optimization seed. Repeat the shared baseline so
+    # zip() does not silently reduce the interval to the first policy seed.
+    if len(baseline_cases_by_seed) == 1 and len(policy_cases_by_seed) > 1:
+        baseline_cases_by_seed = baseline_cases_by_seed * len(policy_cases_by_seed)
+    if len(policy_cases_by_seed) != len(baseline_cases_by_seed):
+        raise ValueError("policy and baseline seed counts must match or baseline must contain one shared row")
     case_ids = sorted(set.intersection(*(set(x) for x in policy_cases_by_seed), *(set(x) for x in baseline_cases_by_seed)))
     rng = np.random.default_rng(seed)
     samples = {"accuracy": [], "utility": []}
@@ -510,6 +532,11 @@ def main():
             values = [float(m[key]) for m in metrics]
             summary[key + "_mean"] = float(np.mean(values))
             summary[key + "_seed_sd"] = float(np.std(values, ddof=1)) if len(values) > 1 else 0.0
+        for key in ("accuracy_state_weighted", "utility_state_weighted", "ask_rate_state_weighted",
+                    "answer_rate_state_weighted", "defer_rate_state_weighted"):
+            values = [float(m[key]) for m in metrics]
+            summary[key + "_mean"] = float(np.mean(values))
+            summary[key + "_seed_sd"] = float(np.std(values, ddof=1)) if len(values) > 1 else 0.0
         for key in ("corrections_count", "spoilage_count", "defer_calls_state_count",
                     "correction_rate_given_base_wrong", "spoilage_rate_given_base_correct"):
             vals = [m.get(key) for m in metrics if m.get(key) is not None]
@@ -602,7 +629,12 @@ def main():
     json_dump(args.output_dir / "training_results.json", report)
     with (args.output_dir / "policy_summary.csv").open("w", newline="", encoding="utf-8") as f:
         fields = ["feature","model","seed_count","accuracy_mean","accuracy_seed_sd","utility_mean","utility_seed_sd",
-                  "ask_mean","answer_mean","defer_mean","corrections_count","spoilage_count",
+                  "ask_mean","answer_mean","defer_mean","accuracy_state_weighted_mean","accuracy_state_weighted_seed_sd",
+                  "utility_state_weighted_mean","utility_state_weighted_seed_sd",
+                  "ask_rate_state_weighted_mean","ask_rate_state_weighted_seed_sd",
+                  "answer_rate_state_weighted_mean","answer_rate_state_weighted_seed_sd",
+                  "defer_rate_state_weighted_mean","defer_rate_state_weighted_seed_sd",
+                  "corrections_count","spoilage_count",
                   "correction_rate_given_base_wrong","spoilage_rate_given_base_correct",
                   "q_mae_train_mean","q_mae_dev_mean","relative_advantage_mae_train_mean","relative_advantage_mae_dev_mean",
                   "advantage_auc_ask_dev_mean","advantage_auc_defer_dev_mean",
@@ -614,6 +646,8 @@ def main():
         fields = ["feature","model","seed","best_epoch","validation_loss","q_mae_train","q_mae_dev",
                   "relative_advantage_mae_train","relative_advantage_mae_dev","advantage_auc_ask_dev",
                   "advantage_auc_defer_dev","accuracy","utility","ask_rate","answer_rate","defer_rate",
+                  "accuracy_state_weighted","utility_state_weighted","ask_rate_state_weighted",
+                  "answer_rate_state_weighted","defer_rate_state_weighted",
                   "defer_calls_state_count","corrections_count","spoilage_count"]
         writer = csv.DictWriter(f, fieldnames=fields); writer.writeheader()
         for row in results:
@@ -627,6 +661,11 @@ def main():
                              "advantage_auc_defer_dev":row.get("advantage_auc_defer_dev"),
                              "accuracy":m.get("accuracy"),"utility":m.get("utility"),"ask_rate":m.get("ask"),
                              "answer_rate":m.get("answer"),"defer_rate":m.get("defer"),
+                             "accuracy_state_weighted":m.get("accuracy_state_weighted"),
+                             "utility_state_weighted":m.get("utility_state_weighted"),
+                             "ask_rate_state_weighted":m.get("ask_rate_state_weighted"),
+                             "answer_rate_state_weighted":m.get("answer_rate_state_weighted"),
+                             "defer_rate_state_weighted":m.get("defer_rate_state_weighted"),
                              "defer_calls_state_count":m.get("defer_calls_state_count"),
                              "corrections_count":m.get("corrections_count"),"spoilage_count":m.get("spoilage_count")})
     print(json.dumps({"status":report["status"], "output_dir":str(args.output_dir.resolve()),
