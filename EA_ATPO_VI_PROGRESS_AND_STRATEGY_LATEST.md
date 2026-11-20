@@ -6,6 +6,13 @@
 
 > The dated history below retains earlier plans and results. The 2026-11-20 V2 section below is now the active source of truth and supersedes the earlier Expert-SFT-first route for current work.
 
+## 2026-11-20 recovery and storage cleanup
+
+- Recovery data bundle is committed on `ea-atpo-v1` at `46d8391`: `experiments/ea_atpo_v2/recovery_bundle_20261120/`. It contains the 50-case Train-only trajectories, 146-state Q dataset, Unknown classifications, batch membership, aggregate summaries, manifests, and `SHA256SUMS`. It contains no gold answer text or hidden atomic facts; realized Q/correctness labels are explicitly identified as post-episode outcomes.
+- Pruned 12 superseded PPO checkpoint snapshots (Attempt09 steps 1–9; Attempt06, Attempt07, and Original ATPO Attempt20 step 1) and four regenerable runtime caches. About 2.27 TB were removed. The final checkpoint from each affected run remains; Attempts02–05 each retain their sole checkpoint.
+- Details: `experiments/ea_atpo_v1_smoke/CHECKPOINT_RETENTION_20261120.md` and `CLEANUP_MANIFEST_20261120.json`.
+- Model weights/checkpoints were not uploaded to GitHub due to their size. All cleanup and recovery artifacts are stored under this project on PFS; no system-disk paths were used for persistent files.
+
 ## 2026-11-20 current state: V2 counterfactual expansion
 
 ### Active route

@@ -47,6 +47,6 @@ The launcher reached 2/2 steps and returned exit code 0. Ray emitted a worker-sh
 - ATPO rollout dumps: `rollouts/1.jsonl`, `rollouts/2.jsonl`
 - Raw launcher log: `logs/ea_atpo_v1_smoke_20261113T200605Z.log`
 - Environment/data/model manifest: `run_manifest.json`
-- Checkpoints: `checkpoints/global_step_1/`, `checkpoints/global_step_2/`
+- Checkpoints at run completion: `checkpoints/global_step_1/`, `checkpoints/global_step_2/`. Retention update (2026-11-20): the intermediate `global_step_1/` snapshot was pruned; `global_step_2/` remains.
 
 Each checkpoint directory contains 32 files. The two checkpoints total approximately 352.3 GiB and remain on PFS; they are intentionally not committed to GitHub. The small rollout traces, manifests, logs, and this report are committed for review and reproducibility.

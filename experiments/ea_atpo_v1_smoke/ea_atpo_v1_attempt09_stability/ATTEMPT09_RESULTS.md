@@ -66,7 +66,7 @@ The final checkpoint was evaluated once on 20 held-out cases: 4/20 correct (20%)
 - Redacted train/validation traces with raw Expert completions: `traces/train.jsonl`, `traces/validation.jsonl`; combined source: `traces/all_rollouts.jsonl`.
 - Run configuration, data hashes, privacy audit, and artifact hashes: `run_manifest.json`.
 - Full runtime log remains on the experiment filesystem at `logs/ea_atpo_v1_smoke_20261115T101426Z.log`; the GitHub artifact is path-scrubbed at `logs/ea_atpo_v1_smoke_20261115T101426Z_redacted.log`.
-- Checkpoints: `checkpoints/global_step_1/` through `checkpoints/global_step_10/` on the experiment filesystem. Checkpoints and converted Parquet files are not included in the Git push because of their size and/or data content.
+- At run completion the runner wrote `global_step_1/` through `global_step_10/`. Retention update (2026-11-20): intermediate steps 1–9 were pruned; `checkpoints/global_step_10/` remains on the experiment filesystem. Checkpoints and converted Parquet files are not included in GitHub because of size and/or data content.
 - Re-run command: `./run_ea_atpo_v1_stability.sh` (requires the configured Qwen3-8B cache and the GPU memory gate).
 
 No large-scale training, new network module, or new loss was introduced.

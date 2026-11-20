@@ -46,5 +46,6 @@ ASK 相对 ANSWER 的配对纠错为 10、退化为 11，平均净回报差 -0.0
 - 每批汇总 CSV：`outputs/ask_unknown_repair_50case_20261120/reports/batch_summary/batch_summary.csv`
 - 最终结构/隔离/服务资源核验：`outputs/ask_unknown_repair_50case_20261120/final_validation.json`
 - 逐批 manifest、GPU 快照、服务日志和权重清单均在同一 `outputs/ask_unknown_repair_50case_20261120/` 目录中。
+- 可恢复数据已推送到 `experiments/ea_atpo_v2/recovery_bundle_20261120/`：合并轨迹、Q Dataset、Unknown 逐条分类、分批清单、汇总和 SHA-256 校验；不含 Gold 答案、隐藏 atomic facts 或模型权重。
 
 运行脚本：`scripts/prepare_50_case_batches.py`、`scripts/run_unknown_review_smoke.py`、`scripts/run_counterfactual_pilot.py`、`scripts/build_q_dataset.py`、`scripts/analyze_counterfactual_pilot.py`、`scripts/merge_counterfactual_batches.py`、`scripts/summarize_50_case_batches.py`。每批命令及配置路径记录于本次运行 manifest 和批次目录。

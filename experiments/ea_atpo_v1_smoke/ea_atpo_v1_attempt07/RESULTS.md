@@ -35,6 +35,6 @@ Episode rewards were -0.25, -0.25, -0.05, and -0.05; aggregate resource cost was
 - Normal-policy traces: `traces/train.jsonl`
 - Rollout dumps: `rollouts/1.jsonl`, `rollouts/2.jsonl`
 - Raw trainer log: `logs/ea_atpo_v1_smoke_20261114T034613Z.log`
-- Checkpoints: `checkpoints/global_step_1/`, `checkpoints/global_step_2/` (`latest_checkpointed_iteration.txt` is 2)
+- Checkpoints at run completion: `checkpoints/global_step_1/`, `checkpoints/global_step_2/` (`latest_checkpointed_iteration.txt` was 2). Retention update (2026-11-20): intermediate `global_step_1/` was pruned; final `global_step_2/` remains.
 
 Each checkpoint contains 32 files; together they use approximately 352.3 GiB and remain on PFS. They are excluded from GitHub. Full audits are in the project-root `EA_ATPO_FOUR_ACTION_PROTOCOL_REPORT.md`, `EA_ATPO_REWARD_RETURN_ADVANTAGE_AUDIT.md`, `EA_ATPO_PPO_GRADIENT_COVERAGE.md`, and `EA_ATPO_V1_JOINT_TRAINING_SMOKE.md`.
