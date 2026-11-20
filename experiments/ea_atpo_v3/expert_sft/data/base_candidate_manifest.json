@@ -1,0 +1,23 @@
+{
+  "base_revision": "b968826d9c46dd6066d109eabc6255188de91218",
+  "blocker": "The historical records do not preserve the exact per-request prompt or its hash and runtime code was not locked to the recorded commit. Reconstructing the prompt is not proof of what was sent. Re-generate using one frozen V3 prompt and capture request hashes.",
+  "candidate_file_sha256": "29f23f3d3f9f172f069b184836204065183dc3546f0c20c21255b75ef3623c48",
+  "candidates": 146,
+  "case_split": "train",
+  "config_sha256": "8d86fc9cfc4f9effb32e815ee1a7c0ad28031609d208d4d7ab721a44d51f27df",
+  "raw_candidate_file_private": "/pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO_V1_expert_sft_20261120/experiments/ea_atpo_v3/expert_sft/data/private/base_v2_reuse_candidates.jsonl",
+  "recorded_decoding": {
+    "enable_thinking": false,
+    "max_tokens": 24,
+    "structured_output_regex": "^Final Answer: [A-D]$",
+    "temperature": 0.0,
+    "top_p": 1.0
+  },
+  "status": "CANDIDATES_ONLY_NOT_APPROVED_FOR_REUSE",
+  "tokenizer_hashes": {
+    "tokenizer.json": "aeb13307a71acd8fe81861d94ad54ab689df773318809eed3cbe794b4492dae4",
+    "tokenizer_config.json": "d5d09f07b48c3086c508b30d1c9114bd1189145b74e982a265350c923acd8101"
+  },
+  "trajectory_sha256": "daedec4a13b716c6c5ee4ea0eb0c758342dbcb8b49b4d74e11645a688f279583",
+  "verified_for_v3_reuse": 0
+}

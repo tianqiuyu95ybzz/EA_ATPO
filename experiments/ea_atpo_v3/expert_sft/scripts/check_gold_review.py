@@ -19,6 +19,7 @@ def main() -> None:
     p.add_argument('--source-root', type=Path, required=True)
     p.add_argument('--audit-manifest', type=Path, required=True)
     p.add_argument('--base-answers', type=Path)
+    p.add_argument('--base-manifest', type=Path)
     args = p.parse_args()
     audit = json.loads(args.audit_manifest.read_text())
     expected = {}
@@ -43,8 +44,20 @@ def main() -> None:
             import hashlib
             if hashlib.sha256(b['raw_output'].encode()).hexdigest() != b['raw_output_sha256']:
                 raise ValueError('Base raw output checksum mismatch')
+            if b.get('status') != 'VERIFIED':
+                raise ValueError('unverified Base candidate cannot enter review/training')
             base[b['sample_id']] = b['raw_output']
     errors = Counter()
+    if not args.base_manifest or not args.base_answers:
+        errors['base_pairing_manifest_or_answers_missing'] += 1
+    else:
+        manifest = json.loads(args.base_manifest.read_text())
+        checks = ('model_revision', 'tokenizer', 'prompt', 'decoding', 'data', 'case_ids', 'raw_output_completeness')
+        if (manifest.get('status') != 'VERIFIED' or manifest.get('sample_count') != len(expected)
+            or manifest.get('raw_answers_sha256') != sha(args.base_answers)
+            or manifest.get('base_revision') != 'b968826d9c46dd6066d109eabc6255188de91218'
+            or not all(manifest.get('checks', {}).get(k) is True for k in checks)):
+            errors['base_pairing_manifest_invalid'] += 1
     statuses = Counter()
     actions = Counter()
     for r in review:
@@ -84,8 +97,6 @@ def main() -> None:
                 errors['ambiguous_must_abstain_without_gold'] += 1
         elif action or r['reviewed_gold'].strip():
             errors['rejected_must_be_excluded'] += 1
-    if not args.base_answers:
-        errors['base_provenance_file_not_supplied'] += 1
     summary = {'ready_for_formal_training': not errors, 'samples': len(review), 'status_counts': dict(statuses),
                'action_counts': dict(actions), 'errors': dict(errors), 'queue_sha256': sha(args.queue),
                'base_answers_sha256': sha(args.base_answers) if args.base_answers else None,
