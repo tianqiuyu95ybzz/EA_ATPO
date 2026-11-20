@@ -284,6 +284,7 @@ def conditional_metrics(
                 accum["base_error_fixed"] += result["final_correct"]
             if result["defer_count"]:
                 accum["defer_calls"] += result["defer_count"]
+                accum["defer_answer_correct"] += result["defer_count"] * result["final_correct"]
                 if not result["base_correct"] and result["final_correct"]:
                     accum["useful_defer"] += 1
                 if not result["base_correct"]:
@@ -293,6 +294,7 @@ def conditional_metrics(
     return {
         "base_correct_retention": _safe_ratio(accum["base_correct_kept"], accum["base_correct_den"]),
         "base_error_correction": _safe_ratio(accum["base_error_fixed"], accum["base_error_den"]),
+        "defer_answer_accuracy": _safe_ratio(accum["defer_answer_correct"], accum["defer_calls"]),
         "defer_precision_useful_corrections_per_call": _safe_ratio(accum["useful_defer"], accum["defer_calls"]),
         "defer_error_correction_failure_rate": _safe_ratio(accum["failed_deferred_base_errors"], accum["deferred_base_errors"]),
     }
@@ -320,6 +322,7 @@ def conditional_bootstrap_intervals(
         grouped[str(row["case_id"])].append(row)
     cases = sorted(grouped)
     names = ("retained", "base_correct", "corrected", "base_error", "useful_defer", "defer_calls",
+             "defer_answer_correct",
              "failed_defer", "deferred_base_errors")
     cluster = {name: [] for name in names}
     for case_id in cases:
@@ -335,6 +338,7 @@ def conditional_bootstrap_intervals(
                     tally["corrected"] += result["final_correct"]
                 if result["defer_count"]:
                     tally["defer_calls"] += result["defer_count"]
+                    tally["defer_answer_correct"] += result["defer_count"] * result["final_correct"]
                     if not result["base_correct"]:
                         tally["deferred_base_errors"] += result["defer_count"]
                         tally["useful_defer"] += int(result["final_correct"] == 1)
@@ -355,6 +359,7 @@ def conditional_bootstrap_intervals(
     return {
         "base_correct_retention": ratio_ci("retained", "base_correct"),
         "base_error_correction": ratio_ci("corrected", "base_error"),
+        "defer_answer_accuracy": ratio_ci("defer_answer_correct", "defer_calls"),
         "defer_precision_useful_corrections_per_call": ratio_ci("useful_defer", "defer_calls"),
         "defer_error_correction_failure_rate": ratio_ci("failed_defer", "deferred_base_errors"),
     }
@@ -595,6 +600,7 @@ def make_policy_records(rows: Sequence[Mapping[str, Any]], *, method: str, defer
     metrics = metrics_for_rows(rows, method, defer_cost, seeds=seed_spec)
     baseline_vectors = case_metric_vectors(rows, "always_answer", defer_cost)
     vectors = case_metric_vectors(rows, method, defer_cost, seeds=seed_spec)
+    metrics["net_accuracy_gain_vs_always_answer"] = float(vectors["accuracy"].mean() - baseline_vectors["accuracy"].mean())
     metrics["net_gain_vs_always_answer_utility"] = float(vectors["utility"].mean() - baseline_vectors["utility"].mean())
     metrics["paired_ci95_accuracy_vs_always_answer"] = bootstrap_interval(
         vectors["accuracy"] - baseline_vectors["accuracy"], replicates=10000, seed=20261121,
