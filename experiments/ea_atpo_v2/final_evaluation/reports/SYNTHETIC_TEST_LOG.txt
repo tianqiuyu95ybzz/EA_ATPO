@@ -1,0 +1,14 @@
+test_case_level_metrics_and_cost_are_recomputed_once (test_final_evaluation.FinalEvaluationTests.test_case_level_metrics_and_cost_are_recomputed_once) ... ok
+test_case_manifest_selection_is_deterministic_and_label_blind (test_final_evaluation.FinalEvaluationTests.test_case_manifest_selection_is_deterministic_and_label_blind) ... ok
+test_end_to_end_cli_interface_writes_new_outputs_only (test_final_evaluation.FinalEvaluationTests.test_end_to_end_cli_interface_writes_new_outputs_only) ... ok
+test_expert_correction_and_correct_answer_degradation (test_final_evaluation.FinalEvaluationTests.test_expert_correction_and_correct_answer_degradation) ... ok
+test_missing_counterfactual_action_fails_closed (test_final_evaluation.FinalEvaluationTests.test_missing_counterfactual_action_fails_closed) ... ok
+test_oracle_is_separate_and_is_an_upper_bound (test_final_evaluation.FinalEvaluationTests.test_oracle_is_separate_and_is_an_upper_bound) ... ok
+test_paired_bootstrap_is_reproducible (test_final_evaluation.FinalEvaluationTests.test_paired_bootstrap_is_reproducible) ... ok
+test_prediction_payload_rejects_gold_or_outcome_labels (test_final_evaluation.FinalEvaluationTests.test_prediction_payload_rejects_gold_or_outcome_labels) ... ok
+test_risk_coverage_uses_prediction_scores_not_gold (test_final_evaluation.FinalEvaluationTests.test_risk_coverage_uses_prediction_scores_not_gold) ... ok
+
+----------------------------------------------------------------------
+Ran 9 tests in 0.058s
+
+OK

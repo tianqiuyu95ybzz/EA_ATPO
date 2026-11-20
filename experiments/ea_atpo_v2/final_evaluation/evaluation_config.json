@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "experiment_id": "ea_atpo_v2_final_case_eval_v1",
+  "action_order": ["ASK", "ANSWER", "DEFER"],
+  "policy_order": [
+    "always_answer",
+    "always_ask",
+    "always_defer",
+    "q_guided_distillation",
+    "relative_advantage",
+    "learned_router",
+    "oracle_upper_bound"
+  ],
+  "registered_costs": {"ASK": 0.01, "ANSWER": 0.0, "DEFER": 0.05},
+  "utility_formula": "final_correct - ask_cost * ask_count - defer_cost * defer_count",
+  "bootstrap": {"unit": "case_id", "replicates": 10000, "seed": 20261120, "confidence": 0.95},
+  "risk_coverage": {
+    "coverage": "fraction of cases not deferred to Expert",
+    "risk": "1 - accuracy among non-deferred cases",
+    "score": "prediction-only defer score; larger values imply higher defer priority"
+  },
+  "oracle": {
+    "role": "offline_upper_bound_only",
+    "uses_gold_posthoc": true,
+    "available_to_prediction_interface": false,
+    "available_to_training": false
+  }
+}
