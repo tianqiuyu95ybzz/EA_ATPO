@@ -1,0 +1,23 @@
+{
+  "base_revision": "b968826d9c46dd6066d109eabc6255188de91218",
+  "case_split_sha256": "b55d889a713b2b1d32afc25d89aaf9205891a1ee5fbaae470702ff31a9f81267",
+  "decoding": {
+    "enable_thinking": false,
+    "max_tokens": 24,
+    "seed": 20261120,
+    "structured_outputs_regex": "^Final Answer: [A-D]$",
+    "temperature": 0.0,
+    "top_p": 1.0
+  },
+  "private_plan": "/pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO_V1_expert_sft_20261120/experiments/ea_atpo_v3/expert_sft/data/private/base_request_plan.jsonl",
+  "public_states_sha256": "c2d77685dc3d6a82926fb2a7545dc4bfabd16df98e9fea3ca74ab4a170f8c507",
+  "request_fields_exclude_gold_and_review_labels": true,
+  "request_plan_sha256": "b08618bd31b79626612e6dbb233155b99652d84fba5ded2648927e8589fa1ddf",
+  "sample_count": 291,
+  "status": "REQUESTS_PREPARED_NO_MODEL_RUN",
+  "tokenizer_hashes": {
+    "tokenizer.json": "aeb13307a71acd8fe81861d94ad54ab689df773318809eed3cbe794b4492dae4",
+    "tokenizer_config.json": "d5d09f07b48c3086c508b30d1c9114bd1189145b74e982a265350c923acd8101"
+  },
+  "v2_protocol_code_sha256": "0321925d9b4242f0b033c3c85769d49dd80cc882bc082f825bd9345c5d831016"
+}

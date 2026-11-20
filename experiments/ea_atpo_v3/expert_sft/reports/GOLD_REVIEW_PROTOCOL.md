@@ -10,4 +10,6 @@ The queue contains simulated medical case text and historical answer labels. It 
 
 The separate pairing gate must verify Base model revision, tokenizer, exact prompt, sampling settings, data version, case/state identity and output completeness. The review checker by itself cannot establish those provenance claims.
 
+After Base generation succeeds, `scripts/enrich_gold_review_queue.py` can create a **new** private queue version from the original queue and the verified Base output/manifest. It checks coverage, case and split identities, raw-answer hashes and review status; it does not approve any row. The original queue is preserved.
+
 At inference, conversation and Base answer are the only task inputs to Expert A. `original_gold`, `reviewed_gold`, `base_correct`, action labels, evidence, risk, reviewer and timestamp are labels or audit metadata and are never model inputs. Expert B/C see only the public conversation.
