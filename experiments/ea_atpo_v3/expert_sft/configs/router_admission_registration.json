@@ -1,0 +1,9 @@
+{
+  "status": "NOT_FROZEN",
+  "min_correction_rate": null,
+  "max_degradation_rate": null,
+  "score_features_predecision_only": true,
+  "oracle_used_for_selection": false,
+  "costs_preregistered": [0.0, 0.05, 0.10, 0.20, 0.40, 0.60],
+  "note": "Numerical meaning/acceptability criteria must be fixed before test results. No Router training is authorized by this placeholder."
+}
