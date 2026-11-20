@@ -183,4 +183,4 @@ Run 08 is stored with directory mode `0700` and files mode `0600` under `/pfs/pf
 
 ## 11. GitHub delivery
 
-This report is part of branch `codex/oracle-expert-20261121`. The final commit and remote SHA verification are recorded in the task completion message and the branch history. No other worktree or branch is merged or modified by this experiment.
+The report, sanitized summary, manifest, progress update, and Oracle implementation history were pushed to `tianqiuyu95ybzz/EA_ATPO`, branch `codex/oracle-expert-20261121`, in commit `cbf120367b565c1bd6180fe1c5bf6c9e95187426`. A subsequent `git fetch ea-atpo` resolved the remote branch to the same SHA. This delivery note is a non-force follow-up commit; its final SHA is checked again after push. No other branch was merged or modified.
