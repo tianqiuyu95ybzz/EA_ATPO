@@ -1,0 +1,75 @@
+{
+  "datasets": {
+    "remedi": {
+      "status": "downloaded",
+      "revision": "f94bb9abfba48f467669d2454771bbe263cc4ae5",
+      "url": "https://raw.githubusercontent.com/yanguojun123/Medical-Dialogue/f94bb9abfba48f467669d2454771bbe263cc4ae5/data/ReMeDi-base.json",
+      "path": "experiments/ea_atpo_v3/public_medical_20261121/private/remedi_base.json",
+      "bytes": 16596996,
+      "sha256": "b27b6b1222255cc87cbc6cc0fb6ce7de98e0b6341f5ea61892bb92f247383458"
+    },
+    "disc": {
+      "status": "downloaded",
+      "repo": "Flmc/DISC-Med-SFT",
+      "revision_observed": "b10eedfc23530ebe257a149b00db73c4162fbfc3",
+      "snapshot_revision_proven": false,
+      "total_reported": 464898,
+      "offsets": [
+        0,
+        464798
+      ],
+      "sample_rows": 200,
+      "path": "private/disc_sample.jsonl",
+      "bytes": 250413,
+      "sha256": "70b250070b823831dcaa0acdb5f9a9237e255726285a88a8de45492a56611f15"
+    },
+    "aquila": {
+      "status": "downloaded",
+      "repo": "BAAI/AquilaMed-Instruct",
+      "revision_observed": "7f21bf31bdbc5ce991ce6fec85f82bba42a43fdb",
+      "revision_expected": "7f21bf31bdbc5ce991ce6fec85f82bba42a43fdb",
+      "snapshot_revision_proven": false,
+      "total_reported": 318357,
+      "offsets": [
+        0,
+        79589,
+        159178,
+        238767,
+        318257
+      ],
+      "sample_rows": 500,
+      "path": "experiments/ea_atpo_v3/public_medical_20261121/private/aquila_sample.jsonl",
+      "bytes": 698365,
+      "sha256": "f4ae5ef3891ebea28dbd2d21b4e4a34c99de561b427a6654ec634086379088fb"
+    },
+    "meddg": {
+      "status": "downloaded_uninspected_pickle",
+      "url": "https://drive.google.com/uc?export=download&id=1u9lmFtmKqBoHz_jJfAAHt2IIoQdAm9pB",
+      "path": "experiments/ea_atpo_v3/public_medical_20261121/private/meddg_gen_train.pk",
+      "bytes": 63954764,
+      "sha256": "df2456fdc28ab6556a6f44b4d0a70fc8d826b887091cb8ccc3d424763c661ad6"
+    },
+    "meddialog": {
+      "status": "downloaded_prefix_sample",
+      "source": "UCSD26 official zh train",
+      "source_url": "https://drive.google.com/uc?export=download&id=1AaDJoHaiHAwEZwtskRH8oL1UP4FRgmgx",
+      "source_bytes": 1665206303,
+      "stream_bytes_read": 262144,
+      "sample_rows": 200,
+      "sampling": "first 200 array items, not random",
+      "path": "private/meddialog_sample.jsonl",
+      "bytes": 122963,
+      "sha256": "2a789a9c956052e419b60cff8771df0c09f7475a95327b939b2d40ce92a03f4a"
+    },
+    "meddg_dialogues": {
+      "status": "downloaded_uninspected_pickle",
+      "source": "official MedDG train.pk",
+      "url": "https://drive.usercontent.google.com/download",
+      "file_id": "1PXwM1P1Cz3ajEVB9GpO6KBDG2U5bWOtZ",
+      "path": "private/meddg_train.pk",
+      "bytes": 28473156,
+      "sha256": "9940ca6bfa90ad53323aca233b12b87b4eb3e7d83ebd96aa8f1c17753d7b6744"
+    }
+  },
+  "note": "sample text remains private; HF rows endpoint is a snapshot, not a revision-pinned API"
+}

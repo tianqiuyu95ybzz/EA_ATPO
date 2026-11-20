@@ -1,0 +1,6 @@
+dataset,observed_records,patient_and_doctor,multi_dialogues_ge_2_each,turn_median,turn_p90,chinese_any_cjk,exact_duplicate_dialogues,structural_anomalies,doctor_reply_ge_20_chars,doctor_medical_keyword_heuristic,last_role_doctor,exact_utterance_overlap_atpo_public_pilot,roles
+ReMeDi,1557,1557,1533,21,38,1557,20,2,1230,1380,1520,0,"{""patient"": 17888, ""doctor"": 18403}"
+MedDG,14864,14864,14850,20.0,35,14864,0,0,13572,13448,12526,0,"{""patient"": 173819, ""doctor"": 147846}"
+DISC-Med-SFT,200,200,99,2.0,8,200,0,0,200,196,191,0,"{""patient"": 468, ""doctor"": 458}"
+AquilaMed-Instruct,500,500,155,2.0,6,435,0,0,376,310,500,0,"{""patient"": 771, ""doctor"": 771}"
+MedDialog,200,200,48,2.0,4,200,0,0,138,143,200,0,"{""patient"": 297, ""doctor"": 297}"
