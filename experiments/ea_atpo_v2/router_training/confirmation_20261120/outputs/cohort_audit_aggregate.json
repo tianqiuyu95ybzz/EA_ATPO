@@ -1,0 +1,45 @@
+{
+  "schema_version": 1,
+  "status": "blocked_no_unseen_cases",
+  "audit_scope": "official Train only; Frozen Holdout not opened",
+  "official_train_cases": 70,
+  "current_v2_q_router_cases": 50,
+  "nominal_remaining_cases": 20,
+  "confirmed_unseen_cases": 0,
+  "exposure_counts": {
+    "used_by_current_v2_router_train_or_dev": 0,
+    "included_in_historical_v1_final_router_fit": 20,
+    "present_in_historical_v1_target_table": 20,
+    "present_in_historical_public_state_bundle": 20,
+    "candidate_cases_in_exact_initial_message_duplicate_groups": 0
+  },
+  "historical_v1_router_fit": {
+    "checkpoint_training_cases": 100,
+    "checkpoint_training_states": 291,
+    "checkpoint_state_ids": 291,
+    "candidate_cases_in_fit": 20
+  },
+  "historical_target_table": {
+    "unique_cases": 100,
+    "candidate_cases_present": 20
+  },
+  "historical_public_state_bundle": {
+    "official_train_cases_with_public_initial_state": 70,
+    "candidate_cases_present": 20,
+    "candidate_exact_duplicate_cases": 0
+  },
+  "hashes": {
+    "official_split_sha256": "b55d889a713b2b1d32afc25d89aaf9205891a1ee5fbaae470702ff31a9f81267",
+    "current_case_batch_manifest_sha256": "05aa2aeb4b57075719e0be7a72604702098199a17e60a06d9084ec2ded082911",
+    "current_router_split_sha256": "ddc4afba5a52a0ffe93dc24764d3d31f8a2ff589488a74e58239c02088f45b98",
+    "current_embedding_manifest_sha256": "e01453bb78dd29342108005dec74348e2acc1c6d3ae3fca6e38ae41a6a86348a",
+    "historical_router_checkpoint_metadata_sha256": "b7b2febe445b939e5d66544ccb2e51656520a155ee7003c6ec041483c7239e1d",
+    "historical_target_table_sha256": "041ca0382b2888723e17abd9063849aca01b4ac6f80e4af5899b653fbc15ed7e",
+    "historical_public_states_sha256": "c2d77685dc3d6a82926fb2a7545dc4bfabd16df98e9fea3ca74ab4a170f8c507"
+  },
+  "nonclaims": [
+    "No new model inference or end-to-end confirmation episode was run.",
+    "This audit does not establish performance on unseen cases.",
+    "Frozen Holdout contents and outcomes were not read."
+  ]
+}

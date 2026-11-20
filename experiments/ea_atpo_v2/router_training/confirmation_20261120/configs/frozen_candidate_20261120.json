@@ -1,0 +1,183 @@
+{
+  "schema_version": 1,
+  "experiment_id": "frozen_embedding_router_confirmation_candidates_20261120",
+  "status": "frozen_candidates_confirmation_blocked_no_unseen_cases",
+  "git": {
+    "branch": "codex/router-training-20261120",
+    "freeze_source_commit": "bcbade727eb86977094b462d516c62ee654218e4",
+    "window_a_head_before_audit": "7a9bb2a9e5efd4e8664c6e1f69c837f3327d9692"
+  },
+  "feature_extractor": {
+    "model_id": "Qwen/Qwen3-8B",
+    "revision": "b968826d9c46dd6066d109eabc6255188de91218",
+    "tokenizer_revision": "b968826d9c46dd6066d109eabc6255188de91218",
+    "prompt_template_sha256": "41d5929bf73796beb66809ac700b2cf3ff81694f933e5c14d52b7fd6963c947d",
+    "embedding_config_sha256": "f48a8f8392c6c8fe0ce3020da9ce52c07aba4c0b88e311767496bb74ef9f18ab",
+    "serialization_rule": "tokenizer.apply_chat_template(add_generation_prompt=false, chat_template_kwargs); tokenizer(add_special_tokens=false)",
+    "chat_template_kwargs": {
+      "enable_thinking": false
+    },
+    "pooling": "mean_last_hidden_state",
+    "dimension": 4096,
+    "max_length": 2048,
+    "truncation_side": "left",
+    "dtype": "bfloat16",
+    "normalize_l2": false,
+    "feature_boundary": "public_state_before_action_only",
+    "embedding_cache_sha256": "e25b9461d07ff5788bb872b41e85b3490e7a9f946a7a32c198fbd982ceaf5458",
+    "embedding_manifest_sha256": "e01453bb78dd29342108005dec74348e2acc1c6d3ae3fca6e38ae41a6a86348a"
+  },
+  "router_common": {
+    "action_order": [
+      "ASK",
+      "ANSWER",
+      "DEFER"
+    ],
+    "hidden_dim": 16,
+    "activation": "GELU",
+    "costs": {
+      "ANSWER": 0.0,
+      "ASK": 0.01,
+      "DEFER": 0.05
+    },
+    "costs_in_training_targets": true,
+    "runtime_cost_subtraction": false,
+    "optimization_seeds": [
+      17,
+      42,
+      2026
+    ],
+    "seed_policy": "evaluate each fixed seed separately; report seed mean; no confirmation-based seed selection and no new ensemble"
+  },
+  "candidate_families": [
+    {
+      "name": "q_guided_distillation",
+      "output_dim": 3,
+      "primary_confirmation_candidate": true,
+      "dev_selection_metrics": {
+        "accuracy_mean": 0.5074074074074075,
+        "utility_mean": 0.4906296296296297,
+        "utility_seed_sd": 0.03881140428895423,
+        "paired_ci_vs_always_answer_accuracy": [
+          -7.401486830834377e-18,
+          0.32222222222222224
+        ],
+        "paired_ci_vs_always_answer_utility": [
+          -0.014227777777777801,
+          0.2966722222222221
+        ]
+      },
+      "checkpoints": [
+        {
+          "seed": 17,
+          "path": "experiments/ea_atpo_v2/router_training/outputs/real_q_router_20261120/training_final/checkpoints/embedding/q_guided_distillation/seed_17.pt",
+          "sha256": "9821e7ca701189d37df9567fbf8ffaff9eaddb537e97448d8019803e3b8e2d32",
+          "bytes": 341981,
+          "best_epoch": 10,
+          "validation_loss": 1.1351888179779053
+        },
+        {
+          "seed": 42,
+          "path": "experiments/ea_atpo_v2/router_training/outputs/real_q_router_20261120/training_final/checkpoints/embedding/q_guided_distillation/seed_42.pt",
+          "sha256": "b461fab29c675070b3d1f02abb52b7ca84d8218c6a9c0dae4ac523c0bf0157b4",
+          "bytes": 341917,
+          "best_epoch": 8,
+          "validation_loss": 1.1532371044158936
+        },
+        {
+          "seed": 2026,
+          "path": "experiments/ea_atpo_v2/router_training/outputs/real_q_router_20261120/training_final/checkpoints/embedding/q_guided_distillation/seed_2026.pt",
+          "sha256": "3405648a8284a526db22b0e211e190302705443753d788e858b0d93b7ac83aeb",
+          "bytes": 342257,
+          "best_epoch": 12,
+          "validation_loss": 1.1716668605804443
+        }
+      ]
+    },
+    {
+      "name": "mlp_relative",
+      "output_dim": 2,
+      "primary_confirmation_candidate": false,
+      "dev_selection_metrics": {
+        "accuracy_mean": 0.49259259259259264,
+        "utility_mean": 0.46855555555555545,
+        "utility_seed_sd": 0.07282076762525141,
+        "paired_ci_vs_always_answer_accuracy": [
+          0.022222222222222216,
+          0.32222222222222224
+        ],
+        "paired_ci_vs_always_answer_utility": [
+          0.0014444444444444181,
+          0.294797222222222
+        ]
+      },
+      "checkpoints": [
+        {
+          "seed": 17,
+          "path": "experiments/ea_atpo_v2/router_training/outputs/real_q_router_20261120/training_final/checkpoints/embedding/mlp_relative/seed_17.pt",
+          "sha256": "4982446d860d0a70794fd8f606ca03d47c16985225213fd64f752333e7e6da8f",
+          "bytes": 342173,
+          "best_epoch": 18,
+          "validation_loss": 0.13638317584991455
+        },
+        {
+          "seed": 42,
+          "path": "experiments/ea_atpo_v2/router_training/outputs/real_q_router_20261120/training_final/checkpoints/embedding/mlp_relative/seed_42.pt",
+          "sha256": "7ecdc640e0951772e7a027787e24de03a941843f058360157c9784f00599a2b0",
+          "bytes": 342173,
+          "best_epoch": 18,
+          "validation_loss": 0.13843554258346558
+        },
+        {
+          "seed": 2026,
+          "path": "experiments/ea_atpo_v2/router_training/outputs/real_q_router_20261120/training_final/checkpoints/embedding/mlp_relative/seed_2026.pt",
+          "sha256": "efc9a44ef83453aea8d31c6139f85e9903931159745786f3541d58d70dc7ec77",
+          "bytes": 342449,
+          "best_epoch": 20,
+          "validation_loss": 0.14751257002353668
+        }
+      ]
+    }
+  ],
+  "training_and_selection": {
+    "official_split": "Train only",
+    "split_unit": "case_id",
+    "train_cases": 35,
+    "dev_cases": 15,
+    "train_states": 103,
+    "dev_states": 43,
+    "case_split_path": "experiments/ea_atpo_v2/router_training/outputs/real_q_router_20261120/case_split_35_train_15_dev.json",
+    "case_split_sha256": "ddc4afba5a52a0ffe93dc24764d3d31f8a2ff589488a74e58239c02088f45b98",
+    "max_epochs": 300,
+    "early_stopping": "minimum Dev loss; patience 30; min improvement 1e-8",
+    "batch_size": 16,
+    "optimizer": "AdamW",
+    "learning_rate": 0.003,
+    "weight_decay": 0.01,
+    "model_selection": "Embedding Q-guided Distillation selected as family by average Dev Utility across fixed seeds; Relative Advantage MLP retained as predeclared requested comparator; all six checkpoints frozen.",
+    "distillation_temperature": 0.1,
+    "relative_regression_loss": "Huber"
+  },
+  "action_decoding": {
+    "q_guided_distillation": "argmax of three logits in ASK,ANSWER,DEFER order",
+    "mlp_relative": "form [delta_ASK, 0_answer_anchor, delta_DEFER], then argmax in ASK,ANSWER,DEFER order",
+    "tie_break": "first index in action order"
+  },
+  "reproduction_artifacts_sha256": {
+    "primary_config": "e391a2e853ba01fbe52ee959396bc336e16ba8ca8f383680b7a724962612c81d",
+    "embedding_manifest": "e01453bb78dd29342108005dec74348e2acc1c6d3ae3fca6e38ae41a6a86348a",
+    "training_results": "b0484eff25420590ea9471e653141dee4f118eb5f2a60ccdd581735f87592b62",
+    "router_training_code": "33c89e952c6c02584641d76109625bcb172d96c8553e14b1c69b5b68cc435593",
+    "embedding_extraction_code": "da66956b9ae6ba290f9883a1fa134e76122be34493c0ad6cd0f5e0699935dccf",
+    "case_split": "ddc4afba5a52a0ffe93dc24764d3d31f8a2ff589488a74e58239c02088f45b98"
+  },
+  "confirmation_gate": {
+    "nominal_remaining_official_train_cases": 20,
+    "confirmed_unseen_cases": 0,
+    "reason": "all remaining official Train cases occur in the historical V1 full-fit Router checkpoint (100 cases/291 states)",
+    "new_inference_started": false,
+    "end_to_end_episodes_started": false,
+    "frozen_holdout_opened": false,
+    "retraining_threshold_change_cost_change_checkpoint_selection": false
+  }
+}

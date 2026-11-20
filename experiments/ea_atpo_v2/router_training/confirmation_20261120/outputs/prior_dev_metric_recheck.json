@@ -1,0 +1,155 @@
+{
+  "status": "recomputed_prior_dev_only",
+  "cases": 15,
+  "states": 43,
+  "source": "Q targets already used for training/model selection; no new cases",
+  "accuracy_reconstruction": "correctness comes from terminal rollout outcome; Q is reconciled to correctness - 0.01*cumulative_ASK - 0.05*cumulative_DEFER",
+  "base_expert_four_cells_state_count": {
+    "base_correct_expert_correct": 11,
+    "base_correct_expert_wrong": 6,
+    "base_wrong_expert_correct": 9,
+    "base_wrong_expert_wrong": 17
+  },
+  "baselines_case_macro": {
+    "ASK": {
+      "accuracy": 0.4444444444444444,
+      "answer_rate": 0.0,
+      "ask_rate": 1.0,
+      "defer_rate": 0.0,
+      "utility": 0.43444444444444436
+    },
+    "ANSWER": {
+      "accuracy": 0.4,
+      "answer_rate": 1.0,
+      "ask_rate": 0.0,
+      "defer_rate": 0.0,
+      "utility": 0.4
+    },
+    "DEFER": {
+      "accuracy": 0.4777777777777778,
+      "answer_rate": 0.0,
+      "ask_rate": 0.0,
+      "defer_rate": 1.0,
+      "utility": 0.42777777777777776
+    }
+  },
+  "policies": {
+    "mlp_relative": {
+      "case_macro_mean_over_three_seeds": {
+        "accuracy": 0.49259259259259264,
+        "utility": 0.46855555555555545,
+        "ask_rate": 0.34814814814814815,
+        "answer_rate": 0.24074074074074073,
+        "defer_rate": 0.41111111111111115
+      },
+      "state_weighted_action_rates_mean_over_three_seeds": {
+        "ask_rate": 0.35658914728682173,
+        "answer_rate": 0.24031007751937986,
+        "defer_rate": 0.40310077519379844
+      },
+      "per_seed_case_macro": {
+        "17": {
+          "accuracy": 0.5666666666666667,
+          "answer_rate": 0.16666666666666666,
+          "ask_rate": 0.4444444444444445,
+          "defer_rate": 0.3888888888888889,
+          "utility": 0.5427777777777777
+        },
+        "42": {
+          "accuracy": 0.4888888888888889,
+          "answer_rate": 0.3222222222222222,
+          "ask_rate": 0.26666666666666666,
+          "defer_rate": 0.41111111111111115,
+          "utility": 0.4656666666666666
+        },
+        "2026": {
+          "accuracy": 0.4222222222222222,
+          "answer_rate": 0.23333333333333334,
+          "ask_rate": 0.3333333333333333,
+          "defer_rate": 0.43333333333333335,
+          "utility": 0.3972222222222222
+        }
+      },
+      "saved_case_metrics_max_abs_difference": 0.0,
+      "saved_case_cluster_bootstrap_ci_vs_always_answer": {
+        "accuracy": [
+          0.022222222222222216,
+          0.32222222222222224
+        ],
+        "utility": [
+          0.0014444444444444181,
+          0.294797222222222
+        ]
+      },
+      "bootstrap_ci_recomputed_here": false,
+      "relative_advantage_mae_state_weighted_seed_mean": 0.3917781559864868,
+      "relative_advantage_positive_auroc_state_level": {
+        "ASK": 0.6431623931623932,
+        "DEFER": 0.6089324618736384
+      }
+    },
+    "q_guided_distillation": {
+      "case_macro_mean_over_three_seeds": {
+        "accuracy": 0.5074074074074074,
+        "utility": 0.4906296296296296,
+        "ask_rate": 0.47407407407407404,
+        "answer_rate": 0.28518518518518515,
+        "defer_rate": 0.24074074074074073
+      },
+      "state_weighted_action_rates_mean_over_three_seeds": {
+        "ask_rate": 0.4728682170542635,
+        "answer_rate": 0.29457364341085274,
+        "defer_rate": 0.23255813953488372
+      },
+      "per_seed_case_macro": {
+        "17": {
+          "accuracy": 0.5444444444444444,
+          "answer_rate": 0.2222222222222222,
+          "ask_rate": 0.5111111111111111,
+          "defer_rate": 0.26666666666666666,
+          "utility": 0.526
+        },
+        "42": {
+          "accuracy": 0.5111111111111111,
+          "answer_rate": 0.4111111111111111,
+          "ask_rate": 0.3777777777777777,
+          "defer_rate": 0.2111111111111111,
+          "utility": 0.49677777777777776
+        },
+        "2026": {
+          "accuracy": 0.4666666666666667,
+          "answer_rate": 0.2222222222222222,
+          "ask_rate": 0.5333333333333333,
+          "defer_rate": 0.24444444444444444,
+          "utility": 0.44911111111111107
+        }
+      },
+      "saved_case_metrics_max_abs_difference": 6.938893903907228e-18,
+      "saved_case_cluster_bootstrap_ci_vs_always_answer": {
+        "accuracy": [
+          -7.401486830834377e-18,
+          0.32222222222222224
+        ],
+        "utility": [
+          -0.014227777777777801,
+          0.2966722222222221
+        ]
+      },
+      "bootstrap_ci_recomputed_here": false,
+      "q_prediction_mae": null,
+      "q_prediction_mae_note": "Distillation head outputs policy logits, not Q values; Q MAE/AUROC are undefined."
+    }
+  },
+  "bootstrap": {
+    "unit": "case_id",
+    "replicates": 5000,
+    "seed": 20261120,
+    "ci_source": "saved original training_results.json; point and case metrics are reconciled here"
+  },
+  "base_expert_four_cells_case_weighted": {
+    "base_correct_expert_correct": 0.26666666666666666,
+    "base_correct_expert_wrong": 0.13333333333333333,
+    "base_wrong_expert_correct": 0.2111111111111111,
+    "base_wrong_expert_wrong": 0.3888888888888889
+  }
+}
