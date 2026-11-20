@@ -1,0 +1,23 @@
+{
+  "base_answers_verified": 0,
+  "base_correct_reviewed": 0,
+  "contains_clinical_certification": false,
+  "created_queue_sha256": "7c1f1d489cde281486126d641f9782bdaa0755bb587f5fb16dc8a125405c1dbb",
+  "queue_path": "/pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO_V1_expert_sft_20261120/experiments/ea_atpo_v3/expert_sft/data/private/gold_review_queue.csv",
+  "ready_for_formal_training": false,
+  "samples": 291,
+  "samples_by_split": {
+    "internal_test": 44,
+    "train": 205,
+    "validation": 42
+  },
+  "schema_version": 1,
+  "source_audit_sha256": "72fddf492474947d4d062b7639dcdc57094812ffa8e217348844345347aeadd4",
+  "status_counts": {
+    "AMBIGUOUS": 0,
+    "APPROVED": 0,
+    "PENDING": 291,
+    "REJECTED": 0
+  },
+  "target_actions_reviewed": 0
+}
