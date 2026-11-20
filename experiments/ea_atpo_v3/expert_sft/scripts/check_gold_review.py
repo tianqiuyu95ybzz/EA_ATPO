@@ -46,6 +46,9 @@ def main() -> None:
                 raise ValueError('Base raw output checksum mismatch')
             if b.get('status') != 'VERIFIED':
                 raise ValueError('unverified Base candidate cannot enter review/training')
+            if (b['sample_id'] not in expected or not b['raw_output']
+                or (b.get('case_id'), b.get('split')) != expected[b['sample_id']][:2]):
+                raise ValueError('Base sample/case/split identity mismatch')
             base[b['sample_id']] = b['raw_output']
     errors = Counter()
     if not args.base_manifest or not args.base_answers:
@@ -68,6 +71,8 @@ def main() -> None:
         statuses[status] += 1
         if action:
             actions[action] += 1
+        if r['gold_status'] != status or r['target_action'] != action:
+            errors['status_or_action_not_canonical'] += 1
         if r['sample_id'] not in base or r['base_answer'] != base[r['sample_id']]:
             errors['verified_base_missing_or_changed'] += 1
         if status == 'PENDING':
@@ -93,7 +98,7 @@ def main() -> None:
             if (correct, action) not in {('true', 'KEEP'), ('false', 'REVISE')}:
                 errors['approved_action_inconsistent'] += 1
         elif status == 'AMBIGUOUS':
-            if action != 'ABSTAIN' or r['reviewed_gold'].strip():
+            if action != 'ABSTAIN' or r['reviewed_gold'].strip() or correct:
                 errors['ambiguous_must_abstain_without_gold'] += 1
         elif action or r['reviewed_gold'].strip():
             errors['rejected_must_be_excluded'] += 1

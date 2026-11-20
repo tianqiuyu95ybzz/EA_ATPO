@@ -1,0 +1,21 @@
+{
+  "status": "BLOCKED_REVIEW_BASE_GPU_AWQ_SMOKE",
+  "model_id": "Qwen/Qwen3-32B-AWQ",
+  "revision": "0499c3ac83fdef8810b907a23894ba91e95eddd8",
+  "tokenizer_revision": "0499c3ac83fdef8810b907a23894ba91e95eddd8",
+  "initialization": "independent_lora_adapter_on_pinned_awq",
+  "input_fields": ["conversation", "base_answer"],
+  "output_json_fields": ["action", "answer"],
+  "actions": ["KEEP", "REVISE", "ABSTAIN"],
+  "keep_or_abstain_execution": "program_copies_original_base_answer_verbatim",
+  "action_loss_weight": 1.0,
+  "correction_loss_weight": 1.0,
+  "correction_loss_only_for": "REVISE",
+  "lora": {"rank": 16, "alpha": 32, "dropout": 0.05},
+  "max_epochs": 10,
+  "save_each_epoch": true,
+  "selection_and_thresholds": "validation_only",
+  "internal_test": "once_after_model_and_configuration_freeze",
+  "independent_output_dir": "experiments/ea_atpo_v3/expert_sft/outputs/expert_a",
+  "seed": 20261120
+}
