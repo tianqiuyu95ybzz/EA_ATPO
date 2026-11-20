@@ -37,6 +37,12 @@ def main() -> None:
             issues.append('paired 95% CI does not establish improvement')
     if registration.get('score_features_predecision_only') is not True:
         issues.append('pre-decision feature constraint not verified')
+    allowed = {'constant', 'random_seed', 'base_entropy', 'base_margin', 'base_max_logprob',
+               'base_option_logprobs', 'base_answer_tokens', 'prompt_tokens', 'dialogue_turns'}
+    features = metrics.get('score_features')
+    if (metrics.get('score_visibility') != 'predecision' or not isinstance(features, list)
+        or not features or not set(features).issubset(allowed)):
+        issues.append('evaluated policy is not established as a pre-Expert decision')
     if registration.get('oracle_used_for_selection') is not False:
         issues.append('independence from Oracle selection not verified')
     result = {'decision': 'BLOCKED' if issues else 'ELIGIBLE_FOR_ROUTER', 'reasons': issues,

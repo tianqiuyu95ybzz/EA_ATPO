@@ -20,3 +20,16 @@ CUDA_VISIBLE_DEVICES=GPU /pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO_V1/exp
 ```
 
 Formal A and B training remains blocked by the incomplete human review and must pass a fresh resource gate at launch. No BF16, other model or alternative training algorithm was selected as a fallback.
+
+An additional, separate synthetic integration check of the actual A/B loss implementation was started on GPU 5 after a fresh gate. It was interrupted by SIGTERM after AWQ loading; the source of that signal is unknown, and no completed report or per-step proof was produced. The earlier 10-step AWQ compatibility smoke remains valid. The training entry point additionally requires a completed integration report matching the current trainer/prompt code, so this interrupted attempt cannot be mistaken for a pass. Its log and preflight files remain under `outputs/trainer_loss_smoke_20261120_attempt01/` and `outputs/logs/`.
+
+After a new safe GPU window is available, this additional synthetic check can be rerun in a **new** output directory, replacing `GPU` with an allowed physical index:
+
+```bash
+CUDA_VISIBLE_DEVICES=GPU /pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO_V1/experiments/expert_sft/multiturn_dialogue/.venv_awq/bin/python \
+  experiments/ea_atpo_v3/expert_sft/scripts/verify_training_losses.py --gpu GPU \
+  --model-dir /pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO/experiments/real_case_pilot_20261103/assets/models/Qwen3-32B-AWQ \
+  --smoke-report experiments/ea_atpo_v3/expert_sft/data/awq_smoke_manifest.json \
+  --smoke-adapter experiments/ea_atpo_v3/expert_sft/outputs/awq_smoke_20261120_attempt01/adapter/adapter_model.safetensors \
+  --output-dir experiments/ea_atpo_v3/expert_sft/outputs/trainer_loss_smoke_NEW
+```

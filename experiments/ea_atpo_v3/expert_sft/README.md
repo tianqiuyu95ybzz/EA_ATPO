@@ -8,7 +8,7 @@ This is an isolated, gated experiment branch. The source material is the existin
 - `outputs/` contains local logs, attempts and later checkpoints. It is Git-ignored. New attempts must use new directories; do not overwrite or clean historical artifacts.
 - `reports/` distinguishes completed checks from blocked or unimplemented work. No V3 training/evaluation result may be inferred from the presence of a script or config.
 
-The 291 Base outputs have been generated and verified, and the separate synthetic 10-step AWQ LoRA smoke passed with a loading warning recorded in its report. Current execution requires actual human Gold review and implementation and validation of the formal A/B training, prediction and Dev-threshold calibration workflows. Only then may a frozen Internal Test be evaluated once per Expert. Router training requires a separately satisfied admission decision; PPO/ATPO RL is outside this experiment.
+The 291 Base outputs have been generated and verified, and the separate synthetic 10-step AWQ LoRA smoke passed with a loading warning recorded in its report. A/B training, prediction and Dev-calibration code is prepared but has not been exercised end to end on reviewed data or trained checkpoints. A separate synthetic GPU integration check of the A/B losses was interrupted and must be completed for the current code. Current execution also requires actual human Gold review before formal SFT. Only after Dev selection and freezing may Internal Test be evaluated once per Expert. Router training requires a separately satisfied admission decision; PPO/ATPO RL is outside this experiment.
 
 Run the meaningful synthetic checks without loading a model or opening the holdout:
 

@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 import csv
 import datetime as dt
+import hashlib
 import json
 import math
 import random
@@ -254,6 +255,8 @@ def main() -> None:
     p.add_argument('--split', choices=('train', 'validation', 'internal_test'), required=True)
     p.add_argument('--model-lock', type=Path, required=True)
     p.add_argument('--prediction-manifest', type=Path, required=True)
+    p.add_argument('--raw-predictions', type=Path, required=True)
+    p.add_argument('--prediction-run-manifest', type=Path, required=True)
     p.add_argument('--review-queue', type=Path, required=True)
     p.add_argument('--source-root', type=Path, required=True)
     p.add_argument('--audit-manifest', type=Path, required=True)
@@ -268,6 +271,7 @@ def main() -> None:
         raise ValueError('evaluation output must be a new V3 outputs/ directory')
     lock = json.loads(args.model_lock.read_text())
     prediction = json.loads(args.prediction_manifest.read_text())
+    raw_run = json.loads(args.prediction_run_manifest.read_text())
     calibration_path = Path(lock['threshold_calibration_manifest'])
     calibration = json.loads(calibration_path.read_text())
     frozen_at = aware_datetime(lock.get('frozen_at_utc', ''))
@@ -286,12 +290,24 @@ def main() -> None:
         or calibration.get('split') != 'validation' or calibration.get('oracle_used') is not False
         or calibration.get('threshold') != lock.get('threshold')
         or aware_datetime(calibration.get('completed_at_utc', '')) > frozen_at
-        or prediction.get('status') != 'COMPLETED' or prediction.get('split') != args.split
+        or prediction.get('status') != 'COMPLETED' or prediction.get('expert') != args.expert or prediction.get('split') != args.split
         or prediction.get('model_lock_sha256') != sha(args.model_lock)
         or prediction.get('scored_predictions_sha256') != sha(args.predictions)
+        or prediction.get('raw_predictions_sha256') != sha(args.raw_predictions)
+        or prediction.get('raw_run_manifest_sha256') != sha(args.prediction_run_manifest)
         or prediction.get('reviewed_queue_sha256') != sha(args.review_queue)
         or prediction.get('base_answers_sha256') != sha(args.base_answers)
-        or prediction.get('score_visibility') != 'predecision' or generated_at < frozen_at
+        or prediction.get('score_visibility') != 'predecision'
+        or (args.split == 'internal_test' and generated_at < frozen_at)
+        or raw_run.get('status') != 'COMPLETED' or raw_run.get('expert') != args.expert
+        or raw_run.get('split') != args.split or raw_run.get('raw_predictions_sha256') != sha(args.raw_predictions)
+        or raw_run.get('checkpoint_sha256') != lock.get('checkpoint_sha256')
+        or raw_run.get('config_sha256') != lock.get('config_sha256')
+        or raw_run.get('reviewed_queue_sha256') != sha(args.review_queue)
+        or raw_run.get('base_answers_sha256') != sha(args.base_answers)
+        or raw_run.get('generated_at_utc') != prediction.get('generated_at_utc')
+        or raw_run.get('score_features') != features or raw_run.get('score_visibility') != 'predecision'
+        or (args.split == 'internal_test' and raw_run.get('model_lock_sha256') != sha(args.model_lock))
         or not isinstance(features, list) or not features or not set(features).issubset(allowed_features)):
         raise ValueError('frozen model, split, review, prediction, score, or threshold provenance is inconsistent')
     review_check = subprocess.run([sys.executable, str(EXP / 'scripts/check_gold_review.py'),
@@ -301,11 +317,22 @@ def main() -> None:
     if review_check.returncode:
         raise ValueError('human Gold review or Base provenance gate failed')
     source = list(rows(args.predictions))
+    raw_records = list(rows(args.raw_predictions))
+    raw_by_id = {r['sample_id']: r for r in raw_records}
+    if len(raw_by_id) != len(raw_records) or set(raw_by_id) != {r['sample_id'] for r in source}:
+        raise ValueError('scored and raw prediction coverage differ')
+    for record in source:
+        raw = raw_by_id[record['sample_id']]
+        keys = ('case_id', 'sample_id', 'split', 'base_answer', 'expert_output', 'decision_score')
+        if (any(record.get(k) != raw.get(k) for k in keys)
+            or hashlib.sha256(raw['expert_output'].encode()).hexdigest() != raw.get('expert_output_sha256')):
+            raise ValueError('scored record differs from its frozen raw prediction')
     if any(r.get('split') != args.split for r in source):
         raise ValueError('mixed or wrong evaluation split')
     with args.review_queue.open(encoding='utf-8', newline='') as f:
         review = {r['sample_id']: r for r in csv.DictReader(f)
-                  if r['split'] == args.split and r['gold_status'] != 'REJECTED'}
+                  if r['split'] == args.split and (r['gold_status'] in {'APPROVED', 'AMBIGUOUS'}
+                                                   if args.expert == 'A' else r['gold_status'] == 'APPROVED')}
     if set(review) != {r['sample_id'] for r in source} or len(review) != len(source):
         raise ValueError('prediction coverage differs from reviewed split')
     for record in source:
@@ -322,6 +349,10 @@ def main() -> None:
         with marker.open('x', encoding='utf-8') as f:
             json.dump({'expert': args.expert, 'model_lock_sha256': sha(args.model_lock), 'predictions_sha256': sha(args.predictions)}, f)
     summary, by_case, curve = evaluate(source, args.expert, float(lock['threshold']), args.bootstrap, args.seed)
+    summary['score_features'] = features
+    summary['score_visibility'] = prediction['score_visibility']
+    summary['model_lock_sha256'] = sha(args.model_lock)
+    summary['threshold_calibration_sha256'] = sha(calibration_path)
     out.mkdir(parents=True, mode=0o700)
     for name, value in [('aggregate_metrics.json', summary), ('by_case.json', by_case)]:
         with (out / name).open('x', encoding='utf-8') as f:

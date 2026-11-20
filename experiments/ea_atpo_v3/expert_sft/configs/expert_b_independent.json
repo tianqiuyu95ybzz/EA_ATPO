@@ -11,6 +11,7 @@
   "target": "reviewed_gold_for_approved_examples_only",
   "loss": "assistant_token_cross_entropy",
   "lora": {"rank": 16, "alpha": 32, "dropout": 0.05},
+  "training": {"learning_rate": 0.0001, "micro_batch": 1, "gradient_accumulation": 8, "max_sequence_length": 4096, "gradient_checkpointing": true, "optimizer": "AdamW", "weight_decay": 0.01},
   "max_epochs": 10,
   "save_each_epoch": true,
   "selection_and_thresholds": "validation_only",

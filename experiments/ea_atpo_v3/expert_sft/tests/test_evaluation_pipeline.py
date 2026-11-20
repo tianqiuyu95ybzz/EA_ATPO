@@ -77,16 +77,28 @@ class EvaluationPipelineTest(unittest.TestCase):
                    'expert_output': json.dumps({'action': 'REVISE', 'answer': 'A'}),
                    'expert_correct': True, 'correctness_method': 'approved_gold_exact_option'}
             pred.write_text(json.dumps(row) + '\n')
+            raw = root / 'raw.jsonl'
+            raw_row = {k: row[k] for k in ('sample_id', 'case_id', 'split', 'base_answer', 'expert_output', 'decision_score')}
+            raw_row['expert_output_sha256'] = hashlib.sha256(raw_row['expert_output'].encode()).hexdigest()
+            raw.write_text(json.dumps(raw_row) + '\n')
+            raw_run = root / 'raw_run.json'
+            dump(raw_run, {'status': 'COMPLETED', 'expert': 'A', 'split': 'validation',
+                           'raw_predictions_sha256': digest(raw), 'checkpoint_sha256': digest(checkpoint),
+                           'config_sha256': digest(config), 'reviewed_queue_sha256': digest(review),
+                           'base_answers_sha256': digest(base), 'generated_at_utc': '2026-01-01T03:00:00+00:00',
+                           'score_features': ['base_entropy'], 'score_visibility': 'predecision'})
             pred_manifest = root / 'pred_manifest.json'
-            manifest = {'status': 'COMPLETED', 'split': 'validation', 'model_lock_sha256': digest(lock),
+            manifest = {'status': 'COMPLETED', 'expert': 'A', 'split': 'validation', 'model_lock_sha256': digest(lock),
                         'scored_predictions_sha256': digest(pred), 'reviewed_queue_sha256': digest(review),
+                        'raw_predictions_sha256': digest(raw), 'raw_run_manifest_sha256': digest(raw_run),
                         'base_answers_sha256': digest(base), 'score_visibility': 'predecision',
                         'score_features': ['base_entropy'], 'generated_at_utc': '2026-01-01T03:00:00+00:00'}
             dump(pred_manifest, manifest)
             out = root / 'eval'
             command = [sys.executable, str(EXP / 'scripts/evaluate_experts.py'), '--predictions', str(pred),
                        '--expert', 'A', '--split', 'validation', '--model-lock', str(lock),
-                       '--prediction-manifest', str(pred_manifest), '--review-queue', str(review),
+                       '--prediction-manifest', str(pred_manifest), '--raw-predictions', str(raw),
+                       '--prediction-run-manifest', str(raw_run), '--review-queue', str(review),
                        '--source-root', str(source), '--audit-manifest', str(audit), '--base-answers', str(base),
                        '--base-manifest', str(base_manifest), '--output-dir', str(out), '--bootstrap', '20']
             completed = subprocess.run(command, capture_output=True, text=True)
