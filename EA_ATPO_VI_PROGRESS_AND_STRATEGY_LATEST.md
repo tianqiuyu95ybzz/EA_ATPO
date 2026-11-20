@@ -1,10 +1,18 @@
 # EA-ATPO / VI-EA-ATPO Progress and Strategy — Latest
 
-**Updated:** 2026-11-20 (Asia/Shanghai)
+**Updated:** 2026-11-21 (Asia/Shanghai)
 **Repository:** `/pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO_V1`
 **Branch / starting commit for the V2 execution:** `ea-atpo-v1` / `af560a5`
 
-> The dated history below retains earlier plans and results. The 2026-11-20 V2 section below is now the active source of truth and supersedes the earlier Expert-SFT-first route for current work.
+> The dated history below retains earlier plans and results. The latest active route is the 2026-11-21 Oracle Expert evaluation below; it supersedes the earlier Expert-SFT-first route. The 2026-11-20 V2 results remain historical development evidence.
+
+## 2026-11-21 active route: answer-key Oracle experiment; Expert SFT paused
+
+- The planned Expert A/B SFT is paused. No formal SFT process was running or stopped in this task; the prior 10-step AWQ LoRA compatibility smoke, SFT code/configuration, and audit artifacts remain preserved. The 291-row V3 review queue is still 291/291 `PENDING`; its 169 disagreements with unreviewed historical labels are triage only, not error labels.
+- The Oracle experiment uses the original ATPO training benchmark answer key only as an offline scoring-time idealization. It is not clinician-adjudicated truth. Source rows and correctness labels are not exposed to Router inputs or uploaded to public GitHub.
+- Completed a CPU-only reanalysis of the already-used V2 development split: 15 case clusters / 43 public states / 129 real-model action outcomes. All source answer mappings, public initial prompts, final options, and recorded correctness values reconciled; all three frozen Q-guided Router checkpoints replayed to their saved scores within `7.5e-8` maximum absolute error.
+- Development-only results: Base/actual Expert four cells are `11/6/9/17` (Expert corrects 9/26 Base errors and spoils 6/17 Base-correct states). Learned Router + actual Expert utility versus Always ANSWER is positive only as a point estimate for DEFER costs 0.05–0.20; all paired case-cluster 95% intervals include zero. At cost 0.60 its point net utility is negative. Learned Router + Oracle safety gate is an optimistic upper bound; at cost 0.60 its paired utility interval also includes zero. This reused Dev set cannot support a generalization claim.
+- The 400-case Frozen Holdout and V3 Internal Test were not opened. No Expert SFT, Router training, PPO/RL, or model service request ran. See `experiments/ea_atpo_v3/oracle_expert/reports/ORACLE_EXPERT_EXPERIMENT_REPORT.md` and the PFS-only run manifest/results under `/pfs/pfs-spMCeu/image_team/workspace-copy/EA-ATPO_Oracle_20261121/run_06/`.
 
 ## 2026-11-20 recovery and storage cleanup
 
