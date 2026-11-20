@@ -1,0 +1,6 @@
+/data/private/
+/data/gold_review_queue.csv
+/data/*reviewed_gold*.csv
+/data/*paired*.jsonl
+/data/*raw*.jsonl
+/outputs/
