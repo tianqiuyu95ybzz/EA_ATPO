@@ -43,6 +43,20 @@ On Dev, Base ANSWER and Expert DEFER had both correct 11, Base correct/Expert wr
 
 Metrics are equal-case-weighted averages, averaged over three seeds for learned models. Action rates are predicted state fractions. These are **offline paired-counterfactual policy estimates**, not live Router-driven rollouts. The corrections/spoilage column reports the mean number of Base-wrong→Expert-correct and Base-correct→Expert-wrong cases among the selected DEFER states per seed. Paired case-cluster bootstrap intervals use 5,000 resamples versus Always ANSWER on the same Dev cases used for early stopping; they are descriptive and optimistic, not confirmatory.
 
+The table below gives mean Train/Dev policy performance across seeds, followed by Train and Dev action rates. This makes the train-development gap visible; it does not turn the selected 15-case Dev partition into an independent test.
+
+| Model / features | Train accuracy / utility | Train ASK / DEFER | Dev accuracy / utility | Dev ASK / DEFER |
+|---|---:|---:|---:|---:|
+| Constant Mean | 0.386 / 0.386 | 0% / 0% | 0.400 / 0.400 | 0% / 0% |
+| Ridge absolute, TF-IDF | 0.581 / 0.574 | 6.2% / 13.3% | 0.378 / 0.365 | 46.7% / 16.7% |
+| MLP absolute, TF-IDF | 0.568 / 0.548 | 34.0% / 33.3% | 0.437 / 0.424 | 78.5% / 10.4% |
+| MLP relative, TF-IDF | 0.581 / 0.563 | 37.9% / 27.6% | 0.430 / 0.402 | 51.5% / 44.1% |
+| Q-guided distillation, TF-IDF | 0.575 / 0.563 | 31.1% / 17.1% | 0.422 / 0.410 | 50.4% / 13.7% |
+| Ridge absolute, embedding | 0.581 / 0.574 | 6.2% / 13.3% | 0.444 / 0.429 | 32.2% / 24.4% |
+| MLP absolute, embedding | 0.581 / 0.563 | 41.7% / 27.3% | 0.500 / 0.482 | 44.8% / 26.3% |
+| MLP relative, embedding | 0.581 / 0.561 | 34.3% / 32.1% | 0.493 / 0.469 | 34.8% / 41.1% |
+| Q-guided distillation, embedding | 0.581 / 0.568 | 35.9% / 17.9% | 0.507 / 0.491 | 47.4% / 24.1% |
+
 | Policy / features | Accuracy | Utility | ASK | DEFER | Corrections / spoilage | Δ Acc 95% CI | Δ Utility 95% CI |
 |---|---:|---:|---:|---:|---:|---:|---:|
 | Always ANSWER | 0.400 | 0.400 | 0% | 0% | 0 / 0 | [0.000, 0.000] | [0.000, 0.000] |
