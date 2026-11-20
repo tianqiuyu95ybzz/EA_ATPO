@@ -1,0 +1,9 @@
+{
+  "all_gold_status": "PENDING",
+  "historical_label_agreement_count": 122,
+  "historical_label_disagreement_count": 169,
+  "interpretation": "disagreement is only a review priority against an unreviewed historical label; it is not Base correctness or accuracy",
+  "queue_sha256": "669d0171ef1b907589d1822d938d765a80b5baa748b75bfc2ce4a6e3375b7040",
+  "samples": 291,
+  "triage_sha256": "8770c261b1f27d6510ff3dbaed50e098111b17af6a428d3a06078f7fffebeb55"
+}

@@ -49,9 +49,28 @@ def gate(gpu: int, output: Path) -> None:
         raise RuntimeError(f'GPU {gpu} safety gate blocked; see {output}')
 
 
-def gpu_used(gpu: int) -> int:
-    value = subprocess.check_output(['nvidia-smi', f'--id={gpu}', '--query-gpu=memory.used', '--format=csv,noheader,nounits'], text=True)
-    return int(value.strip())
+def gpu_used_and_exclusive(gpu: int) -> int:
+    value = subprocess.check_output(['nvidia-smi', f'--id={gpu}', '--query-gpu=memory.used,memory.free', '--format=csv,noheader,nounits'], text=True)
+    used, free = (int(x.strip()) for x in value.strip().split(','))
+    process_rows = subprocess.check_output(['ps', '-eo', 'pid=,ppid='], text=True)
+    parents = {}
+    for line in process_rows.splitlines():
+        try:
+            pid, parent = (int(x) for x in line.split())
+            parents[pid] = parent
+        except ValueError:
+            continue
+    own = {os.getpid()}
+    changed = True
+    while changed:
+        new = {pid for pid, parent in parents.items() if parent in own} - own
+        own.update(new)
+        changed = bool(new)
+    gpu_rows = subprocess.check_output(['nvidia-smi', f'--id={gpu}', '--query-compute-apps=pid', '--format=csv,noheader,nounits'], text=True)
+    gpu_pids = {int(x.strip()) for x in gpu_rows.splitlines() if x.strip().isdigit()}
+    if free < 24576 or gpu_pids - own:
+        raise RuntimeError(f'post-load GPU gate failed: free={free} MiB, other compute process count={len(gpu_pids - own)}')
+    return used
 
 
 def main() -> None:
@@ -91,50 +110,69 @@ def main() -> None:
     if fingerprints != FINGERPRINT:
         raise ValueError('Base checkpoint/tokenizer does not match pinned source fingerprint')
     runtime = out / 'runtime'
-    for subdir in ('hf', 'xdg', 'tmp', 'triton', 'torch'):
+    for subdir in ('hf', 'xdg', 'tmp', 'triton', 'torch', 'cuda', 'vllm', 'flashinfer'):
         (runtime / subdir).mkdir(parents=True, mode=0o700)
+    # vLLM's Unix sockets have a 107-byte limit; the actual runtime files stay
+    # in the private PFS run directory via a unique short workspace symlink.
+    rpc_alias = PROJECT.parent / f'.v3b_{os.getpid()}'
+    if len(os.fsencode(str(rpc_alias) + '/' + '0' * 36)) >= 107:
+        raise ValueError('short vLLM IPC path would still exceed the socket limit')
+    os.symlink(runtime / 'tmp', rpc_alias, target_is_directory=True)
     os.environ.update({'HF_HOME': str(runtime / 'hf'), 'XDG_CACHE_HOME': str(runtime / 'xdg'),
                        'TMPDIR': str(runtime / 'tmp'), 'TRITON_CACHE_DIR': str(runtime / 'triton'),
-                       'TORCH_HOME': str(runtime / 'torch'), 'HF_HUB_OFFLINE': '1', 'TRANSFORMERS_OFFLINE': '1'})
+                       'TORCH_HOME': str(runtime / 'torch'), 'VLLM_RPC_BASE_PATH': str(rpc_alias),
+                       'CUDA_CACHE_PATH': str(runtime / 'cuda'), 'VLLM_CACHE_ROOT': str(runtime / 'vllm'),
+                       'FLASHINFER_WORKSPACE_BASE': str(runtime / 'flashinfer'),
+                       'VLLM_USE_FLASHINFER_SAMPLER': '0',
+                       'HF_HUB_OFFLINE': '1', 'TRANSFORMERS_OFFLINE': '1'})
     import vllm
     import torch
     from vllm import LLM, SamplingParams
     from vllm.sampling_params import StructuredOutputsParams
+    from vllm.v1.attention.backends.registry import AttentionBackendEnum
     if vllm.__version__ != '0.33.0':
         raise RuntimeError('use the pinned V2 vLLM 0.33.0 runtime')
     gate(args.gpu, out / 'gpu_immediately_before_model_load.json')
     engine = LLM(model=str(model_dir), tokenizer=str(model_dir), dtype='bfloat16',
                  tensor_parallel_size=1, trust_remote_code=False, gpu_memory_utilization=0.12,
-                 max_model_len=4096, max_num_seqs=1)
+                 max_model_len=4096, max_num_seqs=1, attention_backend=AttentionBackendEnum.TRITON_ATTN)
     decoding = plan_meta['decoding']
     sampling = SamplingParams(temperature=decoding['temperature'], top_p=decoding['top_p'],
                               max_tokens=decoding['max_tokens'], seed=decoding['seed'],
                               structured_outputs=StructuredOutputsParams(regex=decoding['structured_outputs_regex']))
-    peak = gpu_used(args.gpu)
+    peak = gpu_used_and_exclusive(args.gpu)
     bad = 0
     raw_path = out / 'base_answers.jsonl'
     fd = os.open(raw_path, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
-    with os.fdopen(fd, 'w', encoding='utf-8') as f:
-        for r in requests:
-            result = engine.chat(r['request']['messages'], sampling_params=sampling, use_tqdm=False,
-                                 chat_template_kwargs={'enable_thinking': decoding['enable_thinking']})
-            raw = result[0].outputs[0].text
-            valid = bool(raw and re.fullmatch(decoding['structured_outputs_regex'], raw))
-            bad += not valid
-            record = {'case_id': r['case_id'], 'sample_id': r['sample_id'], 'split': r['split'],
-                      'request_sha256': r['request_sha256'], 'raw_output': raw,
-                      'raw_output_sha256': hashlib.sha256(raw.encode()).hexdigest(),
-                      'status': 'VERIFIED' if valid else 'INVALID_FORMAT'}
-            f.write(json.dumps(record, ensure_ascii=False, sort_keys=True) + '\n')
-            f.flush()
-            peak = max(peak, gpu_used(args.gpu))
+    try:
+        with os.fdopen(fd, 'w', encoding='utf-8') as f:
+            for r in requests:
+                peak = max(peak, gpu_used_and_exclusive(args.gpu))
+                result = engine.chat(r['request']['messages'], sampling_params=sampling, use_tqdm=False,
+                                     chat_template_kwargs={'enable_thinking': decoding['enable_thinking']})
+                raw = result[0].outputs[0].text
+                valid = bool(raw and re.fullmatch(decoding['structured_outputs_regex'], raw))
+                bad += not valid
+                record = {'case_id': r['case_id'], 'sample_id': r['sample_id'], 'split': r['split'],
+                          'request_sha256': r['request_sha256'], 'raw_output': raw,
+                          'raw_output_sha256': hashlib.sha256(raw.encode()).hexdigest(),
+                          'status': 'VERIFIED' if valid else 'INVALID_FORMAT'}
+                f.write(json.dumps(record, ensure_ascii=False, sort_keys=True) + '\n')
+                f.flush()
+                peak = max(peak, gpu_used_and_exclusive(args.gpu))
+    finally:
+        core = getattr(getattr(engine, 'llm_engine', None), 'engine_core', None)
+        if core is not None and hasattr(core, 'shutdown'):
+            core.shutdown()
     if bad:
         write_json(out / 'generation_incomplete.json', {'status': 'BLOCKED_INVALID_OUTPUTS', 'invalid_outputs': bad, 'samples': len(requests), 'raw_answers_sha256': sha(raw_path)})
         raise RuntimeError('one or more Base outputs failed the fixed answer format')
     result = {'status': 'VERIFIED', 'sample_count': len(requests), 'base_revision': REVISION,
               'raw_answers_sha256': sha(raw_path), 'request_plan_sha256': sha(args.plan),
               'plan_manifest_sha256': sha(args.plan_manifest), 'model_fingerprints': fingerprints,
-              'gpu': args.gpu, 'gpu_peak_used_mib': peak, 'elapsed_seconds': round(time.monotonic() - started, 3),
+              'gpu': args.gpu, 'gpu_max_observed_used_mib': peak, 'elapsed_seconds': round(time.monotonic() - started, 3),
+              'ipc_alias': str(rpc_alias), 'generator_script_sha256': sha(Path(__file__)),
+              'attention_backend': 'TRITON_ATTN', 'flashinfer_sampler_enabled': False,
               'vllm': vllm.__version__, 'torch': torch.__version__, 'cuda_build': torch.version.cuda,
               'decoding': decoding, 'checks': {k: True for k in ('model_revision', 'tokenizer', 'prompt', 'decoding', 'data', 'case_ids', 'raw_output_completeness')}}
     write_json(out / 'base_generation_manifest.json', result)
