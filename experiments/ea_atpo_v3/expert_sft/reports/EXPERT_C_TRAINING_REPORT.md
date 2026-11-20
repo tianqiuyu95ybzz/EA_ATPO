@@ -1,0 +1,7 @@
+# Expert C: med_qwen verification and training
+
+**BLOCKED; no inference or training performed.** A fresh read-only check of the official [ModelScope metadata](https://modelscope.cn/api/v1/models/zky001/med_qwen) on 2026-11-20 returned HTTP 200 and an architecture label `Qwen2ForCausalLM`, but both license fields were empty and the reported revision was the mutable name `master`, not a pinned commit. The [repository file-tree endpoint](https://modelscope.cn/api/v1/models/zky001/med_qwen/repo/files?Revision=master&Recursive=True) returned HTTP 404 with API code `10010200001`.
+
+The historical local candidate directory was checked and was empty: no config, tokenizer, weight index, shards or license. Consequently, file integrity, actual architecture/config, tokenizer/chat template, immutable revision, loading dependencies, weight format, GPU inference and output parsing cannot be verified. The metadata label by itself is not evidence of a usable checkpoint. The API response hashes, current prerequisites and commands are recorded in `data/med_qwen_preflight.json` and `scripts/verify_med_qwen_metadata.py`.
+
+The model owner must supply an accessible immutable snapshot and license before local integrity/dependency checks and a real GPU input/output test can be attempted. Only a verified model can receive a separately adapted LoRA configuration and independent training directory. No Expert C accuracy, correction rate or training effect is reported, and no substitute model has been selected. ReMeDi, PopiT and HuatuoGPT-o1 remain historical candidates only.

@@ -1,0 +1,17 @@
+{
+  "status": "BLOCKED_MODEL_VERIFICATION",
+  "model_id": "zky001/med_qwen",
+  "revision": null,
+  "license": null,
+  "input_fields": ["conversation"],
+  "target": "reviewed_gold_for_approved_examples_only",
+  "loss": "assistant_token_cross_entropy",
+  "lora_target_modules": "must_be_determined_from_verified_model_architecture",
+  "adapter_and_optimizer": "independent",
+  "max_epochs": 10,
+  "save_each_epoch": true,
+  "selection_and_thresholds": "validation_only",
+  "internal_test": "once_after_model_and_configuration_freeze",
+  "independent_output_dir": "experiments/ea_atpo_v3/expert_sft/outputs/expert_c",
+  "seed": 20261120
+}

@@ -1,0 +1,44 @@
+{
+  "actual_gpu_inference": "NOT_RUN",
+  "architecture_metadata": [
+    "Qwen2ForCausalLM"
+  ],
+  "checked_at_utc": "2026-11-20T11:25:36.581721+00:00",
+  "file_tree_api_code": 10010200001,
+  "file_tree_error": null,
+  "file_tree_http_status": 404,
+  "file_tree_response_sha256": "e6e84a801da682ddccfe53344df6bf0f9989abdd21c88f95e0e562adf4660343",
+  "file_tree_url": "https://modelscope.cn/api/v1/models/zky001/med_qwen/repo/files?Revision=master&Recursive=True",
+  "full_shard_hash_verification": "NOT_RUN",
+  "index_parse_error": null,
+  "indexed_shards": 0,
+  "license_metadata": "",
+  "local_filenames": [],
+  "local_model_dir": "/pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO_V1/experiments/real_case_pilot_20261103/assets/models/medical_candidates/med_qwen",
+  "metadata_error": null,
+  "metadata_http_status": 200,
+  "metadata_response_sha256": "7175077bc0f49b054103d31162bdfaf214237d35a6e1e37ffbe44e92f99e1385",
+  "metadata_url": "https://modelscope.cn/api/v1/models/zky001/med_qwen",
+  "missing_indexed_shards": 0,
+  "model_id": "zky001/med_qwen",
+  "note": "Metadata/local inventory alone cannot approve this model. Verify shard hashes, architecture, dependencies, license and immutable revision, then perform real GPU inference and output parsing before training.",
+  "output_format_verified": false,
+  "prerequisites": {
+    "all_indexed_shards_present": false,
+    "config": false,
+    "immutable_revision": false,
+    "license_identified": false,
+    "nonempty_weight_shard_set": false,
+    "tokenizer": false,
+    "weight_index": false
+  },
+  "revision_metadata": "master",
+  "runtime_versions": {
+    "peft": null,
+    "safetensors": null,
+    "torch": null,
+    "transformers": null
+  },
+  "status": "BLOCKED",
+  "training_started": false
+}
