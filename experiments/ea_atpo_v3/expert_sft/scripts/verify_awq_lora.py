@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import importlib.metadata
 import json
 import math
 import os
@@ -56,7 +57,8 @@ def main() -> None:
     started = time.monotonic()
     report = {'status': 'FAILED', 'stage': 'resource_gate', 'gpu': args.gpu,
               'model_revision': REVISION, 'synthetic_nonmedical_only': True,
-              'formal_training': False, 'optimizer_steps': 0}
+              'tokenizer_revision': REVISION, 'seed': 20261120, 'source_lock_sha256': LOCK_SHA,
+              'script_sha256': sha(Path(__file__)), 'formal_training': False, 'optimizer_steps': 0}
     try:
         gate(args.gpu, out / 'gpu_before_fingerprinting.json')
         report['stage'] = 'fingerprint'
@@ -72,18 +74,23 @@ def main() -> None:
             if path.stat().st_size != item['size'] or sha(path) != item['sha256']:
                 raise ValueError(f'AWQ fingerprint mismatch: {item["name"]}')
             fingerprints[item['name']] = item['sha256']
-        for subdir in ('hf', 'xdg', 'tmp', 'triton', 'torch'):
+        for subdir in ('hf', 'xdg', 'tmp', 'triton', 'torch', 'cuda', 'flashinfer'):
             (out / 'runtime' / subdir).mkdir(parents=True, mode=0o700)
         os.environ.update({'HF_HOME': str(out / 'runtime/hf'), 'XDG_CACHE_HOME': str(out / 'runtime/xdg'),
                            'TMPDIR': str(out / 'runtime/tmp'), 'TRITON_CACHE_DIR': str(out / 'runtime/triton'),
-                           'TORCH_HOME': str(out / 'runtime/torch'), 'HF_HUB_OFFLINE': '1', 'TRANSFORMERS_OFFLINE': '1'})
+                           'TORCH_HOME': str(out / 'runtime/torch'), 'CUDA_CACHE_PATH': str(out / 'runtime/cuda'),
+                           'FLASHINFER_WORKSPACE_BASE': str(out / 'runtime/flashinfer'),
+                           'HF_HUB_OFFLINE': '1', 'TRANSFORMERS_OFFLINE': '1'})
         import torch
         import gptqmodel  # noqa: F401 -- installs the trainable torch_awq bridge
         from peft import LoraConfig, PeftModel, get_peft_model, get_peft_model_state_dict
         from safetensors.torch import load_file
         from transformers import AutoConfig, AutoModelForCausalLM, AutoTokenizer
+        report['package_versions'] = {name: importlib.metadata.version(name)
+                                      for name in ('torch', 'transformers', 'peft', 'gptqmodel', 'safetensors')}
         report['stage'] = 'immediate_resource_gate'
         gate(args.gpu, out / 'gpu_immediately_before_model_load.json')
+        report['gpu_model'] = json.loads((out / 'gpu_immediately_before_model_load.json').read_text())['name']
         if not torch.cuda.is_available():
             raise RuntimeError('CUDA is unavailable')
         torch.cuda.set_device(0)

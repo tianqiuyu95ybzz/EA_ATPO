@@ -1,10 +1,14 @@
 # AWQ LoRA smoke status
 
-**Blocked before model load by GPU resource policy.** At the latest comprehensive check, every allowed GPU (0, 2, 3, 4, 5, 6) had an existing compute process. GPU 5 had approximately 179,609 MiB free but had a foreign process, so it also failed the zero-other-process gate. GPUs 1 and 7 are prohibited. No process was interrupted.
+**The required model-level smoke passed** after GPU 5 became available and passed both pre-load no-sharing checks. GPUs 1 and 7 remain prohibited. This is a compatibility smoke with synthetic non-medical text, not Expert A or B training and not evidence of medical quality.
 
-A deliberate gate test on occupied GPU 0 stopped before any AWQ weight was loaded. Its preserved `outputs/awq_smoke_gatecheck_20261120/smoke_report.json` records `stage=resource_gate` and zero optimizer steps. That older diagnostic labels the run `FAILED`, meaning the resource gate failed; it is **not** evidence that AWQ or PEFT is incompatible. There has been no model forward, backward, optimizer update, checkpoint round-trip or inference in this V3 smoke.
+A deliberate earlier gate test on occupied GPU 0 stopped before any AWQ weight was loaded. Its preserved `outputs/awq_smoke_gatecheck_20261120/smoke_report.json` records `stage=resource_gate` and zero optimizer steps. That diagnostic labels the resource gate `FAILED`; it is not an AWQ/PEFT incompatibility result.
 
-`scripts/verify_awq_lora.py` is prepared to use only synthetic non-medical text, the pinned Qwen3-32B-AWQ source lock and GPTQModel `torch_awq`, a new independent adapter and output directory. It enforces the no-sharing gate immediately before model load and the 32-GiB post-load reserve, checks finite nonzero LoRA gradients and changed weights for 10 actual optimizer steps, saves and reloads the adapter, checks tensor identity and attempts a real post-reload generation. Since no safe GPU was available, those model-level paths are **not yet validated**, and this script must not be treated as proof of training support.
+The successful attempt used Qwen3-32B-AWQ revision `0499c3ac83fdef8810b907a23894ba91e95eddd8`, GPTQModel 7.12.0 `AwqTorchLinear`, PEFT 0.21.3 and PyTorch 2.15.0+cu132. All source-lock model and tokenizer hashes matched. Ten actual AdamW steps each produced finite loss, nonzero LoRA gradients and a changed LoRA parameter. The rank-16 adapter was saved, loaded onto a newly loaded AWQ base, matched the saved tensors exactly, and produced a nonempty synthetic inference output after reload. Its SHA-256 is `0962465510ba0b3027c8be66de77f2e931e4f2853a19d5680a7f827b80ca8368`. The checkpoint remains in ignored PFS output and is not an A/B adapter.
+
+The attempt took 160.351 seconds on NVIDIA B20Z GPU 5. PyTorch peak allocated/reserved memory was 21,455.2/21,766 MiB; the observed device usage after the steps was 22,646 MiB. No foreign GPU process appeared at the checks. Per-step losses and gradient norms, model hashes, package versions and seed are in `data/awq_smoke_manifest.json`.
+
+Transformers emitted a `qzeros_format` missing-buffer warning for seven projection types across the model. Inspection of the installed GPTQModel code shows that the selected `AwqTorchLinear` forward directly dequantizes the stored `qweight`, `qzeros` and `scales`; the warning concerns an inherited format marker. This inspection and the successful smoke do not establish numerical parity with vLLM or clinical quality, so the warning remains a recorded limitation rather than an assumed accuracy guarantee.
 
 Once an eligible card is free, run a fresh attempt using the existing isolated AWQ Python. Replace `GPU` with an allowed physical GPU and use a new output path:
 
@@ -15,4 +19,4 @@ CUDA_VISIBLE_DEVICES=GPU /pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO_V1/exp
   --output-dir experiments/ea_atpo_v3/expert_sft/outputs/awq_smoke_NEW
 ```
 
-The script's source and small-file syntax checks are not a substitute for that real run. Formal A and B training is blocked until the smoke, completed human review and applicable resource gates all pass. No BF16, other model or alternative training algorithm is selected as a fallback.
+Formal A and B training remains blocked by the incomplete human review and must pass a fresh resource gate at launch. No BF16, other model or alternative training algorithm was selected as a fallback.

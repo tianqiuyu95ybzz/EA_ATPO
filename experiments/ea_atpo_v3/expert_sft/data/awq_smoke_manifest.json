@@ -1,0 +1,123 @@
+{
+  "adapter_reload_exact": true,
+  "adapter_sha256": "0962465510ba0b3027c8be66de77f2e931e4f2853a19d5680a7f827b80ca8368",
+  "cuda_build": "13.2",
+  "elapsed_seconds": 160.351,
+  "formal_training": false,
+  "gpu": 5,
+  "gpu_model": "NVIDIA B20Z",
+  "gpu_peak_allocated_mib": 21455.2,
+  "gpu_peak_reserved_mib": 21766.0,
+  "learning_rate": 0.0001,
+  "lora": {
+    "alpha": 32,
+    "dropout": 0.05,
+    "rank": 16
+  },
+  "model_fingerprints": {
+    "config.json": "0e0c09d430b12e84773ef83ca83dba7c9174caf5a94bb940cd895b82df6c6528",
+    "generation_config.json": "2325da0f15bb848e018c5ae071b7943332e9f871d6b60e2ed22ca97d4cb993d2",
+    "merges.txt": "8831e4f1a044471340f7c0a83d7bd71306a5b867e95fd870f74d0c5308a904d5",
+    "model-00001-of-00004.safetensors": "ab7988215e3b087c884e0c14ce1994a64aac31dc9a37a4bcf29f5b45f3506e2e",
+    "model-00002-of-00004.safetensors": "46faff349f1dd18ffe76993edd3d9fd32941d042331dc590525409bbe3d37edf",
+    "model-00003-of-00004.safetensors": "6e9f763d8c31ad19f1cd67b0b599a38edffd76a4465a22ff5f7fcac46d820e63",
+    "model-00004-of-00004.safetensors": "87f180889fead12b00b1bdf4dca3a3a14e4510e1e200bf56e31898e120b993d8",
+    "model.safetensors.index.json": "7d0427c7d238f401b5d38ec08dca07cc8a921aa69d73769b2b7983520de504a1",
+    "tokenizer.json": "aeb13307a71acd8fe81861d94ad54ab689df773318809eed3cbe794b4492dae4",
+    "tokenizer_config.json": "d5d09f07b48c3086c508b30d1c9114bd1189145b74e982a265350c923acd8101",
+    "vocab.json": "ca10d7e9fb3ed18575dd1e277a2579c16d108e32f27439684afa0e10b1440910"
+  },
+  "model_revision": "0499c3ac83fdef8810b907a23894ba91e95eddd8",
+  "optimizer": "AdamW",
+  "optimizer_steps": 10,
+  "package_versions": {
+    "gptqmodel": "7.12.0",
+    "peft": "0.21.3",
+    "safetensors": "0.8.0",
+    "torch": "2.15.0+cu132",
+    "transformers": "5.22.2"
+  },
+  "reload_inference_output_chars": 2,
+  "reload_inference_output_sha256": "565339bc4d33d72817b583024112eb7f5cdf3e5eef0252d6ec1b9c9a94e12bb3",
+  "resource_after_load": {
+    "free_mib": 163447,
+    "other_compute_process_count": 0,
+    "used_mib": 19178
+  },
+  "resource_after_step": {
+    "free_mib": 159979,
+    "other_compute_process_count": 0,
+    "used_mib": 22646
+  },
+  "script_sha256": "50cc93412930e29c1e6bc0535e171ff620441c6976bc6d99817a7501cae57407",
+  "seed": 20261120,
+  "source_lock_sha256": "c3016466299afca01670361bc40dc6868ff1ffe4e3d118197b164167354a3bbe",
+  "stage": "complete",
+  "status": "PASSED",
+  "steps": [
+    {
+      "lora_gradient_norm": 8.970434188842773,
+      "lora_parameter_changed": true,
+      "loss": 0.5843307971954346,
+      "step": 1
+    },
+    {
+      "lora_gradient_norm": 0.07680965960025787,
+      "lora_parameter_changed": true,
+      "loss": 0.002278127009049058,
+      "step": 2
+    },
+    {
+      "lora_gradient_norm": 0.00213619670830667,
+      "lora_parameter_changed": true,
+      "loss": 7.99024710431695e-05,
+      "step": 3
+    },
+    {
+      "lora_gradient_norm": 0.0021850354969501495,
+      "lora_parameter_changed": true,
+      "loss": 8.316029561683536e-05,
+      "step": 4
+    },
+    {
+      "lora_gradient_norm": 0.0025763430166989565,
+      "lora_parameter_changed": true,
+      "loss": 8.427275315625593e-05,
+      "step": 5
+    },
+    {
+      "lora_gradient_norm": 0.0028654327616095543,
+      "lora_parameter_changed": true,
+      "loss": 9.130430407822132e-05,
+      "step": 6
+    },
+    {
+      "lora_gradient_norm": 0.00329892011359334,
+      "lora_parameter_changed": true,
+      "loss": 9.901100565912202e-05,
+      "step": 7
+    },
+    {
+      "lora_gradient_norm": 0.0034022561740130186,
+      "lora_parameter_changed": true,
+      "loss": 0.00010620099055813625,
+      "step": 8
+    },
+    {
+      "lora_gradient_norm": 0.004266590345650911,
+      "lora_parameter_changed": true,
+      "loss": 0.00011331142741255462,
+      "step": 9
+    },
+    {
+      "lora_gradient_norm": 0.004191079176962376,
+      "lora_parameter_changed": true,
+      "loss": 0.0001150193638750352,
+      "step": 10
+    }
+  ],
+  "synthetic_nonmedical_only": true,
+  "tokenizer_revision": "0499c3ac83fdef8810b907a23894ba91e95eddd8",
+  "torch": "2.15.0+cu132",
+  "trainable_lora_parameters": 134217728
+}
