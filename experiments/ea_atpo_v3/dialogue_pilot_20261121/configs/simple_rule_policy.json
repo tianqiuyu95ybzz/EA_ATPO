@@ -1,0 +1,39 @@
+{
+  "policy_id": "ea_atpo_v3_public_text_rule_v1",
+  "scope": "exploratory non-clinical heuristic baseline",
+  "visible_input": "initial public patient message only",
+  "costs": {
+    "answer": 0.0,
+    "ask": 0.01,
+    "defer": 0.05
+  },
+  "predecision_confidence": {
+    "defer_below": 0.35,
+    "ask_below": 0.65,
+    "confidence_required_from_base_service": false,
+    "not_calibrated": true
+  },
+  "routing": [
+    {
+      "action": "DEFER",
+      "condition": "initial text contains one of 胸痛, 呼吸困难, 意识不清, 大出血, 抽搐, 突发偏瘫",
+      "fallback": "ANSWER if no callable Expert endpoint"
+    },
+    {
+      "action": "ASK",
+      "condition": "initial text lacks at least one of age, symptom duration, medication/allergy context and a matched historical replay pair is available",
+      "fallback": "ANSWER if no matched replay pair"
+    },
+    {
+      "action": "ANSWER",
+      "condition": "otherwise"
+    }
+  ],
+  "limitations": [
+    "This is a transparent heuristic baseline, not a clinically validated triage rule.",
+    "A matched ASK replay uses the exact historical clinician question and its immediately adjacent patient reply; it does not claim to match a newly generated Base question.",
+    "The rule may select DEFER only when the live Expert service is available; historical clinician text is not returned as a model answer.",
+    "If Base confidence is available, use the frozen 0.35/0.65 thresholds; otherwise use only the missing-history fallback. Thresholds are not calibrated.",
+    "Do not tune this rule on evaluation outcomes."
+  ]
+}
