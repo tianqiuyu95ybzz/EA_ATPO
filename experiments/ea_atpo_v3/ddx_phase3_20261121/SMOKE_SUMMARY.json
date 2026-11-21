@@ -1,0 +1,45 @@
+{
+  "sample_n": 50,
+  "sample": "first 50 official validation rows; exploratory, not random and not independent certification",
+  "base_accuracy": 0.18,
+  "base_confidence_available": false,
+  "always_defer_A_accuracy": 1.0,
+  "always_defer_B_accuracy": 1.0,
+  "defer_cost_free_accuracy_gain_A": 0.8200000000000001,
+  "defer_cost_free_accuracy_gain_B": 0.8200000000000001,
+  "base_correct_preserved_A_and_B": 9,
+  "base_errors_corrected_A_and_B": 41,
+  "base_correct_destroyed_A": 0,
+  "base_correct_destroyed_B": 0,
+  "always_ask_accuracy": 0.04,
+  "ask_accuracy_difference": -0.13999999999999999,
+  "ask_accuracy_difference_paired_bootstrap_ci95": [
+    -0.24,
+    -0.06
+  ],
+  "always_answer_utility": 0.18,
+  "always_ask_utility": {
+    "0.01": 0.03,
+    "0.05": -0.010000000000000002,
+    "0.1": -0.060000000000000005
+  },
+  "always_defer_A_and_B_utility": {
+    "0.05": 0.95,
+    "0.1": 0.9,
+    "0.2": 0.8,
+    "0.6": 0.4
+  },
+  "q_guided_router": "unavailable: no DDX-specific trained policy or frozen compatible embeddings",
+  "counts": {
+    "base_correct": 9,
+    "ask_correct": 2,
+    "base_invalid": 1,
+    "ask_invalid": 2,
+    "ask_corrected": 0,
+    "ask_degraded": 7
+  },
+  "parse_policy": "strict exact official disease label; invalid counted wrong for base accuracy",
+  "diagnostic_scope": "synthetic pathology classification only",
+  "base_output_sha256": "ac941b183648a9c6f5bd202be143c4afc88ca36299157bf2752780a87da41303",
+  "ask_output_sha256": "6aac042cf0b622976ac68b1edecd605dcfba28331bfa986203dc18a35c32f886"
+}

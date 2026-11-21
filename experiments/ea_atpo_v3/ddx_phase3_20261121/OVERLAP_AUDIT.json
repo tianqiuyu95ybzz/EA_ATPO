@@ -1,0 +1,15 @@
+{
+  "train_rows": 1025602,
+  "validation_rows": 132448,
+  "train_exact_row_duplicates": 10162,
+  "validation_exact_row_duplicates": 75,
+  "first_50_validation_rows_matching_train": 0,
+  "distinct_exact_row_values_shared": 1625,
+  "train_rows_in_cross_split_matches": 1875,
+  "validation_rows_in_cross_split_matches": 1643,
+  "patient_id_available": false,
+  "semantic_or_patient_level_overlap": "unknown",
+  "test_opened": false,
+  "train_archive_sha256": "174ae1d56f36a15b7144838ecd214e1e1748a5369fc90c559529b6dc6ecfb218",
+  "validation_archive_sha256": "625a96855becf0efe5da339fd3d440aa99597d48f784957a97dacc3fceaa7e40"
+}

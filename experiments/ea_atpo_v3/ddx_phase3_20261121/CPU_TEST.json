@@ -1,0 +1,16 @@
+{
+  "result": "PASS",
+  "n": 50,
+  "counts": {
+    "duplicate_rejected": 50,
+    "unknown_rejected": 50,
+    "asked_B": 10100,
+    "asked_C": 233,
+    "asked_M": 135,
+    "dependency_rejected": 632,
+    "cases": 50
+  },
+  "case_id": "archive hash + row locator; not patient identifier",
+  "scope": "default/type semantics and independent evidence; dependency policy conservative; no actual Base predictions",
+  "cuda_visible_devices": "none"
+}

@@ -1,0 +1,18 @@
+{
+  "split": "official_validation",
+  "archive_sha256": "625a96855becf0efe5da339fd3d440aa99597d48f784957a97dacc3fceaa7e40",
+  "rows": 132448,
+  "row_identifiers": "archive hash plus zero-based row index; no original patient ID column",
+  "columns": [
+    "AGE",
+    "DIFFERENTIAL_DIAGNOSIS",
+    "EVIDENCES",
+    "INITIAL_EVIDENCE",
+    "PATHOLOGY",
+    "SEX"
+  ],
+  "exact_full_row_duplicates": 75,
+  "first_50_locator_list_sha256": "4a291843a53ee9102f85691ccb87d94f3f922e1f2d2b2ff6f685bdc8bf684296",
+  "cross_split_patient_disjoint": "unverified: patient ID absent and train/test not accessed",
+  "test_opened": false
+}

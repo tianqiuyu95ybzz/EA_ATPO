@@ -1,0 +1,30 @@
+{
+  "status": "exploratory_cpu_smoke_not_full_validation",
+  "base_model": "Qwen/Qwen3-8B",
+  "base_revision": "b968826d9c46dd6066d109eabc6255188de91218",
+  "base_index_sha256": "f9fdbcb91c23971c13ec5d5f2573d2349e8f61f2f049371ec699281748fdb1bc",
+  "base_weights_individually_sha_verified_this_run": false,
+  "device": "cpu",
+  "threads": 8,
+  "temperature": 0.0,
+  "max_new_tokens": 24,
+  "enable_thinking": false,
+  "patient_policy": "one deterministic first root evidence in sorted ID order, excluding already exposed",
+  "label_parser": "case-insensitive exact ontology label; all other outputs invalid and counted wrong",
+  "validation_policy": "first 50 rows for smoke, no random selection; full validation not evaluated",
+  "ask_costs": [
+    0.01,
+    0.05,
+    0.1
+  ],
+  "defer_costs": [
+    0.05,
+    0.1,
+    0.2,
+    0.6
+  ],
+  "test_accessed": false,
+  "frozen_holdout_accessed": false,
+  "confidence": "not provided",
+  "gold_input_to_base": false
+}
