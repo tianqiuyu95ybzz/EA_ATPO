@@ -1,0 +1,27 @@
+{
+  "planned_cases": 50,
+  "completed_paired_cases": 12,
+  "always_answer_n": 12,
+  "historical_ask_replay_n": 12,
+  "rule_router_n": 12,
+  "same_initial_state_defer_n": 0,
+  "post_feedback_doctor_proxy_available_n": 12,
+  "nonempty_answer_n": 12,
+  "nonempty_replay_answer_n": 12,
+  "initial_eos_n": 12,
+  "replay_eos_n": 12,
+  "router_action_counts": {
+    "ANSWER": 12
+  },
+  "router_ask_rate": 0.0,
+  "router_defer_rate": 0.0,
+  "average_ask_turns_router": 0.0,
+  "average_ask_turns_always_ask": 1.0,
+  "answer_quality": null,
+  "useful_ask_rate": null,
+  "critical_error_rate": null,
+  "utility": null,
+  "reason_unavailable": "no trustworthy independent review; historical post-feedback doctor response is not verified Gold and is not comparable to initial-state DEFER",
+  "router_limit": "retrospective replay availability; uncertainty keyword not validated as clinically important",
+  "private_results_sha256": "e6365aa7c028b89c75d3c3510ff034e7dd67562e48e2f02363a6305d0ddccbd4"
+}
