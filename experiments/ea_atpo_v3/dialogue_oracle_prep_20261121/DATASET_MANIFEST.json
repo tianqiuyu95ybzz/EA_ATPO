@@ -1,0 +1,47 @@
+{
+  "source_files": {
+    "remedi": {
+      "name": "ReMeDi-base.json",
+      "sha256": "b27b6b1222255cc87cbc6cc0fb6ce7de98e0b6341f5ea61892bb92f247383458",
+      "revision": "f94bb9abfba48f467669d2454771bbe263cc4ae5",
+      "official_split": "unmapped"
+    },
+    "meddg": {
+      "name": "train.pk",
+      "sha256": "9940ca6bfa90ad53323aca233b12b87b4eb3e7d83ebd96aa8f1c17753d7b6744",
+      "official_split": "train"
+    }
+  },
+  "counts": {
+    "remedi": {
+      "dialogues_with_observed_feedback": 1511,
+      "doctor_turn_states": 18114,
+      "duplicate_source_id_records": 0,
+      "exact_duplicate_records": 20,
+      "gold_verified_states": 0,
+      "multi_turn_dialogues": 1511,
+      "oracle_available_states": 0,
+      "raw_dialogues": 1557,
+      "states_with_patient_feedback": 11020,
+      "structurally_invalid_unique": 2,
+      "usable_unique_dialogues": 1535
+    },
+    "meddg": {
+      "dialogues_with_observed_feedback": 14857,
+      "doctor_turn_states": 147843,
+      "duplicate_source_id_records": null,
+      "gold_verified_states": 0,
+      "multi_turn_dialogues": 14850,
+      "oracle_available_states": 0,
+      "raw_dialogues": 14864,
+      "states_with_patient_feedback": 109711,
+      "usable_unique_dialogues": 14864
+    }
+  },
+  "cross_dataset_exact_complete_dialogue_matches": 0,
+  "patient_identity_available": false,
+  "cross_split_patient_disjoint_verified": false,
+  "gold_and_oracle_state_count": 0,
+  "ask_semantics": "observed immediate patient utterance following original doctor utterance; not a response to arbitrary generated question",
+  "source_data_and_converted_text_committed": false
+}

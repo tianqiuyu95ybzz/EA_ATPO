@@ -1,0 +1,8 @@
+Oracle boundary tests: PASS (synthetic fixtures only; correctness is post-hoc)
+remedi: PASS 1535 unique structurally valid dialogue records, 18114 states; chronological prefixes and immediate patient feedback checked; duplicate IDs excluded=0
+remedi {"dialogues_with_observed_feedback": 1511, "doctor_turn_states": 18114, "duplicate_source_id_records": 0, "exact_duplicate_records": 20, "gold_verified_states": 0, "multi_turn_dialogues": 1511, "oracle_available_states": 0, "raw_dialogues": 1557, "states_with_patient_feedback": 11020, "structurally_invalid_unique": 2, "usable_unique_dialogues": 1535}
+meddg: PASS 14864 unique structurally valid dialogue records, 147843 states; chronological prefixes and immediate patient feedback checked; duplicate IDs excluded=0
+meddg {"dialogues_with_observed_feedback": 14857, "doctor_turn_states": 147843, "duplicate_source_id_records": null, "gold_verified_states": 0, "multi_turn_dialogues": 14850, "oracle_available_states": 0, "raw_dialogues": 14864, "states_with_patient_feedback": 109711, "usable_unique_dialogues": 14864}
+Split check: INDETERMINATE: ReMeDi source split mapping and both datasets patient IDs unavailable; MedDG dev/test not locally present.
+private export: remedi 18114 states, 1557 audit records; meddg 147843 states, 14864 audit records: PASS
+cross-dataset exact full-dialogue intersection: 0; near-duplicates and patient overlap: UNKNOWN
