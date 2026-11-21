@@ -1,0 +1,29 @@
+{
+  "source_sha256": "434a6734dce931262f2ed9e3201a3751e57db3609b1612ab9666835ac8832fdc",
+  "states": 43,
+  "cases": 15,
+  "action_records": 129,
+  "case_source_indices_unique": 15,
+  "mapping_action_counts": {
+    "UNIQUE_OPTION_SET_ONLY": 111,
+    "AMBIGUOUS_OPTION_SET": 18
+  },
+  "mapping_case_counts": {
+    "UNIQUE_OPTION_SET_ONLY": 13,
+    "AMBIGUOUS_OPTION_SET": 2
+  },
+  "official_correct_option_comparison_case_counts": {
+    "unique_agree": 13,
+    "ambiguous_all_agree": 2
+  },
+  "candidate_official_split_counts": {
+    "train": 17
+  },
+  "multiple_candidate_source_indices": {
+    "2671": 2,
+    "2894": 2
+  },
+  "private_mapping_sha256": "78b363d7f5eeab06537191132ad1bb8b8e9a40403476c8230f4d43cb30425c01",
+  "private_mapping_path": "/pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO_V1_gold_oracle_audit_20261121/experiments/ea_atpo_v3/gold_oracle_audit_20261121/private/private_129_gold_provenance.jsonl",
+  "interpretation": "OPTION SET matches are candidates only; transformed prompts do not prove case equivalence. No official answer or raw text in this aggregate."
+}

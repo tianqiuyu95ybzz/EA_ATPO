@@ -1,0 +1,14 @@
+{
+  "medqa": {
+    "source_url": "https://drive.google.com/uc?export=download&id=1ImYUSLk9JbgHXOemfvyiDiirluZHPeQw",
+    "bytes": 131741885,
+    "sha256": "1c2ca8130b3d86d9a99a432ab9bef14f3bb9807bef20facd9ac86ba36960f629",
+    "path": "private/medqa.zip"
+  },
+  "medmcqa": {
+    "source_url": "https://drive.google.com/uc?export=download&id=15VkJdq5eyWIkfb_aoD3oS8i4tScbHYky",
+    "bytes": 55285460,
+    "sha256": "16c1fbc6f47d548d2af7837b18e893aa45f45c0be9bda0a9adfff3c625bf9262",
+    "path": "private/medmcqa.zip"
+  }
+}

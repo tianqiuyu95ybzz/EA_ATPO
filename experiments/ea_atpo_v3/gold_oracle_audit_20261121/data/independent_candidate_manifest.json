@@ -1,0 +1,26 @@
+{
+  "status": "CANDIDATE_NOT_CERTIFIED",
+  "sample_n": 100,
+  "selection": "first 100 IDs sorted by SHA256 of fixed namespace and ID; no answer labels or model outcomes used",
+  "source": "MedMCQA author archive dev.json",
+  "archive_sha256": "16c1fbc6f47d548d2af7837b18e893aa45f45c0be9bda0a9adfff3c625bf9262",
+  "history_checked": "291 public states from 100 prior pilot cases; exact question-prefix or unordered 4-option hash only; frozen holdout not opened",
+  "history_case_count": 100,
+  "history_unique_question_hashes": 100,
+  "history_unique_option_hashes": 100,
+  "counts": {
+    "official_rows": 4183,
+    "historic_exact_question_or_options_excluded": 2,
+    "official_internal_duplicates_excluded": 105,
+    "invalid_shape_excluded": 0
+  },
+  "candidate_csv_sha256": "950230a6658604593d52a8c5d3f0d90b65bbfde1db880b879dfefd5b5164b512",
+  "limitations": [
+    "No complete cross-worktree history or paraphrase review",
+    "No comparison to frozen holdout",
+    "No Router scores, ASK counterfactuals, or Expert predictions",
+    "Official dev split is source benchmark dev, not this project router dev",
+    "Source author archive dev has answers but they were not used in candidate selection",
+    "Does not establish absence from model pretraining"
+  ]
+}
