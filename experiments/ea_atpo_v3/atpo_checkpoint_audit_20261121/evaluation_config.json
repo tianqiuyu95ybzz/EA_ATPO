@@ -1,0 +1,11 @@
+{
+  "task": "prior 50 Qwen3-8B pilot audit only; requested ATPO experiments A/B not run",
+  "base_raw_path": "../ddx_phase3_20261121/private/base_cpu_smoke_retry.jsonl",
+  "ask_raw_path": "../ddx_phase3_20261121/private/ask_cpu_smoke.jsonl",
+  "official_validation_zip_sha256": "625a96855becf0efe5da339fd3d440aa99597d48f784957a97dacc3fceaa7e40",
+  "old_decoding": "temperature 0, max 24 new tokens, enable_thinking false, native template, user prompt only",
+  "label_mapping": "case-insensitive exact 49 official condition_name; no aliases or LLM judge",
+  "macro_f1": "49 classes; zero precision/recall/F1 where denominators zero; invalid as extra prediction column",
+  "frozen_test_accessed": false,
+  "retraining": false
+}

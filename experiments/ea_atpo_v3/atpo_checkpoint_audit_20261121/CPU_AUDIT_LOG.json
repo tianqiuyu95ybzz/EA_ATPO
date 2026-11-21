@@ -1,0 +1,13 @@
+{
+  "n": 50,
+  "strict_accuracy": 0.18,
+  "raw_output_nonempty": 50,
+  "canonical_exact_parse_count": 49,
+  "label_parser_accuracy": "not measurable without independent semantic annotation of output intentions",
+  "canonical_parser_unit_test": "49/49 exact labels accepted; invalid token rejected",
+  "macro_f1_over_49_official_classes": 0.09886621315192744,
+  "macro_f1_over_supported_classes": 0.173015873015873,
+  "unparseable_count": 1,
+  "patient_simulator_replay": "50/50 traces and response values match stored simulator; not independent validation of official dependency semantics",
+  "sample_identity": "50/50 row locators and official gold agree with original validation archive"
+}

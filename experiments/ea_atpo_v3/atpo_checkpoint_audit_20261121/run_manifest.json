@@ -1,0 +1,12 @@
+{
+  "initial_git_head": "308131078e9208622b7ceef137dcfbc2ad81b304",
+  "branch": "codex/ea-atpo-gold-oracle-audit-20261121",
+  "start_status": "clean",
+  "new_atpo_inference_run": false,
+  "old_inference_environment": "CPU, transformers 5.20.2, torch 2.14.0+cu130, CUDA_VISIBLE_DEVICES empty",
+  "prior_base_jsonl_sha256": "ac941b183648a9c6f5bd202be143c4afc88ca36299157bf2752780a87da41303",
+  "prior_ask_jsonl_sha256": "6aac042cf0b622976ac68b1edecd605dcfba28331bfa986203dc18a35c32f886",
+  "gpu_status": "all devices have other compute processes; GPUs 1 and 7 excluded",
+  "required_checkpoint": "unavailable",
+  "outputs_note": "per-case raw results and trajectories are private, hashes only in git"
+}

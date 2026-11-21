@@ -1,0 +1,358 @@
+{
+  "n": 50,
+  "strict_accuracy": 0.18,
+  "raw_output_nonempty": 50,
+  "canonical_exact_parse_count": 49,
+  "label_parser_accuracy": "not measurable without independent semantic annotation of output intentions",
+  "canonical_parser_unit_test": "49/49 exact labels accepted; invalid token rejected",
+  "macro_f1_over_49_official_classes": 0.09886621315192744,
+  "macro_f1_over_supported_classes": 0.173015873015873,
+  "unparseable_count": 1,
+  "patient_simulator_replay": "50/50 traces and response values match stored simulator; not independent validation of official dependency semantics",
+  "sample_identity": "50/50 row locators and official gold agree with original validation archive",
+  "per_class": {
+    "Acute COPD exacerbation / infection": {
+      "support": 0,
+      "predicted": 0,
+      "precision": 0,
+      "recall": 0,
+      "f1": 0
+    },
+    "Acute dystonic reactions": {
+      "support": 1,
+      "predicted": 2,
+      "precision": 0.5,
+      "recall": 1.0,
+      "f1": 0.6666666666666666
+    },
+    "Acute laryngitis": {
+      "support": 1,
+      "predicted": 2,
+      "precision": 0.5,
+      "recall": 1.0,
+      "f1": 0.6666666666666666
+    },
+    "Acute otitis media": {
+      "support": 2,
+      "predicted": 2,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+    },
+    "Acute pulmonary edema": {
+      "support": 0,
+      "predicted": 2,
+      "precision": 0.0,
+      "recall": 0,
+      "f1": 0.0
+    },
+    "Acute rhinosinusitis": {
+      "support": 1,
+      "predicted": 6,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+    },
+    "Allergic sinusitis": {
+      "support": 1,
+      "predicted": 0,
+      "precision": 0,
+      "recall": 0.0,
+      "f1": 0.0
+    },
+    "Anaphylaxis": {
+      "support": 2,
+      "predicted": 2,
+      "precision": 0.5,
+      "recall": 0.5,
+      "f1": 0.5
+    },
+    "Anemia": {
+      "support": 5,
+      "predicted": 4,
+      "precision": 0.5,
+      "recall": 0.4,
+      "f1": 0.4444444444444444
+    },
+    "Atrial fibrillation": {
+      "support": 2,
+      "predicted": 2,
+      "precision": 0.5,
+      "recall": 0.5,
+      "f1": 0.5
+    },
+    "Boerhaave": {
+      "support": 2,
+      "predicted": 1,
+      "precision": 1.0,
+      "recall": 0.5,
+      "f1": 0.6666666666666666
+    },
+    "Bronchiectasis": {
+      "support": 1,
+      "predicted": 1,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+    },
+    "Bronchiolitis": {
+      "support": 0,
+      "predicted": 0,
+      "precision": 0,
+      "recall": 0,
+      "f1": 0
+    },
+    "Bronchitis": {
+      "support": 3,
+      "predicted": 2,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+    },
+    "Bronchospasm / acute asthma exacerbation": {
+      "support": 1,
+      "predicted": 4,
+      "precision": 0.25,
+      "recall": 1.0,
+      "f1": 0.4
+    },
+    "Chagas": {
+      "support": 0,
+      "predicted": 0,
+      "precision": 0,
+      "recall": 0,
+      "f1": 0
+    },
+    "Chronic rhinosinusitis": {
+      "support": 1,
+      "predicted": 0,
+      "precision": 0,
+      "recall": 0.0,
+      "f1": 0.0
+    },
+    "Cluster headache": {
+      "support": 1,
+      "predicted": 0,
+      "precision": 0,
+      "recall": 0.0,
+      "f1": 0.0
+    },
+    "Croup": {
+      "support": 0,
+      "predicted": 0,
+      "precision": 0,
+      "recall": 0,
+      "f1": 0
+    },
+    "Ebola": {
+      "support": 0,
+      "predicted": 0,
+      "precision": 0,
+      "recall": 0,
+      "f1": 0
+    },
+    "Epiglottitis": {
+      "support": 0,
+      "predicted": 1,
+      "precision": 0.0,
+      "recall": 0,
+      "f1": 0.0
+    },
+    "GERD": {
+      "support": 0,
+      "predicted": 0,
+      "precision": 0,
+      "recall": 0,
+      "f1": 0
+    },
+    "Guillain-Barr\u00e9 syndrome": {
+      "support": 0,
+      "predicted": 1,
+      "precision": 0.0,
+      "recall": 0,
+      "f1": 0.0
+    },
+    "HIV (initial infection)": {
+      "support": 1,
+      "predicted": 0,
+      "precision": 0,
+      "recall": 0.0,
+      "f1": 0.0
+    },
+    "Influenza": {
+      "support": 4,
+      "predicted": 0,
+      "precision": 0,
+      "recall": 0.0,
+      "f1": 0.0
+    },
+    "Inguinal hernia": {
+      "support": 2,
+      "predicted": 0,
+      "precision": 0,
+      "recall": 0.0,
+      "f1": 0.0
+    },
+    "Larygospasm": {
+      "support": 0,
+      "predicted": 0,
+      "precision": 0,
+      "recall": 0,
+      "f1": 0
+    },
+    "Localized edema": {
+      "support": 0,
+      "predicted": 0,
+      "precision": 0,
+      "recall": 0,
+      "f1": 0
+    },
+    "Myasthenia gravis": {
+      "support": 2,
+      "predicted": 1,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+    },
+    "Myocarditis": {
+      "support": 0,
+      "predicted": 0,
+      "precision": 0,
+      "recall": 0,
+      "f1": 0
+    },
+    "PSVT": {
+      "support": 0,
+      "predicted": 0,
+      "precision": 0,
+      "recall": 0,
+      "f1": 0
+    },
+    "Pancreatic neoplasm": {
+      "support": 0,
+      "predicted": 0,
+      "precision": 0,
+      "recall": 0,
+      "f1": 0
+    },
+    "Panic attack": {
+      "support": 3,
+      "predicted": 0,
+      "precision": 0,
+      "recall": 0.0,
+      "f1": 0.0
+    },
+    "Pericarditis": {
+      "support": 2,
+      "predicted": 0,
+      "precision": 0,
+      "recall": 0.0,
+      "f1": 0.0
+    },
+    "Pneumonia": {
+      "support": 1,
+      "predicted": 0,
+      "precision": 0,
+      "recall": 0.0,
+      "f1": 0.0
+    },
+    "Possible NSTEMI / STEMI": {
+      "support": 0,
+      "predicted": 0,
+      "precision": 0,
+      "recall": 0,
+      "f1": 0
+    },
+    "Pulmonary embolism": {
+      "support": 1,
+      "predicted": 0,
+      "precision": 0,
+      "recall": 0.0,
+      "f1": 0.0
+    },
+    "Pulmonary neoplasm": {
+      "support": 1,
+      "predicted": 0,
+      "precision": 0,
+      "recall": 0.0,
+      "f1": 0.0
+    },
+    "SLE": {
+      "support": 1,
+      "predicted": 0,
+      "precision": 0,
+      "recall": 0.0,
+      "f1": 0.0
+    },
+    "Sarcoidosis": {
+      "support": 0,
+      "predicted": 0,
+      "precision": 0,
+      "recall": 0,
+      "f1": 0
+    },
+    "Scombroid food poisoning": {
+      "support": 0,
+      "predicted": 3,
+      "precision": 0.0,
+      "recall": 0,
+      "f1": 0.0
+    },
+    "Spontaneous pneumothorax": {
+      "support": 1,
+      "predicted": 0,
+      "precision": 0,
+      "recall": 0.0,
+      "f1": 0.0
+    },
+    "Spontaneous rib fracture": {
+      "support": 0,
+      "predicted": 12,
+      "precision": 0.0,
+      "recall": 0,
+      "f1": 0.0
+    },
+    "Stable angina": {
+      "support": 1,
+      "predicted": 1,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0
+    },
+    "Tuberculosis": {
+      "support": 0,
+      "predicted": 0,
+      "precision": 0,
+      "recall": 0,
+      "f1": 0
+    },
+    "URTI": {
+      "support": 4,
+      "predicted": 0,
+      "precision": 0,
+      "recall": 0.0,
+      "f1": 0.0
+    },
+    "Unstable angina": {
+      "support": 0,
+      "predicted": 0,
+      "precision": 0,
+      "recall": 0,
+      "f1": 0
+    },
+    "Viral pharyngitis": {
+      "support": 2,
+      "predicted": 0,
+      "precision": 0,
+      "recall": 0.0,
+      "f1": 0.0
+    },
+    "Whooping cough": {
+      "support": 0,
+      "predicted": 0,
+      "precision": 0,
+      "recall": 0,
+      "f1": 0
+    }
+  }
+}

@@ -1,0 +1,45 @@
+{
+  "required_model_status": "NOT_FOUND_UNVERIFIED",
+  "required_final_checkpoint": null,
+  "required_initial_model": "Qwen3-8B",
+  "required_sft_checkpoint": null,
+  "required_atpo_training_checkpoint": null,
+  "official_sft_data_path": "/pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO_V1/ATPO-official/dataset/sft_training_data.jsonl",
+  "official_sft_data_sha256": "772585c937180ab625833d220b972e89c41945cd20a824a8c2a3d50f9fc3be73",
+  "prior_pilot": {
+    "path": "/pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO/experiments/real_case_pilot_20261103/assets/models/Qwen3-8B",
+    "model": "Qwen/Qwen3-8B",
+    "revision": "b968826d9c46dd6066d109eabc6255188de91218",
+    "sft_atpo_checkpoint": false,
+    "loading": "transformers AutoModelForCausalLM local snapshot; no adapter; native tokenizer template enable_thinking=false"
+  },
+  "candidate_atpo_only": {
+    "path": "/pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO_V1/experiments/ea_atpo_v1_smoke/ea_atpo_v1_attempt09_stability/recovery/hf/original_atpo_attempt20_actor",
+    "status": "REJECTED_NO_SFT_PARENT",
+    "initialization": "/pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO/experiments/real_case_pilot_20261103/assets/models/Qwen3-8B",
+    "source_log": "EA_ATPO_V1/experiments/ea_atpo_v1_smoke/original_atpo_attempt20/logs/original_atpo_smoke_20261113T175436Z.log",
+    "training": "original ATPO smoke 2 PPO updates, 2 train rows",
+    "lora_rank": 0,
+    "weights": "four full-model safetensors; not adapter",
+    "tested_on_ddx": false
+  },
+  "historical_4b": {
+    "model": "Qwen3-4B",
+    "reported_sft_path": "/kwkj-k8s/llm_team/tqy/mywork/ATPO-official/checkpoints/sft-qwen3-4b-full-hf",
+    "reported_atpo_path": "/kwkj-k8s/llm_team/tqy/mywork/ATPO-official/checkpoints/official-atpo-baseline-corrected-gpu1",
+    "source": "ATPO_BASELINE_STATUS_2026-09-08.md and ea_atpo_stage/EA_ATPO_IMPLEMENTATION_STATUS_2026-09-09.md",
+    "status": "historical reports only; mount absent, wrong base size and logs/checkpoint inaccessible"
+  },
+  "limitations": [
+    "SFT plus ATPO Qwen3-8B weights and training logs not located",
+    "ATPO-official worktree git metadata points to missing /tmp path",
+    "tokenizer match to required training unknown",
+    "candidate full shard hashes in MODEL_SHA256SUMS; this does not establish a missing SFT stage"
+  ],
+  "official_sft_source": {
+    "url": "https://github.com/Quark-Medical/ATPO/blob/af9a0d2000f3a305dffbb75f3a966eb018582e03/dataset/sft_training_data.jsonl",
+    "source_git_blob_sha1": "8928c44624e26527f930f4e1bb8e49a269272dcc",
+    "local_git_blob_sha1": "8928c44624e26527f930f4e1bb8e49a269272dcc",
+    "source_retrieved": "GitHub contents API 2026-11-21"
+  }
+}
