@@ -1,0 +1,14 @@
+{
+  "status": "structural_checks_passed_quality_not_reviewed",
+  "retry_completed": 50,
+  "empty_output": 0,
+  "output_without_eos": 0,
+  "initial_abandoned_smoke": {
+    "paired_cases": 3,
+    "all_6_outputs_reached_96_token_limit": true,
+    "included_in_final": false
+  },
+  "medical_failure_cases": "unknown: independent review pending",
+  "defer_failure": "no same-initial-state physician answer; post-feedback response not a valid paired defer reference",
+  "raw_outputs_location": "private/model_trajectories_retry.jsonl"
+}

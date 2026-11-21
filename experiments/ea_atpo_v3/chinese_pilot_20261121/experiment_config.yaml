@@ -1,5 +1,5 @@
 experiment: chinese_medical_retrospective_replay
-status: cpu_inference_in_progress
+status: cpu_paired_inference_complete_review_pending
 source: ReMeDi-base
 cohort: 50 unique dialogue records with chronological doctor question and immediate patient feedback
 selection: sha256 fixed namespace and original dialogue ID
@@ -15,7 +15,9 @@ execution:
   device: cpu
   threads: 8
   gpu_use: none
-  no_truncation: true
+  no_input_truncation: true
+  retry_prompt: at most two sentences and 60 Chinese characters
+  abandoned_first_attempt: 3 cases, all outputs hit token cap, excluded
 strategies:
   ANSWER: direct model generation from pre-question history
   ASK: retrospective original doctor question and next patient reply, then base answer
