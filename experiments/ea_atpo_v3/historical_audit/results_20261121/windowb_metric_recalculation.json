@@ -1,0 +1,22 @@
+{
+  "status": "passed",
+  "rows_read": 438,
+  "valid_rows": 438,
+  "case_count": 50,
+  "state_count": 146,
+  "action_coverage": {
+    "ASK": 146,
+    "ANSWER": 146,
+    "DEFER": 146
+  },
+  "invalid_rows": 0,
+  "raw_return_mismatches": 0,
+  "reference_rows": 96,
+  "recomputed_rows": 96,
+  "max_abs_difference_vs_saved_aggregate_csv": 0.0,
+  "bootstrap_unit": "case_id, all states kept within case",
+  "bootstrap_replicates": 10000,
+  "bootstrap_seed_base": 1300,
+  "case_ids_or_case_text_written": false,
+  "model_or_gpu_used": false
+}

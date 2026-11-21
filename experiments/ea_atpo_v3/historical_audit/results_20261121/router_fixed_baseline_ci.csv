@@ -1,0 +1,13 @@
+feature,learned_policy,baseline,metric,n_cases,point_delta,ci95_low,ci95_high,bootstrap_unit,bootstrap_replicates,bootstrap_seed
+embedding,q_guided_distillation,always_answer,accuracy,15,0.1074074074074074,-0.01851851851851852,0.2555555555555556,case_id; three fixed seed policies averaged within case,5000,20261120
+embedding,q_guided_distillation,always_answer,utility,15,0.09062962962962959,-0.03248425925925929,0.23566851851851844,case_id; three fixed seed policies averaged within case,5000,20261120
+embedding,q_guided_distillation,always_ask,accuracy,15,0.06296296296296296,-0.007407407407407407,0.16296296296296295,case_id; three fixed seed policies averaged within case,5000,20261120
+embedding,q_guided_distillation,always_ask,utility,15,0.05618518518518519,-0.012703703703703684,0.1529685185185184,case_id; three fixed seed policies averaged within case,5000,20261120
+embedding,q_guided_distillation,always_defer,accuracy,15,0.029629629629629613,-0.14074074074074078,0.2,case_id; three fixed seed policies averaged within case,5000,20261120
+embedding,q_guided_distillation,always_defer,utility,15,0.06285185185185188,-0.10926296296296291,0.23611851851851842,case_id; three fixed seed policies averaged within case,5000,20261120
+embedding,mlp_relative,always_answer,accuracy,15,0.09259259259259259,-0.06666666666666667,0.25925925925925924,case_id; three fixed seed policies averaged within case,5000,20261120
+embedding,mlp_relative,always_answer,utility,15,0.06855555555555554,-0.08882592592592593,0.23297037037037022,case_id; three fixed seed policies averaged within case,5000,20261120
+embedding,mlp_relative,always_ask,accuracy,15,0.04814814814814815,-0.05555555555555556,0.17777777777777776,case_id; three fixed seed policies averaged within case,5000,20261120
+embedding,mlp_relative,always_ask,utility,15,0.03411111111111112,-0.06696574074074071,0.16238333333333316,case_id; three fixed seed policies averaged within case,5000,20261120
+embedding,mlp_relative,always_defer,accuracy,15,0.014814814814814807,-0.10370370370370371,0.14074074074074075,case_id; three fixed seed policies averaged within case,5000,20261120
+embedding,mlp_relative,always_defer,utility,15,0.04077777777777781,-0.0785935185185185,0.1679296296296296,case_id; three fixed seed policies averaged within case,5000,20261120

@@ -1,0 +1,168 @@
+{
+  "schema_version": 1,
+  "created_utc": "2026-11-21",
+  "audit_scope": "CPU-only read-only historical audit of EA-ATPO V2/V3; no model training, GPU, model service calls, checkpoint loading, Holdout access, or source result modification.",
+  "git": {
+    "branch": "codex/historical-audit-20261121",
+    "head_before_final_commit": "93c8b75a497b6a880953e39d0bee5ba134eeb557",
+    "base_branch": "codex/oracle-expert-20261121",
+    "router_training_source_commit": "ba698a8d8176ae2dfe34e8f654adc12ca6208530",
+    "router_audit_source_commit": "9b3f978ec9d0d8fb2d7dcc550fd2295743329777",
+    "window_b_source_commit": "d375f892d8019cc2b034dc173cd07c44ec5c40ab",
+    "v3_oracle_source_commit": "93c8b75a497b6a880953e39d0bee5ba134eeb557"
+  },
+  "data_and_model_revisions": {
+    "router_training_cases": 50,
+    "router_train_cases": 35,
+    "router_dev_cases": 15,
+    "router_states": 146,
+    "dev_states": 43,
+    "counterfactual_trajectories": 438,
+    "action_order": [
+      "ASK",
+      "ANSWER",
+      "DEFER"
+    ],
+    "costs": {
+      "ANSWER": 0.0,
+      "ASK": 0.01,
+      "DEFER": 0.05
+    },
+    "feature_model": "Qwen/Qwen3-8B",
+    "feature_model_revision": "b968826d9c46dd6066d109eabc6255188de91218",
+    "embedding_dimension": 4096,
+    "router_seeds": [
+      17,
+      42,
+      2026
+    ],
+    "frozen_candidate_config_sha256": "d52466ffbe2e05a2dc571035d37c10f08883cd6d178d6540b6d171312b9a9f05",
+    "candidate_checkpoints": 6,
+    "checkpoint_files_uploaded": false,
+    "frozen_400_case_holdout_opened": false
+  },
+  "input_artifact_hashes": {
+    "router_case_split": "ddc4afba5a52a0ffe93dc24764d3d31f8a2ff589488a74e58239c02088f45b98",
+    "router_costed_q_dataset": "93fb335e2e5db3ca43bbbad2b4cae5c4506218980e7552aecc46cceb829ba122",
+    "router_public_states": "f0cc25fbbe643de16f26993a72435ff8e3b1ec3201b5b84ff21e6a9b9bb817a9",
+    "router_embeddings": "e25b9461d07ff5788bb872b41e85b3490e7a9f946a7a32c198fbd982ceaf5458",
+    "router_trajectories": "daedec4a13b716c6c5ee4ea0eb0c758342dbcb8b49b4d74e11645a688f279583",
+    "router_saved_predictions": "51422a7afce9fe3aa3c44dc7e1b580bcc32d48b4d971ddede1323bec9a2cf0c7",
+    "router_training_results": "b0484eff25420590ea9471e653141dee4f118eb5f2a60ccdd581735f87592b62",
+    "router_primary_config": "e391a2e853ba01fbe52ee959396bc336e16ba8ca8f383680b7a724962612c81d",
+    "router_checkpoint_reload_audit": "edd45005ebb7a0a92bee3c4e2365f71122425a1e4cfbc74802700f8c24420975",
+    "windowb_source_q": "77ae8947b496a8c6ba2843410d0b958b0490a88b239030f0e5070b2ec78f0ec8",
+    "windowb_source_trajectories": "daedec4a13b716c6c5ee4ea0eb0c758342dbcb8b49b4d74e11645a688f279583",
+    "windowb_saved_cost_sensitivity_csv": "cf024910a4a51ccb0c7c33699a6c0e19925e6414241f60f461cae58a62ca16fc",
+    "v3_oracle_aggregate_summary": "b2f1538caf8ffa7a7c5ad41228e6da316c6be54b0b9a91b7d412304d6862f863"
+  },
+  "recomputation": {
+    "python": "3.12.3",
+    "numpy": "1.26.4",
+    "commands": [
+      "CUDA_VISIBLE_DEVICES= <EA_ATPO_V1>/.venv/bin/python experiments/ea_atpo_v3/historical_audit/scripts/audit_router_results.py --source-root <router_training_worktree> --output-dir experiments/ea_atpo_v3/historical_audit/results_20261121",
+      "CUDA_VISIBLE_DEVICES= <EA_ATPO_V1>/.venv/bin/python experiments/ea_atpo_v3/historical_audit/scripts/recompute_windowb_metrics.py --trajectories <merged>/pilot_trajectories.jsonl --reference-csv <window_b>/results_20261120_rerun2/cost_sensitivity.csv --output-dir experiments/ea_atpo_v3/historical_audit/results_20261121",
+      "CUDA_VISIBLE_DEVICES= <EA_ATPO_V1>/.venv/bin/python experiments/ea_atpo_v3/historical_audit/scripts/recompute_router_fixed_baseline_ci.py --training-results <router_training>/outputs/real_q_router_20261120/training_final/training_results.json --output experiments/ea_atpo_v3/historical_audit/results_20261121/router_fixed_baseline_ci.csv"
+    ],
+    "windowb_recalculation": "96/96 aggregate rows match saved CSV exactly; maximum absolute difference 0",
+    "bootstrap_router_primary": "case_id clustered, 5000 replicates, NumPy PCG64, seed 20261120",
+    "bootstrap_windowb": "case_id clustered, 10000 replicates, NumPy PCG64, seed sequence from saved analyzer",
+    "bootstrap_router_fixed_comparisons": "case_id clustered, 5000 replicates, seed 20261120",
+    "model_training_performed": false,
+    "gpu_used": false,
+    "model_service_called": false,
+    "checkpoint_loaded_or_modified": false,
+    "holdout_read": false
+  },
+  "privacy": {
+    "case_level_gold_or_patient_text_included": false,
+    "case_ids_in_audit_outputs": false,
+    "raw_predictions_uploaded": false,
+    "model_weights_or_checkpoints_uploaded": false,
+    "sensitive_credentials_uploaded": false,
+    "source_data_storage": "Original sensitive datasets, trajectories, predictions, embeddings, and checkpoints remain in controlled PFS locations; only their hashes and aggregate audit outputs are referenced here."
+  },
+  "audit_output_files": [
+    {
+      "path": "experiments/ea_atpo_v3/historical_audit/HISTORICAL_EXPERIMENT_AUDIT.md",
+      "sha256": "88cdb80c613b227b831db14252049f1b21d79da0356ecd9c5236433486840f80",
+      "bytes": 7090
+    },
+    {
+      "path": "experiments/ea_atpo_v3/historical_audit/METRIC_AUDIT.md",
+      "sha256": "ad55f12c6fdf434416142c87506a17780814d050eb91a8d3e14034f56dde0518",
+      "bytes": 4218
+    },
+    {
+      "path": "experiments/ea_atpo_v3/historical_audit/BOOTSTRAP_AUDIT.md",
+      "sha256": "b0164236e9b6ae0b53133076ec6e4ac31f0c190e5d9b4fb847522d1092454d2a",
+      "bytes": 4000
+    },
+    {
+      "path": "experiments/ea_atpo_v3/historical_audit/ROUTER_PIPELINE_AUDIT.md",
+      "sha256": "b234e4cebd25e51cdca490e5b942b6741dab9d6955533268f7712d6da71c114f",
+      "bytes": 5687
+    },
+    {
+      "path": "experiments/ea_atpo_v3/historical_audit/PAPER_RESULT_TABLES.csv",
+      "sha256": "3a492bd65fcb396420a2d7e0bd9ca8a9aad9109f5ab96e46ff2d4c869991a7d5",
+      "bytes": 5217
+    },
+    {
+      "path": "experiments/ea_atpo_v3/historical_audit/scripts/audit_router_results.py",
+      "sha256": "ebdd182c516de425e4de54e4ea2c0ad5cdb034217649939f83101ed738761d65",
+      "bytes": 33480
+    },
+    {
+      "path": "experiments/ea_atpo_v3/historical_audit/scripts/recompute_windowb_metrics.py",
+      "sha256": "a235ad5aa985af2534095fbd0ef5cf229877f24f8a4c6c036b4d23420e621db0",
+      "bytes": 9041
+    },
+    {
+      "path": "experiments/ea_atpo_v3/historical_audit/scripts/recompute_router_fixed_baseline_ci.py",
+      "sha256": "848ac715152ec9988dfe4a63ddc6da9d493b25d2e226717c15d04c65854d4ef5",
+      "bytes": 3852
+    },
+    {
+      "path": "experiments/ea_atpo_v3/historical_audit/results_20261121/router_result_audit.json",
+      "sha256": "d9cc4b3f66888272c5c4ed6f12bbc178207c1ff25ea6722a1735ce0e4784cd2b",
+      "bytes": 15286
+    },
+    {
+      "path": "experiments/ea_atpo_v3/historical_audit/results_20261121/bootstrap_ci_before_after.csv",
+      "sha256": "e4e5c239fc2c5f9ce0834b7a59b6fb09a863f9efbd01e6ece925aba7f5bf67a9",
+      "bytes": 672
+    },
+    {
+      "path": "experiments/ea_atpo_v3/historical_audit/results_20261121/bootstrap_ci_case_clustered.csv",
+      "sha256": "7523cf12549b4970162bdaf126c7d01bbc34c9fe96600102a6bb8b13c7178c76",
+      "bytes": 1511
+    },
+    {
+      "path": "experiments/ea_atpo_v3/historical_audit/results_20261121/seed_metrics_case_vs_state_weighted.csv",
+      "sha256": "5094d6b431e132432904ff2117abbe620f6d66b8452b2ec89ee1f3691f19e03e",
+      "bytes": 1530
+    },
+    {
+      "path": "experiments/ea_atpo_v3/historical_audit/results_20261121/windowb_cost_recomputed.csv",
+      "sha256": "cf024910a4a51ccb0c7c33699a6c0e19925e6414241f60f461cae58a62ca16fc",
+      "bytes": 26008
+    },
+    {
+      "path": "experiments/ea_atpo_v3/historical_audit/results_20261121/windowb_metric_recalculation.json",
+      "sha256": "b1548c7253b22870dc24b70e9fb9dbd641984857564160c42d00e89dffb0de15",
+      "bytes": 536
+    },
+    {
+      "path": "experiments/ea_atpo_v3/historical_audit/results_20261121/router_fixed_baseline_ci.csv",
+      "sha256": "f9ebeb9a9e0af0d298e1b55c49f7d355ab51477a3bde624477ae85e344f0d5a1",
+      "bytes": 2304
+    }
+  ],
+  "scope_limitations": [
+    "The 15-case Dev set was used for early stopping and model selection.",
+    "The V2 50-case cohort is entirely within official Train and each state-action has K=1.",
+    "The V3 answer-key Oracle results reuse the same Dev cases and are not independent generalization evidence.",
+    "Exact content hashes do not rule out semantically similar or source-level duplicate cases."
+  ]
+}
