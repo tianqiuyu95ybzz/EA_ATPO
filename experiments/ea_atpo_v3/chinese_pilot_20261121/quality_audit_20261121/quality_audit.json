@@ -1,0 +1,27 @@
+{
+  "pilot_pairs": 50,
+  "review_cases": 20,
+  "review_answers": 40,
+  "unique_review_cases": 20,
+  "paired_output_integrity": "PASS: source identity, chronological contexts, option key, nonempty and EOS",
+  "human_scores_present": false,
+  "rubric_status": "PENDING_HUMAN",
+  "name_blinding": "policy names and answer order hidden; context exposure differs and can reveal condition",
+  "privacy": "pseudonymous IDs only; source text may contain personal information and must be reviewed before sharing",
+  "unique_router_ask": {
+    "trigger": "explicit patient uncertainty marker and retrospective replay availability",
+    "historical_question_and_feedback": "source-matched and chronological",
+    "additional_information": "feedback contains previous treatment status and frequency not stated at same precision in initial history",
+    "answer_changed": true,
+    "answer_change_summary": "initial answer recommends seeking care; replay answer includes self-care or treatment suggestions and a conditional recommendation to seek care",
+    "clinical_quality_or_safety": "NOT_REVIEWED; no causal attribution to feedback"
+  },
+  "same_state_defer": {
+    "original_pilot_scored": 0,
+    "candidate_note": "one original next-doctor turn contains both a question and conditional advice; potentially usable as an unverified reference only after manual review",
+    "screening": "keyword-based screening of 50 next-doctor turns; not a complete clinical annotation",
+    "keyword_screen_hits": 2,
+    "full_paired_defer_cohort": "not established"
+  },
+  "patient_ids_and_transcripts_published": false
+}

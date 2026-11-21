@@ -1,0 +1,18 @@
+{
+  "starting_head": "a725228a36751e5e74eebbebe025a93f14ed99aa",
+  "branch": "codex/ea-atpo-gold-oracle-audit-20261121",
+  "baseline_trajectory_sha256": "a43ca742e72d59b128a44bf93c9ab33d8ffc3b2ac9f8181f8d1b13b251ec0750",
+  "old_review_queue_sha256": "52125020704ff38b1f9dc89e28392e72bbf66ce9f661af6894be8583400cfdc3",
+  "local_review_packets_sha256": "cc3b657711f1e353ae7de91a6e6ea433f876c9c86c39bb4e2fdbd195b93b4856",
+  "local_response_score_template_sha256": "45ff1f316f5a5ef703243edca412b8440321e285daeaee791a08504de6ff672a",
+  "local_paired_score_template_sha256": "3dc21f1fb1edbe537803902a91ec6433e12e032bd39f0b4fc7494f70f1bc21d7",
+  "model": "Qwen/Qwen3-8B base, revision b968826d9c46dd6066d109eabc6255188de91218, not SFT-ATPO",
+  "model_index_sha256": "f9fdbcb91c23971c13ec5d5f2573d2349e8f61f2f049371ec699281748fdb1bc",
+  "tokenizer_sha256": "aeb13307a71acd8fe81861d94ad54ab689df773318809eed3cbe794b4492dae4",
+  "gpu_status": "all eight GPUs with other compute processes",
+  "gpu_inference": false,
+  "new_model_inference": false,
+  "training": false,
+  "review_status": "20 paired cases, 40 answers, all human score fields blank",
+  "privacy": "private materials may contain identifying text; no raw material is published"
+}
