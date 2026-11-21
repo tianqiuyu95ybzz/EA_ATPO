@@ -1,0 +1,108 @@
+{
+  "source_revisions": {
+    "imcs21": {
+      "url": "https://github.com/lemuria-wchen/imcs21",
+      "commit": "836048f491704011dba229a5bd04db5f7f4d2bbe",
+      "acquired_utc": "2026-11-21 approximately 04:13 UTC",
+      "data_license": "not located"
+    },
+    "ddxplus": {
+      "code_url": "https://github.com/mila-iqia/ddxplus",
+      "code_commit": "69e8cf50a15ebb8979a57bb1f30ba5bb7f587f66",
+      "data_url": "https://figshare.com/articles/dataset/DDXPlus_Dataset_English_/22687585",
+      "data_version": 2,
+      "acquired_utc": "2026-11-21T04:14:13Z",
+      "license": "CC BY 4.0"
+    },
+    "dx": {
+      "url": "https://drive.google.com/file/d/19WrAIH1fyJ8BTdsahU-LycTsYnPhUt2n/view",
+      "acquired_utc": "2026-11-21T04:15:15Z",
+      "license": "academic use per author page; upstream rights unconfirmed"
+    }
+  },
+  "private_raw_files": {
+    "imcs_train": {
+      "sha256": "2760c987d0f438785992ed7e7a622ea1a45ad9231506f4f926e8dce840d3d117",
+      "bytes": 43441711,
+      "local_mtime_utc": "2026-11-21T04:13:20.272523+00:00"
+    },
+    "imcs_dev": {
+      "sha256": "e1c354383a9b3769015411651ad362ce4bd8fb4944cf46fe1114b474ab9bee80",
+      "bytes": 14762499,
+      "local_mtime_utc": "2026-11-21T04:13:20.124195+00:00"
+    },
+    "imcs_test": {
+      "sha256": "f199417a41dc25525f58c2822c3620240cda0df97c2275cbba03387ce09e2ca2",
+      "bytes": 14528528,
+      "local_mtime_utc": "2026-11-21T04:13:20.221644+00:00"
+    },
+    "imcs_test_input": {
+      "sha256": "46ee2e8bbffdc722cad7b813e5d8223c5842904924a164faaf0db523e7c0f09d",
+      "bytes": 5984788,
+      "local_mtime_utc": "2026-11-21T04:13:20.236266+00:00"
+    },
+    "ddx_evidence": {
+      "sha256": "281c78b044ae60514e28ecc9052d08a8225dd3e2db3f00f8788b99c47b05e0c0",
+      "bytes": 120263,
+      "local_mtime_utc": "2026-11-21T04:14:09.344210+00:00"
+    },
+    "ddx_conditions": {
+      "sha256": "56edf4682d8e86a4209fc3a33932e50ce03d1cc1fecc326c26d5ef8fa5c24890",
+      "bytes": 20889,
+      "local_mtime_utc": "2026-11-21T04:14:13.813411+00:00"
+    },
+    "ddx_validate_zip": {
+      "sha256": "625a96855becf0efe5da339fd3d440aa99597d48f784957a97dacc3fceaa7e40",
+      "bytes": 18706053,
+      "local_mtime_utc": "2026-11-21T04:14:12.043344+00:00"
+    },
+    "dx_zip": {
+      "sha256": "0eb9c04337294a0db2fb6134ffc15550a55dbe5ef109e616d7b3c1d28c8bbccd",
+      "bytes": 149378,
+      "local_mtime_utc": "2026-11-21T04:15:15.914214+00:00"
+    }
+  },
+  "committed_files": {
+    ".gitignore": {
+      "sha256": "d56537a93a9565b3322aa9bc821c9cc30a16303467032cade13b069e394cfddc",
+      "bytes": 22,
+      "local_mtime_utc": "2026-11-21T04:15:57.399459+00:00"
+    },
+    "CPU_ORACLE_SMOKE_REPORT.md": {
+      "sha256": "7b772fe4926fd09ec6f4204b7bfc9844bd25030e501ec7af45735ba8f12042ba",
+      "bytes": 1027,
+      "local_mtime_utc": "2026-11-21T04:17:38.259033+00:00"
+    },
+    "DATASET_ADMISSION_DECISION.md": {
+      "sha256": "4d8a525bad2b1bd8ad4a4d762c6da2abcf9bac37613cefbe64ce206c1e8db9b9",
+      "bytes": 1088,
+      "local_mtime_utc": "2026-11-21T04:17:38.257660+00:00"
+    },
+    "DDXPLUS_ORACLE_AUDIT.md": {
+      "sha256": "afcce47faca068c4407df8371d76d25a881a813e9888add284cbeff89b08e607",
+      "bytes": 2290,
+      "local_mtime_utc": "2026-11-21T04:17:38.254931+00:00"
+    },
+    "IMCS21_GOLD_AUDIT.md": {
+      "sha256": "e16f94abea98c7310f81f72dcf087f0e1a4c82304c0d0bfd23ddfbfff99f21f6",
+      "bytes": 2230,
+      "local_mtime_utc": "2026-11-21T04:17:38.253579+00:00"
+    },
+    "PUBLIC_DATASET_COMPARISON.md": {
+      "sha256": "e3c88f718f0df9046ac76052aa2a916794b58684c9ebf20a74aec75fd538a53e",
+      "bytes": 2516,
+      "local_mtime_utc": "2026-11-21T04:17:38.256334+00:00"
+    },
+    "cpu_smoke.json": {
+      "sha256": "a26b3be9dca6438479649d44afe1009d8897c948859a095927766ae00c615a35",
+      "bytes": 532,
+      "local_mtime_utc": "2026-11-21T04:16:36.793588+00:00"
+    },
+    "ddx_cpu_smoke.py": {
+      "sha256": "db5817423aa5f2eebd9e89284d65230d954d36e552536ec8af80fd847eca7d5e",
+      "bytes": 5134,
+      "local_mtime_utc": "2026-11-21T04:16:36.747217+00:00"
+    }
+  },
+  "note": "No raw data, labels or patient text committed. Raw hashes enable verification after authorized retrieval; file mtimes are not source publication timestamps."
+}

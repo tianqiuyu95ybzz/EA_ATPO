@@ -1,0 +1,18 @@
+{
+  "cases": 50,
+  "ontology_evidences": 223,
+  "ontology_conditions": 49,
+  "icd10_present": 49,
+  "icd10_unique": 49,
+  "hidden_tests": {
+    "hidden_evidence_tested": 50,
+    "unrecorded_unknown_tested": 50
+  },
+  "differential_probability_sum_min": 0.9999999999999998,
+  "differential_probability_sum_max": 1.0000000000000002,
+  "oracle_A_B_boundaries": "PASS",
+  "router_view_isolation": "PASS",
+  "ask_repeats_unknown": "PASS",
+  "split": "official validate",
+  "note": "sample of 50; no estimates of full-dataset coverage"
+}
