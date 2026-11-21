@@ -1,0 +1,12 @@
+{
+  "selected": 50,
+  "selection": "fixed hash of source dialogue id among chronological question/patient/doctor eligible records",
+  "source": "ReMeDi base",
+  "source_sha256": "b27b6b1222255cc87cbc6cc0fb6ce7de98e0b6341f5ea61892bb92f247383458",
+  "case_ids_sha256": "e411abbc71e4cd75c9676c98c53c1feba2b897f2b539ae428b36af6ff73a59c0",
+  "private_cases_sha256": "9ac348d2632de088ef7c23c47e2e01bd3f6b1b5b808fc09e33f8289a7a3e9584",
+  "audit": {
+    "invalid": 2,
+    "duplicate": 20
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "model": "Qwen/Qwen3-8B",
+  "revision": "b968826d9c46dd6066d109eabc6255188de91218",
+  "path": "/pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO/experiments/real_case_pilot_20261103/assets/models/Qwen3-8B",
+  "index_sha256": "f9fdbcb91c23971c13ec5d5f2573d2349e8f61f2f049371ec699281748fdb1bc",
+  "tokenizer_sha256": "aeb13307a71acd8fe81861d94ad54ab689df773318809eed3cbe794b4492dae4",
+  "weights": "five original full-model shards; no adapter",
+  "stage": "original Qwen3-8B; not SFT+ATPO final",
+  "checkpoint_sha256_manifest": "../atpo_checkpoint_audit_20261121/MODEL_SHA256SUMS",
+  "backend": "Transformers 5.20.2 / torch 2.14.0+cu130 / CPU"
+}

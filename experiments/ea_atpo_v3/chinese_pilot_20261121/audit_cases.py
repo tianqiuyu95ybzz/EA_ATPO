@@ -1,0 +1,6 @@
+import json,pathlib,hashlib
+p=pathlib.Path(__file__).parent;data=json.loads(pathlib.Path('/pfs/pfs-spMCeu/image_team/workspace/zjr/EA_ATPO_V1_public_medical_data_20261121/experiments/ea_atpo_v3/public_medical_20261121/private/remedi_base.json').read_text());cases=[json.loads(x) for x in (p/'private'/'cases.jsonl').read_text().splitlines()]
+assert len(cases)==50 and len({x['case_id'] for x in cases})==50
+for c in cases:
+ d=data[c['source_index']];t=d['information'];i=c['question_turn'];assert c['case_id']=='remedi:'+str(d['dialogue']);assert [(u['role'],u['text']) for u in c['initial']]==[(x['role'],x['sentence']) for x in t[:i]];assert c['initial'][-1]['role']=='patient';assert t[i]['role']=='doctor' and t[i]['sentence']==c['doctor_question'];assert t[i+1]['role']=='patient' and t[i+1]['sentence']==c['patient_feedback'];assert t[i+2]['role']=='doctor' and t[i+2]['sentence']==c['doctor_after_feedback']
+print(json.dumps({'case_count':len(cases),'initial_prefix_and_roles':'PASS','historical_question_and_patient_feedback':'PASS','post_feedback_doctor_response':'PASS','future_feedback_or_doctor_reference_in_initial':'none by construction','question_specific_relevance':'not established','proxy_is_unverified':'true'},indent=2))

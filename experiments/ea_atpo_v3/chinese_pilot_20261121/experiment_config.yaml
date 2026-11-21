@@ -1,0 +1,27 @@
+experiment: chinese_medical_retrospective_replay
+status: cpu_inference_in_progress
+source: ReMeDi-base
+cohort: 50 unique dialogue records with chronological doctor question and immediate patient feedback
+selection: sha256 fixed namespace and original dialogue ID
+base: Qwen/Qwen3-8B
+revision: b968826d9c46dd6066d109eabc6255188de91218
+base_stage: original_pretrained_not_sft_atpo
+sampling:
+  temperature: 0
+  enable_thinking: false
+  max_new_tokens: 96
+  context_limit_tokens: 3072
+execution:
+  device: cpu
+  threads: 8
+  gpu_use: none
+  no_truncation: true
+strategies:
+  ANSWER: direct model generation from pre-question history
+  ASK: retrospective original doctor question and next patient reply, then base answer
+  DEFER: unavailable at original state; post-feedback doctor reply is non-comparable unverified proxy
+  ROUTER: explicit uncertainty marker and replay-available -> replay ASK; otherwise ANSWER; no inferred risk or automated DEFER
+costs:
+  ask: [0.01, 0.05, 0.10]
+  defer: [0.05, 0.10, 0.20]
+quality_scoring: unavailable_until_independent_review
