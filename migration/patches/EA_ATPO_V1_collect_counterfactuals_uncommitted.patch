@@ -1,0 +1,23 @@
+diff --git a/ea_atpo_stage/recipe/ea_atpo/collect_counterfactuals.py b/ea_atpo_stage/recipe/ea_atpo/collect_counterfactuals.py
+index 9f45de4..184bafa 100644
+--- a/ea_atpo_stage/recipe/ea_atpo/collect_counterfactuals.py
++++ b/ea_atpo_stage/recipe/ea_atpo/collect_counterfactuals.py
+@@ -69,3 +69,7 @@ PATIENT_SYSTEM = """You are a patient simulator. Answer the doctor's question us
+-only the supplied patient atomic facts. Do not add medical inference or outside
+-knowledge. If no supplied fact directly answers it, reply exactly: The patient
+-cannot answer this question. Give only the concise patient response."""
++only the supplied patient atomic facts. Match facts by meaning, including ordinary
++paraphrases; do not require the question to repeat the fact's exact wording. For a
++broad question, report the relevant facts that are known and clearly say when a
++requested detail (such as a procedure or measurement) is not stated. Do not add
++medical inference or outside knowledge. If none of the supplied facts answers any
++part of the question, reply exactly: The patient cannot answer this question.
++Give only the concise patient response."""
+@@ -92 +96,2 @@ class ChatAPI:
+-    def __init__(self, base_url: str, model: str, timeout_s: float = 180.0, enable_thinking: bool | None = None):
++    def __init__(self, base_url: str, model: str, timeout_s: float = 180.0,
++                 enable_thinking: bool | None = None, top_p: float = 1.0):
+@@ -100,0 +106 @@ class ChatAPI:
++        self.top_p = float(top_p)
+@@ -118,0 +125 @@ class ChatAPI:
++            "top_p": self.top_p,

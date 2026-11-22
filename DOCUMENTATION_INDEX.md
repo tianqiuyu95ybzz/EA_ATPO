@@ -1,8 +1,21 @@
 # EA-ATPO 文档索引
 
-更新日期：2026-11-17
+更新日期：2026-11-22
 
 此页标出当前有效的研究口径、实验结果和复现入口。历史计划与中间实验保留在对应目录或 Git 历史；若与较新的结果冲突，以带日期的原始实验报告和 `PUBLISHED_RESULTS_INDEX.md` 为准。
+
+## 迁移与当前 V3 状态
+
+- [V1/V2/V3 实验索引](EXPERIMENT_INDEX.md)
+- [旧服务器与 GitHub 迁移审计](LOCAL_REMOTE_MIGRATION_AUDIT.md)
+- [PFS 私有数据、模型和 checkpoint 索引](PFS_ARTIFACT_INDEX.md)
+- [新服务器恢复说明](MIGRATION_RESTORE.md)
+- [版本管理规范](VERSIONING.md)
+- [变更日志](CHANGELOG.md)
+- [迁移文件 SHA-256 清单](MIGRATION_SHA256SUMS)
+- [V3 ReMeDi Pilot 状态](experiments/ea_atpo_v3/chinese_pilot_20261121/REPORT.md)
+
+当前 V3 Pilot 使用原始 Qwen3-8B，不是 SFT-ATPO；20 个 ANSWER/ASK 配对病例（40 条回答）尚无人评分，DEFER 未评估。不要将 N/A 解释为零分或临床结论。
 
 ## 当前项目口径
 
