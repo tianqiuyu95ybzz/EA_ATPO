@@ -1,0 +1,14 @@
+{
+  "source_head": "5ecdfdaef19c09fc560f81c6ac5e1341d6ff8f6c",
+  "branch": "codex/ea-atpo-gold-oracle-audit-20261121",
+  "restricted_packets_sha256": "b9d5d152254d174d6b9c7b28b5e8abd541c894629b908a9a2a846d24207d080f",
+  "response_form_sha256": "43810ac253b50d7553b4276d5ee0d808b14c648e501a7b85651ea1c5182b9d60",
+  "paired_form_sha256": "05527d00e425be87cd1e6bc7bf37ee2eb778b844817482c3a6e4e7aefa13d277",
+  "case_mapping_sha256": "fb198ba9265603ff816fea02353cccfecf5a3ed1395ba56a7978c574544f10c9",
+  "privacy": "not approved for external sharing",
+  "review_status": "pending, no human ratings",
+  "human_attestation_provided": false,
+  "defer": "N/A",
+  "gpu_used": false,
+  "model_training": false
+}

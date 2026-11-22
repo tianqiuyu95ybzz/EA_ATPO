@@ -1,0 +1,15 @@
+{
+  "cases_unchanged": 20,
+  "paired_outputs_unchanged": 40,
+  "human_responses_scored": 0,
+  "human_case_pairs_scored": 0,
+  "summary_script_blank_input": "REFUSED_BEFORE_UNBLINDING_NO_OUTPUT",
+  "summary_math_test": "PASS_SYNTHETIC_ARITHMETIC_ONLY",
+  "privacy_status": "RESTRICTED_EXTERNAL_REVIEW_NOT_AUTHORIZED",
+  "external_transmission": false,
+  "gpu_used": false,
+  "training": false,
+  "defer_metric": null,
+  "utility": null,
+  "other_worktree_uncommitted_assets": "PRESENT_NOT_FULLY_CLASSIFIED_OR_CONFIRMED_BACKED_UP"
+}

@@ -1,0 +1,13 @@
+{
+  "cases": 20,
+  "counts": {
+    "age_or_month_marker_case_count": 10,
+    "relative_duration_case_count": 16,
+    "treatment_case_count": 16,
+    "direct_contact_case_count": 0,
+    "verbatim_source_utterance_at_least_12_chars_case_count": 20
+  },
+  "method": "simple pattern indicators and exact local-source utterance match; not a de-identification certification or reidentification rate",
+  "external_search_or_disclosure": false,
+  "retained_model_responses_unchanged": true
+}
