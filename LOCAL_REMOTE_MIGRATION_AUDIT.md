@@ -105,11 +105,15 @@ to distribute the data.
 - Original Qwen3-8B base weights exist on old-host PFS at the path in
   `PFS_ARTIFACT_INDEX.md`; the five shard files total about 16.4 GB. Their
   revision/index/tokenizer identity is recorded. They are not on GitHub.
-- Attempt09 Actor/Critic and Attempt20 Actor recovery exports exist under the
-  old V1 worktree, totaling about 47.9 GB. They were not used for the current
-  V3 pilot. The Attempt09 shard set has no verified per-shard manifest in its
-  recovery directory and no matching file in the checked Window A archive
-  inventory.
+- Attempt09 Actor/Critic and Attempt20 Actor Hugging Face inference exports
+  total 47,947,649,685 logical bytes across 12 safetensors shards. Their three
+  index maps, shard headers, and file SHA-256 values were verified on CPU. A
+  separate `checkpoints/global_step_10` tree totals 189,142,648,842 bytes
+  across 32 files, including optimizer state; its files were also SHA-256
+  hashed. Exact manifests are mode 0600 in the restricted PFS migration
+  directory, not GitHub. This is byte-integrity evidence only; model loading
+  and full training resume were not tested. Attempt09/20 weights were not used
+  by the V3 pilot.
 - The previously verified Window A archive contains V2 Router checkpoints,
   not V3 model weights or the Attempt09 recovery tree. Its manifest had zero
   exact hash matches among the 2,898 audited legacy/V1 untracked files.
@@ -124,10 +128,12 @@ to distribute the data.
 ## 6. New-server connection and restore status
 
 The user-provided SSH address was reached and the host key was stored in a
-PFS-local `known_hosts` file. The session is waiting at the JumpServer password
-prompt. No password was requested or entered; no node was guessed or selected.
-Therefore hostname, GPU model/count/memory, driver/CUDA, Python/PyTorch/Git,
-disk, and GitHub connectivity on the new server are **not yet verified**.
+PFS-local `known_hosts` file. Password authentication was not completed, and a
+separate public-key-only attempt returned `Permission denied
+(password,publickey)`. No node was guessed or selected. Therefore hostname, GPU
+model/count/memory, driver/CUDA, Python/PyTorch/Git, disk, and GitHub
+connectivity on the new server are **not yet verified**. Per the latest
+instruction, no further SSH attempt was made.
 
 No clone or GPU smoke test has been run there. After the user completes
 interactive authentication (and selects a node if prompted), follow

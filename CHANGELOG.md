@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-11-22
+
+- Added aggregate migration asset triage and checkpoint-integrity status. The
+  private SHA-256 manifests remain on restricted PFS; no checkpoint or case
+  data was added to GitHub.
+
 ## 2026-11-22 — server migration and recovery audit
 
 - Added a current experiment index, versioning rules, PFS artifact index, and

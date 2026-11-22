@@ -10,6 +10,7 @@ model weights, checkpoints, or previous server logs.
 - [Documentation index and current sources of truth](DOCUMENTATION_INDEX.md)
 - [Experiment index](EXPERIMENT_INDEX.md)
 - [Latest migration audit](LOCAL_REMOTE_MIGRATION_AUDIT.md)
+- [Migration asset triage and recovery status](MIGRATION_ASSET_TRIAGE.md)
 - [PFS artifact index](PFS_ARTIFACT_INDEX.md)
 - [Restore and continue on a new server](MIGRATION_RESTORE.md)
 - [Versioning rules](VERSIONING.md)

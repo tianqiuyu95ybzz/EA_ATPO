@@ -8,6 +8,7 @@
 
 - [V1/V2/V3 实验索引](EXPERIMENT_INDEX.md)
 - [旧服务器与 GitHub 迁移审计](LOCAL_REMOTE_MIGRATION_AUDIT.md)
+- [迁移资产分类与恢复状态](MIGRATION_ASSET_TRIAGE.md)
 - [PFS 私有数据、模型和 checkpoint 索引](PFS_ARTIFACT_INDEX.md)
 - [新服务器恢复说明](MIGRATION_RESTORE.md)
 - [版本管理规范](VERSIONING.md)

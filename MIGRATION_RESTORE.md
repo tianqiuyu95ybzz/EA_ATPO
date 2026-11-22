@@ -14,11 +14,13 @@ sha256sum -c MIGRATION_SHA256SUMS.sha256
 sha256sum -c MIGRATION_SHA256SUMS
 ```
 
-The expected branch and SHA are recorded in `LOCAL_REMOTE_MIGRATION_AUDIT.md`
-after publication. The manifest covers migration-added/modified public files
-and the V3 pilot/checkpoint summary reports named in the manifest; it excludes
-private dialogues, per-case records, checkpoints, and model weights. Do not
-clone only `main` if you need the V3 migration work.
+The audit records the initial migration payload SHA and its remote verification.
+For the current branch tip, compare `git rev-parse HEAD` with
+`git ls-remote origin refs/heads/codex/ea-atpo-v3-migration-20261122` when you
+restore. The manifest covers migration-added/modified public files and the V3
+pilot/checkpoint summary reports named in the manifest; it excludes private
+dialogues, per-case records, checkpoints, and model weights. Do not clone only
+`main` if you need the V3 migration work.
 
 ## Restore boundary
 
