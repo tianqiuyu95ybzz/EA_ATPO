@@ -135,8 +135,12 @@ do not run training or a 50-case inference job as part of this migration.
 This migration branch includes documentation, reviewed code/configuration,
 aggregate reports, and SHA manifests. It excludes patient text, Gold, case
 mappings, per-case outcomes, output/review text, credentials, model weights,
-and checkpoints. The exact migration branch SHA is reported after push and
-fetch verification. No force-push or history rewrite is used.
+and checkpoints. No force-push or history rewrite is used. The initial
+migration payload commit `398128b00b36d45a5fd24318e054f348299bd6ab` was pushed
+to `codex/ea-atpo-v3-migration-20261122`; a subsequent fetch returned the same
+SHA. Its parent is the audited V3 base `8fcbd488987da4b7d5a2db9b9a063a11b382102f`.
+The remote tree contains all 34 manifest entries plus the manifest and its
+sidecar; the local/remote trees matched at verification time.
 
 ### Previously published files on the migration base
 
