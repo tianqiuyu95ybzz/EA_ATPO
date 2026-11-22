@@ -1,0 +1,16 @@
+{
+  "review_cases": 20,
+  "paired_responses": 40,
+  "each_output_equals_original": true,
+  "output_hashes_sha256_of_sorted_multiset": "1095c93b2c829d0055aa7c0de1a0d18371925f89c47df5ad2254ae0db35d4b63",
+  "review_files_match_prior_hashes": {
+    "restricted_packets_sha256": true,
+    "response_form_sha256": true,
+    "paired_form_sha256": true
+  },
+  "pilot_output_file_hash_matches": true,
+  "score_fields_filled": 0,
+  "review_status": "PENDING",
+  "defer": "N/A, no qualified matched full cohort",
+  "no_raw_text_published": true
+}

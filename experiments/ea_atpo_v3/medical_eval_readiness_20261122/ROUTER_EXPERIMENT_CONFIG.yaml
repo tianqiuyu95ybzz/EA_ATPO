@@ -1,0 +1,82 @@
+schema_version: 1
+status: DESIGN_ONLY_NOT_AUTHORIZED_TO_RUN
+execution:
+  run_inference: false
+  train_router: false
+  train_expert: false
+  run_rl: false
+  open_official_test: false
+  open_frozen_holdout: false
+scope:
+  task: medical_information_acquisition_and_differential_diagnosis
+  objective: balance_quality_safety_and_action_cost
+  actions: [ASK, ANSWER, DEFER]
+  router_candidate: Q_guided_distillation
+  expert: offline_oracle_upper_bound
+  deployable_expert_validated: false
+model:
+  base: null
+  checkpoint_sha256: null
+  required_status: freeze_verified_before_data_collection
+  prior_exploratory_base: Qwen_Qwen3_8B_original_not_sft_atpo_final
+data:
+  primary: DDXPlus_synthetic_diagnosis_classification
+  secondary: IMCS21_Chinese_dialogue_candidate
+  additional_real_dialogue: ReMeDi_historical_replay_only
+  exact_cross_split_duplicates_resolved: false
+  patient_identity_disjoint_verified: false
+  external_review_permission_verified: false
+  clinical_diagnosis_gold_for_remedi: false
+  train_split: official_train_after_independence_audit
+  validation_split: official_validation_after_independence_audit
+  test_split: frozen_no_tuning_no_access
+  source_and_sample_hashes_frozen: false
+  cohort_selection_frozen: false
+  common_action_eligibility_and_missingness_frozen: false
+oracle:
+  allowed_only_with_qualified_state_and_task_matched_gold: true
+  standard: defer_returns_gold
+  protecting: offline_if_base_correct_preserve_else_gold
+  base_correctness_available_to_router: false
+  gold_in_router_input: false
+  pathology_label_supports_full_clinical_response: false
+ask:
+  history_replay_is_autonomous_patient_simulation: false
+  missing_or_unmatched_feedback: action_unavailable_report_separately
+  simulator_official_semantics_validated: false
+baselines: [always_answer, always_ask_once_then_answer, oracle_defer_standard, oracle_defer_protecting, q_guided_router]
+costs:
+  ask_grid: [0.01, 0.05, 0.10]
+  defer_grid: [0.05, 0.10, 0.20, 0.60]
+  charge_each_action_once: true
+  primary_cost_pair: null
+  primary_pair_must_be_locked_before_validation_selection: true
+quality:
+  diagnosis_metric: accuracy_only_with_matching_verified_label
+  free_text_metric: clinician_review_only_after_permission
+  free_text_weights: null
+  quality_normalization: null
+  safety_penalty: null
+  utility: null_until_units_and_scoring_locked
+statistical_analysis:
+  paired_unit: case_id
+  method: paired_case_cluster_bootstrap
+  confidence: 0.95
+  bootstrap_resamples: 10000
+  seed: 20261122
+  sample_size_and_precision_plan_locked: false
+  missing_denominators_reported: true
+  multiplicity_policy: null
+ablation:
+  planned: [no_ask, no_defer, no_cost, no_uncertainty_features, no_q_distillation]
+  matched_budget_and_cohort_required: true
+  oracle_is_not_deployable_policy: true
+readiness_gates:
+  privacy_and_source_rights: false
+  gold_provenance_and_time_match: false
+  split_leakage_and_duplicate_audit: false
+  simulator_and_question_matching: false
+  base_and_model_assets_frozen: false
+  action_targets_and_public_features_audited: false
+  cost_safety_and_quality_protocol_frozen: false
+  review_and_sample_size_protocol_frozen: false

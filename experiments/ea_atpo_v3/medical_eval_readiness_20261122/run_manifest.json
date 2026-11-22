@@ -1,0 +1,18 @@
+{
+  "starting_head": "8fcbd488987da4b7d5a2db9b9a063a11b382102f",
+  "remote_at_start": "8fcbd488987da4b7d5a2db9b9a063a11b382102f",
+  "branch": "codex/ea-atpo-gold-oracle-audit-20261121",
+  "review_pairs": 20,
+  "outputs_verified": 40,
+  "private_per_output_hash_file_sha256": "8af8aa5d13e719a0172a244ac6e9cdd7a15ad4d414d0536d0661971198d8dac9",
+  "score_fields_filled": 0,
+  "privacy_rights_status": "UNCONFIRMED_NO_EXTERNAL_SHARING",
+  "defer_status": "NA_NO_VERIFIED_COMPLETE_SAME_STATE_GOLD",
+  "ddxplus": "synthetic diagnostic label only; train_validation_duplicates_unresolved",
+  "meddialogrubrics_hf_revision_observed": "c97f0ba59fee7269cd290672cb689386d9fb5d64",
+  "meddialogrubrics_hf_license_metadata": null,
+  "new_samples": false,
+  "new_model_inference": false,
+  "gpu_training": false,
+  "test_accessed": false
+}
