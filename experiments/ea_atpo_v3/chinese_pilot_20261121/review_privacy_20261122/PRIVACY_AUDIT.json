@@ -1,0 +1,24 @@
+{
+  "status": "PRELIMINARY_RESTRICTED_NOT_APPROVED_FOR_EXTERNAL_SHARING",
+  "cases": 20,
+  "paired_answers": 40,
+  "outputs_unchanged": true,
+  "direct_id_regex_hits_replaced": {
+    "phone": 0,
+    "email": 0,
+    "identity_number": 0,
+    "url": 0
+  },
+  "adult_age_generalizations": 18,
+  "calendar_time_redactions": 4,
+  "counts_note": "counts include repeated contexts between blinded options",
+  "indirect_risk": [
+    "pediatric age and sex retained for clinical context",
+    "diagnosis, exact wording, clinical history and relative time can identify an individual together",
+    "source dialogue text is publicly searchable and may be linked back to a source",
+    "redaction may remove clinically relevant information; comparison must be interpreted accordingly"
+  ],
+  "release_gate": "prohibit external sharing until independent qualified privacy review and source rights confirmation; no sharing performed",
+  "human_scores": "PENDING",
+  "restricted_packets_sha256": "b9d5d152254d174d6b9c7b28b5e8abd541c894629b908a9a2a846d24207d080f"
+}

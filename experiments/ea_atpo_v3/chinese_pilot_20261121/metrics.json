@@ -22,7 +22,22 @@
   "useful_ask_rate": null,
   "critical_error_rate": null,
   "utility": null,
-  "reason_unavailable": "no trustworthy independent review; historical post-feedback doctor response is not verified Gold and is not comparable to initial-state DEFER",
+  "reason_unavailable": "Human scoring has not been performed; three initial-state mixed question/comment candidates need independent clinical review; no full paired DEFER cohort.",
   "router_limit": "retrospective replay availability; uncertainty keyword not validated as clinically important",
-  "private_results_sha256": "a43ca742e72d59b128a44bf93c9ab33d8ffc3b2ac9f8181f8d1b13b251ec0750"
+  "private_results_sha256": "a43ca742e72d59b128a44bf93c9ab33d8ffc3b2ac9f8181f8d1b13b251ec0750",
+  "human_review": {
+    "selected_cases": 20,
+    "paired_responses": 40,
+    "scored_cases": 0,
+    "status": "PENDING",
+    "medical_correctness": null,
+    "completeness": null,
+    "safety": null,
+    "case_level_improved_worsened_unchanged": null,
+    "additional_information_effective_rate": null,
+    "paired_confidence_intervals": null,
+    "ask_cost_sensitivity": null
+  },
+  "same_initial_state_defer_candidates_needing_clinical_review": 3,
+  "same_initial_state_defer_quality_comparison": null
 }

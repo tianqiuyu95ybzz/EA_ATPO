@@ -1,0 +1,10 @@
+{
+  "reviewed_initial_next_doctor_turns": 50,
+  "potential_partial_response_candidates": 3,
+  "question_only_by_assistant_inspection": 47,
+  "review_type": "assistant inspection of original next-doctor utterance only; not independent clinical evaluation",
+  "qualified_defer_reference_count": null,
+  "matched_full_cohort": false,
+  "post_feedback_doctor_reply_used_as_initial_reference": false,
+  "disposition": "N/A pending human qualification and complete same-state coverage"
+}

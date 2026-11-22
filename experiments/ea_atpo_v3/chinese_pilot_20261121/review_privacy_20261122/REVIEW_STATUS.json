@@ -1,0 +1,8 @@
+{
+  "responses": 40,
+  "paired_cases": 20,
+  "fully_scored_responses": 0,
+  "fully_scored_pair_fields": 0,
+  "status": "PENDING_HUMAN_REVIEW",
+  "clinical_quality_inferred": false
+}
