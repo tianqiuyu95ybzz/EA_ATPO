@@ -37,7 +37,7 @@ not merge or rewrite another window's history.
 | Source | Untracked paths | Classification |
 |---|---:|---|
 | Legacy `EA_ATPO` clone | 961 | 939 cache/runtime files; 3 small Router checkpoint files; 11 source files; 1 config; 6 data/result files; 1 report. |
-| `EA_ATPO_V1` primary worktree | 1,937 | 1,883 V2 parallel-cache files; 4 code files; 43 data/manifest files; 4 documentation/tokenizer files; 3 logs. |
+| `EA_ATPO_V1` primary worktree | 1,937 | 1,883 V2 parallel-cache files; 43 data/manifest files; 4 Attempt09/20 checkpoint-scoped `chat_template.jinja` copies; 3 logs. The four templates are byte-identical (SHA-256 `a55ee1b1…1974d8`). |
 | Repository-management worktree | 1 | One inventory script. |
 | **Total** | **2,899** | Individually recorded in the restricted PFS inventory, including relative path, size, category, file hash where scanned, and archive-match status. |
 
@@ -70,6 +70,11 @@ Its location is listed in [PFS_ARTIFACT_INDEX.md](PFS_ARTIFACT_INDEX.md).
 - The management inventory script was copied to
   `scripts/repo_management/audit_local_assets.py`. It writes sensitive
   file-path/hash inventories and must be directed to a restricted output path.
+- The four V1 `chat_template.jinja` files are identical and belong to the
+  private Attempt09/Attempt20 recovery tree. They were not copied as general
+  project code: the current V3 pilot uses the raw Qwen3-8B model's native
+  tokenizer template, while the associated Actor/Critic weights remain
+  private and are not part of this restore.
 
 ## 4. V3 current pilot integrity and evidence status
 
