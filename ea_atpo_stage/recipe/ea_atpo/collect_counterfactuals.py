@@ -66,9 +66,13 @@ expert. Treat 'The patient cannot answer this question.' as UNKNOWN, not as a ne
 clinical finding."""
 
 PATIENT_SYSTEM = """You are a patient simulator. Answer the doctor's question using
-only the supplied patient atomic facts. Do not add medical inference or outside
-knowledge. If no supplied fact directly answers it, reply exactly: The patient
-cannot answer this question. Give only the concise patient response."""
+only the supplied patient atomic facts. Match facts by meaning, including ordinary
+paraphrases; do not require the question to repeat the fact's exact wording. For a
+broad question, report the relevant facts that are known and clearly say when a
+requested detail (such as a procedure or measurement) is not stated. Do not add
+medical inference or outside knowledge. If none of the supplied facts answers any
+part of the question, reply exactly: The patient cannot answer this question.
+Give only the concise patient response."""
 
 
 @dataclass
@@ -89,7 +93,8 @@ def _call_metrics(call: APICall) -> dict[str, Any]:
 
 
 class ChatAPI:
-    def __init__(self, base_url: str, model: str, timeout_s: float = 180.0, enable_thinking: bool | None = None):
+    def __init__(self, base_url: str, model: str, timeout_s: float = 180.0,
+                 enable_thinking: bool | None = None, top_p: float = 1.0):
         try:
             import aiohttp
         except ImportError as exc:
@@ -98,6 +103,7 @@ class ChatAPI:
         self.url = base_url.rstrip("/") + "/chat/completions"
         self.model = model
         self.enable_thinking = enable_thinking
+        self.top_p = float(top_p)
         self.client = self._aiohttp.ClientSession(timeout=self._aiohttp.ClientTimeout(total=timeout_s))
 
     async def close(self) -> None:
@@ -116,6 +122,7 @@ class ChatAPI:
             "model": self.model,
             "messages": list(messages),
             "temperature": temperature,
+            "top_p": self.top_p,
             "max_tokens": max_tokens,
         }
         if self.enable_thinking is not None:
