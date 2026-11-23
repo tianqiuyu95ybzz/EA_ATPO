@@ -1,0 +1,59 @@
+experiment: ea_atpo_relative_advantage_router_20261106
+seed:
+  pilot_split: 20261105
+  validation_rows: 20261107
+  test_rows: 20261108
+  bootstrap: 20261200
+data:
+  pilot_trajectories: experiments/real_case_pilot_20261103/outputs/full/pilot_trajectories.jsonl
+  official_test_parquet: experiments/real_case_pilot_20261103/assets/test.pilot.parquet
+  validation_cases: 50
+  independent_test_cases: 200
+  rollouts_per_action: 3
+  previously_used_official_test_rows_excluded: true
+router:
+  baseline: experiments/ea_atpo_value_router_20261105/artifacts/checkpoint
+  method: paired_action_minus_answer_kernel_ridge
+  max_text_features: 128
+  candidate_alpha: [0.03, 0.1, 0.3, 1.0, 3.0, 10.0, 30.0]
+  alpha_selection: pilot_case_grouped_validation_minimum_macro_mse
+  pilot_case_split: experiments/ea_atpo_value_router_20261105/artifacts/case_split.json
+  feature_input: initial_public_state_index_0_user_assistant_messages_and_public_structure_only
+  pilot_state_filter: state_index_0_only
+  target: paired_correctness_action_minus_answer
+  separate_resource_targets:
+    - patient_turns
+    - expert_tokens
+    - total_tokens
+    - latency_s
+policy:
+  decision_timing: select_once_from_initial_public_state
+  continuation: pinned_base_agent_continuation_from_counterfactual_collector
+  max_total_assistant_turns: 10
+  max_consults: 1
+  final_turn_forced_answer: true
+  conservative_threshold: validation_only
+  utility: accuracy - lambda_patient_per_turn * patient_turns - lambda_expert_per_1k_tokens * expert_tokens_per_1000
+  total_token_usage_is_reported_separately: true
+cost_grid:
+  - {name: no_cost, patient_per_turn: 0.0, expert_per_1k_tokens: 0.0}
+  - {name: patient_0005_expert_001, patient_per_turn: 0.005, expert_per_1k_tokens: 0.01}
+  - {name: reference, patient_per_turn: 0.01, expert_per_1k_tokens: 0.02}
+  - {name: patient_001_expert_005, patient_per_turn: 0.01, expert_per_1k_tokens: 0.05}
+  - {name: patient_003_expert_010, patient_per_turn: 0.03, expert_per_1k_tokens: 0.10}
+model:
+  repo_id: Qwen/Qwen3-8B
+  revision: b968826d9c46dd6066d109eabc6255188de91218
+  serving_framework: vllm
+  dtype: bfloat16
+  max_model_len: 8192
+  gpu_memory_utilization: 0.20
+  max_num_seqs: 2
+  temperature_base: 0.2
+  temperature_expert: 0.2
+  temperature_patient: 0.0
+bootstrap:
+  unit: case_id
+  repetitions: 4000
+  policy_ci_seed_base: 20261120
+  paired_ci_seed_base: 20261200

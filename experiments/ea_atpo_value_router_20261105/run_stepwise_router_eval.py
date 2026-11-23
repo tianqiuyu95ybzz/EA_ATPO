@@ -73,12 +73,53 @@ def public_state_from_row(row: dict[str, Any], source_index: int) -> dict[str, A
     }
 
 
-def select_action(policy: str, pred, no_rel_pred, threshold_cfg, train_summary, used_consults: int, final_turn: bool) -> tuple[str, dict[str, float]]:
+def select_action(policy: str, pred, no_rel_pred, threshold_cfg, train_summary, used_consults: int, final_turn: bool,
+                  used_asks: int = 0, policy_configs: dict[str, Any] | None = None) -> tuple[str, dict[str, float]]:
     costs = {
         "no_cost": {a: 0.0 for a in ACTIONS},
         "reference": {"ANSWER": 0.0, "ASK": 0.01, "CONSULT": 0.02, "DEFER": 0.02},
         "higher_cost": {"ANSWER": 0.0, "ASK": 0.03, "CONSULT": 0.10, "DEFER": 0.10},
     }
+
+    def utilities(values, lambda_set):
+        return {
+            a: values[a]["q"]
+            - lambda_set.get("ASK", 0.0) * values[a]["costs"]["patient_turns"]
+            - lambda_set.get("CONSULT", 0.0) * values[a]["costs"]["consult_tokens"]
+            - lambda_set.get("DEFER", 0.0) * values[a]["costs"]["defer_tokens"]
+            for a in ACTIONS
+        }
+
+    policy_configs = policy_configs or {}
+    if policy in policy_configs:
+        config = policy_configs[policy]
+        lambdas = dict(config.get("costs", costs["reference"]))
+        gamma = float(config.get("q_shrinkage", 1.0))
+        priors = config.get("q_priors", {})
+        calibrated = {}
+        for action in ACTIONS:
+            prior = float(priors.get(action, 0.5))
+            calibrated[action] = dict(pred[action])
+            calibrated[action]["q"] = min(1.0, max(0.0, prior + gamma * (float(pred[action]["q"]) - prior)))
+        pred = calibrated
+        allowed = list(ACTIONS)
+        if used_consults >= int(config.get("max_consults", 1)):
+            allowed.remove("CONSULT")
+        max_asks = config.get("max_asks")
+        if max_asks is not None and used_asks >= int(max_asks):
+            allowed.remove("ASK")
+        u = utilities(pred, lambdas)
+        if final_turn:
+            return "ANSWER", u
+        non_answer = [a for a in allowed if a != "ANSWER"]
+        if not non_answer:
+            action = "ANSWER"
+        else:
+            best_non_answer = max(non_answer, key=lambda a: (u[a], -ACTIONS.index(a)))
+            margin = float(config.get("min_intervention_advantage", 0.0))
+            action = best_non_answer if u[best_non_answer] - u["ANSWER"] >= margin else "ANSWER"
+        return action, u
+
     if policy == "always_answer":
         lambdas = costs["reference"]
     elif policy == "learned_value_no_cost":
@@ -97,15 +138,6 @@ def select_action(policy: str, pred, no_rel_pred, threshold_cfg, train_summary, 
         allowed.remove("DEFER")
     if final_turn:
         allowed = ["ANSWER"]
-
-    def utilities(values, lambda_set):
-        return {
-            a: values[a]["q"]
-            - lambda_set.get("ASK", 0.0) * values[a]["costs"]["patient_turns"]
-            - lambda_set.get("CONSULT", 0.0) * values[a]["costs"]["consult_tokens"]
-            - lambda_set.get("DEFER", 0.0) * values[a]["costs"]["defer_tokens"]
-            for a in ACTIONS
-        }
 
     u = utilities(pred, lambdas)
     if final_turn:
@@ -137,7 +169,8 @@ def select_action(policy: str, pred, no_rel_pred, threshold_cfg, train_summary, 
     return action, u
 
 
-async def run_one_policy(case, policy, model, no_rel_model, threshold_cfg, train_summary, base, patient, expert, temperature, max_turns):
+async def run_one_policy(case, policy, model, no_rel_model, threshold_cfg, train_summary, base, patient, expert, temperature, max_turns,
+                         policy_configs=None):
     from ea_atpo_stage.recipe.ea_atpo.collect_counterfactuals import (
         ACTION_REGEX, _extend_state, _forced_messages,
         _patient_messages, _public_action_text,
@@ -155,6 +188,7 @@ async def run_one_policy(case, policy, model, no_rel_model, threshold_cfg, train
     answer = None
     error = None
     used_consults = 0
+    used_asks = 0
     try:
         for decision_index in range(max_turns):
             final_turn = decision_index == max_turns - 1
@@ -162,7 +196,8 @@ async def run_one_policy(case, policy, model, no_rel_model, threshold_cfg, train
             pred = predict(model, [state_doc])[current.state_id]
             no_rel_pred = predict(no_rel_model, [state_doc])[current.state_id]
             action_name, utilities = select_action(
-                policy, pred, no_rel_pred, threshold_cfg, train_summary, used_consults, final_turn
+                policy, pred, no_rel_pred, threshold_cfg, train_summary, used_consults, final_turn,
+                used_asks=used_asks, policy_configs=policy_configs
             )
             actions_taken.append(action_name)
             trace.append({
@@ -249,6 +284,7 @@ async def run_one_policy(case, policy, model, no_rel_model, threshold_cfg, train
                               "completion_tokens": patient_call.completion_tokens,
                               "latency_s": patient_call.latency_s})
                 current = _extend_state(current, visible, {"role": "user", "content": response})
+                used_asks += 1
                 continue
             if action is Action.CONSULT:
                 expert_messages = build_expert_messages(current, Action.CONSULT, consult_question=content)
@@ -349,17 +385,32 @@ async def run(args):
     if len(eligible) < args.cases:
         raise ValueError("not enough official test cases after excluding the strong-expert subset")
     selected = random.Random(args.seed).sample(eligible, args.cases)
+    if args.source_rows_json:
+        selected = [int(i) for i in json.loads(args.source_rows_json.read_text(encoding="utf-8"))]
+        if len(selected) != len(set(selected)):
+            raise ValueError("source row list contains duplicates")
+        if any(i not in eligible for i in selected):
+            raise ValueError("source row list includes a row excluded from this Router evaluation")
+        if args.cases and len(selected) != args.cases:
+            raise ValueError(f"source row list has {len(selected)} rows, --cases requested {args.cases}")
     cases = [public_state_from_row(data.iloc[i].to_dict(), i) for i in selected]
     model_dir = args.artifacts / "checkpoint"
     no_rel_dir = args.artifacts / "checkpoint_no_reliability"
     model, no_rel_model = _load_model(model_dir), _load_model(no_rel_dir)
     train_summary = json.loads((args.artifacts / "training_summary.json").read_text(encoding="utf-8"))
     threshold_cfg = json.loads((args.artifacts / "baseline_policy_config.json").read_text(encoding="utf-8"))
-    service_path = HERE / "outputs/model_service_manifest.json"
+    service_path = args.output_dir / "model_service_manifest.json"
+    if not service_path.exists():
+        service_path = HERE / "outputs/model_service_manifest.json"
     service = json.loads(service_path.read_text(encoding="utf-8")) if service_path.exists() else {}
-    policies = ["always_answer", "uncertainty_threshold", "fixed_cost_router", "learned_value_no_cost",
-                "learned_value_router", "learned_value_higher_cost", "ablation_no_expert_reliability",
-                "ablation_no_consult", "ablation_no_defer"]
+    default_policies = ["always_answer", "uncertainty_threshold", "fixed_cost_router", "learned_value_no_cost",
+                       "learned_value_router", "learned_value_higher_cost", "ablation_no_expert_reliability",
+                       "ablation_no_consult", "ablation_no_defer"]
+    policies = [p.strip() for p in args.policies.split(",") if p.strip()] if args.policies else default_policies
+    policy_configs = json.loads(args.policy_config_json.read_text(encoding="utf-8")) if args.policy_config_json else {}
+    unknown = set(policies) - set(default_policies) - set(policy_configs)
+    if unknown:
+        raise ValueError(f"custom policy configs missing for: {sorted(unknown)}")
     manifest_path = args.output_dir / "run_manifest.json"
     episodes_path = args.output_dir / "policy_episodes.jsonl"
     manifest = {
@@ -376,6 +427,8 @@ async def run(args):
                        "patient_temperature": 0.0, "max_decisions": args.max_turns,
                        "max_consults": 1, "seed_strategy": "sha256(model,messages,temperature) per request"},
         "policy_names": policies,
+        "policy_configs": policy_configs,
+        "policy_config_sha256": file_sha256(args.policy_config_json) if args.policy_config_json else None,
         "input_boundary": "Router sees only current public user/assistant dialogue and structural features; hidden atomic_facts only enter Patient Simulator; expert sees public dialogue and consult question; gold is evaluated after episode",
         "reference_cost": {"ASK": 0.01, "CONSULT": 0.02, "DEFER": 0.02},
         "rollout_file": str(episodes_path.resolve()),
@@ -414,7 +467,7 @@ async def run(args):
                     started = time.perf_counter()
                     row = await run_one_policy(case, policy, model, no_rel_model, threshold_cfg,
                                                train_summary, base, patient, expert,
-                                               args.temperature, args.max_turns)
+                                               args.temperature, args.max_turns, policy_configs=policy_configs)
                     row["elapsed_wall_s"] = time.perf_counter() - started
                     writer.write(json.dumps(row, ensure_ascii=False) + "\n")
                     writer.flush()
@@ -444,6 +497,9 @@ def main():
     parser.add_argument("--temperature", type=float, default=0.2)
     parser.add_argument("--timeout-s", type=float, default=300.0)
     parser.add_argument("--resume", action="store_true")
+    parser.add_argument("--policies", default=None, help="comma-separated policy names; defaults to the registered nine")
+    parser.add_argument("--policy-config-json", type=Path, default=None, help="frozen custom policy configs")
+    parser.add_argument("--source-rows-json", type=Path, default=None, help="explicit source row indices for a disjoint split")
     asyncio.run(run(parser.parse_args()))
 
 
