@@ -1,5 +1,10 @@
 # Changelog
 
+## 2026-11-27
+
+- Record the V3 Blackwell restore, verified original Qwen3-8B snapshot,
+  and the bounded BF16 generation smoke.
+
 ## 2026-11-22
 
 - Added aggregate migration asset triage and checkpoint-integrity status. The

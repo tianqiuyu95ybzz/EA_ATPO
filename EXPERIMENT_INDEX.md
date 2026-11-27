@@ -1,6 +1,6 @@
 # EA-ATPO experiment index
 
-Last checked: 2026-11-22. Research version labels V1/V2/V3 identify method
+Last checked: 2026-11-27. Research version labels V1/V2/V3 identify method
 stages; they are not package releases or claims of clinical validation.
 
 | Stage | Main artifacts | Evidence status | Recovery boundary |
@@ -11,6 +11,7 @@ stages; they are not package releases or claims of clinical validation.
 | V3 checkpoint lineage | [Audit report](experiments/ea_atpo_v3/atpo_checkpoint_audit_20261121/REPORT.md), [model lineage](experiments/ea_atpo_v3/atpo_checkpoint_audit_20261121/model_lineage.json) | The pilot used original Qwen3-8B at revision `b968826d9c46dd6066d109eabc6255188de91218`, without an adapter. A verified SFT+ATPO Qwen3-8B final checkpoint was not found. | Base and Attempt09 weights remain on PFS. No model weights are uploaded. |
 | V3 Oracle / benchmark admission | `experiments/ea_atpo_v3/gold_oracle_audit_20261121/`, `experiments/ea_atpo_v3/gold_dataset_admission_20261121/`, [Oracle design/report](experiments/ea_atpo_v3/oracle_expert/README.md) | CPU-only audit and Dev analyses. The PFS runs 07/08 are Dev-only; no Frozen Holdout was opened. | Per-state files remain private PFS artifacts. Aggregate summaries and scripts are in GitHub. |
 | Historical V2 relative Router recovery | `experiments/ea_atpo_value_router_20261105/` | Legacy exploratory code and aggregate precheck metrics are preserved separately. Case-level targets, splits, checkpoints, and service logs are excluded from GitHub. | Detailed local file classification is in the private migration inventory indexed by [PFS artifact index](PFS_ARTIFACT_INDEX.md). |
+| V3 Blackwell restore | [Restore and BF16 smoke](experiments/ea_atpo_v3/blackwell_restore_20261127/REPORT.md) | Synthetic-prompt generation, embedding extraction, BF16 kernel and CPU Oracle checks. | Detailed logs, vectors and model shards stay in controlled server storage. |
 
 ## Result terminology
 
