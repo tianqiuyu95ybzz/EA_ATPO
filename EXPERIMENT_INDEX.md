@@ -13,6 +13,7 @@ stages; they are not package releases or claims of clinical validation.
 | Historical V2 relative Router recovery | `experiments/ea_atpo_value_router_20261105/` | Legacy exploratory code and aggregate precheck metrics are preserved separately. Case-level targets, splits, checkpoints, and service logs are excluded from GitHub. | Detailed local file classification is in the private migration inventory indexed by [PFS artifact index](PFS_ARTIFACT_INDEX.md). |
 | V3 Blackwell restore | [Restore and BF16 smoke](experiments/ea_atpo_v3/blackwell_restore_20261127/REPORT.md) | Synthetic-prompt generation, embedding extraction, BF16 kernel and CPU Oracle checks. | Detailed logs, vectors and model shards stay in controlled server storage. |
 | V3 Chinese synthetic diagnosis pilot | [Admission and paired replay](experiments/ea_atpo_v3/lingxi_admission_20261128/REPORT.md) | Eight validation cases served as an engineering check for label scoring and ASK replay. Same-state DEFER remains unavailable. | Only the runner and aggregates are published. |
+| V3 ReMeDi label restoration | [Official annotations and replay preparation](experiments/ea_atpo_v3/remedi_label_audit_20261128/REPORT.md) | Restored 1,517 uniquely mapped dialogues and 3,506 replay windows after historical pilot exclusion. | Semantic tags and case-level replay indices remain in controlled storage. |
 
 ## Result terminology
 
