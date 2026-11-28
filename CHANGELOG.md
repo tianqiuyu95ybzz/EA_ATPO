@@ -1,5 +1,9 @@
 # Changelog
 
+## 2026-11-28
+
+- Record Chinese benchmark admission and the bounded LingxiDiag ANSWER/ASK replay pilot.
+
 ## 2026-11-27
 
 - Record the V3 Blackwell restore, verified original Qwen3-8B snapshot,
