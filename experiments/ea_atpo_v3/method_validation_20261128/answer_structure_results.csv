@@ -1,0 +1,5 @@
+split,kind,state,rows,slot_hits,slot_reference,slot_predicted,entity_hits,entity_reference,parsed,slot_precision,slot_recall,entity_coverage
+train,answer,before,12,8,12,42,2,8,11,0.190476,0.666667,0.25
+dev,answer,before,21,11,21,89,6,23,21,0.123596,0.52381,0.26087
+dev,pair,before,8,4,8,20,3,10,8,0.2,0.5,0.3
+dev,pair,after,8,5,8,28,4,10,8,0.178571,0.625,0.4

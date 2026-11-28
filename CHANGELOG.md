@@ -2,6 +2,7 @@
 
 ## 2026-11-28
 
+- Validate ReMeDi ASK/ANSWER on Train/Dev and audit the original ATPO tree path.
 - Build ReMeDi behavior, observed outcomes, feature-only states and masked counterfactual records.
 - Restore ReMeDi official semantic labels, split membership and eligible replay windows.
 - Record Chinese benchmark admission and the bounded LingxiDiag ANSWER/ASK replay pilot.

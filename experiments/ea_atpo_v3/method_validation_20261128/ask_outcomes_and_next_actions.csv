@@ -1,0 +1,9 @@
+split,feedback_outcome,windows,known_slots_before,known_slots_after,next_absent,mean_slots_before,mean_slots_after,next_Recommend,next_Inquire,next_Inform,next_QuestionAnswering,next_Diagnosis,next_Other,next_Chitchat,next_unlabeled,next_missing
+train,no_feedback,21,63,63,21,3.0,3.0,,,,,,,,,
+train,no_new_fact,340,713,713,,2.097059,2.097059,83,172,89,20,16,30,30,,
+train,non_target_new,225,450,603,,2.0,2.68,56,120,58,4,16,20,13,1,
+train,target_new,847,1553,2305,,1.83353,2.72137,240,463,169,53,65,84,30,,1
+dev,no_feedback,2,5,5,2,2.5,2.5,,,,,,,,,
+dev,no_new_fact,63,131,131,,2.079365,2.079365,13,37,17,6,3,5,4,,
+dev,non_target_new,46,74,108,,1.608696,2.347826,11,28,9,1,4,4,1,,
+dev,target_new,143,265,386,,1.853147,2.699301,38,81,23,9,12,9,7,1,
