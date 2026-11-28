@@ -17,6 +17,7 @@ stages; they are not package releases or claims of clinical validation.
 | V3 ReMeDi state/action preparation | [Admission and next experiment](experiments/ea_atpo_v3/remedi_state_action_20261128/ea_atpo_next_experiment_plan.md) | 4,986 two-action imitation targets, 0 paired Q targets. No inference or training. | State, replay and case-level records remain private. |
 | V3 ReMeDi ASK/ANSWER validation and ATPO code audit | [Train/Dev validation](experiments/ea_atpo_v3/method_validation_20261128/remedi_ask_answer_validation.md), [tree audit](experiments/ea_atpo_v3/method_validation_20261128/atpo_tree_search_audit.md) | Bounded fixed-Base structural evaluation and read-only upstream code review. | Test stayed frozen. No Q training. |
 | V3 three-action environment audit | [IMCS-21 and DDXPlus feasibility](experiments/ea_atpo_v3/three_action_environment_audit_20261128/REPORT.md) | Author-distributed patient environments identified. DDXPlus BASD is the priority for one-case interface verification. | Read-only audit. No dataset download, model runs, or training. |
+| V3 DDXPlus BASD single-case smoke | [Restore gate](experiments/ea_atpo_v3/ddxplus_basd_smoke_test_20261128/REPORT.md) | Blocked before restore because the registered data files were unavailable on amax. | No data transfer or runtime test. |
 
 ## Result terminology
 

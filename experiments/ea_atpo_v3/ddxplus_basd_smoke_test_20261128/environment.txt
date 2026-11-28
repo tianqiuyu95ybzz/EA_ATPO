@@ -1,0 +1,18 @@
+Status: BLOCKED before restore; no BASD runtime was started.
+Host alias: amax (63).
+BASD upstream: https://github.com/mila-iqia/ddxplus
+BASD pinned commit: 69e8cf50a15ebb8979a57bb1f30ba5bb7f587f66
+Reviewed entry points: code/basd/env.py and code/basd/sim_utils.py
+Source runtime imports: numpy, scipy.stats, tqdm and pandas via sim_utils.
+No BASD dependency lock identified in the upstream tree.
+Observed from installed-package metadata without importing packages.
+System Python: 3.13.9, torch distribution metadata 2.9.0.
+Candidate atpo-cu130 Python: 3.11.15
+torch distribution metadata: 2.11.0
+numpy: 1.26.4
+scipy: 1.17.1
+pandas: 3.0.3
+tqdm: 4.67.3
+pyarrow: 24.0.0
+gym, gymnasium: not installed in candidate environment
+Runtime compatibility, case locator, seed and execution configuration: not tested or selected.

@@ -1,0 +1,39 @@
+{
+  "status": "blocked_backup_not_accessible",
+  "release": "DDXPlus Dataset (English) Figshare v2",
+  "license": "CC BY 4.0",
+  "official_metadata_url": "https://api.figshare.com/v2/articles/22687585/versions/2",
+  "registered_source_relative_path": "experiments/ea_atpo_v3/gold_dataset_admission_20261121/private/ddx_data/",
+  "registered_manifest": "../gold_dataset_admission_20261121/SHA256_MANIFEST.json",
+  "effective_backup_location": null,
+  "restore_destination": null,
+  "files": [
+    {
+      "name": "release_validate_patients.zip",
+      "registered_bytes": 18706053,
+      "official_bytes": 18706053,
+      "registered_sha256": "625a96855becf0efe5da339fd3d440aa99597d48f784957a97dacc3fceaa7e40",
+      "official_md5": "e4db88e9082f18410de6fd0cb7e74d18",
+      "observed_sha256": null,
+      "restored": false
+    },
+    {
+      "name": "release_evidences.json",
+      "registered_bytes": 120263,
+      "official_bytes": 120263,
+      "registered_sha256": "281c78b044ae60514e28ecc9052d08a8225dd3e2db3f00f8788b99c47b05e0c0",
+      "official_md5": "0660962abe0bbf99e1fb77188c253597",
+      "observed_sha256": null,
+      "restored": false
+    },
+    {
+      "name": "release_conditions.json",
+      "registered_bytes": 20889,
+      "official_bytes": 20889,
+      "registered_sha256": "56edf4682d8e86a4209fc3a33932e50ce03d1cc1fecc326c26d5ef8fa5c24890",
+      "official_md5": "a992eadcff3099dd72e1820fbd2115aa",
+      "observed_sha256": null,
+      "restored": false
+    }
+  ]
+}
