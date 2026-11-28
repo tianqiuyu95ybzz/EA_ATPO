@@ -1,0 +1,8 @@
+{
+  "near_threshold": 0.8,
+  "near_pairs": {},
+  "near_flagged_prepared_ids": 0,
+  "dialogue_ids_checked": 1517,
+  "prior_pilot_cases": 50,
+  "original_replay_windows_verified": 3506
+}

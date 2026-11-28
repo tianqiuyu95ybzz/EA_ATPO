@@ -1,0 +1,9 @@
+split,cohort,action_consistency,action_reference_available,action_reference_coverage,annotated_medical_slot_value_pairs,answer_reference_groups,entity_reference_available,entity_reference_coverage,independent_predictions_evaluated,literal_entity_alignment_rate,literal_source_entity_matches,medical_correctness,medical_correctness_evaluated,medical_entity_coverage,reference_Diagnosis,reference_QuestionAnswering,slot_consistency,slot_reference_available,slot_reference_coverage,source_span_alignment_rate,source_span_matches,valid_reference_spans
+train,all_prepared,,679,1.0,145,679,135,0.198822,0,0.627586,91,,0,,160,528,,160,0.235641,0.997582,825,827
+train,eligible,,659,1.0,140,659,130,0.197269,0,0.621429,87,,0,,154,514,,154,0.233687,0.997506,800,802
+dev,all_prepared,,112,1.0,27,112,24,0.214286,0,0.666667,18,,0,,26,87,,26,0.232143,1.0,136,136
+dev,eligible,,112,1.0,27,112,24,0.214286,0,0.666667,18,,0,,26,87,,26,0.232143,1.0,136,136
+test,all_prepared,,826,1.0,199,826,178,0.215496,0,0.542714,108,,0,,205,630,,204,0.246973,1.0,1001,1001
+test,eligible,,801,1.0,192,801,171,0.213483,0,0.546875,105,,0,,198,612,,197,0.245943,1.0,974,974
+total,all_prepared,,1617,1.0,371,1617,337,0.208411,0,0.584906,217,,0,,391,1245,,390,0.241187,0.998982,1962,1964
+total,eligible,,1572,1.0,359,1572,325,0.206743,0,0.584958,210,,0,,378,1213,,377,0.239822,0.998954,1910,1912

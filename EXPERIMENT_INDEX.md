@@ -14,6 +14,7 @@ stages; they are not package releases or claims of clinical validation.
 | V3 Blackwell restore | [Restore and BF16 smoke](experiments/ea_atpo_v3/blackwell_restore_20261127/REPORT.md) | Synthetic-prompt generation, embedding extraction, BF16 kernel and CPU Oracle checks. | Detailed logs, vectors and model shards stay in controlled server storage. |
 | V3 Chinese synthetic diagnosis pilot | [Admission and paired replay](experiments/ea_atpo_v3/lingxi_admission_20261128/REPORT.md) | Eight validation cases served as an engineering check for label scoring and ASK replay. Same-state DEFER remains unavailable. | Only the runner and aggregates are published. |
 | V3 ReMeDi label restoration | [Official annotations and replay preparation](experiments/ea_atpo_v3/remedi_label_audit_20261128/REPORT.md) | Restored 1,517 uniquely mapped dialogues and 3,506 replay windows after historical pilot exclusion. | Semantic tags and case-level replay indices remain in controlled storage. |
+| V3 ReMeDi state/action preparation | [Admission and next experiment](experiments/ea_atpo_v3/remedi_state_action_20261128/ea_atpo_next_experiment_plan.md) | 4,986 two-action imitation targets, 0 paired Q targets. No inference or training. | State, replay and case-level records remain private. |
 
 ## Result terminology
 

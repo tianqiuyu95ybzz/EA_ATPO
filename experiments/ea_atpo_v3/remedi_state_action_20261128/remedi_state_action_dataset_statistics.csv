@@ -1,0 +1,9 @@
+split,cohort,answer,answer_reference_coverage_over_all_states,ask,ask_feedback_available,ask_feedback_coverage_over_all_states,ask_new_info_available,ask_target_and_new_info,comparable_action_outcomes,defer_available,defer_coverage_over_all_states,dialogues,direct_answer_reference,doctor_states,feature_inputs_exported,historical_pilot_dialogues,indexed_replay_windows,mixed,near_duplicate_flagged_dialogues,other,q_guided_examples,single_action_behavior_examples
+train,all_prepared,679,0.131742,1490,1529,0.296663,1152,908,0,0,0.0,641,679,5154,4281,20,1472,66,0,2919,0,2169
+train,eligible,659,0.131511,1433,1472,0.293754,1110,876,0,0,0.0,621,659,5011,4281,0,1472,66,0,2853,0,2092
+dev,all_prepared,112,0.136752,254,266,0.324786,198,147,0,0,0.0,99,112,819,690,0,266,14,0,439,0,366
+dev,eligible,112,0.136752,254,266,0.324786,198,147,0,0,0.0,99,112,819,690,0,266,14,0,439,0,366
+test,all_prepared,826,0.129508,1804,1848,0.289746,1409,1113,0,0,0.0,777,826,6378,5241,29,1768,78,0,3670,0,2630
+test,eligible,801,0.131204,1727,1770,0.289926,1348,1065,0,0,0.0,748,801,6105,5241,0,1768,77,0,3500,0,2528
+total,all_prepared,1617,0.130921,3548,3643,0.294956,2759,2168,0,0,0.0,1517,1617,12351,10212,49,3506,158,0,7028,0,5165
+total,eligible,1572,0.131713,3414,3508,0.293925,2656,2088,0,0,0.0,1468,1572,11935,10212,0,3506,157,0,6792,0,4986
